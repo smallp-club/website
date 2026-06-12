@@ -73,3 +73,21 @@ a {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
+
+/* Motion tokens — consumed by all animated components via var(--duration-*) */
+:root {
+  --duration-instant: 0.01ms;
+  --duration-fast:    0.15s;
+  --duration-base:    0.25s;
+  --duration-slow:    0.4s;
+  --ease-out:         cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: var(--duration-instant);
+    --duration-base: var(--duration-instant);
+    --duration-slow: var(--duration-instant);
+  }
+  html { scroll-behavior: auto; }
+}

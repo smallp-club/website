@@ -1,0 +1,21 @@
+.root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  width: 40%;
+  background: var(--spc-turquoise);
+  animation: slide 1.2s var(--ease-out) infinite;
+}
+
+@keyframes slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}

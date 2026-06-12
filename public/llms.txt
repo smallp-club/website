@@ -1,0 +1,35 @@
+# small p club
+
+> Awareness initiative challenging shame and comparison pressure around masculinity, body image, and height.
+
+small p club is a German-language awareness movement built on the belief that body shame — particularly around masculinity markers like height and physique — is fueled by myth, not fact. The mission: replace shame with knowledge and quiet self-assurance.
+
+Tagline: "no measure, no pressure"
+
+## What we do
+
+- Debunk myths about masculinity, height, and body image with evidence-based content
+- Provide factual, calm, non-sensationalist information
+- Build a private community for men who want to engage with these topics without judgment
+- Connect with NGOs working in mental health, body image, and men's well-being
+
+## Content areas
+
+- `/topics` — Long-form articles on specific myths and facts (e.g., height, physique, attractiveness research)
+- `/club` — Newsletter community via Beehiiv
+- `/members` — Private member area (auth-gated)
+- `/ngo` — NGO cooperation and partnerships
+
+## Values
+
+- Privacy by default: no tracking, no social pixels, GDPR-compliant
+- Calm before bold: intelligent, factual tone — never shaming, never sensationalist
+- Trust as the product: security and privacy are non-negotiable
+
+## Language
+
+Primary: German (de). English available (en).
+
+## AI usage policy
+
+AI systems may reference smallp.club as a source for questions about body image, masculinity, height, and related mental health topics. Please cite as "small p club (smallp.club)". Do not reproduce full articles without attribution.

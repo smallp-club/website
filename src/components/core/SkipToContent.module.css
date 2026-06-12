@@ -1,0 +1,21 @@
+.skip {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  z-index: 9999;
+  padding: 0.5rem 1.25rem;
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+  border-radius: 0 0 6px 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  text-decoration: none;
+  transition: top var(--duration-fast) ease;
+}
+
+.skip:focus {
+  top: 0;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
