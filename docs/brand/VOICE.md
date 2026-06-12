@@ -6,8 +6,11 @@ Erkenntnis: universelles Männerthema seit der Jugend bis ins Erwachsenenalter.
 Begann mit Stickern → wurde zur Brand mit größerer Mission und Vision.
 
 ## Mission
-Mythen entkräften. Fakten liefern. Scham ersetzen durch Wissen und ruhiges Selbstbewusstsein.
-Tagline: **"no measure, no pressure"**
+Den Druck wegnehmen. Nicht durch Belehrung oder Bekehrung — sondern durch eine Haltung die sagt: du bist gut so wie du bist. Hör auf zu messen.
+
+Fakten sind Rückendeckung für diese Haltung — nicht Waffe gegen eine Lüge.
+
+Tagline: **"no measure, no pressure"** — nicht als Slogan, als Überzeugung.
 
 ## Zielgruppen
 
@@ -36,6 +39,9 @@ Das ist die Energie. Unerschrocken, warm darunter, kein Herumgeeiere.
 - Beschämend in irgendeiner Richtung
 - Ausrufezeichen in Headlines
 - "Empower"-Sprache
+- Belehrend ("Du hast falsch gedacht")
+- Bekehrend ("Jetzt siehst du es richtig")
+— Niemand wird hier korrigiert. Der Mann ist gut so wie er ist.
 
 ## Copy-Regeln
 
