@@ -47,7 +47,7 @@ Das ist die Energie. Unerschrocken, warm darunter, kein Herumgeeiere.
 
 - **Du** (nicht Sie) — peer-to-peer, direkt
 - **Keine Anglizismen** wo ein natürliches deutsches Wort existiert
-- **Keine vagen Claims** — "Studien zeigen" → "Eine Meta-Analyse von 17.000 Männern (BJU International, 2020)"
+- **Keine vagen Claims** — "Studien zeigen" → "Veale et al., BJU International, 2015, n=15.521 Männer"
 - **Keine medizinischen Ratschläge** — Fakten beschreiben, nicht verschreiben
 - **Kein Toxic Positivity** — "Du bist perfekt wie du bist" ist auch Druck
 - Tagline **"no measure, no pressure"** niemals umformulieren oder paraphrasieren

@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-12
+## Stand: 2026-06-12 (Session 3)
 
 ## Fertig — Fundament
 
@@ -27,10 +27,15 @@
 - [x] **CSS-Regeln**: keine Hex-Werte, kein `!important`, alle Animationen via `--duration-*`-Tokens
 - [x] **ESLint** inkl. jsx-a11y via `eslint-config-next`
 - [x] **`/ciao` Command** + Stop Hook für Session-Closing-Protokoll
+- [x] **Content-Recherche** — `docs/content/RESEARCH.md` angelegt: 7 Mythen mit Quellen, Kernstudie Veale 2015 (BJU International, n=15.521), DACH-Institutionen, Humor-Schutzschild-Phänomen
+- [x] **VOICE.md Fehler korrigiert** — Studie war falsch als "2020, 17.000 Männer" dokumentiert → jetzt korrekt: "Veale et al., BJU International, 2015, n=15.521"
+- [x] **CONCEPT.md erweitert** — Golden Circle (WHY/HOW/WHAT), Unique Narrative Territory, überarbeitete Story Architecture mit zweiter Lesart pro Mythos-Block
+- [x] **VOICE.md erweitert** — Ton-Verbote ergänzt: kein Belehren, kein Bekehren
 
 ## Offen — Direkt nächste Schritte
 
 - [ ] **Phase 2: Visual Direction** — `/imagegen-frontend-web` Moodboards → Kevin Feedback
+- [ ] **Social Media vs. Website Content** — klare Trennung erarbeiten (welche Inhalte wo, welches Format)
 - [ ] **Vercel DPA signieren** — DSGVO-Pflicht (Vercel → Settings → Legal)
 - [ ] **Vercel Preset auf "Next.js" prüfen**
 
@@ -61,3 +66,5 @@ Phase 7  Shop / Shopify (nach Launch)
 
 - [ ] Content-Strategie für /topics (Themen, Quellen, Format)
 - [ ] NGO-Kooperationskonzept: Was soll die Seite leisten?
+- [ ] **Member Area — Erfahrungsberichte:** Autorennennung vs. Anonymität? (Pro: zeigt Haltung / Contra: macht angreifbar) — Konzept liegt in Memory
+- [ ] **Social Media Strategie** — Trennung Website-Content vs. Social-Content noch nicht ausgearbeitet

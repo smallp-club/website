@@ -15,6 +15,7 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 - Story Architecture, Konzeptstand → @docs/project/CONCEPT.md
 - Implementierungsstand, Roadmap, offene Punkte → @docs/project/ROADMAP.md
 - Visuelles Design-System → @DESIGN.md
+- Forschungsquellen (Mythen, Fakten, Psychologie, DACH) → @docs/content/RESEARCH.md
 
 ## Agents & Skills
 - **brand-guardian**, **content-strategist**, **security-reviewer** in `.claude/agents/` — bei jedem Creative/Build-Schritt einbeziehen
