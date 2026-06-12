@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "topics": "Themen",
+    "club": "Club beitreten",
+    "members": "Members",
+    "shop": "Shop"
+  },
+  "hero": {
+    "tagline": "no measure, no pressure"
+  },
+  "footer": {
+    "tagline": "klein geschrieben. groß gefühlt.",
+    "privacy": "Datenschutz",
+    "imprint": "Impressum"
+  },
+  "club": {
+    "heading": "du bist richtig hier.",
+    "subheading": "Werde Teil der Community.",
+    "emailPlaceholder": "deine@email.de",
+    "cta": "Dabei sein"
+  },
+  "common": {
+    "myth": "Mythos",
+    "fact": "Fakt",
+    "readMore": "Mehr erfahren",
+    "backToTop": "Nach oben"
+  }
+}

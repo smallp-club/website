@@ -1,0 +1,28 @@
+{
+  "nav": {
+    "topics": "Topics",
+    "club": "Join the club",
+    "members": "Members",
+    "shop": "Shop"
+  },
+  "hero": {
+    "tagline": "no measure, no pressure"
+  },
+  "footer": {
+    "tagline": "small letter. big feeling.",
+    "privacy": "Privacy",
+    "imprint": "Imprint"
+  },
+  "club": {
+    "heading": "you belong here.",
+    "subheading": "Join the community.",
+    "emailPlaceholder": "your@email.com",
+    "cta": "Join now"
+  },
+  "common": {
+    "myth": "Myth",
+    "fact": "Fact",
+    "readMore": "Read more",
+    "backToTop": "Back to top"
+  }
+}
