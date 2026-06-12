@@ -23,7 +23,7 @@ function buildCsp(nonce: string): string {
   ].join('; ');
 }
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const nonce = generateNonce();
   const csp = buildCsp(nonce);
 

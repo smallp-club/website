@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-12 (Session 3)
+## Stand: 2026-06-13 (Session 4)
 
 ## Fertig — Fundament
 
@@ -34,6 +34,7 @@
 
 ## Offen — Direkt nächste Schritte
 
+- [x] **Farbkonzept abgestimmt** — Sektionsregeln, Komponentenregeln, Verbote → `docs/brand/COLOR_CONCEPT.md`
 - [ ] **Phase 2: Visual Direction** — `/imagegen-frontend-web` Moodboards → Kevin Feedback
 - [ ] **Social Media vs. Website Content** — klare Trennung erarbeiten (welche Inhalte wo, welches Format)
 - [ ] **Vercel DPA signieren** — DSGVO-Pflicht (Vercel → Settings → Legal)

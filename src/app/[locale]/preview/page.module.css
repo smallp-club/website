@@ -1,0 +1,320 @@
+/* ============================================================
+   Preview — Grafische Richtungen Demo
+   ============================================================ */
+
+.page {
+  background-color: var(--spc-offwhite);
+  color: var(--spc-black);
+}
+
+/* ---- Nav ---- */
+.nav {
+  position: fixed;
+  top: var(--space-5);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--space-3);
+  z-index: 100;
+  background: rgba(247, 246, 242, 0.85);
+  backdrop-filter: blur(12px);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--spc-stone);
+}
+
+.navLink {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  transition: color var(--duration-base) var(--ease-standard),
+              background var(--duration-base) var(--ease-standard);
+}
+
+.navLink:hover {
+  color: var(--spc-black);
+  background: var(--spc-sand);
+}
+
+/* ---- Sections shared ---- */
+.section {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-11) var(--space-9);
+  overflow: hidden;
+  position: relative;
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+  margin-bottom: var(--space-8);
+}
+
+/* ================================================================
+   Richtung 3 — Maßstrich ins Off
+   ================================================================ */
+.r3 {
+  gap: 0;
+  user-select: none;
+}
+
+.r3Content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-9);
+}
+
+.measureLine {
+  position: relative;
+  width: calc(100% + var(--space-9));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.measureTrack {
+  position: relative;
+  height: 1px;
+  background: var(--spc-black);
+  width: 100%;
+}
+
+.measureTrackWrap {
+  position: relative;
+  cursor: none;
+  padding: 24px 0;
+  margin: -24px 0;
+}
+
+.measureZero {
+  position: absolute;
+  left: 0;
+  top: -22px;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  letter-spacing: var(--tracking-overline);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.cursorIndicator {
+  position: absolute;
+  top: -32px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.cursorLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-black);
+  white-space: nowrap;
+}
+
+.cursorLabelLong {
+  white-space: normal;
+  max-width: 200px;
+  text-align: center;
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-wide);
+  font-weight: var(--weight-regular);
+  font-style: italic;
+  text-transform: none;
+}
+
+.cursorTick {
+  width: 2px;
+  height: 52px;
+  background: var(--spc-turquoise);
+}
+
+.measureTicks {
+  display: flex;
+  justify-content: space-between;
+  width: calc(100% - 80px);
+}
+
+.tick {
+  width: 1px;
+  height: 10px;
+  background: var(--spc-black);
+}
+
+.tickLong {
+  height: 20px;
+}
+
+.measureCaption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  margin-top: var(--space-3);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.r3Headline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 10vw, var(--text-display-xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+  max-width: 14ch;
+}
+
+.r3Sub {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  color: var(--spc-slate);
+  max-width: 48ch;
+  line-height: var(--leading-relaxed);
+  margin-top: var(--space-5);
+}
+
+/* ================================================================
+   Richtung 2 — Monumentalzahl + Lücke
+   ================================================================ */
+.r2 {}
+
+.statsRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.statBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.statNumber {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(80px, 16vw, 160px);
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+}
+
+.statNumber.accent {
+  color: var(--spc-turquoise-deep);
+}
+
+.statLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  color: var(--spc-ink);
+  max-width: 36ch;
+  line-height: var(--leading-relaxed);
+}
+
+.statDivider {
+  width: 1px;
+  height: var(--space-8);
+  background: var(--spc-stone);
+  margin: var(--space-4) 0;
+}
+
+.statSource {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  margin-top: var(--space-7);
+}
+
+/* ================================================================
+   Richtung 6 — Topografie als Hintergrundschicht
+   ================================================================ */
+.r6 {}
+
+.topoContainer {
+  position: relative;
+}
+
+.topoSvg {
+  position: absolute;
+  inset: -40px -80px;
+  width: calc(100% + 160px);
+  height: calc(100% + 80px);
+  pointer-events: none;
+  overflow: visible;
+}
+
+.r6Content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.gapVisual {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+.bigNum {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(100px, 20vw, 200px);
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+}
+
+.smallNum {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(56px, 10vw, 100px);
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-ash);
+}
+
+.pct {
+  font-size: 0.34em;
+  vertical-align: 0.22em;
+  letter-spacing: 0;
+  margin-left: 0.06em;
+}
+
+.gapLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--spc-slate);
+  max-width: 44ch;
+  line-height: var(--leading-relaxed);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mythFactText {
+    transition: none;
+  }
+}

@@ -24,6 +24,11 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 - Playwright MCP: `.mcp.json` aktiv
 - Workflow neue Seiten: erst `/imagegen-frontend-web` → Kevin Feedback → Code
 
+## Skill-Workflow (fest, nicht überspringen)
+- **Phase 2 (Visual Direction):** `design-taste-frontend` Dials für jede neue Section setzen: `DESIGN_VARIANCE: 7 / MOTION_INTENSITY: 6 / VISUAL_DENSITY: 2`
+- **Phase 4/5 (Section Build):** Nach jeder gebauten Section → `impeccable critique` → Schwächen beheben bevor nächste Section startet
+- **Konzept-Challenges:** Grafische Richtungen und Design-Entscheidungen immer durch `design-taste-frontend` und `impeccable` challengen bevor sie als final gelten
+
 ## Prinzipien
 1. Immer erst besprechen, dann bauen
 2. Kevin ist kein Dev — technische Konzepte einfach erklären
