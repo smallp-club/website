@@ -7,7 +7,7 @@
 - [x] Next.js 15 Projektstruktur in `src/` (App Router, TypeScript strict)
 - [x] i18n: next-intl, DE default, EN vorbereitet
 - [x] DeepL-Übersetzungsscript `scripts/translate.mjs`
-- [x] Security: Nonce-basierte CSP in `src/middleware.ts`, Referrer-Policy no-referrer
+- [x] Security: Nonce-basierte CSP in `src/proxy.ts` (umbenannt von middleware.ts, Next.js 16)
 - [x] Security Headers in `next.config.ts`
 - [x] Chillax Variable Font in `public/fonts/`
 - [x] CSS Token-System in `tokens/`
@@ -17,8 +17,16 @@
 - [x] Custom Agents: brand-guardian, content-strategist, security-reviewer
 - [x] Playwright MCP konfiguriert (`.mcp.json`)
 - [x] GitHub: `smallp-club/website`, Branch `main`
-- [x] Vercel Auto-Deploy aktiv
+- [x] Vercel Auto-Deploy aktiv — Domain `smallp.club` verbunden
 - [x] Konzept Phase 1: Story Architecture abgestimmt
+- [x] **A11y-Fundament**: `prefers-reduced-motion` via CSS-Tokens, `SkipToContent`, `id="main-content"`
+- [x] **App-Fundament**: `not-found`, `error`, `loading` (Locale + Root), `manifest.ts`, `sitemap.ts`
+- [x] **SEO**: metadataBase, OG/Twitter-Metadata, OG-Bild (Chillax, dark), JSON-LD Organization
+- [x] **GEO**: `public/llms.txt` für AI-Crawler
+- [x] **noindex aktiv** — Site ist live aber nicht indexiert (bewusst, Baustelle)
+- [x] **CSS-Regeln**: keine Hex-Werte, kein `!important`, alle Animationen via `--duration-*`-Tokens
+- [x] **ESLint** inkl. jsx-a11y via `eslint-config-next`
+- [x] **`/ciao` Command** + Stop Hook für Session-Closing-Protokoll
 
 ## Offen — Direkt nächste Schritte
 
