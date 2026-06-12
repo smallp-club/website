@@ -7,7 +7,21 @@ Kevin ist **kein Developer**. Alle technischen Entscheidungen müssen erklärt w
 Awareness-Bewegung rund um Männlichkeit, Körperbild und Körpergröße.
 Tagline: **"no measure, no pressure"**
 Mission: Mythen entkräften, Fakten liefern, Scham ersetzen durch Wissen und ruhiges Selbstbewusstsein.
-Ton: Ruhig, intelligent, faktenbasiert, nie beschämend, nie reißerisch. Calm before bold.
+
+**Origin Story:** Entstand aus einem echten Gespräch von Kevin mit 2 Freunden über kleine Penisse. Erkenntnis: das ist seit der Jugend bis ins Erwachsenenalter ein universelles Männerthema. Begann mit lustigen Stickern → wurde zur Brand mit größerer Mission.
+
+**Zielgruppen (zwei, gleich wichtig):**
+- **Betroffene** — Männer die dieses Gefühl kennen. Kommen wegen Fakten, bleiben wegen Gemeinschaft.
+- **Anhänger** — Männer (und andere) die die Mission verstehen und supporten, ohne selbst "betroffen" zu sein. Man muss nicht betroffen sein um Teil der Bewegung zu sein.
+
+**Ton (final entschieden):** Direkt. Ehrlich. Mit Augenzwinkern. Gerne auch herb.
+Nicht: Witze über das Thema. Nicht: Wellness-Sprache. Nicht: Herumgeeiere.
+Sondern: "Ja, wir reden darüber. Und?" — unerschrocken, warm darunter.
+
+**Business Model (nicht verhandelbar):**
+- Membership: immer kostenlos, für immer. Kein Paid Tier, keine Premiumstufe.
+- Einnahmen ausschließlich über: Merch, Sticker, Spenden
+- Shop (Shopify) kommt erst nach vollständigem Website-Launch
 
 ## Brand-Design-Sprache
 - Font: Chillax (Display), System-Stack (Body)
@@ -92,17 +106,25 @@ Sensibles Thema — Vertrauen ist das Produkt. Sicherheit muss auf allen Ebenen 
 - [ ] `src/app/[locale]/ngo/page.tsx`
 - [ ] `src/app/[locale]/shop/page.tsx`
 
+### Konzeptstand Landing Page (Phase 1 abgeschlossen — 2026-06-12)
+Story Architecture final abgestimmt:
+1. Ankunft — direkt, herb, kein Aufwärmen ("Wir reden über das hier.")
+2. Erkenntnismoment — von privater Runde zur gesellschaftlichen Realität, Fakten ruhig präsentiert
+3. Mythos bricht — cinematischer Kernmoment: Mythos steht → scrollt → Wahrheit ersetzt ihn
+4. Du bist nicht allein — Betroffene + Anhänger, Community-Signal
+5. Mitmachen — Newsletter = Membership, kostenlos, kein Gate
+
+Signature-Moment: Mythos-Reveal — Mythos steht groß im Raum, beim Scrollen bricht er still auseinander, Fakt bleibt stehen. Wiederholt sich 3–4x mit verschiedenen Mythen.
+
 ### Offen / Nächste Schritte
-- [ ] **Hero Section bauen** — Workflow: `/imagegen-frontend-web` → Kevin Feedback → Code
+- [ ] **Phase 2: Visual Direction** — `/imagegen-frontend-web` → 3–4 Moodboard-Richtungen → Kevin Feedback
 - [ ] **Vercel DPA signieren** — DSGVO-Pflicht (Vercel Dashboard → Settings → Legal)
 - [ ] **Vercel Preset auf "Next.js" prüfen** — sonst schlägt Build fehl
 - [ ] Content-Strategie für /topics Seiten (Mythen/Fakten Format festlegen)
-- [ ] Mitglieder-Mehrwert: Konzept offen — Early Access Merch ist klar, Rest später im Sparring
 - [ ] NGO-Kooperationskonzept: Was soll die Seite leisten?
 
 ## Was als nächstes besprochen werden muss
-- Content-Strategie für /topics Seiten
-- Mitglieder-Mehrwert: Konzept noch offen — Kevin will das im Sparring erarbeiten. Early Access für Merch ist klar.
+- Content-Strategie für /topics Seiten (Themen, Quellen, Format)
 - NGO-Kooperationskonzept
 
 ## Wichtige Prinzipien für Claude
@@ -115,4 +137,5 @@ Sensibles Thema — Vertrauen ist das Produkt. Sicherheit muss auf allen Ebenen 
 7. Security ist nicht optional — sensibles Thema, Vertrauen ist das Produkt
 8. Privacy by Default: erst prüfen ob etwas nötig ist, bevor Daten gesammelt werden
 9. Kein GSAP — Animationen mit Framer Motion + Vanilla Custom Hooks
-10. Implementierungsstand in diesem File aktuell halten — nach jeder Session updaten
+10. Kein GSAP — Animationen mit Framer Motion + Vanilla Custom Hooks
+11. **Nach jeder Session:** CLAUDE.md Implementierungsstand + Memory-Dateien mit neuen Erkenntnissen abgleichen und ergänzen. Das gemeinsame Grundwissen wächst mit jeder Session.
