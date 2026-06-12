@@ -42,5 +42,18 @@
       "Bash(rm -rf /)",
       "Bash(rm -rf src:*)"
     ]
+  },
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"systemMessage\": \"Reminder: Falls dies das Ende der Session ist → /ciao ausführen um CLAUDE.md + Memory zu aktualisieren.\"}'",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
   }
 }
