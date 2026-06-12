@@ -1,0 +1,73 @@
+/* ============================================================
+   small p club — Component interaction states
+   Hover/press for primitives. Calm motion: subtle shifts,
+   gentle press-down. No bounce, no glow.
+   ============================================================ */
+
+/* ---- Button ---- */
+.spc-btn:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+.spc-btn:not(:disabled):active {
+  transform: translateY(1px) scale(0.99);
+}
+.spc-btn--primary:not(:disabled):hover {
+  background: var(--accent-hover);
+}
+.spc-btn--primary:not(:disabled):active {
+  background: var(--accent-press);
+}
+.spc-btn--secondary:not(:disabled):hover {
+  background: var(--surface-sunken);
+}
+.spc-btn--ghost:not(:disabled):hover {
+  background: var(--surface-sunken);
+}
+.spc-btn--deep:not(:disabled):hover {
+  background: var(--spc-turquoise-deep);
+  filter: brightness(1.12);
+}
+.spc-btn--deep:not(:disabled):active {
+  background: var(--spc-deep-press);
+  filter: none;
+}
+.spc-btn--signal:not(:disabled):hover {
+  filter: brightness(1.06);
+}
+.spc-btn--signal:not(:disabled):active {
+  background: var(--signal-press);
+  filter: none;
+}
+
+/* ---- Card (interactive) ---- */
+.spc-card--interactive {
+  transition: box-shadow var(--duration-base) var(--ease-standard),
+              transform var(--duration-base) var(--ease-out);
+  cursor: pointer;
+}
+.spc-card--interactive:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* ---- Input ---- */
+.spc-input:focus {
+  outline: none;
+  border-color: var(--focus-ring);
+  box-shadow: var(--shadow-focus);
+}
+.spc-input::placeholder { color: var(--text-faint); }
+
+/* ---- Link with motion ---- */
+.spc-link {
+  position: relative;
+  text-decoration: none;
+  color: var(--text-strong);
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 2px;
+  transition: background-size var(--duration-base) var(--ease-out);
+}
+.spc-link:hover { background-size: 100% 40%; }

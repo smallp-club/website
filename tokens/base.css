@@ -1,0 +1,75 @@
+/* ============================================================
+   small p club — Base / element defaults
+   Applies brand typography & background to consuming pages.
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-bg);
+  color: var(--text-body);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  font-weight: var(--weight-regular);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Display headings — Chillax, lowercase preferred, tight tracking */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-strong);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-display);
+  line-height: var(--leading-snug);
+  margin: 0;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--text-display-lg); line-height: var(--leading-tight); }
+h2 { font-size: var(--text-display-md); }
+h3 { font-size: var(--text-heading-lg); letter-spacing: var(--tracking-tight); }
+h4 { font-size: var(--text-heading-md); letter-spacing: var(--tracking-tight); }
+
+p {
+  margin: 0 0 1em;
+  text-wrap: pretty;
+  max-width: 68ch;
+}
+
+a {
+  color: var(--accent-contrast);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+}
+
+/* Overline / eyebrow label utility */
+.spc-overline {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+::selection {
+  background: var(--spc-turquoise);
+  color: var(--spc-turquoise-deep);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}

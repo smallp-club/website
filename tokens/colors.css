@@ -1,0 +1,71 @@
+/* ============================================================
+   small p club — Color System
+   "Color is navigation, not decoration."
+   Mostly monochrome layouts · one accent per screen ·
+   large areas stay neutral · WCAG-compliant contrast.
+   ============================================================ */
+
+:root {
+  /* ---- Base palette (raw brand colors) ---- */
+  --spc-offwhite:        #F7F6F2;  /* Off-White Balance — primary background */
+  --spc-black:           #0A0A0A;  /* Black Confidence — primary text */
+  --spc-turquoise:       #7BDCB5;  /* Pastel Turquoise Pulse — primary accent */
+  --spc-turquoise-deep:  #1D5556;  /* Dark Turquoise Mystery — secondary accent */
+  --spc-sienna:          #C05A38;  /* Burnt Sienna — occasional signal color */
+
+  /* ---- Neutral ramp (warm-tinted greys, derived from off-white/black) ---- */
+  --spc-paper:           #FCFBF8;  /* lifted surface above background */
+  --spc-sand:            #EDEBE4;  /* subtle fill / hairline zone */
+  --spc-stone:           #DEDBD1;  /* borders, dividers */
+  --spc-ash:             #B6B2A6;  /* disabled / faint */
+  --spc-slate:           #6F6C63;  /* muted / secondary text */
+  --spc-ink:             #2A2925;  /* near-black, softer than pure black */
+
+  /* ---- Accent tints & shades (for hover/press, washes) ---- */
+  --spc-turquoise-wash:  #E8F8F0;  /* faint accent fill */
+  --spc-turquoise-soft:  #B9ECD6;  /* lighter accent (hover on tint) */
+  --spc-turquoise-press: #5FC79C;  /* pressed primary accent */
+  --spc-deep-wash:       #E3ECEC;  /* faint deep-turquoise fill */
+  --spc-deep-press:      #143C3D;  /* pressed deep turquoise */
+  --spc-sienna-wash:     #F6E6DF;  /* faint sienna fill */
+  --spc-sienna-press:    #A4452A;  /* pressed sienna */
+
+  /* ============================================================
+     Semantic aliases — reference these in components
+     ============================================================ */
+
+  /* Surfaces */
+  --surface-bg:          var(--spc-offwhite);   /* page background */
+  --surface-card:        var(--spc-paper);      /* raised card */
+  --surface-sunken:      var(--spc-sand);       /* inset / fill */
+  --surface-inverse:     var(--spc-black);      /* dark sections */
+  --surface-accent:      var(--spc-turquoise);  /* accent block */
+  --surface-accent-soft: var(--spc-turquoise-wash);
+  --surface-deep:        var(--spc-turquoise-deep);
+
+  /* Text */
+  --text-strong:         var(--spc-black);       /* headlines, primary */
+  --text-body:           var(--spc-ink);         /* body copy */
+  --text-muted:          var(--spc-slate);       /* secondary, captions */
+  --text-faint:          var(--spc-ash);         /* disabled */
+  --text-on-accent:      var(--spc-turquoise-deep); /* text on turquoise */
+  --text-on-deep:        var(--spc-offwhite);    /* text on dark turquoise */
+  --text-on-inverse:     var(--spc-offwhite);    /* text on black */
+  --text-signal:         var(--spc-sienna);      /* signal / myth marker */
+
+  /* Lines */
+  --border-hairline:     var(--spc-stone);
+  --border-strong:       var(--spc-black);
+  --border-faint:        var(--spc-sand);
+
+  /* Accent roles */
+  --accent:              var(--spc-turquoise);
+  --accent-hover:        var(--spc-turquoise-soft);
+  --accent-press:        var(--spc-turquoise-press);
+  --accent-contrast:     var(--spc-turquoise-deep);
+  --signal:              var(--spc-sienna);
+  --signal-press:        var(--spc-sienna-press);
+
+  /* Focus ring */
+  --focus-ring:          var(--spc-turquoise-deep);
+}

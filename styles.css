@@ -1,0 +1,14 @@
+/* ============================================================
+   small p club — Design System entry point
+   "Size does not define value."
+   Consumers link this single file. Imports only — no rules here.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..700;1,14..32,400..600&display=swap");
+
+@import "tokens/fonts.css";
+@import "tokens/colors.css";
+@import "tokens/typography.css";
+@import "tokens/spacing.css";
+@import "tokens/base.css";
+@import "components/interactions.css";

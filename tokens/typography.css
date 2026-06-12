@@ -1,0 +1,58 @@
+/* ============================================================
+   small p club — Typography
+   Display: Chillax (lowercase, large, editorial)
+   Body: Inter (sentence case, highly readable)
+   ============================================================ */
+
+:root {
+  /* ---- Families ---- */
+  --font-display: "Chillax Variable", "Chillax", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* ---- Weights ---- */
+  --weight-extralight: 200;
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---- Type scale (fluid-ready px values) ---- */
+  --text-display-2xl: 104px;  /* hero statements */
+  --text-display-xl: 80px;
+  --text-display-lg: 64px;
+  --text-display-md: 48px;
+  --text-display-sm: 36px;
+  --text-heading-lg: 30px;
+  --text-heading-md: 24px;
+  --text-heading-sm: 20px;
+  --text-body-lg: 19px;
+  --text-body-md: 17px;   /* default body */
+  --text-body-sm: 15px;
+  --text-caption: 13px;
+  --text-overline: 12px;
+
+  /* ---- Line heights ---- */
+  --leading-tight: 0.98;   /* big display */
+  --leading-snug: 1.08;    /* headings */
+  --leading-normal: 1.3;
+  --leading-relaxed: 1.6;  /* body copy */
+
+  /* ---- Letter spacing ---- */
+  --tracking-display: -0.02em;  /* tighten large display */
+  --tracking-tight: -0.01em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.04em;
+  --tracking-overline: 0.16em;  /* uppercase labels / overlines */
+
+  /* ---- Semantic roles ---- */
+  --type-hero-family: var(--font-display);
+  --type-hero-weight: var(--weight-medium);
+  --type-hero-tracking: var(--tracking-display);
+  --type-hero-leading: var(--leading-tight);
+
+  --type-body-family: var(--font-body);
+  --type-body-weight: var(--weight-regular);
+  --type-body-leading: var(--leading-relaxed);
+}
