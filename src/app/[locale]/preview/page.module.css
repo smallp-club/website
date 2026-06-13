@@ -115,13 +115,44 @@
 
 .cursorIndicator {
   position: absolute;
-  top: -32px;
+  top: -24px;
   transform: translateX(-50%);
   pointer-events: none;
+}
+
+.mmReadoutRow {
+  height: 28px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
+  align-items: flex-end;
+}
+
+.mmFixedReadout {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-black);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.flagBelow {
+  position: absolute;
+  top: 36px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.flagText {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-regular);
+  font-style: italic;
+  color: var(--spc-slate);
+  letter-spacing: 0.02em;
 }
 
 .cursorLabel {
@@ -135,14 +166,32 @@
 }
 
 .cursorLabelLong {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
   white-space: normal;
-  max-width: 200px;
+  max-width: 220px;
   text-align: center;
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-wide);
+  text-transform: none;
+  font-style: normal;
+}
+
+.cursorLabelMm {
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-black);
+}
+
+.cursorLabelStatement {
+  font-size: var(--text-caption);
   font-weight: var(--weight-regular);
   font-style: italic;
-  text-transform: none;
+  line-height: var(--leading-snug);
+  letter-spacing: 0.02em;
+  color: var(--spc-slate);
 }
 
 .cursorTick {
@@ -621,10 +670,424 @@
 }
 
 /* ================================================================
+   RZ — Karten-Stapel (generisch: Bild + Text + CTA)
+   ================================================================ */
+.rz {
+  /* enough vertical room for the 3D fan + nav */
+  min-height: 100dvh;
+  position: relative;
+}
+
+/* Hot zones — span full section height on desktop, hidden on mobile */
+.rzHotZone {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: none;
+  z-index: 1;
+}
+
+.rzHotZoneLeft {
+  left: 0;
+  right: calc(50% + 220px);
+}
+
+.rzHotZoneRight {
+  right: 0;
+  left: calc(50% + 220px);
+}
+
+.rzHotZone:focus-visible {
+  outline: none;
+  box-shadow: inset 0 0 0 2px var(--spc-turquoise-deep);
+}
+
+/* Glass bubble — follows cursor inside hot zones */
+.rzCursorBubble {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  background: rgba(247, 246, 242, 0.45);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  box-shadow:
+    0 16px 40px rgba(10, 10, 10, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+.rzCursorArrow {
+  font-family: var(--font-body);
+  font-size: 30px;
+  font-weight: var(--weight-light);
+  color: var(--spc-black);
+  line-height: 1;
+}
+
+@media (max-width: 768px) {
+  .rzHotZone {
+    display: none;
+  }
+  .rzCursorBubble {
+    display: none;
+  }
+}
+
+.rzStage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-8);
+  position: relative;
+  z-index: 2;
+  /* let empty stage area pass clicks through to hot zones */
+  pointer-events: none;
+}
+
+/* re-enable pointer events for interactive children */
+.rzStage .rzFanContainer,
+.rzStage .rzNavCounter {
+  pointer-events: auto;
+}
+
+/* Perspective container that holds all 4 absolutely positioned cards */
+.rzFanContainer {
+  position: relative;
+  width: 420px;
+  height: 560px;
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+/* Every card is absolutely centered in the container */
+.rzCard {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 420px;
+  height: 520px;
+  border-radius: var(--radius-xl);
+  background-color: var(--spc-offwhite);
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  transform-origin: center center;
+  overflow: hidden;
+}
+
+.rzCardActive {
+  box-shadow: var(--shadow-lg);
+  cursor: default;
+}
+
+.rzCardInactive {
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+}
+
+.rzCardInner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+/* Image area — placeholder with subtle obround pattern */
+.rzImage {
+  position: relative;
+  width: 100%;
+  height: 220px;
+  flex-shrink: 0;
+  background-color: rgba(10, 10, 10, 0.04);
+  background-image:
+    radial-gradient(ellipse 60% 30% at 30% 38%, rgba(10, 10, 10, 0.045), transparent 60%),
+    radial-gradient(ellipse 40% 22% at 72% 64%, rgba(10, 10, 10, 0.035), transparent 60%),
+    radial-gradient(ellipse 28% 14% at 55% 22%, rgba(10, 10, 10, 0.03), transparent 60%);
+  background-size: cover;
+  background-position: center;
+}
+
+.rzImage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 60%, rgba(10, 10, 10, 0.06) 100%);
+  pointer-events: none;
+}
+
+/* Subtle tonal variants per card position */
+.rzImageTone0 {
+  background-color: rgba(123, 220, 181, 0.10); /* faint turquoise mist */
+}
+
+.rzImageTone1 {
+  background-color: rgba(29, 85, 86, 0.08); /* faint dark turquoise */
+}
+
+.rzImageTone2 {
+  background-color: rgba(192, 90, 56, 0.08); /* faint sienna */
+}
+
+.rzImageTone3 {
+  background-color: rgba(10, 10, 10, 0.05); /* neutral graphite */
+}
+
+/* Content area — eyebrow / headline / body / CTA */
+.rzContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6) var(--space-7) var(--space-7);
+  flex: 1;
+  box-sizing: border-box;
+}
+
+.rzEyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-turquoise-deep);
+}
+
+.rzHeadline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+.rzBody {
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--spc-black);
+  margin: 0;
+  flex: 1;
+}
+
+.rzCta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  margin-top: auto;
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--spc-black);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-medium);
+  color: var(--spc-black);
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+.rzCta:hover {
+  background: rgba(10, 10, 10, 0.05);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.rzCta:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.rzNavCounter {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+  min-width: 4ch;
+  text-align: center;
+}
+
+/* Reduced motion: flat list */
+.rzReducedList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  max-width: 520px;
+}
+
+.rzReducedItem {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(10, 10, 10, 0.08);
+  background: var(--spc-offwhite);
+}
+
+/* Mobile — narrower fan cards */
+@media (max-width: 768px) {
+  .rzFanContainer {
+    width: 320px;
+    height: 480px;
+    perspective: 1000px;
+  }
+
+  .rzCard {
+    width: 320px;
+    height: 440px;
+  }
+
+  .rzImage {
+    height: 160px;
+  }
+
+  .rzContent {
+    padding: var(--space-5);
+    gap: var(--space-3);
+  }
+}
+
+/* ================================================================
+   RP — Pull-Focus (Mythos rückt zurück + blur, Fakt zoomt rein)
+   ================================================================ */
+.rp {
+  gap: var(--space-7);
+}
+
+.rpGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+  width: 100%;
+}
+
+.rpCard {
+  position: relative;
+  min-height: 260px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(10, 10, 10, 0.07);
+  padding: var(--space-6);
+  overflow: hidden;
+  cursor: pointer;
+  background-color: var(--spc-offwhite);
+  box-shadow: inset 0 1px 3px rgba(10, 10, 10, 0.04);
+  user-select: none;
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+.rpCard:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.rpLayerMyth,
+.rpLayerFact {
+  position: absolute;
+  inset: 0;
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  transform-origin: center center;
+  transform-style: preserve-3d;
+  will-change: opacity, transform, filter;
+}
+
+.rpChip {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px var(--space-4);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+.rpChipMyth {
+  background: var(--spc-sienna);
+  color: var(--spc-offwhite);
+}
+
+.rpChipFact {
+  background: var(--spc-turquoise);
+  color: var(--spc-black);
+}
+
+.rpLayerText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(18px, 2.2vw, 26px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+  flex: 1;
+}
+
+.rpSource {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  margin: 0;
+  margin-top: auto;
+  letter-spacing: var(--tracking-wide);
+}
+
+@media (max-width: 768px) {
+  .rpGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .rpCard {
+    min-height: 220px;
+  }
+
+  .rpLayerText {
+    font-size: clamp(16px, 5vw, 22px);
+  }
+}
+
+/* ================================================================
    Reduced motion
    ================================================================ */
 @media (prefers-reduced-motion: reduce) {
   .mythFactText {
     transition: none;
+  }
+
+  /* RP — Pull-Focus: skip blur/scale, plain opacity swap */
+  .rpLayerMyth,
+  .rpLayerFact {
+    transition: none !important;
+    filter: none !important;
+    transform: none !important;
   }
 }

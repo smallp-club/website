@@ -608,110 +608,23 @@ function R6() {
 }
 
 /* ------------------------------------------------------------------ */
-/* RX — Gallery Tiefenebenen                                            */
-/* ------------------------------------------------------------------ */
-function RX() {
-  const mythGallery = [
-    { id: 'humor', myth: 'Wer drüber lacht, hat kein Problem damit.', fact: 'Der Witz ist oft der Schutzschild — nicht der Beweis, dass keiner nötig wäre.', source: 'Sharp & Oates, Aesthetic Surgery Journal, 2019' },
-    { id: 'schuh', myth: 'Schuhgröße verrät Penisgröße.', fact: 'Keine statistisch signifikante Korrelation — der Mythos ist hartnäckiger als die Datenlage.', source: 'Veale et al., BJU International, 2015, n=15.521' },
-    { id: 'frauen', myth: 'Frauen wollen größere Penisse.', fact: '85 % der Partnerinnen sind mit der Penislänge ihres Partners zufrieden.', source: 'Lever et al., Psychology of Men & Masculinity, 2006, n=52.000+' },
-    { id: 'porno', myth: 'Pornos zeigen realistische Größen.', fact: 'Pornodarsteller gehören zum oberen Drittel der Normalverteilung.', source: 'Skoda & Pedersen, SAGE Open, 2019' },
-  ] as const;
-
-  return (
-    <section id="rx" className={`${styles.section} ${styles.rx}`}>
-      <span className={styles.label}>RX — Gallery: Tiefenebenen</span>
-      <div className={styles.rxGrid}>
-        {mythGallery.map((item) => (
-          <RXCard key={item.id} myth={item.myth} fact={item.fact} source={item.source} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function RXCard({ myth, fact, source }: { myth: string; fact: string; source: string }) {
-  const [isRevealed, setIsRevealed] = useState(false);
-
-  function handleMouseEnter() {
-    setIsRevealed(true);
-  }
-
-  function handleMouseLeave() {
-    setIsRevealed(false);
-  }
-
-  function handleTap() {
-    setIsRevealed((prev) => !prev);
-  }
-
-  const easeOut: [number, number, number, number] = [0.16, 1, 0.3, 1];
-  const transition = { duration: 0.38, ease: easeOut };
-
-  return (
-    <motion.div
-      className={styles.rxCard}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleTap}
-      aria-pressed={isRevealed}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          handleTap();
-        }
-      }}
-    >
-      {/* Mythos layer — front, fades/shrinks/blurs away on reveal */}
-      <motion.div
-        className={styles.rxLayerMyth}
-        animate={
-          isRevealed
-            ? { opacity: 0, scale: 0.94, filter: 'blur(4px)', z: -30 }
-            : { opacity: 1, scale: 1, filter: 'blur(0px)', z: 0 }
-        }
-        transition={transition}
-        aria-hidden={isRevealed}
-      >
-        <span className={`${styles.rxChip} ${styles.rxChipMyth}`}>Mythos</span>
-        <p className={styles.rxLayerText}>{myth}</p>
-      </motion.div>
-
-      {/* Fakt layer — behind, comes forward on reveal */}
-      <motion.div
-        className={styles.rxLayerFact}
-        animate={
-          isRevealed
-            ? { opacity: 1, scale: 1, filter: 'blur(0px)', z: 0 }
-            : { opacity: 0, scale: 0.96, filter: 'blur(6px)', z: -20 }
-        }
-        transition={transition}
-        aria-hidden={!isRevealed}
-      >
-        <span className={`${styles.rxChip} ${styles.rxChipFact}`}>Fakt</span>
-        <p className={styles.rxLayerText}>{fact}</p>
-        <p className={styles.rxSource}>{source}</p>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/* RZ — Gallery: Perspektiv-Fächer                                     */
+/* RZ — Karten-Stapel (generisch: Bild + Text + CTA)                  */
 /* ------------------------------------------------------------------ */
 function RZ() {
-  const mythGallery = [
-    { id: 'humor', myth: 'Wer drüber lacht, hat kein Problem damit.', fact: 'Der Witz ist oft der Schutzschild — nicht der Beweis, dass keiner nötig wäre.', source: 'Sharp & Oates, Aesthetic Surgery Journal, 2019' },
-    { id: 'schuh', myth: 'Schuhgröße verrät Penisgröße.', fact: 'Keine statistisch signifikante Korrelation — der Mythos ist hartnäckiger als die Datenlage.', source: 'Veale et al., BJU International, 2015, n=15.521' },
-    { id: 'frauen', myth: 'Frauen wollen größere Penisse.', fact: '85 % der Partnerinnen sind mit der Penislänge ihres Partners zufrieden.', source: 'Lever et al., Psychology of Men & Masculinity, 2006, n=52.000+' },
-    { id: 'porno', myth: 'Pornos zeigen realistische Größen.', fact: 'Pornodarsteller gehören zum oberen Drittel der Normalverteilung.', source: 'Skoda & Pedersen, SAGE Open, 2019' },
+  const topicCards = [
+    { id: 'luecke',    eyebrow: 'Forschung',   headline: 'Die Lücke im Kopf',         body: '91 % glauben sie seien zu klein. Klinisch trifft es 2 %. Der Rest ist Wahrnehmung.', cta: 'Mehr dazu', href: '#' },
+    { id: 'witz',      eyebrow: 'Psychologie', headline: 'Der Witz als Schutzschild', body: 'Wer drüber lacht, kommt dem Spott zuvor. Aber der Schild wird zur Identität.',       cta: 'Lesen',     href: '#' },
+    { id: 'kluft',     eyebrow: 'Daten',       headline: '85 vs 55',                  body: '85 % der Partnerinnen zufrieden. 55 % der Männer mit sich selbst. Die Lücke sitzt im Kopf.', cta: 'Quellen',  href: '#' },
+    { id: 'spec',      eyebrow: 'Phänomen',    headline: 'Spectatoring',              body: 'Wer sich beim Sex selbst bewertet, verliert genau das, wovor er sich schämt.',           cta: 'Erklärt',   href: '#' },
   ] as const;
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [revealedFact, setRevealedFact] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [hoverZone, setHoverZone] = useState<'left' | 'right' | null>(null);
+  const cursorX = useMotionValue(-200);
+  const cursorY = useMotionValue(-200);
+  const springX = useSpring(cursorX, { stiffness: 480, damping: 38, mass: 0.4 });
+  const springY = useSpring(cursorY, { stiffness: 480, damping: 38, mass: 0.4 });
 
   useEffect(() => {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -722,55 +635,112 @@ function RZ() {
   }, []);
 
   function goTo(index: number) {
-    const next = (index + mythGallery.length) % mythGallery.length;
+    const next = (index + topicCards.length) % topicCards.length;
     setActiveIndex(next);
-    setRevealedFact(false);
   }
 
   function handlePrev() { goTo(activeIndex - 1); }
   function handleNext() { goTo(activeIndex + 1); }
 
+  function handleZoneMove(e: React.MouseEvent, zone: 'left' | 'right') {
+    cursorX.set(e.clientX - 55);
+    cursorY.set(e.clientY - 55);
+    if (hoverZone !== zone) setHoverZone(zone);
+  }
+
+  function handleZoneEnter(e: React.MouseEvent, zone: 'left' | 'right') {
+    // Jump source + spring to entry point so bubble appears at cursor
+    const x = e.clientX - 55;
+    const y = e.clientY - 55;
+    cursorX.jump(x);
+    cursorY.jump(y);
+    springX.jump(x);
+    springY.jump(y);
+    setHoverZone(zone);
+  }
+
+  function handleZoneLeave() {
+    setHoverZone(null);
+  }
+
   // Offset map: 0=active, 1=right-near, 2=right-far, 3=left-near
   const fanConfig: Record<number, { rotateY: number; translateX: number; scale: number; opacity: number; zIndex: number; translateZ: number }> = {
     0: { rotateY: 0,    translateX: 0,    scale: 1.00, opacity: 1.00, zIndex: 4, translateZ: 0    },
-    1: { rotateY: -22,  translateX: -180, scale: 0.88, opacity: 0.55, zIndex: 3, translateZ: -120 },
-    2: { rotateY: -38,  translateX: -290, scale: 0.78, opacity: 0.35, zIndex: 2, translateZ: -220 },
-    3: { rotateY: 22,   translateX: 180,  scale: 0.88, opacity: 0.55, zIndex: 3, translateZ: -120 },
+    1: { rotateY: -18,  translateX: -180, scale: 0.88, opacity: 0.55, zIndex: 3, translateZ: -120 },
+    2: { rotateY: -30,  translateX: -290, scale: 0.78, opacity: 0.30, zIndex: 2, translateZ: -220 },
+    3: { rotateY: 18,   translateX: 180,  scale: 0.88, opacity: 0.55, zIndex: 3, translateZ: -120 },
   };
 
   if (reducedMotion) {
     return (
       <section id="rz" className={`${styles.section} ${styles.rz}`}>
-        <span className={styles.label}>RZ — Gallery: Perspektiv-Fächer</span>
+        <span className={styles.label}>RZ — Karten-Stapel</span>
         <div className={styles.rzReducedList}>
-          {mythGallery.map((item) => (
-            <div key={item.id} className={styles.rzReducedItem}>
-              <span className={`${styles.rzChip} ${styles.rzChipMyth}`}>Mythos</span>
-              <p className={styles.rzCardText}>{item.myth}</p>
-              <span className={`${styles.rzChip} ${styles.rzChipFact}`}>Fakt</span>
-              <p className={styles.rzCardText}>{item.fact}</p>
-              <p className={styles.rzCardSource}>{item.source}</p>
-            </div>
+          {topicCards.map((item, i) => (
+            <article key={item.id} className={styles.rzReducedItem}>
+              <div className={`${styles.rzImage} ${styles[`rzImageTone${i % 4}`] ?? ''}`} aria-hidden="true" />
+              <span className={styles.rzEyebrow}>{item.eyebrow}</span>
+              <h3 className={styles.rzHeadline}>{item.headline}</h3>
+              <p className={styles.rzBody}>{item.body}</p>
+              <a className={styles.rzCta} href={item.href}>{item.cta}</a>
+            </article>
           ))}
         </div>
       </section>
     );
   }
 
-  const activeItem = mythGallery[activeIndex];
-  if (!activeItem) return null;
-
   return (
     <section id="rz" className={`${styles.section} ${styles.rz}`}>
-      <span className={styles.label}>RZ — Gallery: Perspektiv-Fächer</span>
+      <span className={styles.label}>RZ — Karten-Stapel</span>
+
+      {/* Hot zones — full section height, desktop only (hidden via CSS on mobile) */}
+      <button
+        type="button"
+        className={`${styles.rzHotZone} ${styles.rzHotZoneLeft}`}
+        onMouseEnter={(e) => handleZoneEnter(e, 'left')}
+        onMouseMove={(e) => handleZoneMove(e, 'left')}
+        onMouseLeave={handleZoneLeave}
+        onClick={handlePrev}
+        aria-label="Vorherige Karte"
+      />
+      <button
+        type="button"
+        className={`${styles.rzHotZone} ${styles.rzHotZoneRight}`}
+        onMouseEnter={(e) => handleZoneEnter(e, 'right')}
+        onMouseMove={(e) => handleZoneMove(e, 'right')}
+        onMouseLeave={handleZoneLeave}
+        onClick={handleNext}
+        aria-label="Nächste Karte"
+      />
+
+      {/* Glass bubble — follows cursor in hot zone */}
+      <AnimatePresence>
+        {hoverZone && (
+          <motion.div
+            className={styles.rzCursorBubble}
+            style={{ x: springX, y: springY }}
+            initial={{ opacity: 0, scale: 0.7 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.7 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            aria-hidden="true"
+          >
+            <span className={styles.rzCursorArrow}>
+              {hoverZone === 'left' ? '←' : '→'}
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className={styles.rzStage}>
         <div className={styles.rzFanContainer}>
-          {mythGallery.map((item, i) => {
-            const offset = ((i - activeIndex) % mythGallery.length + mythGallery.length) % mythGallery.length;
+          {topicCards.map((item, i) => {
+            const offset = ((i - activeIndex) % topicCards.length + topicCards.length) % topicCards.length;
             const cfg = fanConfig[offset];
             if (!cfg) return null;
             const isActive = offset === 0;
+            const toneClass = styles[`rzImageTone${i % 4}`] ?? '';
 
             return (
               <motion.div
@@ -788,271 +758,133 @@ function RZ() {
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => { if (!isActive) goTo(i); }}
                 aria-hidden={!isActive}
+                aria-label={isActive ? undefined : `Karte: ${item.headline}`}
               >
-                {isActive ? (
-                  <div className={styles.rzCardInner}>
-                    {/* Chip */}
-                    <AnimatePresence mode="wait">
-                      {revealedFact ? (
-                        <motion.span
-                          key="rz-chip-fact"
-                          className={`${styles.rzChip} ${styles.rzChipFact}`}
-                          initial={{ opacity: 0, y: -6 }}
-                          animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
-                          exit={{ opacity: 0, y: 6, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}
-                        >
-                          Fakt
-                        </motion.span>
-                      ) : (
-                        <motion.span
-                          key="rz-chip-myth"
-                          className={`${styles.rzChip} ${styles.rzChipMyth}`}
-                          initial={{ opacity: 0, y: -6 }}
-                          animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
-                          exit={{ opacity: 0, y: 6, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}
-                        >
-                          Mythos
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
+                <div className={styles.rzCardInner}>
+                  {/* Image area */}
+                  <div className={`${styles.rzImage} ${toneClass}`} aria-hidden="true" />
 
-                    {/* Text with Clip-Path Wipe */}
-                    <div className={styles.rzTextGrid}>
-                      <AnimatePresence mode="wait">
-                        {revealedFact ? (
-                          <motion.p
-                            key={`rz-fact-${item.id}`}
-                            className={styles.rzCardText}
-                            aria-live="polite"
-                            initial={{ clipPath: 'inset(0 100% 0 0%)' }}
-                            animate={{ clipPath: 'inset(0 0% 0 0%)', transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
-                            exit={{ clipPath: 'inset(0 0% 0 100%)', transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}
-                          >
-                            {item.fact}
-                          </motion.p>
-                        ) : (
-                          <motion.p
-                            key={`rz-myth-${item.id}`}
-                            className={styles.rzCardText}
-                            initial={{ clipPath: 'inset(0 100% 0 0%)' }}
-                            animate={{ clipPath: 'inset(0 0% 0 0%)', transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
-                            exit={{ clipPath: 'inset(0 0% 0 100%)', transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}
-                          >
-                            {item.myth}
-                          </motion.p>
-                        )}
-                      </AnimatePresence>
-                    </div>
-
-                    {/* Source — only on fact */}
-                    <AnimatePresence>
-                      {revealedFact && (
-                        <motion.p
-                          key={`rz-source-${item.id}`}
-                          className={styles.rzCardSource}
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0, transition: { duration: 0.3, delay: 0.18, ease: [0, 0, 0.2, 1] } }}
-                          exit={{ opacity: 0, transition: { duration: 0.12 } }}
+                  {/* Content area */}
+                  <div className={styles.rzContent}>
+                    <span className={styles.rzEyebrow}>{item.eyebrow}</span>
+                    <h3 className={styles.rzHeadline}>{item.headline}</h3>
+                    {isActive && (
+                      <>
+                        <p className={styles.rzBody}>{item.body}</p>
+                        <a
+                          className={styles.rzCta}
+                          href={item.href}
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          {item.source}
-                        </motion.p>
-                      )}
-                    </AnimatePresence>
-
-                    {/* Toggle button */}
-                    {!revealedFact && (
-                      <button
-                        className={styles.rzRevealBtn}
-                        onClick={(e) => { e.stopPropagation(); setRevealedFact(true); }}
-                        aria-label="Fakt anzeigen"
-                      >
-                        Fakt zeigen
-                      </button>
+                          {item.cta}
+                        </a>
+                      </>
                     )}
                   </div>
-                ) : (
-                  <div className={styles.rzCardInner} aria-hidden="true">
-                    <span className={`${styles.rzChip} ${styles.rzChipMyth}`}>Mythos</span>
-                    <p className={styles.rzCardTextSmall}>{item.myth}</p>
-                  </div>
-                )}
+                </div>
               </motion.div>
             );
           })}
         </div>
 
-        {/* Navigation arrows */}
-        <div className={styles.rzNav}>
-          <button
-            className={styles.rzNavBtn}
-            onClick={handlePrev}
-            aria-label="Vorherige Karte"
-          >
-            ←
-          </button>
-          <span className={styles.rzNavCounter}>
-            {activeIndex + 1} / {mythGallery.length}
-          </span>
-          <button
-            className={styles.rzNavBtn}
-            onClick={handleNext}
-            aria-label="Nächste Karte"
-          >
-            →
-          </button>
-        </div>
+        {/* Counter only — orientation, no buttons */}
+        <span className={styles.rzNavCounter}>
+          {activeIndex + 1} / {topicCards.length}
+        </span>
       </div>
     </section>
   );
 }
 
 /* ------------------------------------------------------------------ */
-/* RY — Rotierende Obrounds (Gallery, Y-Achsen-Flip)                  */
+/* RP — Pull-Focus (Mythos rückt zurück + blur, Fakt zoomt von vorne) */
 /* ------------------------------------------------------------------ */
-const mythGallery = [
-  { id: 'humor', myth: 'Wer drüber lacht, hat kein Problem damit.', fact: 'Der Witz ist oft der Schutzschild — nicht der Beweis, dass keiner nötig wäre.', source: 'Sharp & Oates, Aesthetic Surgery Journal, 2019' },
-  { id: 'schuh', myth: 'Schuhgröße verrät Penisgröße.', fact: 'Keine statistisch signifikante Korrelation — der Mythos ist hartnäckiger als die Datenlage.', source: 'Veale et al., BJU International, 2015, n=15.521' },
-  { id: 'frauen', myth: 'Frauen wollen größere Penisse.', fact: '85 % der Partnerinnen sind mit der Penislänge ihres Partners zufrieden.', source: 'Lever et al., Psychology of Men & Masculinity, 2006, n=52.000+' },
-  { id: 'porno', myth: 'Pornos zeigen realistische Größen.', fact: 'Pornodarsteller gehören zum oberen Drittel der Normalverteilung.', source: 'Skoda & Pedersen, SAGE Open, 2019' },
-] as const;
-
-type MythGalleryItem = typeof mythGallery[number];
-
-interface RYCardProps {
-  item: MythGalleryItem;
-  phaseOffset: number;
-}
-
-function RYCard({ item, phaseOffset }: RYCardProps) {
-  const rotateY = useMotionValue(phaseOffset);
-  const [paused, setPaused] = useState(false);
-  const pausedRef = useRef(paused);
-  pausedRef.current = paused;
-  const controlsRef = useRef<{ stop: () => void } | null>(null);
-  const currentAngleRef = useRef(phaseOffset);
-  const [isFront, setIsFront] = useState(true);
-
-  useMotionValueEvent(rotateY, 'change', v => {
-    currentAngleRef.current = v;
-    const norm = ((v % 360) + 360) % 360;
-    setIsFront(norm < 90 || norm >= 270);
-  });
-
-  function startLoop(fromAngle: number) {
-    const loop = animate(rotateY, fromAngle + 360, {
-      duration: 8,
-      ease: 'linear',
-      repeat: Infinity,
-    });
-    controlsRef.current = loop;
-  }
-
-  useEffect(() => {
-    startLoop(phaseOffset);
-    return () => {
-      controlsRef.current?.stop();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function handlePause() {
-    controlsRef.current?.stop();
-    setPaused(true);
-  }
-
-  function handleResume() {
-    setPaused(false);
-    startLoop(currentAngleRef.current);
-  }
-
-  function handleTouchStart() {
-    if (pausedRef.current) {
-      handleResume();
-    } else {
-      handlePause();
-    }
-  }
+function RP() {
+  const mythGallery = [
+    { id: 'humor', myth: 'Wer drüber lacht, hat kein Problem damit.', fact: 'Der Witz ist oft der Schutzschild — nicht der Beweis, dass keiner nötig wäre.', source: 'Sharp & Oates, Aesthetic Surgery Journal, 2019' },
+    { id: 'schuh', myth: 'Schuhgröße verrät Penisgröße.', fact: 'Keine statistisch signifikante Korrelation — der Mythos ist hartnäckiger als die Datenlage.', source: 'Veale et al., BJU International, 2015, n=15.521' },
+    { id: 'frauen', myth: 'Frauen wollen größere Penisse.', fact: '85 % der Partnerinnen sind mit der Penislänge ihres Partners zufrieden.', source: 'Lever et al., Psychology of Men & Masculinity, 2006, n=52.000+' },
+    { id: 'porno', myth: 'Pornos zeigen realistische Größen.', fact: 'Pornodarsteller gehören zum oberen Drittel der Normalverteilung.', source: 'Skoda & Pedersen, SAGE Open, 2019' },
+  ] as const;
 
   return (
-    <div
-      className={styles.ryCardWrapper}
-      onMouseEnter={handlePause}
-      onMouseLeave={handleResume}
-      onTouchStart={handleTouchStart}
-      aria-label={isFront ? `Mythos: ${item.myth}` : `Fakt: ${item.fact}`}
+    <section id="rp" className={`${styles.section} ${styles.rp}`}>
+      <span className={styles.label}>RP — Pull-Focus</span>
+      <div className={styles.rpGrid}>
+        {mythGallery.map((item) => (
+          <RPCard key={item.id} myth={item.myth} fact={item.fact} source={item.source} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function RPCard({ myth, fact, source }: { myth: string; fact: string; source: string }) {
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  function handleEnter() {
+    setIsRevealed(true);
+  }
+
+  function handleLeave() {
+    setIsRevealed(false);
+  }
+
+  function handleTap() {
+    setIsRevealed((prev) => !prev);
+  }
+
+  const easeOut: [number, number, number, number] = [0.16, 1, 0.3, 1];
+  const transition = { duration: 1.1, ease: easeOut };
+
+  return (
+    <motion.div
+      className={styles.rpCard}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      onClick={handleTap}
+      aria-pressed={isRevealed}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleTap();
+        }
+      }}
     >
+      {/* Mythos — recedes & blurs */}
       <motion.div
-        className={styles.ryCardInner}
-        style={{ rotateY }}
+        className={styles.rpLayerMyth}
+        animate={
+          isRevealed
+            ? { opacity: 0.35, z: -180, filter: 'blur(3px)' }
+            : { opacity: 1, z: 0, filter: 'blur(0px)' }
+        }
+        transition={transition}
+        aria-hidden={isRevealed}
       >
-        {/* Vorderseite — Mythos */}
-        <div
-          className={`${styles.ryCardFace} ${styles.ryCardFront}`}
-          aria-hidden={!isFront}
-        >
-          <span className={`${styles.ryChip} ${styles.ryChipMyth}`}>Mythos</span>
-          <p className={styles.ryCardText}>{item.myth}</p>
-        </div>
-
-        {/* Rückseite — Fakt */}
-        <div
-          className={`${styles.ryCardFace} ${styles.ryCardBack}`}
-          aria-hidden={isFront}
-        >
-          <span className={`${styles.ryChip} ${styles.ryChipFact}`}>Fakt</span>
-          <p className={styles.ryCardText}>{item.fact}</p>
-          <p className={styles.ryCardSource}>{item.source}</p>
-        </div>
+        <span className={`${styles.rpChip} ${styles.rpChipMyth}`}>Mythos</span>
+        <p className={styles.rpLayerText}>{myth}</p>
       </motion.div>
-    </div>
-  );
-}
 
-function RYCardStatic({ item }: { item: MythGalleryItem }) {
-  return (
-    <div className={styles.ryCardWrapperStatic}>
-      <div className={styles.ryCardFaceStatic}>
-        <span className={`${styles.ryChip} ${styles.ryChipMyth}`}>Mythos</span>
-        <p className={styles.ryCardText}>{item.myth}</p>
-      </div>
-      <div className={styles.ryCardFaceStatic}>
-        <span className={`${styles.ryChip} ${styles.ryChipFact}`}>Fakt</span>
-        <p className={styles.ryCardText}>{item.fact}</p>
-        <p className={styles.ryCardSource}>{item.source}</p>
-      </div>
-    </div>
-  );
-}
-
-function RY() {
-  const [reducedMotion, setReducedMotion] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setReducedMotion(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  return (
-    <section id="ry" className={`${styles.section} ${styles.ry}`}>
-      <span className={styles.label}>RY — Rotierende Obrounds</span>
-
-      <div className={styles.ryGrid} style={{ perspective: '1200px' }}>
-        {mythGallery.map((item, index) =>
-          reducedMotion ? (
-            <RYCardStatic key={item.id} item={item} />
-          ) : (
-            <RYCard
-              key={item.id}
-              item={item}
-              phaseOffset={index * 90}
-            />
-          )
-        )}
-      </div>
-    </section>
+      {/* Fakt — comes from foreground (close), settles at neutral depth */}
+      <motion.div
+        className={styles.rpLayerFact}
+        initial={{ opacity: 0, z: 320, filter: 'blur(10px)' }}
+        animate={
+          isRevealed
+            ? { opacity: 1, z: 0, filter: 'blur(0px)' }
+            : { opacity: 0, z: 320, filter: 'blur(10px)' }
+        }
+        transition={transition}
+        aria-hidden={!isRevealed}
+      >
+        <span className={`${styles.rpChip} ${styles.rpChipFact}`}>Fakt</span>
+        <p className={styles.rpLayerText}>{fact}</p>
+        <p className={styles.rpSource}>{source}</p>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -1068,9 +900,8 @@ export default function PreviewPage() {
           { id: 'r5i', label: '5i — Extralight 200' },
           { id: 'r2', label: '2 — Monumentalzahl' },
           { id: 'r6', label: '6 — Topografie' },
-          { id: 'rx', label: 'X — Tiefenebenen' },
           { id: 'rz', label: 'Z — Perspektiv-Fächer' },
-          { id: 'ry', label: 'Y — Rotierende Obrounds' },
+          { id: 'rp', label: 'P — Pull-Focus' },
         ].map(({ id, label }) => (
           <button key={id} className={styles.navLink} onClick={() => scrollTo(id)}>
             {label}
@@ -1083,9 +914,8 @@ export default function PreviewPage() {
         <R5i />
         <R2 />
         <R6 />
-        <RX />
         <RZ />
-        <RY />
+        <RP />
       </main>
     </div>
   );

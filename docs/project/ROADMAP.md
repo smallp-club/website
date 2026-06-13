@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-13 (Session 4)
+## Stand: 2026-06-14 (Session 5)
 
 ## Fertig — Fundament
 
@@ -31,14 +31,23 @@
 - [x] **VOICE.md Fehler korrigiert** — Studie war falsch als "2020, 17.000 Männer" dokumentiert → jetzt korrekt: "Veale et al., BJU International, 2015, n=15.521"
 - [x] **CONCEPT.md erweitert** — Golden Circle (WHY/HOW/WHAT), Unique Narrative Territory, überarbeitete Story Architecture mit zweiter Lesart pro Mythos-Block
 - [x] **VOICE.md erweitert** — Ton-Verbote ergänzt: kein Belehren, kein Bekehren
+- [x] **Preview-Page Variantenlabor** — `/preview` als zentrale Sandbox für Karten-/Animations-Pattern (3, 5i, 2, 6, Z, P)
+- [x] **RP — Pull-Focus-Karte** (Hover/Tap): Mythos rückt mit Blur nach hinten (z: -180, blur 3px, opacity 0.35), Fakt zoomt aus dem Vordergrund (z: 320 → 0, blur 10 → 0), 1.1s, Reduced-Motion = Opacity-Swap
+- [x] **RZ — Karten-Stapel (generisch)**: Bild + Eyebrow + Headline + Body + CTA. Aktive Karte voll, inaktive zeigen Teaser. Vier echte Topic-Teaser aus RESEARCH.md als erstes Real-Content-Beispiel
+- [x] **RZ Glass-Bubble-Cursor** (Desktop): Hot Zones links/rechts mit backdrop-blur Custom-Cursor, Spring-Follow, Click navigates prev/next. Mobile: Hot Zones deaktiviert, kein Bottom-Nav
+- [x] **Aufgeräumt:** RY (Rotierende Obrounds) und RX (Tiefenebenen) komplett entfernt
 
 ## Offen — Direkt nächste Schritte
 
 - [x] **Farbkonzept abgestimmt** — Sektionsregeln, Komponentenregeln, Verbote → `docs/brand/COLOR_CONCEPT.md`
 - [ ] **Phase 2: Visual Direction** — `/imagegen-frontend-web` Moodboards → Kevin Feedback
+- [ ] **Karten-Stapel-Komponente in `/topics` integrieren** als erste echte Anwendung des generischen Schemas (Bild/Eyebrow/Headline/Body/CTA)
+- [ ] **Karten-Stapel auch auf Landing** einbauen (Kevin explizit genehmigt) — Section noch zu definieren
+- [ ] **Echte Fotos** für RZ-Bildslots — Shooting nach Fotografen-Briefing (Memory `project_imagery.md`)
 - [ ] **Social Media vs. Website Content** — klare Trennung erarbeiten (welche Inhalte wo, welches Format)
 - [ ] **Vercel DPA signieren** — DSGVO-Pflicht (Vercel → Settings → Legal)
 - [ ] **Vercel Preset auf "Next.js" prüfen**
+- [ ] **OneDrive-Pfad-Problem lösen** — Repo aus `OneDrive-adessoGroup/` raus nach `~/Code/smallp-website`. Dev-Server braucht 9,3 min bis „Ready", erste Page 10 min. HMR fällt regelmäßig auseinander. Git-Remote bleibt, Vercel auch.
 
 ## Route-Stubs (existieren, noch leer)
 
