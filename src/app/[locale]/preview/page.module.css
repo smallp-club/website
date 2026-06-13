@@ -551,6 +551,295 @@
 }
 
 /* ================================================================
+   Richtung 5d — Schwarzer Raum, Farbe als Text
+   ================================================================ */
+
+/* No .section base — overflow: hidden would break sticky positioning */
+.r5dOuter {
+  position: relative;
+  min-height: 300vh;
+  background: var(--spc-black);
+}
+
+.r5dSticky {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--spc-black);
+}
+
+/* Section label — top-left */
+.r5dLabel {
+  position: absolute;
+  top: var(--space-9);
+  left: var(--space-9);
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+}
+
+/* Content stack */
+.r5dInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-11) var(--space-9);
+}
+
+/* Main text — same position/size in both myth and fact states */
+.r5dText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: clamp(44px, 7vw, 92px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  max-width: 18ch;
+}
+
+.r5dMythText {
+  color: var(--spc-offwhite);
+}
+
+.r5dFactText {
+  color: var(--spc-turquoise);
+}
+
+/* Source line */
+.r5dSource {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  letter-spacing: var(--tracking-wide);
+  max-width: 52ch;
+}
+
+/* Scroll hint — centered bottom */
+.r5dScrollHint {
+  position: absolute;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--spc-slate);
+  pointer-events: none;
+}
+
+@media (max-width: 1024px) {
+  .r5dLabel {
+    top: var(--space-7);
+    left: var(--space-7);
+  }
+  .r5dInner {
+    padding: var(--space-10) var(--space-7);
+  }
+}
+
+@media (max-width: 768px) {
+  .r5dOuter {
+    min-height: 200vh;
+  }
+  .r5dLabel {
+    top: var(--space-5);
+    left: var(--space-5);
+  }
+  .r5dInner {
+    padding: var(--space-9) var(--space-5);
+  }
+  .r5dText {
+    font-size: clamp(36px, 9vw, 64px);
+    max-width: 20ch;
+  }
+}
+
+/* ================================================================
+   Richtung 5f — Editorial-Akzent, Bold mit Farbhighlight
+   ================================================================ */
+
+/* .r5f uses .section as base — no additional layout overrides needed */
+.r5f {}
+
+.r5fInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.r5fText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-semibold);
+  font-size: clamp(36px, 5.5vw, 68px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+  max-width: 20ch;
+}
+
+.r5fAccentMyth {
+  color: var(--spc-sienna);
+  font-style: italic;
+}
+
+.r5fAccentFact {
+  color: var(--spc-turquoise-deep);
+  font-style: italic;
+}
+
+.r5fSource {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  letter-spacing: var(--tracking-wide);
+  max-width: 52ch;
+}
+
+/* ================================================================
+   Richtung 5e — Farb-Flip: Die ganze Welt wechselt
+   ================================================================ */
+
+/* No .section base — overflow: hidden would break sticky scroll */
+.r5eOuter {
+  position: relative;
+  min-height: 300vh;
+  background: transparent; /* sticky child carries the background color */
+}
+
+/* Sticky panel — carries the background, switches class on isFact toggle */
+.r5eSticky {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  overflow: hidden;
+  /* No transition on background-color — the flip is instant, not animated */
+}
+
+/* Background states — no transition property intentionally */
+.r5eStickyMyth {
+  background: var(--spc-offwhite);
+}
+
+.r5eStickyFact {
+  background: var(--spc-turquoise-deep);
+}
+
+/* Section label — top-left absolute */
+.r5eLabel {
+  position: absolute;
+  top: var(--space-9);
+  left: var(--space-9);
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+}
+
+.r5eLabelMyth {
+  color: var(--spc-slate);
+}
+
+.r5eLabelFact {
+  color: rgba(247, 246, 242, 0.6);
+}
+
+/* Content stack — centered, generous padding */
+.r5eInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  justify-content: center;
+  height: 100%;
+  padding: var(--space-11) var(--space-9);
+}
+
+/* Main text — bold, same size and position in both states */
+.r5eText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: clamp(44px, 7vw, 92px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  max-width: 18ch;
+}
+
+.r5eMythText {
+  color: var(--spc-black);
+}
+
+.r5eFactText {
+  color: var(--spc-offwhite);
+}
+
+/* Source line */
+.r5eSource {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-wide);
+  max-width: 52ch;
+}
+
+.r5eMythSource {
+  color: var(--spc-slate);
+}
+
+/* Turquoise as link-style text on dark-turquoise bg — 5.13:1 (AA) */
+.r5eFactSource {
+  color: rgba(247, 246, 242, 0.65);
+}
+
+/* Scroll hint — centered bottom */
+.r5eScrollHint {
+  position: absolute;
+  bottom: var(--space-8);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  pointer-events: none;
+}
+
+.r5eScrollHintMyth {
+  color: var(--spc-slate);
+}
+
+.r5eScrollHintFact {
+  color: var(--spc-turquoise);
+}
+
+@media (max-width: 1024px) {
+  .r5eLabel {
+    top: var(--space-7);
+    left: var(--space-7);
+  }
+  .r5eInner {
+    padding: var(--space-10) var(--space-7);
+  }
+}
+
+@media (max-width: 768px) {
+  .r5eOuter {
+    min-height: 200vh;
+  }
+  .r5eLabel {
+    top: var(--space-5);
+    left: var(--space-5);
+  }
+  .r5eInner {
+    padding: var(--space-9) var(--space-5);
+  }
+  .r5eText {
+    font-size: clamp(36px, 9vw, 64px);
+    max-width: 20ch;
+  }
+}
+
+/* ================================================================
    Richtung 2 — Monumentalzahl + Lücke
    ================================================================ */
 .r2 {}
@@ -769,6 +1058,111 @@
   }
   .r5cFactText {
     font-size: clamp(32px, 8vw, 52px);
+  }
+}
+
+/* ================================================================
+   Richtung 5g — Monument-Scale, regelkonform
+   ================================================================ */
+.r5gOuter {
+  min-height: 300vh;
+  background: var(--spc-offwhite);
+}
+
+.r5gSticky {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 var(--space-7);
+  overflow: hidden;
+}
+
+.r5gPreviewLabel {
+  position: absolute;
+  top: var(--space-5);
+  left: var(--space-5);
+  font-size: var(--text-caption);
+  color: var(--spc-black);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.r5gContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.r5gChip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 var(--space-7);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  width: fit-content;
+}
+
+.r5gChipMyth {
+  background: var(--spc-sienna);
+  color: var(--spc-offwhite);
+}
+
+.r5gChipFact {
+  background: var(--spc-turquoise);
+  color: var(--spc-black);
+}
+
+.r5gText {
+  font-family: var(--font-display, 'Chillax', sans-serif);
+  font-weight: 700;
+  font-size: clamp(72px, 11vw, 104px);
+  line-height: 0.93;
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+.r5gSource {
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: var(--text-caption);
+  color: var(--spc-black);
+  opacity: 0.5;
+  max-width: 52ch;
+  margin: 0;
+}
+
+.r5gScrollHint {
+  position: absolute;
+  bottom: var(--space-6);
+  left: var(--space-7);
+  font-family: var(--font-body, Inter, sans-serif);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-wide);
+  color: var(--spc-black);
+  opacity: 0.4;
+}
+
+@media (max-width: 768px) {
+  .r5gSticky {
+    padding: 0 var(--space-5);
+  }
+
+  .r5gText {
+    font-size: clamp(44px, 12vw, 72px);
+    line-height: 0.95;
+  }
+
+  .r5gScrollHint {
+    left: var(--space-5);
   }
 }
 

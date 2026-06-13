@@ -934,6 +934,123 @@ function R5e() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Richtung 5g — Monument-Scale, regelkonform                          */
+/* ------------------------------------------------------------------ */
+function R5g() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isFact, setIsFact] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+    if (mq.matches) setIsFact(true);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const sourceOpacity = useTransform(scrollYProgress, [0.55, 0.75], [0, 1]);
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.06], [1, 0]);
+
+  useMotionValueEvent(scrollYProgress, 'change', v => {
+    if (!reducedMotion) setIsFact(v >= 0.4);
+  });
+
+  if (reducedMotion) {
+    return (
+      <section id="r5g" className={styles.r5gOuter}>
+        <div className={styles.r5gSticky}>
+          <span className={styles.r5gPreviewLabel}>Richtung 5g — Monument</span>
+          <div className={styles.r5gContent}>
+            <span className={`${styles.r5gChip} ${styles.r5gChipFact}`}>Fakt</span>
+            <p className={styles.r5gText}>{mythFact.fact}</p>
+            <p className={styles.r5gSource}>{mythFact.source}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="r5g" className={styles.r5gOuter} ref={sectionRef}>
+      <div className={styles.r5gSticky}>
+        <span className={styles.r5gPreviewLabel}>Richtung 5g — Monument</span>
+
+        <div className={styles.r5gContent}>
+          <AnimatePresence mode="wait">
+            {isFact ? (
+              <motion.span
+                key="r5g-chip-fact"
+                className={`${styles.r5gChip} ${styles.r5gChipFact}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Fakt
+              </motion.span>
+            ) : (
+              <motion.span
+                key="r5g-chip-myth"
+                className={`${styles.r5gChip} ${styles.r5gChipMyth}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Mythos
+              </motion.span>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            {isFact ? (
+              <motion.p
+                key="r5g-text-fact"
+                className={styles.r5gText}
+                aria-live="polite"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {mythFact.fact}
+              </motion.p>
+            ) : (
+              <motion.p
+                key="r5g-text-myth"
+                className={styles.r5gText}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {mythFact.myth}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          <motion.p className={styles.r5gSource} style={{ opacity: sourceOpacity }}>
+            {mythFact.source}
+          </motion.p>
+        </div>
+
+        <motion.div
+          className={styles.r5gScrollHint}
+          style={{ opacity: hintOpacity }}
+          aria-hidden="true"
+        >
+          scroll
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Richtung 2 — Monumentalzahl + Lücke                                 */
 /* ------------------------------------------------------------------ */
 function R2() {
@@ -1172,6 +1289,7 @@ export default function PreviewPage() {
           { id: 'r5d', label: '5d — Schwarz+Farbe' },
           { id: 'r5f', label: '5f — Editorial-Akzent' },
           { id: 'r5e', label: '5e — Farb-Flip' },
+          { id: 'r5g', label: '5g — Monument' },
           { id: 'r2', label: '2 — Monumentalzahl' },
           { id: 'r6', label: '6 — Topografie' },
         ].map(({ id, label }) => (
@@ -1189,6 +1307,7 @@ export default function PreviewPage() {
         <R5d />
         <R5f />
         <R5e />
+        <R5g />
         <R2 />
         <R6 />
       </main>
