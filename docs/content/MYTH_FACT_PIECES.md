@@ -1,8 +1,8 @@
 # Mythos → Fakt — Contentpieces
 
-## Status: Brand-reviewed, Batch 1+2 komplett (2026-06-13) — 27 Pieces total
+## Status: Brand-reviewed, Batch 1+2+3 komplett (2026-06-13) — 46 Pieces total
 
-Alle 13 Pieces sind vollständig ausgearbeitet mit 5 Ebenen:
+Alle Pieces sind vollständig ausgearbeitet mit 5 Ebenen:
 - **MYTHOS** — Die innere Stimme, wie Männer es wirklich denken
 - **FAKT** — Klar, belegt, entlastend — nicht belehrend
 - **QUELLE** — Spezifisch: Autor, Journal, Jahr, n=
@@ -556,6 +556,388 @@ Fakt: Die Hälfte der deutschen Männer zwischen 16 und 28 hält am Ideal des un
 
 ---
 
+---
+
+## Piece 28: Übergewicht / Buried Penis Effect
+
+**MYTHOS**
+"Irgendwie... ist er kürzer geworden. Oder war er schon immer so?"
+
+**FAKT**
+Kein Zentimeter geht verloren. Das suprapubische Fettpolster verdeckt die Basis des Penis — was unsichtbar ist, ist trotzdem da. Klinisch heißt das "Buried Penis Effect": die anatomische Länge bleibt unverändert, nur die sichtbare Länge nimmt ab. Gewichtsreduktion gibt die verdeckte Länge zurück. Pro 10 kg Körpergewicht werden schätzungsweise rund 1 cm durch Fettgewebe verdeckt.
+
+**QUELLE**
+Lumen R et al., World Journal of Urology, 2008 (Buried-Penis-Klassifikation); klinischer Konsens Urologie/Andrologie — die 1-cm/10-kg-Schätzung ist Expertenkonsens, kein RCT-Wert
+
+**GESELLSCHAFTLICHE LESART**
+Das Körperbild eines Mannes kann sich verändern, ohne dass sich seine Anatomie verändert hat.
+
+**SOCIAL VERSION**
+Mythos: "Er ist kürzer geworden."
+Fakt: Kein Zentimeter geht verloren. Das Fettpolster an der Basis verdeckt ihn — die Anatomie bleibt unberührt.
+
+---
+
+## Piece 29: Rauchen
+
+**MYTHOS**
+"Rauchen schadet der Lunge. Mit dem Penis hat das nichts zu tun."
+
+**FAKT**
+Nikotin ist ein Vasokonstriktor — es verengt Blutgefäße, auch im Schwellkörpergewebe. Kurzfristig beeinträchtigt das die Erektionsfähigkeit. Langfristig schädigt chronisches Rauchen die feinen Gefäße im kavernösen Gewebe nachweislich und erhöht das Risiko für erektile Dysfunktion erheblich. Die Schwellkörpermechanik ist vaskulär — was schlecht für die Gefäße ist, ist schlecht für die Erektion.
+
+**QUELLE**
+Shamloul R & Ghanem H, The Lancet, 2013 (Review); Bacon CG et al., Annals of Internal Medicine, 2006, n=22.086; Shiri R et al., BJU International, 2011
+
+**GESELLSCHAFTLICHE LESART**
+Erektile Dysfunktion durch Rauchen wird in der öffentlichen Kommunikation über Tabakschäden kaum erwähnt — obwohl die Datenlage robust ist.
+
+**SOCIAL VERSION**
+Mythos: "Rauchen schadet der Lunge. Mit dem Penis hat das nichts zu tun."
+Fakt: Nikotin verengt Blutgefäße — auch die im Schwellkörper. Langfristiger vaskulärer Schaden ist klinisch dokumentiert. Shiri et al., BJU International, 2011.
+
+---
+
+## Piece 30: Alkohol / Brewer's Droop
+
+**MYTHOS**
+"Ein, zwei Bier — das entspannt doch nur."
+
+**FAKT**
+Akuter Alkohol dämpft das Zentralnervensystem und hemmt periphere Gefäßreaktionen — beides bremst die Erektion. Das Phänomen ist so bekannt dass es einen eigenen Begriff hat: "Brewer's Droop." Chronischer Alkoholmissbrauch senkt zusätzlich den Testosteronspiegel und verursacht vaskuläre Schäden. Alkohol senkt die Hemmschwelle — und die Erektionsfähigkeit gleichzeitig.
+
+**QUELLE**
+Shamloul R & Ghanem H, The Lancet, 2013; Emanuele MA & Emanuele NV, Alcohol Health and Research World, 1998
+
+**GESELLSCHAFTLICHE LESART**
+Die kulturelle Verknüpfung von Alkohol mit Entspannung und Sexualität steht in Spannung zu einem gut dokumentierten physiologischen Widerspruch.
+
+**SOCIAL VERSION**
+Mythos: "Ein Bier entspannt doch nur."
+Fakt: Alkohol hemmt Zentralnervensystem und Gefäßreaktion gleichzeitig. Das Phänomen hat einen Namen: Brewer's Droop.
+
+---
+
+## Piece 31: Kälte
+
+**MYTHOS**
+"Kalt war's. Seitdem ist er... kleiner."
+
+**FAKT**
+Der Penis zieht sich bei Kälte zurück — das ist ein normaler physiologischer Reflex. Vasokonstriktion reduziert die Durchblutung, der Cremaster-Muskel zieht die Hoden nach oben. Beides ist vollständig reversibel, sobald die Temperatur steigt. Keine klinische Evidenz für permanente Größenveränderung durch Kälteexposition.
+
+**QUELLE**
+Anatomischer und physiologischer Konsens (Cremaster-Reflex, thermoregulatorische Vasokonstriktion); Veale D et al., BJU International, 2015, n=15.521 — keine Umwelt-Korrelate für Penisruhegröße dokumentiert
+
+**GESELLSCHAFTLICHE LESART**
+Die Vorstellung von Kälte als dauerhaftem Schadenfaktor vermischt vorübergehende Physiologie mit anatomischer Veränderung.
+
+**SOCIAL VERSION**
+Mythos: "Kalt war's. Seitdem ist er kleiner."
+Fakt: Vollständig reversibler Reflex. Keine klinische Evidenz für permanente Veränderung durch Temperatur.
+
+---
+
+## Piece 32: Wachstum nach der Pubertät
+
+**MYTHOS**
+"Vielleicht wächst er noch. Man liest ja so einiges."
+
+**FAKT**
+Das penile Wachstum endet mit dem Abschluss der Pubertät — typischerweise zwischen 17 und 19 Jahren. Danach ist kein physiologischer Mechanismus für natürliches Längenwachstum bekannt. Produkte die das Gegenteil versprechen, vermarkten einen Prozess der anatomisch nicht existiert.
+
+**QUELLE**
+Klinischer Konsens Andrologie/EAU (European Association of Urology); Veale D et al., BJU International, 2015, n=15.521
+
+**GESELLSCHAFTLICHE LESART**
+Der Markt für Penisvergrößerungsprodukte setzt in der Phase nach der Pubertät an — einer Zeit in der Unsicherheit über den eigenen Körper noch nicht abgeschlossen ist.
+
+**SOCIAL VERSION**
+Mythos: "Vielleicht wächst er noch."
+Fakt: Penisgewebe wächst bis zum Ende der Pubertät — danach kein natürlicher Wachstumsmechanismus bekannt. Was danach wächst, ist das Angebot an Produkten die das Gegenteil versprechen.
+
+---
+
+## Piece 33: Masturbation
+
+**MYTHOS**
+"Zu oft ist nicht gut. Irgendwann schädigt das."
+
+**FAKT**
+Kein klinischer Beweis verbindet Masturbationshäufigkeit mit Penisgröße, Erektionsfähigkeit oder verminderter Sensitivität. In einer prospektiven Studie mit 31.925 Männern zeigte regelmäßige Ejakulation sogar eine inverse Korrelation mit Prostatakrebsrisiko — häufigere Ejakulation war mit geringerem Risiko assoziiert. Der Mythos hat kulturelle und religiöse Wurzeln, keine physiologischen.
+
+**QUELLE**
+Rider JR et al., European Urology, 2016, n=31.925; klinischer Konsens Andrologie: keine negativen Effekte auf Penisgröße oder Erektionsfunktion
+
+**GESELLSCHAFTLICHE LESART**
+Der Mythos überlebt nicht wegen medizinischer Evidenz. Das erklärt, warum er in medizinischen Kontexten selten auftaucht.
+
+**SOCIAL VERSION**
+Mythos: "Zu oft — das schädigt irgendwann."
+Fakt: Kein klinischer Beleg. Eine Studie mit 31.925 Männern zeigt: regelmäßige Ejakulation ist mit geringerem Prostatakrebsrisiko assoziiert. Rider et al., European Urology, 2016.
+
+---
+
+## Piece 34: Beschneidung
+
+**MYTHOS**
+"Beschneidung verändert die Größe — in die eine oder andere Richtung."
+
+**FAKT**
+Ein Review von über 40 Studien findet keine konsistenten Belege für Größenveränderung durch Beschneidung. Bei Empfindlichkeit ist die Datenlage komplexer: einzelne Studien messen minimale Unterschiede in Sensitivitätstests, aber keine konsistenten Effekte auf sexuelle Zufriedenheit insgesamt. Beide umlaufenden Mythen — "größer" und "kleiner" — sind nicht belegt.
+
+**QUELLE**
+Morris BJ & Krieger JN, BJU International, 2013 (Review, n=40+ Studien); Sorrells ML et al., BJU International, 2007 *(Methodik umstritten — transparente Einschränkung)*
+
+**GESELLSCHAFTLICHE LESART**
+Beschneidung wird gleichzeitig als Verbesserung und als Verlust gerahmt — je nach kulturellem Kontext, selten auf Basis derselben Daten.
+
+**SOCIAL VERSION**
+Mythos: "Beschneidung verändert die Größe."
+Fakt: Ein Review von über 40 Studien findet keine konsistenten Belege für Größenveränderung. Morris & Krieger, BJU International, 2013.
+
+---
+
+## Piece 35: Der Napoleon-Komplex
+
+**MYTHOS**
+Kleine Männer oder Männer mit kleinem Penis machen das durch Auftreten wett. Großes Auto, lautes Wort, erste Faust — Kompensation ist das Stichwort. Jeder kennt das Muster.
+
+**FAKT**
+Körpergröße und Aggressivität korrelieren in Großerhebungen nicht konsistent miteinander. Eine Analyse von über 42.000 Männern fand keinen "Napoleon-Effekt" — kleinere Männer zeigten keine messbar höhere Aggression oder Dominanzorientierung. Was die Forschung zeigt: Wenn Männlichkeit aktiv bedroht wird, reagieren Männer mit Überkonformität zu maskulinen Normen — aber dieser Effekt tritt unabhängig von Körpergröße auf. Er ist Reaktion, nicht Eigenschaft.
+
+**QUELLE**
+Stulp G et al., PLOS ONE, 2013, n=42.519; Willer R et al., Social Psychology Quarterly, 2013 (Masculine Overcompensation Thesis)
+
+**GESELLSCHAFTLICHE LESART**
+Das Stereotyp bündelt Körper und Charakter zu einem Urteil — und übersieht, dass Überanpassung an Männlichkeitsnormen ein Mechanismus ist, den die Norm selbst erzeugt.
+
+**SOCIAL VERSION**
+Mythos: Kleine Männer kompensieren — mit Auftreten, Autos, Aggression.
+Fakt: Keine konsistente Korrelation zwischen Körpergröße und Aggressivität in Erhebungen mit über 42.000 Männern. Der Effekt entsteht durch bedrohte Männlichkeit — nicht durch Körpergröße. Stulp et al., PLOS ONE, 2013.
+
+---
+
+## Piece 36: "Sie sagt nur, es ist okay"
+
+**MYTHOS**
+Partnerinnen die sagen, Größe spielt keine Rolle, sind einfach höflich. Das ist Rücksichtnahme, keine Wahrheit.
+
+**FAKT**
+85% der Partnerinnen geben in einer anonymen Befragung mit 52.000+ Teilnehmern an, mit der Penislänge ihres Partners zufrieden zu sein — kein Anlass zur Rücksicht. Nur 55% der Männer sind es mit ihrer eigenen Größe. Die Lücke sitzt nicht in der Realität — sie sitzt im Kopf.
+
+**QUELLE**
+Lever J, Frederick DA, Peplau LA, Psychology of Men & Masculinity, 2006, n=52.000+
+
+**GESELLSCHAFTLICHE LESART**
+Ein Denkmuster das jede bestätigende Information automatisch entwertet, ist kein Realismus — es ist eine geschlossene Schleife.
+
+**SOCIAL VERSION**
+Mythos: "Sie sagt nur, es ist okay" — aus Rücksicht.
+Fakt: 85% anonym befragt, ohne Anlass zur Rücksicht. Nur 55% der Männer sind es mit sich selbst. Lever et al., Psychology of Men & Masculinity, 2006, n=52.000+.
+
+---
+
+## Piece 37: Gay Men — Größe als Kriterium
+
+**MYTHOS**
+Bei schwulen Männern ist Penisgröße ein echtes Auswahlkriterium — expliziter, ehrlicher als bei heterosexuellen Frauen. Das ist wenigstens keine Heuchelei.
+
+**FAKT**
+Homosexuelle Männer berichten im Durchschnitt eine höhere Bedeutung der Penislänge als heterosexuelle Frauen — das ist dokumentiert. Was ebenfalls gilt: Auch in homosexuellen Partnerschaften ist die Korrelation zwischen Penisgröße und tatsächlicher sexueller Zufriedenheit schwach. Die Bedeutung die einem Maß beigemessen wird, und die Wirkung die es auf Zufriedenheit hat, sind zwei verschiedene Dinge — in jeder Konstellation.
+
+**QUELLE**
+Drummond JD & Filiault SM, The Canadian Journal of Human Sexuality, 2007; Lever J et al., Psychology of Men & Masculinity, 2006, n=52.000+
+
+**GESELLSCHAFTLICHE LESART**
+Die Sichtbarkeit von Größe als Kriterium in bestimmten Kontexten sagt mehr über Kommunikationsnormen aus als über den Stellenwert in gelebten Beziehungen.
+
+**SOCIAL VERSION**
+Mythos: Schwule Männer legen mehr Wert auf Größe — das wenigstens ehrlich.
+Fakt: Größe wird häufiger explizit benannt. Einfluss auf Zufriedenheit? Schwache Korrelation — auch dort.
+
+---
+
+## Piece 38: Erfahrene Partnerinnen sind anspruchsvoller
+
+**MYTHOS**
+Je mehr Erfahrung eine Frau hat, desto klarer weiß sie, was sie will — und desto höher liegt die Messlatte. Das ist doch logisch.
+
+**FAKT**
+Keine messbare Verbindung zwischen Anzahl früherer Sexualpartner und Ansprüchen an Körpermaße. Was Zufriedenheit in Partnerschaften zuverlässig vorhersagt: emotionale Verbindung, Kommunikation, gegenseitige Aufmerksamkeit — nicht Anatomie, nicht sexuelle Geschichte.
+
+**QUELLE**
+Herbenick D et al., Journal of Sexual Medicine, 2018, n=52.031; klinischer Konsens Sexualtherapie (AASECT)
+
+**GESELLSCHAFTLICHE LESART**
+Dieser Mythos bedient gleichzeitig zwei Ängste: vor weiblicher Sexualerfahrung und vor körperlicher Unzulänglichkeit — und gibt keiner von beiden eine faktische Grundlage.
+
+**SOCIAL VERSION**
+Mythos: Erfahrene Frauen haben höhere Ansprüche an Körpermaße.
+Fakt: Keine Forschung belegt das. Was Zufriedenheit vorhersagt: Kommunikation, emotionale Verbindung, Aufmerksamkeit. Herbenick et al., Journal of Sexual Medicine, 2018, n=52.031.
+
+---
+
+## Piece 39: Männer haben kein echtes Körperbild-Problem
+
+**MYTHOS**
+Körperbild ist ein Frauenthema. Männer die damit kämpfen, übertreiben oder haben anderes nicht richtig verarbeitet. Das beschäftigt echte Männer nicht.
+
+**FAKT**
+Body Dysmorphic Disorder tritt bei Männern und Frauen in etwa gleicher Häufigkeit auf — Prävalenz 1,7–2,4% der Bevölkerung. Männer suchen seltener Hilfe — nicht weil das Problem seltener ist, sondern weil das Stigma größer ist. Speziell zur Penisgröße: Männer mit Penile Dysmorphic Disorder haben klinisch normale Maße, nehmen sich aber als abnorm klein wahr.
+
+**QUELLE**
+Phillips KA et al., Depression and Anxiety, 2010 (BDD-Prävalenz); Veale D et al., Sexual Medicine, 2015, n=90. PubMed: 26468378
+
+**GESELLSCHAFTLICHE LESART**
+Die Überzeugung, dass Männer kein echtes Körperbild-Problem haben können, trägt dazu bei, dass das Thema selten benannt wird.
+
+**SOCIAL VERSION**
+Mythos: Körperbild-Probleme sind ein Frauenthema.
+Fakt: BDD trifft Männer und Frauen gleich häufig. Männer suchen seltener Hilfe — wegen des Stigmas, nicht weil das Problem seltener ist. Phillips et al., Depression and Anxiety, 2010.
+
+---
+
+## Piece 40: Er denkt sicher die ganze Zeit dran
+
+**MYTHOS**
+Männer die unsicher wegen ihrer Körpergröße sind, tragen das ständig mit sich — immer präsent, immer im Weg.
+
+**FAKT**
+Körperscham bei Männern ist situativ getriggert — sie wird durch spezifische Kontexte aktiviert: Intimität, Umkleideräume, Vergleichsmomente. Außerhalb dieser Kontexte funktionieren dieselben Männer unauffällig. Das Problem ist real — aber es ist nicht permanent. Es hat Grenzen, Auslöser, Kontexte.
+
+**QUELLE**
+Sharp G & Oates J, Aesthetic Surgery Journal, Oxford Academic, 2019; Expertenkonsens Körperbildforschung (kontextuelles Body Image)
+
+**GESELLSCHAFTLICHE LESART**
+Die Vorstellung dauerhafter Belastung entspricht selten dem, was Betroffene selbst berichten: Körperscham ist situativ, nicht permanent.
+
+**SOCIAL VERSION**
+Mythos: Männer die unsicher sind, tragen das ständig mit sich.
+Fakt: Körperscham ist situativ — durch konkrete Kontexte getriggert, nicht dauerhaft aktiv. Sharp & Oates, Aesthetic Surgery Journal, 2019.
+
+---
+
+## Piece 41: Antike Statuen
+
+**MYTHOS**
+Griechische Statuen zeigen kleine Penisse. Muss irgendwas bedeuten, oder?
+
+**FAKT**
+Im antiken Griechenland war der kleine, unaufdringliche Penis das ästhetische Ideal — kein Zufall, keine Scham der Bildhauer. Groß galt als unkultiviert, tierisch, barbarisch. Klein stand für Vernunft, Beherrschung, Zivilisiertheit. Das war kein anatomischer Befund, sondern ein Wertesystem. Ein anderes Jahrhundert, eine andere Kultur, ein vollständig anderes Ideal.
+
+**QUELLE**
+Kellum BA, "The Phallus as Signifier," in Sexuality and Gender in Early Modern Europe, Cambridge University Press, 1993; Davidson J, klassische Studien zur griechischen Ästhetik — kulturhistorischer Konsens
+
+**GESELLSCHAFTLICHE LESART**
+Was als Ideal gilt, hat sich in 2.500 Jahren mehrfach vollständig umgekehrt.
+
+**SOCIAL VERSION**
+Mythos: Kleine Penisse galten immer als Makel.
+Fakt: Im antiken Griechenland war klein das ästhetische Ideal. Groß galt als barbarisch. Ideale sind konstruiert — und vergänglich.
+
+---
+
+## Piece 42: Evolution — "biologisch verdrahtet"
+
+**MYTHOS**
+Frauen bevorzugen größere Penisse evolutionär — das ist in uns verdrahtet. Da kann man nichts gegen andenken.
+
+**FAKT**
+Mautz et al. (PNAS, 2013) fanden in einer Laborstudie mit Silhouetten eine schwache Präferenz für größere Penisse — aber der Effekt war klein und stark durch Körpergröße und -proportion moderiert. Penisgröße allein erklärte wenig. Und: 85% der realen Partnerinnen sind mit der Penisgröße ihres Partners zufrieden (Lever et al., 2006, n=52.000+). Evolution produziert Varianz — kein einheitliches Optimum.
+
+**QUELLE**
+Mautz BS et al., PNAS, 2013, n=105 *(Laborstudie mit Silhouetten — nicht repräsentativ für reale Partnerwahl)*; Lever J et al., Psychology of Men & Masculinity, 2006, n=52.000+
+
+**GESELLSCHAFTLICHE LESART**
+Die Forschungslage zu evolutionären Präferenzen ist differenzierter, als das Argument suggeriert.
+
+**SOCIAL VERSION**
+Mythos: Größer ist evolutionär besser — biologisch fest verdrahtet.
+Fakt: Eine Laborstudie zeigte kleinen Effekt, stark moderiert durch Körperproportion. 85% der realen Partnerinnen sind mit ihrem Partner zufrieden. Lever et al., 2006, n=52.000+.
+
+---
+
+## Piece 43: "Früher war der Durchschnitt größer"
+
+**MYTHOS**
+Durch Mikroplastik, Östrogene im Wasser, Bewegungsmangel — der Durchschnitt sinkt. Früher war alles größer.
+
+**FAKT**
+Penisgröße als historischer Normwert ist nicht dokumentiert — kein sauberer Vergleich mit heute ist möglich. Die robusteste je erhobene Messstudie: Veale et al., BJU International, 2015, n=15.521, Ø 13,12 cm erigiert — ausschließlich klinisch gemessen. Hinweise auf sinkende Spermienqualität und Testosteronwerte in einigen Kohorten existieren — aber eine Verbindung zur Penisgröße ist nicht belegt.
+
+**QUELLE**
+Veale D et al., BJU International, 2015, n=15.521; Swan SH et al., Human Reproduction Update, 2017 (Spermienqualität — andere Frage); Travison TG et al., Journal of Clinical Endocrinology & Metabolism, 2007 (Testosteron)
+
+**GESELLSCHAFTLICHE LESART**
+Historische Vergleichsdaten für Penismaße existieren nicht. Der Verfall-Erzählung fehlt die Grundlage.
+
+**SOCIAL VERSION**
+Mythos: Umweltgifte lassen den Durchschnitt sinken. Früher war mehr.
+Fakt: Historische Vergleichsdaten fehlen. Klinisch gemessen, heute: Ø 13,12 cm. Veale et al., BJU International, 2015, n=15.521.
+
+---
+
+## Piece 44: Größe als Status-Signal
+
+**MYTHOS**
+Erfolgreiche, selbstbewusste, mächtige Männer — die sind bestimmt auch gut ausgestattet. Und wer klein wirkt, ist es überall.
+
+**FAKT**
+Das beschreibt einen kognitiven Mechanismus, keinen anatomischen Befund: den Halo-Effekt. Eine positive Gesamtwahrnehmung führt dazu, einer Person auch in nicht beobachteten Bereichen höhere Werte zuzuschreiben — umgekehrt genauso. Eine belegte Korrelation zwischen Status und Penisgröße existiert nicht.
+
+**QUELLE**
+Thorndike EL, Journal of Applied Psychology, 1920 (Halo-Effekt); kulturhistorischer Konsens Männlichkeitsstudien *(keine direkte Penisgröße-Status-Korrelationsstudie bekannt)*
+
+**GESELLSCHAFTLICHE LESART**
+Das Gehirn ergänzt, was es nicht weiß — und Männlichkeitsnormen bestimmen, womit es ergänzt.
+
+**SOCIAL VERSION**
+Mythos: Mächtige, selbstbewusste Männer sind bestimmt auch gut ausgestattet.
+Fakt: Das ist Halo-Effekt, kein Befund. Anatomische Korrelation zwischen Status und Penisgröße existiert nicht.
+
+---
+
+## Piece 45: Der Selbstbericht-Effekt
+
+**MYTHOS**
+Wenn Männer in Studien lügen und den Schnitt hochrechnen — dann ist der echte Durchschnitt noch kleiner. Und ich liege sicher darunter.
+
+**FAKT**
+Systematisches Overreporting in Selbstangabe-Studien ist belegt — Studien mit Selbstangaben zeigen ~14–16 cm, klinisch gemessene weniger. Veale et al. (BJU International, 2015, n=15.521) haben deshalb ausschließlich klinisch gemessen: Ø 13,12 cm erigiert. Das ist der verlässliche Wert — und er liegt höher als sich 91% der Männer selbst einschätzen. Die Selbstunterschätzung ist das eigentliche Muster, nicht die Lüge der anderen.
+
+**QUELLE**
+Veale D et al., BJU International, 2015, n=15.521; Wessells H et al., Journal of Urology, 1996 (klinische Messung vs. Selbstangabe)
+
+**GESELLSCHAFTLICHE LESART**
+Zwei entgegengesetzte Verzerrungen im selben Raum: Männer übertreiben gegenüber anderen und unterschätzen sich selbst.
+
+**SOCIAL VERSION**
+Mythos: Wenn Männer in Studien lügen, ist der echte Wert noch kleiner — ich liege sicher darunter.
+Fakt: Klinisch gemessen: Ø 13,12 cm. 91% unterschätzen sich trotzdem. Veale et al., BJU International, 2015, n=15.521.
+
+---
+
+## Piece 46: In anderen Kulturen kein Thema
+
+**MYTHOS**
+Das ist ein westliches Problem. In anderen Kulturen denkt kein Mann darüber nach.
+
+**FAKT**
+Körperscham rund um Penisgröße ist in klinischen Daten aus mehreren Kulturräumen dokumentiert. Eine globale Metaanalyse aus 33 Studien (Mostafaei et al., 2025, n=36.883) zeigt Normwerte — und den Wunsch nach Veränderung — über Kulturgrenzen hinweg. Die Ausprägung variiert, der Mechanismus nicht. Was variiert: wie offen darüber gesprochen wird.
+
+**QUELLE**
+Mostafaei H et al., Urology Research and Practice, 2025, n=36.883, 33 Studien; Tang WS & Khoo EM, BJU International, 2011, n=583 *(Primärfokus Erektionsfunktion, Körperscham als Nebenaspekt)*
+
+**GESELLSCHAFTLICHE LESART**
+Die Ausprägung variiert je nach Kulturraum — der Mechanismus selbst ist in den Daten konsistent.
+
+**SOCIAL VERSION**
+Mythos: Penisgröße als Thema ist ein westliches Phänomen.
+Fakt: Globale Metaanalyse, 33 Studien, n=36.883. Die Ausprägung variiert. Der Mechanismus nicht. Mostafaei et al., 2025.
+
+---
+
 ## Empfehlungen für den Einsatz
 
 ### Landing Page (3–4 Pieces)
@@ -577,7 +959,16 @@ Pieces die auch ohne Kenntnis der Brand funktionieren und shareability haben:
 8. Piece 14 — Grower vs. Shower: der Vergleich misst den falschen Zustand
 9. Piece 16 — 0,6% Mikropenis-Prävalenz vs. gefühlte Häufigkeit
 
-### Quellenhinweise — drei Pieces mit schwächerer Beleglage
+### Batch 3 — Highlights für Social und Landing Page
+Neue starke Pieces aus Batch 3 (28–46):
+- **Piece 45** (Selbstbericht-Effekt) — die Meta-Pointe: Männer übertreiben gegenüber anderen, unterschätzen sich selbst
+- **Piece 41** (Antike Statuen) — kontraintuitiv, gesprächsauslösend: klein war das Ideal, groß galt als barbarisch
+- **Piece 36** ("Sie sagt nur es ist okay") — direkteste Adressierung des Misstrauens-Musters
+- **Piece 35** (Napoleon-Komplex) — dreht das Stereotyp um: keine Eigenschaft, eine Reaktion auf die Norm
+
+### Quellenhinweise — Pieces mit schwächerer Beleglage
 - **Piece 22** (Umfang): Eisenman-Quelle kleinere qualitative Arbeit (2001) — vor Veröffentlichung gegen neuere Literatur prüfen
 - **Piece 24** (Der erste Kommentar): Expertenkonsens, kein großer RCT — Piece ist inhaltlich solid, Quelle transparent ausgewiesen
 - **Piece 25** (Sport): Tiggemann-Quelle älter (2000) — Grundbefund in neueren Reviews repliziert, aber nicht mit aktueller Einzelstudie belegbar
+- **Piece 34** (Beschneidung): Sorrells-Quelle methodisch umstritten — transparent ausgewiesen, Morris/Krieger-Review ist solid
+- **Piece 44** (Größe als Status-Signal): kein direkter Penisgröße-Status-Korrelationsbeleg — Halo-Effekt als Mechanismus ist gut belegt
