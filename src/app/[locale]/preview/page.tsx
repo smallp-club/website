@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
-import { motion, AnimatePresence, useInView, useMotionValue, useMotionValueEvent, useVelocity, useTransform, useSpring, animate } from 'framer-motion';
+import { motion, AnimatePresence, useInView, useMotionValue, useMotionValueEvent, useVelocity, useTransform, useSpring, useScroll, animate } from 'framer-motion';
 import styles from './page.module.css';
 
 function scrollTo(id: string) {
@@ -11,23 +11,25 @@ function scrollTo(id: string) {
 /* ------------------------------------------------------------------ */
 /* useCountUp hook                                                       */
 /* ------------------------------------------------------------------ */
-function useCountUp(target: number, duration: number = 1400) {
+function useCountUp(target: number, duration: number = 3200) {
   const [value, setValue] = useState(0);
+  const [done, setDone] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-10%' });
 
   useEffect(() => {
     if (!inView) return;
-    const start = Math.round(target * 0.6);
-    const controls = animate(start, target, {
+    setDone(false);
+    const controls = animate(0, target, {
       duration: duration / 1000,
-      ease: [0.16, 1, 0.3, 1],
+      ease: [0.3, 0, 0.1, 1],
       onUpdate: (v) => setValue(Math.round(v)),
+      onComplete: () => setDone(true),
     });
     return () => controls.stop();
   }, [inView, target, duration]);
 
-  return { ref, value };
+  return { ref, value, done };
 }
 
 /* ------------------------------------------------------------------ */
@@ -44,10 +46,15 @@ function R3() {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-15%' });
-  const ticks = Array.from({ length: 13 });
+
+  // CSS spec: 1in = 96 CSS px → 1 CSS px = 25.4/96 mm
+  // Browsers don't expose physical PPI, so we use the CSS reference pixel.
+  // Accuracy: ±10–20% depending on display — no reliable API exists.
+  const MM_PER_PX = 25.4 / 96;
 
   // Desktop: mouse tracking + velocity blur + spring counter
   const [cursorPct, setCursorPct] = useState<number | null>(null);
+  const [trackWidthPx, setTrackWidthPx] = useState(0);
   const cursorMotionX = useMotionValue(0);
   const velocity = useVelocity(cursorMotionX);
   const labelBlur = useTransform(velocity, [-1200, -200, 0, 200, 1200], [2.5, 0.3, 0, 0.3, 2.5]);
@@ -56,7 +63,7 @@ function R3() {
   const mmTarget = useMotionValue(0);
   const mmSpring = useSpring(mmTarget, { stiffness: 160, damping: 22 });
   const [displayMm, setDisplayMm] = useState(0);
-  useMotionValueEvent(mmSpring, 'change', v => setDisplayMm(Math.round(Math.min(250, Math.max(0, v)))))
+  useMotionValueEvent(mmSpring, 'change', v => setDisplayMm(Math.round(Math.max(0, v))))
 
   // Stillstand: fires after 3.5s without movement
   const stillTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -69,6 +76,16 @@ function R3() {
 
   useEffect(() => {
     setIsMobile(window.matchMedia('(hover: none)').matches);
+  }, []);
+
+  // Track the element's actual CSS pixel width so mm values are screen-accurate
+  useEffect(() => {
+    const el = trackRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setTrackWidthPx(el.getBoundingClientRect().width));
+    ro.observe(el);
+    setTrackWidthPx(el.getBoundingClientRect().width);
+    return () => ro.disconnect();
   }, []);
 
   useEffect(() => {
@@ -112,7 +129,7 @@ function R3() {
     const pct = Math.max(0, Math.min(1.02, (e.clientX - rect.left) / rect.width));
     setCursorPct(pct);
     cursorMotionX.set(e.clientX);
-    mmTarget.set(Math.round(Math.min(1, pct) * 250));
+    mmTarget.set(Math.round(Math.min(1, pct) * trackWidthPx * MM_PER_PX));
     setShowStillstand(false);
     if (stillTimerRef.current) clearTimeout(stillTimerRef.current);
     stillTimerRef.current = setTimeout(() => {
@@ -133,16 +150,27 @@ function R3() {
 
   const activePct = isMobile ? (autoVisible ? autoPct : null) : cursorPct;
   const clampedPct = activePct !== null ? Math.min(1, Math.max(0, activePct)) : 0;
-  const mm = Math.round(clampedPct * 250);
-  // Edge dissolve: fade out in last 30% of track
-  const edgeOpacity = activePct !== null ? Math.min(1, Math.max(0, (1 - clampedPct) / 0.30)) : 1;
+  // Physical mm: derived from actual track width in CSS px × mm/px constant
+  const trackMm = trackWidthPx * MM_PER_PX;
+  const shownMm = isMobile
+    ? Math.round(clampedPct * trackMm)
+    : displayMm;
+  // Edge dissolve: starts at 250mm, fully faded at 300mm
+  const edgeOpacity = activePct !== null
+    ? Math.min(1, Math.max(0, 1 - (shownMm - 250) / 50))
+    : 1;
+  // Ticks at every 25mm; long at every 100mm — generated from real track length
+  const tickMms: number[] = [];
+  if (trackMm > 0) {
+    for (let mm = 0; mm <= Math.ceil(trackMm); mm += 25) tickMms.push(mm);
+  }
 
-  const zoneText = getZoneText(mm);
+  const zoneText = getZoneText(shownMm);
   // contentType key: stable within mm-mode, only changes on mode switch → no flicker
   const contentType = showStillstand ? 'stillstand' : zoneText ? `zone-${zoneText}` : 'mm';
   const labelContent = showStillstand
     ? 'Du hältst inne. Die meisten tun das hier.'
-    : zoneText ?? `${displayMm} mm`;
+    : zoneText ?? `${shownMm} mm`;
   const isLong = showStillstand || !!zoneText;
 
   return (
@@ -156,21 +184,26 @@ function R3() {
 
         <div className={styles.measureLine}>
           <div className={styles.measureTicks}>
-            {ticks.map((_, i) => (
-              <motion.div
-                key={i}
-                className={`${styles.tick} ${i % 4 === 0 ? styles.tickLong : ''}`}
-                initial={{ scaleY: 0, opacity: 0 }}
-                animate={inView ? { scaleY: 1, opacity: 1 } : {}}
-                transition={{ delay: i * 0.04, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                style={{ originY: 1 }}
-              />
-            ))}
+            {tickMms.map(mm => {
+              const isLong = mm % 100 === 0;
+              const pct = trackMm > 0 ? (mm / trackMm) * 100 : 0;
+              return (
+                <motion.div
+                  key={mm}
+                  className={`${styles.tick} ${isLong ? styles.tickLong : ''}`}
+                  style={{ left: `calc(${pct}% - 0.5px)`, originY: 1 }}
+                  initial={{ scaleY: 0, opacity: 0 }}
+                  animate={inView ? { scaleY: 1, opacity: 1 } : {}}
+                  transition={{ delay: (mm / Math.max(trackMm, 1)) * 0.5 + 0.1, duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                />
+              );
+            })}
           </div>
 
           <div
             className={styles.measureTrackWrap}
             ref={trackRef}
+            style={!isMobile && shownMm >= 300 ? { cursor: 'default' } : undefined}
             onMouseMove={isMobile ? undefined : handleMouseMove}
             onMouseLeave={isMobile ? undefined : handleMouseLeave}
           >
@@ -240,11 +273,312 @@ function R3() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Mythos / Fakt — Inhalt                                              */
+/* ------------------------------------------------------------------ */
+const mythFact = {
+  myth: 'Wer drüber lacht, hat kein Problem damit.',
+  fact: 'Der Witz ist oft der Schutzschild — nicht der Beweis, dass keiner nötig wäre.',
+  source: 'Sharp & Oates, Aesthetic Surgery Journal, Oxford Academic, 2019',
+};
+
+/* ------------------------------------------------------------------ */
+/* Richtung 5a — Mythos-Reveal (Sequentiell, InView-getriggert)       */
+/* ------------------------------------------------------------------ */
+function R5a() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: '-10%' });
+  const [phase, setPhase] = useState<'myth' | 'fact'>('myth');
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+    if (mq.matches) setPhase('fact');
+  }, []);
+
+  useEffect(() => {
+    if (!inView || reducedMotion) return;
+    const timer = setTimeout(() => setPhase('fact'), 2800);
+    return () => clearTimeout(timer);
+  }, [inView, reducedMotion]);
+
+  return (
+    <section
+      id="r5a"
+      className={`${styles.section} ${styles.r5a}`}
+      ref={sectionRef}
+    >
+      <div className={styles.r5aInner}>
+        <span className={styles.label}>Richtung 5a — Sequentiell</span>
+
+        {/* Chip — AnimatePresence mode="wait" ensures only one is mounted */}
+        <AnimatePresence mode="wait">
+          {phase === 'myth' ? (
+            <motion.span
+              key="myth"
+              className={`${styles.chip} ${styles.mythChip}`}
+              initial={reducedMotion ? false : { opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Mythos
+            </motion.span>
+          ) : (
+            <motion.span
+              key="fact"
+              className={`${styles.chip} ${styles.factChip}`}
+              initial={reducedMotion ? false : { opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Fakt
+            </motion.span>
+          )}
+        </AnimatePresence>
+
+        {/* Text — AnimatePresence mode="wait" guarantees zero overlap */}
+        <AnimatePresence mode="wait">
+          {phase === 'myth' ? (
+            <motion.p
+              key="myth-text"
+              className={styles.r5aText}
+              initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {mythFact.myth}
+            </motion.p>
+          ) : (
+            <motion.p
+              key="fact-text"
+              className={styles.r5aText}
+              initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={undefined}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {mythFact.fact}
+            </motion.p>
+          )}
+        </AnimatePresence>
+
+        {/* Source — only visible in fact state */}
+        <AnimatePresence>
+          {phase === 'fact' && (
+            <motion.p
+              className={styles.r5aSource}
+              initial={reducedMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: reducedMotion ? 0 : 0.45 }}
+            >
+              {mythFact.source}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Richtung 5b — Sticky, maximale Typoskala, ausblutendes Bleed       */
+/* ------------------------------------------------------------------ */
+function R5b() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isFact, setIsFact] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+    if (mq.matches) setIsFact(true);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  });
+
+  // Source fades in after the fact has settled
+  const sourceOpacity = useTransform(scrollYProgress, [0.55, 0.70], [0, 1]);
+  // Scroll hint fades out as soon as scrolling begins
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+
+  useMotionValueEvent(scrollYProgress, 'change', v => {
+    if (!reducedMotion) setIsFact(v >= 0.38);
+  });
+
+  // Reduced motion: no sticky scroll, show fact state immediately
+  if (reducedMotion) {
+    return (
+      <section id="r5b" className={styles.r5bOuter}>
+        <div className={styles.r5bSticky}>
+          <span className={styles.r5bLabel}>Richtung 5b — Bleed</span>
+          <span className={`${styles.chip} ${styles.factChip} ${styles.r5bChip}`}>Fakt</span>
+          <p className={styles.r5bText}>{mythFact.fact}</p>
+          <p className={styles.r5bSource}>{mythFact.source}</p>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="r5b" className={styles.r5bOuter} ref={sectionRef}>
+      <div className={styles.r5bSticky}>
+        <span className={styles.r5bLabel}>Richtung 5b — Bleed</span>
+
+        {/* Chip swap — AnimatePresence mode="wait", never two chips mounted */}
+        <AnimatePresence mode="wait">
+          {isFact ? (
+            <motion.span
+              key="fact-chip"
+              className={`${styles.chip} ${styles.factChip} ${styles.r5bChip}`}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Fakt
+            </motion.span>
+          ) : (
+            <motion.span
+              key="myth-chip"
+              className={`${styles.chip} ${styles.mythChip} ${styles.r5bChip}`}
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Mythos
+            </motion.span>
+          )}
+        </AnimatePresence>
+
+        {/* Main text — AnimatePresence mode="wait" guarantees zero ghosting */}
+        <AnimatePresence mode="wait">
+          {isFact ? (
+            <motion.p
+              key="fact-text"
+              className={styles.r5bText}
+              aria-live="polite"
+              initial={{ opacity: 0, scale: 0.98, y: 8 }}
+              animate={{ opacity: 1, scale: 1.0, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: -8 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {mythFact.fact}
+            </motion.p>
+          ) : (
+            <motion.p
+              key="myth-text"
+              className={styles.r5bText}
+              initial={{ opacity: 0, scale: 0.98, y: 8 }}
+              animate={{ opacity: 1, scale: 1.0, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: -8 }}
+              transition={{ duration: 0.25, ease: [0.4, 0, 1, 1] }}
+            >
+              {mythFact.myth}
+            </motion.p>
+          )}
+        </AnimatePresence>
+
+        {/* Source — bottom-right absolute, appears after fact settles */}
+        <motion.p className={styles.r5bSource} style={{ opacity: sourceOpacity }}>
+          {mythFact.source}
+        </motion.p>
+
+        {/* Scroll hint — centered bottom, fades on first scroll movement */}
+        <motion.div className={styles.r5bScrollHint} style={{ opacity: hintOpacity }} aria-hidden="true">
+          ↓
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Richtung 5c — Simultaner Kontrast, Nebeneinander                   */
+/* ------------------------------------------------------------------ */
+function R5c() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: '-10%' });
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+  }, []);
+
+  const colVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (delay: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+    }),
+  };
+
+  const isVisible = reducedMotion || inView;
+
+  return (
+    <section
+      id="r5c"
+      className={`${styles.section} ${styles.r5c}`}
+      ref={sectionRef}
+    >
+      <span className={styles.label}>Richtung 5c — Simultaner Kontrast</span>
+
+      <div className={styles.r5cLayout}>
+        {/* ---- Mythos-Spalte ---- */}
+        <motion.div
+          className={styles.r5cMythCol}
+          custom={0}
+          variants={colVariants}
+          initial="hidden"
+          animate={isVisible ? 'visible' : 'hidden'}
+        >
+          <span className={`${styles.chip} ${styles.mythChip}`}>Mythos</span>
+          <div className={styles.r5cMythTextWrap}>
+            <p className={styles.r5cMythText}>{mythFact.myth}</p>
+          </div>
+        </motion.div>
+
+        {/* ---- Trennlinie ---- */}
+        <motion.div
+          className={styles.r5cDivider}
+          custom={0}
+          variants={colVariants}
+          initial="hidden"
+          animate={isVisible ? 'visible' : 'hidden'}
+          aria-hidden="true"
+        />
+
+        {/* ---- Fakt-Spalte ---- */}
+        <motion.div
+          className={styles.r5cFactCol}
+          custom={reducedMotion ? 0 : 0.2}
+          variants={colVariants}
+          initial="hidden"
+          animate={isVisible ? 'visible' : 'hidden'}
+        >
+          <span className={`${styles.chip} ${styles.factChip}`}>Fakt</span>
+          <p className={styles.r5cFactText}>{mythFact.fact}</p>
+          <p className={styles.r5cSource}>{mythFact.source}</p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Richtung 2 — Monumentalzahl + Lücke                                 */
 /* ------------------------------------------------------------------ */
 function R2() {
-  const { ref: ref85, value: val85 } = useCountUp(85, 1200);
-  const { ref: ref55, value: val55 } = useCountUp(55, 1400);
+  const { ref: ref85, value: val85, done: done85 } = useCountUp(85, 3200);
+  const { ref: ref55, value: val55, done: done55 } = useCountUp(55, 4000);
 
   return (
     <section id="r2" className={`${styles.section} ${styles.r2}`}>
@@ -253,7 +587,11 @@ function R2() {
       <div className={styles.statsRow}>
         <div className={styles.statBlock}>
           <span className={styles.statNumber} ref={ref85}>
-            {val85} %
+            <span className={styles.countWrapper}>
+              <span className={styles.countSpacer}>85</span>
+              <span className={styles.countDigits}>{val85}</span>
+            </span>
+            <motion.span className={styles.pct} animate={{ opacity: done85 ? 1 : 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.5 }}> %</motion.span>
           </span>
           <motion.p
             className={styles.statLabel}
@@ -268,7 +606,11 @@ function R2() {
 
         <div className={styles.statBlock}>
           <span className={`${styles.statNumber} ${styles.accent}`} ref={ref55}>
-            {val55} %
+            <span className={styles.countWrapper}>
+              <span className={styles.countSpacer}>55</span>
+              <span className={styles.countDigits}>{val55}</span>
+            </span>
+            <motion.span className={styles.pct} animate={{ opacity: done55 ? 1 : 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.5 }}> %</motion.span>
           </span>
           <motion.p
             className={styles.statLabel}
@@ -347,6 +689,8 @@ function TopoSvg({ inView }: { inView: boolean }) {
     >
       {topoPaths.map((d, i) => {
         const c = topoConfig[i];
+        const altD = topoPathsAlt[i];
+        if (!c || !altD) return null;
         const postDraw = c.drawDelay + c.drawDur;
         return (
           <motion.path
@@ -360,7 +704,7 @@ function TopoSvg({ inView }: { inView: boolean }) {
               strokeDashoffset: 0,
               opacity: [0, 0.32, c.finalOp],
               y: [0, -c.floatAmp, 0],
-              d: [d, topoPathsAlt[i]],
+              d: [d, altD] as string[],
             } : {}}
             transition={{
               strokeDashoffset: {
@@ -399,8 +743,8 @@ function TopoSvg({ inView }: { inView: boolean }) {
 function R6() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const inView = useInView(sectionRef, { once: true, margin: '-10%' });
-  const { ref: ref85, value: val85 } = useCountUp(85, 1200);
-  const { ref: ref55, value: val55 } = useCountUp(55, 1600);
+  const { ref: ref85, value: val85, done: done85 } = useCountUp(85, 3200);
+  const { ref: ref55, value: val55, done: done55 } = useCountUp(55, 4200);
 
   return (
     <section id="r6" className={`${styles.section} ${styles.r6}`} ref={sectionRef}>
@@ -412,10 +756,18 @@ function R6() {
         <div className={styles.r6Content}>
           <div className={styles.gapVisual}>
             <span className={styles.bigNum} ref={ref85}>
-              {val85}<span className={styles.pct}> %</span>
+              <span className={styles.countWrapper}>
+                <span className={styles.countSpacer}>85</span>
+                <span className={styles.countDigits}>{val85}</span>
+              </span>
+              <motion.span className={styles.pct} animate={{ opacity: done85 ? 1 : 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.6 }}> %</motion.span>
             </span>
             <span className={styles.smallNum} ref={ref55}>
-              {val55}<span className={styles.pct}> %</span>
+              <span className={styles.countWrapper}>
+                <span className={styles.countSpacer}>55</span>
+                <span className={styles.countDigits}>{val55}</span>
+              </span>
+              <motion.span className={styles.pct} animate={{ opacity: done55 ? 1 : 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.6 }}> %</motion.span>
             </span>
           </div>
 
@@ -454,6 +806,9 @@ export default function PreviewPage() {
       <nav className={styles.nav} aria-label="Varianten-Navigation">
         {[
           { id: 'r3', label: '3 — Maßstrich' },
+          { id: 'r5a', label: '5a — Sequentiell' },
+          { id: 'r5b', label: '5b — Bleed' },
+          { id: 'r5c', label: '5c — Kontrast' },
           { id: 'r2', label: '2 — Monumentalzahl' },
           { id: 'r6', label: '6 — Topografie' },
         ].map(({ id, label }) => (
@@ -465,6 +820,9 @@ export default function PreviewPage() {
 
       <main id="main-content">
         <R3 />
+        <R5a />
+        <R5b />
+        <R5c />
         <R2 />
         <R6 />
       </main>
