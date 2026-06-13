@@ -9,7 +9,8 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 
 ## Detaillierte Docs
 - Brand Voice, Ton, Origin Story, Zielgruppen, Copy-Regeln → @docs/brand/VOICE.md
-- Design Language (Typografie, Farbe, Rhythmus, noch offen) → @docs/brand/DESIGN_LANGUAGE.md
+- Design Language (Typografie, Rhythmus, Grundprinzip) → @docs/brand/DESIGN_LANGUAGE.md
+- **Farbkonzept (abgestimmt)** — Sektionsregeln, Komponentenregeln, Verbote → @docs/brand/COLOR_CONCEPT.md
 - Business Model, Membership-Prinzipien → @docs/brand/BUSINESS.md
 - Tech Stack, alle Tool-Entscheidungen → @docs/tech/STACK.md
 - Security & Privacy Prinzipien → @docs/tech/SECURITY.md
