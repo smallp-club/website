@@ -1167,23 +1167,35 @@ function R5i() {
           <AnimatePresence mode="wait">
             {isFact ? (
               <motion.span key="r5i-chip-fact" className={`${styles.r5gChip} ${styles.r5gChipFact}`}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}>Fakt</motion.span>
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
+                exit={{ opacity: 0, y: 6, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}>
+                Fakt
+              </motion.span>
             ) : (
               <motion.span key="r5i-chip-myth" className={`${styles.r5gChip} ${styles.r5gChipMyth}`}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}>Mythos</motion.span>
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0, transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
+                exit={{ opacity: 0, y: 6, transition: { duration: 0.12, ease: [0.4, 0, 1, 1] } }}>
+                Mythos
+              </motion.span>
             )}
           </AnimatePresence>
           <AnimatePresence mode="wait">
             {isFact ? (
               <motion.p key="r5i-fact" className={styles.r5iText} aria-live="polite"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}>{mythFact.fact}</motion.p>
+                initial={{ clipPath: 'inset(0 100% 0 0%)' }}
+                animate={{ clipPath: 'inset(0 0% 0 0%)', transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
+                exit={{ clipPath: 'inset(0 0% 0 100%)', transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}>
+                {mythFact.fact}
+              </motion.p>
             ) : (
               <motion.p key="r5i-myth" className={styles.r5iText}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}>{mythFact.myth}</motion.p>
+                initial={{ clipPath: 'inset(0 100% 0 0%)' }}
+                animate={{ clipPath: 'inset(0 0% 0 0%)', transition: { duration: 0.22, ease: [0, 0, 0.2, 1] } }}
+                exit={{ clipPath: 'inset(0 0% 0 100%)', transition: { duration: 0.15, ease: [0.4, 0, 1, 1] } }}>
+                {mythFact.myth}
+              </motion.p>
             )}
           </AnimatePresence>
           <motion.p className={styles.r5gSource} style={{ opacity: sourceOpacity }}>{mythFact.source}</motion.p>
