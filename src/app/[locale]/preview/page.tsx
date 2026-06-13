@@ -574,6 +574,366 @@ function R5c() {
 }
 
 /* ------------------------------------------------------------------ */
+/* Richtung 5d — Schwarzer Raum, Farbe als Text                        */
+/* ------------------------------------------------------------------ */
+function R5d() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [isFact, setIsFact] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+    if (mq.matches) setIsFact(true);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  });
+
+  const sourceOpacity = useTransform(scrollYProgress, [0.52, 0.70], [0, 1]);
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+
+  useMotionValueEvent(scrollYProgress, 'change', v => {
+    if (!reducedMotion) setIsFact(v >= 0.38);
+  });
+
+  // Reduced motion: no sticky scroll, show fact state immediately
+  if (reducedMotion) {
+    return (
+      <section id="r5d" className={styles.r5dOuter}>
+        <div className={styles.r5dSticky}>
+          <span className={styles.r5dLabel}>Richtung 5d — Schwarz + Farbtext</span>
+          <div className={styles.r5dInner}>
+            <span className={`${styles.chip} ${styles.factChip}`}>Fakt</span>
+            <p className={`${styles.r5dText} ${styles.r5dFactText}`}>{mythFact.fact}</p>
+            <p className={styles.r5dSource}>{mythFact.source}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="r5d" className={styles.r5dOuter} ref={sectionRef}>
+      <div className={styles.r5dSticky}>
+        <span className={styles.r5dLabel}>Richtung 5d — Schwarz + Farbtext</span>
+
+        <div className={styles.r5dInner}>
+          {/* Chip swap — AnimatePresence mode="wait" */}
+          <AnimatePresence mode="wait">
+            {isFact ? (
+              <motion.span
+                key="fact-chip"
+                className={`${styles.chip} ${styles.factChip}`}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Fakt
+              </motion.span>
+            ) : (
+              <motion.span
+                key="myth-chip"
+                className={`${styles.chip} ${styles.mythChip}`}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Mythos
+              </motion.span>
+            )}
+          </AnimatePresence>
+
+          {/* Text swap — AnimatePresence mode="wait", color changes via className */}
+          <AnimatePresence mode="wait">
+            {isFact ? (
+              <motion.p
+                key="fact-text"
+                className={`${styles.r5dText} ${styles.r5dFactText}`}
+                aria-live="polite"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {mythFact.fact}
+              </motion.p>
+            ) : (
+              <motion.p
+                key="myth-text"
+                className={`${styles.r5dText} ${styles.r5dMythText}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {mythFact.myth}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          {/* Source — fades in after fact settles */}
+          <motion.p className={styles.r5dSource} style={{ opacity: sourceOpacity }}>
+            {mythFact.source}
+          </motion.p>
+        </div>
+
+        {/* Scroll hint — fades on first scroll */}
+        <motion.div
+          className={styles.r5dScrollHint}
+          style={{ opacity: hintOpacity }}
+          aria-hidden="true"
+        >
+          ↓
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Richtung 5f — Editorial-Akzent, Bold mit Farbhighlight              */
+/* ------------------------------------------------------------------ */
+function R5f() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const inView = useInView(sectionRef, { once: true, margin: '-10%' });
+  const [phase, setPhase] = useState<'myth' | 'fact'>('myth');
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+    if (mq.matches) setPhase('fact');
+  }, []);
+
+  useEffect(() => {
+    if (!inView || reducedMotion) return;
+    const timer = setTimeout(() => setPhase('fact'), 3000);
+    return () => clearTimeout(timer);
+  }, [inView, reducedMotion]);
+
+  return (
+    <section
+      id="r5f"
+      className={`${styles.section} ${styles.r5f}`}
+      ref={sectionRef}
+    >
+      <div className={styles.r5fInner}>
+        <span className={styles.label}>Richtung 5f — Editorial-Akzent</span>
+
+        {/* Chip — AnimatePresence mode="wait" */}
+        <AnimatePresence mode="wait">
+          {phase === 'myth' ? (
+            <motion.span
+              key="myth"
+              className={`${styles.chip} ${styles.mythChip}`}
+              initial={reducedMotion ? false : { opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Mythos
+            </motion.span>
+          ) : (
+            <motion.span
+              key="fact"
+              className={`${styles.chip} ${styles.factChip}`}
+              initial={reducedMotion ? false : { opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Fakt
+            </motion.span>
+          )}
+        </AnimatePresence>
+
+        {/* Text — AnimatePresence mode="wait" */}
+        <AnimatePresence mode="wait">
+          {phase === 'myth' ? (
+            <motion.p
+              key="myth-text"
+              className={styles.r5fText}
+              aria-live="polite"
+              initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {'Wer drüber '}<span className={styles.r5fAccentMyth}>lacht</span>{', hat kein Problem damit.'}
+            </motion.p>
+          ) : (
+            <motion.p
+              key="fact-text"
+              className={styles.r5fText}
+              aria-live="polite"
+              initial={reducedMotion ? false : { opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={undefined}
+              transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {'Der Witz ist oft der '}<span className={styles.r5fAccentFact}>Schutzschild</span>{' — nicht der Beweis, dass keiner nötig wäre.'}
+            </motion.p>
+          )}
+        </AnimatePresence>
+
+        {/* Source — only in fact state */}
+        <AnimatePresence>
+          {phase === 'fact' && (
+            <motion.p
+              className={styles.r5fSource}
+              initial={reducedMotion ? false : { opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: reducedMotion ? 0 : 0.45 }}
+            >
+              {mythFact.source}
+            </motion.p>
+          )}
+        </AnimatePresence>
+      </div>
+    </section>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Richtung 5e — Farb-Flip: Die ganze Welt wechselt                   */
+/* ------------------------------------------------------------------ */
+function R5e() {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const [isFact, setIsFact] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReducedMotion(mq.matches);
+    if (mq.matches) setIsFact(true);
+  }, []);
+
+  const { scrollYProgress } = useScroll({
+    target: outerRef,
+    offset: ['start start', 'end end'],
+  });
+
+  // Source fades in at scrollYProgress [0.52, 0.70]
+  const sourceOpacity = useTransform(scrollYProgress, [0.52, 0.70], [0, 1]);
+  // Scroll hint fades out at [0, 0.05]
+  const hintOpacity = useTransform(scrollYProgress, [0, 0.05], [1, 0]);
+
+  useMotionValueEvent(scrollYProgress, 'change', v => {
+    if (!reducedMotion) setIsFact(v >= 0.38);
+  });
+
+  // Reduced motion: skip sticky scroll, show fact state on dark-turquoise bg directly
+  if (reducedMotion) {
+    return (
+      <div id="r5e" className={styles.r5eOuter}>
+        <div className={`${styles.r5eSticky} ${styles.r5eStickyFact}`}>
+          <span className={`${styles.r5eLabel} ${styles.r5eLabelFact}`}>Richtung 5e — Farb-Flip</span>
+          <div className={styles.r5eInner}>
+            <span className={`${styles.chip} ${styles.factChip}`}>Fakt</span>
+            <p className={`${styles.r5eText} ${styles.r5eFactText}`}>{mythFact.fact}</p>
+            <p className={`${styles.r5eSource} ${styles.r5eFactSource}`}>{mythFact.source}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div id="r5e" className={styles.r5eOuter} ref={outerRef}>
+      {/*
+        Background flip: instant class swap — no CSS transition on background-color.
+        .r5eStickyMyth / .r5eStickyFact carry no transition property; the world
+        switches silently when the chip exit animation completes.
+      */}
+      <div className={`${styles.r5eSticky} ${isFact ? styles.r5eStickyFact : styles.r5eStickyMyth}`}>
+        <span className={`${styles.r5eLabel} ${isFact ? styles.r5eLabelFact : styles.r5eLabelMyth}`}>
+          Richtung 5e — Farb-Flip
+        </span>
+
+        <div className={styles.r5eInner}>
+          {/* Chip swap — AnimatePresence mode="wait": old chip exits fully before new one enters */}
+          <AnimatePresence mode="wait">
+            {isFact ? (
+              <motion.span
+                key="fact-chip"
+                className={`${styles.chip} ${styles.factChip}`}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Fakt
+              </motion.span>
+            ) : (
+              <motion.span
+                key="myth-chip"
+                className={`${styles.chip} ${styles.mythChip}`}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              >
+                Mythos
+              </motion.span>
+            )}
+          </AnimatePresence>
+
+          {/* Text swap — AnimatePresence mode="wait", pure opacity fade, identical size/position */}
+          <AnimatePresence mode="wait">
+            {isFact ? (
+              <motion.p
+                key="fact-text"
+                className={`${styles.r5eText} ${styles.r5eFactText}`}
+                aria-live="polite"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
+              >
+                {mythFact.fact}
+              </motion.p>
+            ) : (
+              <motion.p
+                key="myth-text"
+                className={`${styles.r5eText} ${styles.r5eMythText}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.28, ease: [0.4, 0, 1, 1] }}
+              >
+                {mythFact.myth}
+              </motion.p>
+            )}
+          </AnimatePresence>
+
+          {/* Source — driven by scrollYProgress [0.52, 0.70] */}
+          <motion.p
+            className={`${styles.r5eSource} ${isFact ? styles.r5eFactSource : styles.r5eMythSource}`}
+            style={{ opacity: sourceOpacity }}
+          >
+            {mythFact.source}
+          </motion.p>
+        </div>
+
+        {/* Scroll hint — fades at [0, 0.05]; color follows current state */}
+        <motion.div
+          className={`${styles.r5eScrollHint} ${isFact ? styles.r5eScrollHintFact : styles.r5eScrollHintMyth}`}
+          style={{ opacity: hintOpacity }}
+          aria-hidden="true"
+        >
+          ↓
+        </motion.div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Richtung 2 — Monumentalzahl + Lücke                                 */
 /* ------------------------------------------------------------------ */
 function R2() {
@@ -809,6 +1169,9 @@ export default function PreviewPage() {
           { id: 'r5a', label: '5a — Sequentiell' },
           { id: 'r5b', label: '5b — Bleed' },
           { id: 'r5c', label: '5c — Kontrast' },
+          { id: 'r5d', label: '5d — Schwarz+Farbe' },
+          { id: 'r5f', label: '5f — Editorial-Akzent' },
+          { id: 'r5e', label: '5e — Farb-Flip' },
           { id: 'r2', label: '2 — Monumentalzahl' },
           { id: 'r6', label: '6 — Topografie' },
         ].map(({ id, label }) => (
@@ -823,6 +1186,9 @@ export default function PreviewPage() {
         <R5a />
         <R5b />
         <R5c />
+        <R5d />
+        <R5f />
+        <R5e />
         <R2 />
         <R6 />
       </main>
