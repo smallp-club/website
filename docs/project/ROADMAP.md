@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-14 (Session 5)
+## Stand: 2026-06-16 (Session 6)
 
 ## Fertig — Fundament
 
@@ -36,18 +36,25 @@
 - [x] **RZ — Karten-Stapel (generisch)**: Bild + Eyebrow + Headline + Body + CTA. Aktive Karte voll, inaktive zeigen Teaser. Vier echte Topic-Teaser aus RESEARCH.md als erstes Real-Content-Beispiel
 - [x] **RZ Glass-Bubble-Cursor** (Desktop): Hot Zones links/rechts mit backdrop-blur Custom-Cursor, Spring-Follow, Click navigates prev/next. Mobile: Hot Zones deaktiviert, kein Bottom-Nav
 - [x] **Aufgeräumt:** RY (Rotierende Obrounds) und RX (Tiefenebenen) komplett entfernt
+- [x] **Foundation 1–8 abgeschlossen** — Ordner-Struktur, `src/lib/motion.ts`, Token-Layer, Layout-/Typo-/Body-Primitives, Button-System, Input-System, Patterns extrahiert, `/components-library` als interne Library angelegt
+- [x] **Echte Brand-Assets** ausgelagert nach `public/brand/` (Wordmark + Bildmarke in 5 Farben) und `public/imagery/` (`arches-warm.png`, `steps-bw.png`) — direkt von Next.js servierbar
+- [x] **Shared NavItems** in `src/app/[locale]/preview/lib/navItems.ts` — finale Item-Liste `über · ngo · themen · magazin`, Mitmachen bewusst nicht in der Nav
+- [x] **NavBar-Iterationen 1 + 2 archiviert** mit Lern-README in `src/app/[locale]/preview/_archive/navbar-iteration-{1,2}/` — Lern-Signal für künftige Sessions
 
 ## Offen — Direkt nächste Schritte
+
+- [ ] **NavBar Iteration 3 — Kevin wählt** zwischen A · Material-Morph / B · Form-Morph / C · Charakter-Morph (Bottom→Top-Sticky-Pin-Mechanik). Live in `/preview`, Switcher unten. Nach Auswahl: manifestieren als Pattern oder Section, Library-Page, raus aus `/preview`.
 
 - [x] **Farbkonzept abgestimmt** — Sektionsregeln, Komponentenregeln, Verbote → `docs/brand/COLOR_CONCEPT.md`
 - [ ] **Phase 2: Visual Direction** — `/imagegen-frontend-web` Moodboards → Kevin Feedback
 - [ ] **Karten-Stapel-Komponente in `/topics` integrieren** als erste echte Anwendung des generischen Schemas (Bild/Eyebrow/Headline/Body/CTA)
 - [ ] **Karten-Stapel auch auf Landing** einbauen (Kevin explizit genehmigt) — Section noch zu definieren
-- [ ] **Echte Fotos** für RZ-Bildslots — Shooting nach Fotografen-Briefing (Memory `project_imagery.md`)
+- [ ] **Echte Fotos** für CardFan-Bildslots — Shooting nach Fotografen-Briefing (Memory `project_imagery.md`)
 - [ ] **Social Media vs. Website Content** — klare Trennung erarbeiten (welche Inhalte wo, welches Format)
 - [ ] **Vercel DPA signieren** — DSGVO-Pflicht (Vercel → Settings → Legal)
 - [ ] **Vercel Preset auf "Next.js" prüfen**
 - [ ] **OneDrive-Pfad-Problem lösen** — Repo aus `OneDrive-adessoGroup/` raus nach `~/Code/smallp-website`. Dev-Server braucht 9,3 min bis „Ready", erste Page 10 min. HMR fällt regelmäßig auseinander. Git-Remote bleibt, Vercel auch.
+- [ ] **Dark Mode Konzept ableiten** — Strategie wählen (semantisches Token-Remapping + OKLCH-Verschiebung + getintete Dark-Base auf Dark Turquoise als Favorit). Sienna in Dark Mode neu kalibrieren (wird auf reinem Schwarz schmutzig). Companion-Palette statt 1:1-Inversion. Erst nach Launch der Light-Variante.
 
 ## Route-Stubs (existieren, noch leer)
 

@@ -1,0 +1,55 @@
+.section {
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ----- Tone ----- */
+.section[data-tone='light'] {
+  background-color: var(--surface-bg);
+  color: var(--text-strong);
+}
+
+.section[data-tone='inverse'] {
+  background-color: var(--surface-inverse);
+  color: var(--text-on-inverse);
+}
+
+.section[data-tone='deep'] {
+  background-color: var(--surface-deep);
+  color: var(--text-on-deep);
+}
+
+/* ----- Rhythm — Mobile-Defaults ----- */
+.section[data-rhythm='tight']    { padding-block: var(--space-6); }   /* 32 */
+.section[data-rhythm='standard'] { padding-block: var(--space-8); }   /* 64 */
+.section[data-rhythm='loose']    { padding-block: var(--space-9); }   /* 96 */
+.section[data-rhythm='flush']    { padding-block: 0; }
+
+/* Tablet (>= 768px) — größere Padding-Stufen */
+@media (min-width: 768px) {
+  .section[data-rhythm='tight']    { padding-block: var(--space-7); }    /* 48 */
+  .section[data-rhythm='standard'] { padding-block: var(--space-9); }    /* 96 */
+  .section[data-rhythm='loose']    { padding-block: var(--space-10); }   /* 128 */
+}
+
+/* Desktop (>= 1280px) — monumental Padding für Story-Atmen */
+@media (min-width: 1280px) {
+  .section[data-rhythm='standard'] { padding-block: var(--space-10); }   /* 128 */
+  .section[data-rhythm='loose']    { padding-block: var(--space-11); }   /* 192 */
+}
+
+/* ----- firstOfPage: Hero-Sektion sitzt direkt unter Nav ----- */
+.section[data-first='true'] {
+  padding-top: 0;
+}
+
+/* ----- minHeight ----- */
+.section[data-min-height='screen'] {
+  min-height: 100vh;        /* Fallback für Browser ohne dvh */
+  min-height: 100dvh;       /* iOS Safari URL-Bar-safe */
+}
+
+/* ----- Footer-Safe-Area (Deep-Tone meist nur im Footer) ----- */
+.section[data-tone='deep'] {
+  padding-bottom: max(var(--space-9), env(safe-area-inset-bottom));
+}

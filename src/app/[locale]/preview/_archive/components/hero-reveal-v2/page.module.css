@@ -1,0 +1,347 @@
+.page {
+  background-color: var(--spc-offwhite);
+  color: var(--spc-black);
+  position: relative;
+}
+
+/* ============================================================
+   Top nav — fixed, transparent over content
+   ============================================================ */
+.topNav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-6);
+  pointer-events: none;
+}
+
+.back {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-wide);
+  color: var(--spc-slate);
+  text-decoration: none;
+  pointer-events: auto;
+  padding: var(--space-2) var(--space-4);
+  background: rgba(247, 246, 242, 0.78);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-radius: var(--radius-pill);
+  border: 1px solid rgba(10, 10, 10, 0.06);
+}
+
+.back:hover {
+  color: var(--spc-black);
+}
+
+.topLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+  pointer-events: none;
+}
+
+/* ============================================================
+   Progress indicator — fixed bottom-right
+   ============================================================ */
+.progress {
+  position: fixed;
+  bottom: var(--space-6);
+  right: var(--space-6);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: flex-end;
+  padding: var(--space-3) var(--space-5);
+  background: rgba(247, 246, 242, 0.78);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(10, 10, 10, 0.06);
+}
+
+.progressNumbers {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  color: var(--spc-black);
+}
+
+.progressSlash {
+  color: var(--spc-slate);
+  margin: 0 var(--space-2);
+}
+
+.progressTrack {
+  position: relative;
+  width: 80px;
+  height: 1px;
+  background: rgba(10, 10, 10, 0.12);
+}
+
+.progressFill {
+  position: absolute;
+  inset: 0;
+  background: var(--spc-turquoise-deep);
+  transform-origin: left center;
+}
+
+/* ============================================================
+   Pair section — scroll-driven sticky reveal
+   ============================================================ */
+.pair {
+  position: relative;
+  height: 240vh;
+}
+
+.pairReducedMotion {
+  height: 100dvh;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* ---------------- Background Obround Motif ---------------- */
+.bgMotif {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+}
+
+.bgMotif0 {
+  background-image:
+    radial-gradient(ellipse 220px 110px at 12% 18%, rgba(29, 85, 86, 0.045), transparent 65%),
+    radial-gradient(ellipse 160px 80px at 78% 38%, rgba(29, 85, 86, 0.028), transparent 65%),
+    radial-gradient(ellipse 280px 140px at 28% 82%, rgba(29, 85, 86, 0.035), transparent 65%),
+    radial-gradient(ellipse 120px 60px at 90% 86%, rgba(10, 10, 10, 0.025), transparent 65%);
+}
+
+.bgMotif1 {
+  background-image:
+    radial-gradient(ellipse 320px 160px at 50% 12%, rgba(29, 85, 86, 0.04), transparent 65%),
+    radial-gradient(ellipse 200px 100px at 18% 58%, rgba(10, 10, 10, 0.03), transparent 65%),
+    radial-gradient(ellipse 180px 90px at 86% 72%, rgba(29, 85, 86, 0.035), transparent 65%);
+}
+
+.bgMotif2 {
+  background-image:
+    radial-gradient(ellipse 380px 190px at 8% 50%, rgba(192, 90, 56, 0.025), transparent 65%),
+    radial-gradient(ellipse 240px 120px at 92% 28%, rgba(29, 85, 86, 0.04), transparent 65%),
+    radial-gradient(ellipse 200px 100px at 60% 88%, rgba(10, 10, 10, 0.028), transparent 65%);
+}
+
+.bgMotif3 {
+  background-image:
+    radial-gradient(ellipse 280px 140px at 22% 22%, rgba(29, 85, 86, 0.05), transparent 65%),
+    radial-gradient(ellipse 320px 160px at 75% 78%, rgba(29, 85, 86, 0.035), transparent 65%),
+    radial-gradient(ellipse 160px 80px at 88% 12%, rgba(10, 10, 10, 0.025), transparent 65%);
+}
+
+/* ============================================================
+   Content
+   ============================================================ */
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  padding: 0 var(--space-8);
+  max-width: 100%;
+}
+
+.alignLeft {
+  align-items: flex-start;
+}
+
+.alignCenter {
+  align-items: center;
+  text-align: center;
+}
+
+.alignRight {
+  align-items: flex-end;
+  text-align: right;
+}
+
+/* ---------------- Number marker ---------------- */
+.number {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  color: var(--spc-turquoise-deep);
+}
+
+.numberSep {
+  color: var(--spc-slate);
+  opacity: 0.6;
+  margin: 0 var(--space-1);
+}
+
+/* ============================================================
+   Text box — only one element at a time via AnimatePresence
+   ============================================================ */
+.textBox {
+  position: relative;
+  width: 100%;
+  max-width: 1400px;
+  display: grid;
+  min-height: 1em;
+}
+
+.textBox > * {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.text {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+  margin: 0;
+  line-height: 1.0;
+  will-change: clip-path, opacity;
+}
+
+.myth {
+  /* Mythos in default extralight */
+}
+
+.fakt {
+  /* Fakt one weight step heavier — feels grounded */
+  font-weight: var(--weight-light);
+}
+
+/* ---------------- Scale variants ---------------- */
+.scaleStandard .text {
+  font-size: clamp(56px, 9vw, 92px);
+}
+
+.scaleLarge .text {
+  font-size: clamp(72px, 11vw, 116px);
+}
+
+.scaleMassive .text {
+  /* deliberately oversized — may bleed beyond comfortable margin on narrow viewports */
+  font-size: clamp(88px, 14vw, 148px);
+  line-height: 0.96;
+}
+
+.scaleClosing .text {
+  font-size: clamp(48px, 7vw, 76px);
+  font-weight: var(--weight-light);
+  line-height: 1.08;
+  max-width: 22ch;
+}
+
+/* ---------------- Prefix coloring ---------------- */
+.prefixMyth {
+  color: var(--spc-sienna);
+  font-weight: var(--weight-regular);
+}
+
+.prefixFact {
+  color: var(--spc-turquoise-deep);
+  font-weight: var(--weight-regular);
+}
+
+/* ---------------- Source caption ---------------- */
+.source {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  letter-spacing: var(--tracking-wide);
+  max-width: 60ch;
+  margin: 0;
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: center;
+  min-height: 60dvh;
+  padding: var(--space-9) var(--space-6);
+  text-align: center;
+}
+
+.footerLine {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+.footerSub {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--spc-slate);
+  max-width: 42ch;
+  margin: 0;
+}
+
+/* ============================================================
+   Mobile
+   ============================================================ */
+@media (max-width: 768px) {
+  .pair {
+    height: 200vh;
+  }
+
+  .content {
+    padding: 0 var(--space-5);
+    gap: var(--space-6);
+  }
+
+  .topNav {
+    padding: var(--space-4);
+  }
+
+  .progress {
+    bottom: var(--space-5);
+    right: var(--space-5);
+    padding: var(--space-2) var(--space-4);
+  }
+
+  .progressTrack {
+    width: 56px;
+  }
+
+  .scaleStandard .text,
+  .scaleLarge .text,
+  .scaleMassive .text {
+    font-size: clamp(40px, 12vw, 72px);
+  }
+
+  .scaleClosing .text {
+    font-size: clamp(36px, 10vw, 56px);
+  }
+}

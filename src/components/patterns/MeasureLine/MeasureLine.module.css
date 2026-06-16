@@ -1,0 +1,169 @@
+.section {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-11) var(--space-9);
+  overflow: hidden;
+  position: relative;
+  background: var(--surface-bg);
+  gap: 0;
+  user-select: none;
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+  margin: 0 0 var(--space-8);
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-9);
+}
+
+.measureLine {
+  position: relative;
+  width: calc(100% + var(--space-9));
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.measureTrack {
+  position: relative;
+  height: 1px;
+  background: var(--spc-black);
+  width: 100%;
+}
+
+.measureTrackWrap {
+  position: relative;
+  cursor: none;
+  padding: 24px 0;
+  margin: -24px 0;
+}
+
+.cursorIndicator {
+  position: absolute;
+  top: -24px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.mmReadoutRow {
+  height: 28px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.mmFixedReadout {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-black);
+  pointer-events: none;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.flagBelow {
+  position: absolute;
+  top: 36px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.flagText {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-regular);
+  font-style: italic;
+  color: var(--spc-slate);
+  letter-spacing: 0.02em;
+}
+
+.cursorTick {
+  width: 2px;
+  height: 52px;
+  background: var(--spc-turquoise);
+}
+
+.measureTicks {
+  position: relative;
+  width: 100%;
+  height: 20px;
+}
+
+.tick {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: 10px;
+  background: var(--spc-black);
+}
+
+.tickLong {
+  height: 20px;
+}
+
+.measureCaption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  margin-top: var(--space-3);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.headline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 10vw, var(--text-display-xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+  max-width: 14ch;
+  margin: 0;
+}
+
+.sub {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  color: var(--spc-slate);
+  max-width: 48ch;
+  line-height: var(--leading-relaxed);
+  margin-top: var(--space-5);
+}
+
+@media (max-width: 1024px) {
+  .section {
+    padding: var(--space-10) var(--space-7);
+  }
+  .content {
+    gap: var(--space-7);
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: var(--space-9) var(--space-5);
+  }
+  .content {
+    gap: var(--space-6);
+  }
+  .headline {
+    font-size: clamp(40px, 8vw, 64px);
+  }
+  .sub {
+    font-size: var(--text-body-md);
+  }
+}

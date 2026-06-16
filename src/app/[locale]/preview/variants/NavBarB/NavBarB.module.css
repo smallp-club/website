@@ -1,0 +1,338 @@
+/* =========================================================================
+   NavBarB — Form-Morph (Pill wird Bar)
+
+   Architektur:
+   - .shell trägt den Sticky-Kontext (scroll-container ist <html>/<body>).
+   - .hero ist die Bühne, an deren Bottom die Pill schwebt.
+   - .sentinel ist der 1px-Trigger, der Pin-Detection auslöst.
+   - .nav ist sticky am Top, wird aber durch negativen margin-top so weit
+     hochgezogen, dass sie initial visuell am Hero-Bottom sitzt.
+   - .nav transitioniert alle Form-Properties über CSS-Custom-Properties,
+     die im [data-pinned="true"]-State neu gesetzt werden.
+   ========================================================================= */
+
+.shell {
+  position: relative;
+  isolation: isolate;
+  background-color: var(--spc-offwhite);
+  color: var(--text-strong);
+}
+
+/* -------------------------------------------------------------------------
+   Hero — Bühnenbild mit Tagline.
+   ------------------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(48px, 8vh, 96px) var(--space-5);
+  background-image: url('/imagery/arches-warm.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 10, 10, 0.32) 0%,
+      rgba(10, 10, 10, 0.18) 40%,
+      rgba(10, 10, 10, 0.42) 100%
+    );
+  pointer-events: none;
+}
+
+.eyebrow {
+  position: absolute;
+  top: clamp(24px, 5vh, 48px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: var(--weight-medium);
+  font-size: 13px;
+  letter-spacing: var(--tracking-wide);
+  color: var(--spc-offwhite);
+  text-transform: lowercase;
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.45);
+}
+
+.tagline {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 9vw, 124px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-offwhite);
+  text-transform: lowercase;
+  text-align: center;
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.42);
+}
+
+/* -------------------------------------------------------------------------
+   Sentinel — 1px-Marker direkt vor der Nav.
+   Wenn er aus dem Viewport scrollt, ist die Nav gepinnt.
+   ------------------------------------------------------------------------- */
+
+.sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------
+   Nav — Form-Morph via Custom Properties.
+
+   Default-State = Bottom-Pill, schwebend im Hero.
+   data-pinned="true" = Top-Bar, full-width am Viewport-Rand.
+
+   Der negative margin-top zieht die Nav so weit hoch, dass sie nach
+   Sticky-Dock visuell am Hero-Bottom sitzt — mit dem Floating-Gap als
+   Atem zum Bühnenbild-Rand.
+   ------------------------------------------------------------------------- */
+
+.nav {
+  /* Form-Custom-Properties — werden im pinned-State neu gesetzt. */
+  --nav-height: 48px;
+  --nav-floating-gap: 24px;
+  --nav-max-width: 720px;
+  --nav-radius: var(--radius-pill);
+  --nav-bg-alpha: 0.85;
+  --nav-blur: 20px;
+  --nav-saturate: 1.2;
+  --nav-shadow: var(--shadow-lg);
+  --nav-padding-x: 24px;
+  --nav-hairline: transparent;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  /* Negative margin-top zieht die Nav in den Layout-Fluss hoch. */
+  margin-top: calc(-1 * (var(--nav-height) + var(--nav-floating-gap)));
+  margin-bottom: var(--nav-floating-gap);
+  margin-inline: auto;
+
+  width: 100%;
+  max-width: var(--nav-max-width);
+  height: var(--nav-height);
+
+  padding-inline: var(--nav-padding-x);
+  padding-block: 12px;
+  box-sizing: border-box;
+
+  background-color: rgba(247, 246, 242, var(--nav-bg-alpha));
+  -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  border-radius: var(--nav-radius);
+  box-shadow: var(--nav-shadow), 0 1px 0 0 var(--nav-hairline);
+
+  /* Synchroner Morph aller Form-Properties. */
+  transition:
+    max-width var(--duration-slow) var(--ease-out),
+    border-radius var(--duration-slow) var(--ease-out),
+    background-color var(--duration-slow) var(--ease-out),
+    box-shadow var(--duration-slow) var(--ease-out),
+    padding-inline var(--duration-slow) var(--ease-out),
+    margin-bottom var(--duration-slow) var(--ease-out),
+    -webkit-backdrop-filter var(--duration-slow) var(--ease-out),
+    backdrop-filter var(--duration-slow) var(--ease-out);
+}
+
+/* Pinned-State — Bar.
+   max-width unset → 100vw effektiv, Radius 0, kein Schatten, Hairline statt
+   floating-shadow, Padding nach Viewport skaliert, Margin-bottom 0. */
+.nav[data-pinned='true'] {
+  --nav-max-width: 100%;
+  --nav-radius: 0;
+  --nav-bg-alpha: 0.92;
+  --nav-blur: 16px;
+  --nav-saturate: 1.15;
+  --nav-shadow: none;
+  --nav-padding-x: clamp(24px, 5vw, 64px);
+  --nav-hairline: rgba(10, 10, 10, 0.04);
+  --nav-floating-gap: 0px;
+}
+
+/* -------------------------------------------------------------------------
+   Nav-Inner — Layout für Lockup + Items.
+   ------------------------------------------------------------------------- */
+
+.navInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  width: 100%;
+  height: 100%;
+}
+
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px; /* Touch-Target */
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm);
+}
+
+.lockup:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.mark {
+  display: block;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+}
+
+.wordmark {
+  display: block;
+  height: 18px;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.items {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.separator {
+  display: inline-block;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1;
+  user-select: none;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-inline: 10px;
+  font-family: var(--font-body);
+  font-weight: var(--weight-medium);
+  font-size: 14px;
+  letter-spacing: var(--tracking-normal);
+  color: var(--text-strong);
+  text-transform: lowercase;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.link:hover {
+  color: var(--accent-contrast);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.link[aria-current='page'] {
+  color: var(--accent-contrast);
+}
+
+/* -------------------------------------------------------------------------
+   Folgesektion — nur ein Atemraum, damit Scroll-Verhalten greift.
+   ------------------------------------------------------------------------- */
+
+.afterStage {
+  min-height: 160vh;
+  padding: var(--section-y) var(--space-5);
+  background-color: var(--spc-offwhite);
+}
+
+.afterCopy {
+  max-width: 640px;
+  margin: 0 auto;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+  text-transform: lowercase;
+}
+
+/* -------------------------------------------------------------------------
+   Mobile — Pill schmaler, Wordmark unter 480px ausblenden.
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .nav {
+    --nav-height: 44px;
+    --nav-floating-gap: 16px;
+    --nav-max-width: 92vw;
+    --nav-padding-x: 16px;
+  }
+
+  .nav[data-pinned='true'] {
+    --nav-max-width: 100%;
+    --nav-padding-x: var(--space-5);
+    --nav-floating-gap: 0px;
+  }
+
+  .link {
+    padding-inline: 8px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wordmark {
+    display: none;
+  }
+
+  .items {
+    gap: 2px;
+  }
+
+  .link {
+    padding-inline: 6px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Reduced Motion — Hard-Toggle zwischen Pill und Bar.
+   Tokens setzen --duration-slow auf --duration-instant; zusätzlich
+   garantieren wir hier explizit, dass kein Form-Morph als Animation
+   wahrnehmbar ist.
+   ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .nav {
+    transition-duration: 0.01ms;
+  }
+
+  .link {
+    transition-duration: 0.01ms;
+  }
+}

@@ -1,0 +1,303 @@
+.page {
+  background-color: var(--spc-offwhite);
+  min-height: 100dvh;
+  padding: var(--space-10) var(--space-9);
+  max-width: 880px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+/* ---------------- Header ---------------- */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-7);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.08);
+}
+
+.back {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  text-decoration: none;
+  letter-spacing: var(--tracking-wide);
+  align-self: flex-start;
+}
+
+.back:hover {
+  color: var(--spc-black);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+.intro {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--spc-slate);
+  max-width: 60ch;
+  margin: 0;
+}
+
+/* ---------------- Direction blocks ---------------- */
+.direction {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  padding-bottom: var(--space-9);
+  border-bottom: 1px solid rgba(10, 10, 10, 0.06);
+}
+
+.direction:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.directionHead {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.directionLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-turquoise-deep);
+}
+
+.directionLabelStarred {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-sienna);
+}
+
+.directionLabelCurrent {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+}
+
+.directionTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+.directionDesc {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--spc-slate);
+  max-width: 62ch;
+  margin: 0;
+}
+
+.examples {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  padding: var(--space-6) var(--space-7);
+  background: rgba(10, 10, 10, 0.02);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(10, 10, 10, 0.04);
+}
+
+.exampleSource {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  margin: var(--space-2) 0 0 0;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ============================================================
+   Richtungen 1, 2, 3 — Typografisches Präfix (shared)
+   ============================================================ */
+.prefixSentence {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.8vw, 28px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+.prefixMyth {
+  color: var(--spc-sienna);
+  font-weight: var(--weight-regular);
+}
+
+.prefixFact {
+  color: var(--spc-turquoise-deep);
+  font-weight: var(--weight-regular);
+}
+
+/* ============================================================
+   Richtung 4 — Zitat-Mythos, blanker Fakt
+   ============================================================ */
+.zitatMyth {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-style: italic;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-sienna);
+  opacity: 0.85;
+  margin: 0;
+  padding-left: var(--space-5);
+  border-left: 1px solid rgba(192, 90, 56, 0.2);
+}
+
+.zitatFakt {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.8vw, 28px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+/* ============================================================
+   Richtung 5 — Obround-Marginalie
+   ============================================================ */
+.lane {
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.laneMarkerMyth {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--spc-sienna);
+  margin-top: 0.55em;
+  justify-self: start;
+}
+
+.laneMarkerFact {
+  width: 6px;
+  height: 16px;
+  border-radius: 3px;
+  background: var(--spc-turquoise-deep);
+  margin-top: 0.4em;
+  justify-self: start;
+}
+
+.laneSentence {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.8vw, 28px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+.laneFactBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.laneSource {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  margin: 0;
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ============================================================
+   Zum Vergleich — aktueller Chip
+   ============================================================ */
+.directionCurrent .examples {
+  background: rgba(192, 90, 56, 0.04);
+  border-color: rgba(192, 90, 56, 0.12);
+}
+
+.currentRow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.currentChipMyth,
+.currentChipFact {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px var(--space-4);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+.currentChipMyth {
+  background: var(--spc-sienna);
+  color: var(--spc-offwhite);
+}
+
+.currentChipFact {
+  background: var(--spc-turquoise);
+  color: var(--spc-black);
+}
+
+.currentSentence {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.8vw, 28px);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-black);
+  margin: 0;
+}
+
+/* ---------------- Mobile ---------------- */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-7) var(--space-5);
+    gap: var(--space-8);
+  }
+
+  .examples {
+    padding: var(--space-5);
+  }
+
+  .lane {
+    grid-template-columns: 20px 1fr;
+    gap: var(--space-4);
+  }
+}

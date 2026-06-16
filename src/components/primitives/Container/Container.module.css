@@ -1,0 +1,35 @@
+.container {
+  margin-inline: auto;
+  width: 100%;
+  padding-inline: var(--gutter);
+  box-sizing: border-box;
+}
+
+.container[data-width='prose'] {
+  max-width: 680px;
+}
+
+.container[data-width='default'] {
+  max-width: var(--container-max);
+}
+
+.container[data-width='wide'] {
+  max-width: var(--container-wide);
+}
+
+.container[data-width='bleed'] {
+  max-width: 100%;
+  padding-inline: 0;
+}
+
+@media (min-width: 768px) {
+  .container:not([data-width='bleed']) {
+    padding-inline: var(--space-6);
+  }
+}
+
+@media (min-width: 1280px) {
+  .container:not([data-width='bleed']) {
+    padding-inline: var(--space-7);
+  }
+}

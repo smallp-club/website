@@ -1,0 +1,325 @@
+/* ============================================================
+ * NavBarC — Charakter-Morph
+ *
+ * „Brand-Boden im Hero" wird zu „Editorial-Header über Inhalt".
+ * Kein Pill-Morph, kein Form-Wechsel, kein Material-Sprung.
+ * Höhe konstant (60 / 52 px), Logo + Items farblich unverändert.
+ *
+ * Was sich verwandelt — alles gleichzeitig über --duration-slow:
+ *   1) Soft top-edge Gradient-Fade  →  voller Off-White-Solid
+ *   2) backdrop-filter blur 12 → 16, saturate 1.05 → 1.15
+ *   3) Hairline-bottom opacity 0 → 1 (magazin-editorial-Charakter)
+ *
+ * Background-Morph-Trick: zwei Layer übereinander statt
+ * Gradient→Solid-Transition (die nicht sauber animierbar ist).
+ *   - .nav selbst trägt den Bottom-State-Gradient (immer da).
+ *   - .nav::before ist ein opacity-gefadeter Solid-Off-White-Layer,
+ *     der im pinned state den Gradient überdeckt.
+ * Das ist robust, ohne @property-Browser-Support-Sorgen.
+ * ============================================================ */
+
+/* ---------- HERO ---------- */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background-image:
+    /* Scrim für Lesbarkeit der Off-White-Typo auf warmem Bühnenbild. */
+    linear-gradient(180deg, rgba(10, 10, 10, 0.35) 0%, rgba(10, 10, 10, 0.5) 60%, rgba(10, 10, 10, 0.62) 100%),
+    url('/imagery/arches-warm.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: var(--spc-offwhite);
+  isolation: isolate;
+}
+
+.heroInner {
+  width: 100%;
+  max-width: var(--container-max);
+  padding: var(--space-7) var(--gutter);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-7);
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: lowercase;
+  color: var(--spc-offwhite);
+  opacity: 0.86;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.eyebrowDot {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-circle);
+  background: currentColor;
+  display: inline-block;
+}
+
+.tagline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 9vw, 124px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  text-transform: lowercase;
+  color: var(--spc-offwhite);
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.45);
+  margin: 0;
+  max-width: 18ch;
+}
+
+/* ---------- SENTINEL ---------- */
+/* 1 px Marker direkt vor der Nav für IntersectionObserver. */
+.sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* ---------- NAV — STICKY-PIN-TRICK ---------- */
+/* Mechanik (identisch zu A/B):
+ *   position: sticky + top: 0 + margin-top: -nav-height
+ *   → die Nav startet sichtbar im Hero-Bottom als „Brand-Boden",
+ *     scrollt mit dem Hero hoch, dockt am Viewport-Top an.
+ *
+ * data-pinned wird vom Observer auf den Sentinel getoggelt
+ * und treibt den Charakter-Morph rein per CSS-Selektor. */
+.nav {
+  --nav-height: 60px;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-top: calc(-1 * var(--nav-height));
+  height: var(--nav-height);
+
+  display: flex;
+  align-items: center;
+
+  /* Bottom-State (default, im Hero auf Bühnenbild):
+   * Soft top-edge Gradient-Fade. Off-White wird nach oben hin
+   * transparent → die Bar wirkt wie ein Boden, der ins Bühnenbild
+   * ausläuft, nicht wie ein aufgesetzter Streifen. */
+  background: linear-gradient(
+    to top,
+    rgba(247, 246, 242, 0.78) 0%,
+    rgba(247, 246, 242, 0.42) 60%,
+    rgba(247, 246, 242, 0) 100%
+  );
+
+  /* Glas-Effekt schon im Hero, aber durch den Gradient maskiert. */
+  backdrop-filter: blur(12px) saturate(1.05);
+  -webkit-backdrop-filter: blur(12px) saturate(1.05);
+
+  /* Material-Shift im pinned state — backdrop-filter + Hairline. */
+  transition:
+    backdrop-filter var(--duration-slow) var(--ease-out),
+    -webkit-backdrop-filter var(--duration-slow) var(--ease-out);
+}
+
+/* Solid Off-White Layer — fadet ein, deckt im pinned state den
+ * Gradient ab und wird zum vollen Editorial-Header-Hintergrund.
+ * Eleganter als Gradient↔Solid-Transition, weil opacity sauber
+ * animierbar ist und der visuelle Effekt identisch wirkt. */
+.nav::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(247, 246, 242, 0.92);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+/* Hairline-bottom — letztes Mikro-Detail für Magazin-Charakter. */
+.nav::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(10, 10, 10, 0.06);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+/* Pinned-State: Solid-Layer fadet ein, Hairline fadet ein,
+ * Glas wird stärker. Charakter wechselt — Form bleibt. */
+.nav[data-pinned='true'] {
+  backdrop-filter: blur(16px) saturate(1.15);
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+}
+
+.nav[data-pinned='true']::before {
+  opacity: 1;
+}
+
+.nav[data-pinned='true']::after {
+  opacity: 1;
+}
+
+.navInner {
+  position: relative;
+  z-index: 2; /* über ::before-Solid-Layer und ::after-Hairline */
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+/* ---------- LOGO LOCKUP ---------- */
+/* Farblich konstant: deep-mark + black-wordmark in beiden States.
+ * Im Bottom-State sorgt der Gradient (78 % Off-White unten) für
+ * genug Kontrast unter den Letters — kein Surface-Switch nötig. */
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  /* Touch-Target ≥ 44 px ohne Höhenänderung der Bar. */
+  padding: var(--space-3) 0;
+  text-decoration: none;
+  position: relative;
+  isolation: isolate;
+}
+
+.logoLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+.logoStack {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.mark {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+
+.wordmark {
+  height: 18px;
+  width: auto;
+  display: block;
+}
+
+/* ---------- ITEMS ---------- */
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.itemSeparator {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-circle);
+  background: currentColor;
+  opacity: 0.45;
+  display: inline-block;
+  margin-left: var(--space-4);
+}
+
+.itemLink {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  text-transform: lowercase;
+  letter-spacing: 0;
+  text-decoration: none;
+
+  /* Farblich konstant — kein State-Switch. Gradient + backdrop-filter
+   * tragen die Lesbarkeit im Bottom-State. */
+  color: var(--text-strong);
+
+  /* Touch-Target ≥ 44 px via padding, ohne Bar-Höhe zu sprengen. */
+  padding: var(--space-3) var(--space-2);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+}
+
+.itemLink:hover {
+  opacity: 0.7;
+}
+
+.itemLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.itemLink[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 768px) {
+  .nav {
+    --nav-height: 52px;
+  }
+
+  .itemLink {
+    font-size: 13px;
+    padding: var(--space-3) var(--space-1);
+  }
+
+  .items {
+    gap: var(--space-3);
+  }
+
+  .itemSeparator {
+    margin-left: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Wordmark unter 480 px ausblenden, nur Bildmarke trägt die Marke. */
+  .wordmark {
+    display: none;
+  }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+/* Charakter-Morph wird zum Hard-Toggle. */
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav::before,
+  .nav::after {
+    transition-duration: 0.01ms;
+  }
+}

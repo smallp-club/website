@@ -1,0 +1,117 @@
+.section {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-11) var(--space-9);
+  overflow: hidden;
+  position: relative;
+  background: var(--surface-bg);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+  margin: 0 0 var(--space-8);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.number {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(80px, 16vw, 160px);
+  line-height: 1;
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-black);
+  font-variant-numeric: tabular-nums;
+}
+
+.numberQuiet {
+  color: var(--spc-ash);
+}
+
+.labelBody {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  color: var(--spc-ink);
+  max-width: 36ch;
+  line-height: var(--leading-relaxed);
+}
+
+.source {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--spc-slate);
+  margin-top: var(--space-7);
+}
+
+.countWrapper {
+  display: inline-grid;
+}
+
+.countSpacer {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  user-select: none;
+  pointer-events: none;
+}
+
+.countDigits {
+  grid-area: 1 / 1;
+  text-align: right;
+}
+
+.pct {
+  font-size: 0.34em;
+  vertical-align: 0.22em;
+  letter-spacing: 0;
+  margin-left: 0.06em;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 1024px) {
+  .section {
+    padding: var(--space-10) var(--space-7);
+  }
+  .row {
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: var(--space-9) var(--space-5);
+  }
+  .row {
+    gap: var(--space-5);
+  }
+  .labelBody {
+    font-size: var(--text-body-md);
+  }
+}

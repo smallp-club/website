@@ -1,0 +1,352 @@
+/* ============================================================
+   NavBarD — Editorial-Magazin-Strip (Pentagram-Klasse)
+
+   Großzügiger Cover-Strip oben (Wordmark + Bildmarke + Eyebrow),
+   Items rechts. Hairline trennt Strip vom Hero. Kein Sticky,
+   kein Reveal — der Strip scrollt mit dem Hero weg.
+
+   Hero darunter: full-bleed Bühnenbild mit Scrim und Tagline.
+   ============================================================ */
+
+/* ----------------------------------------------------------------
+   Cover-Strip — relative position, scrollt mit
+   ---------------------------------------------------------------- */
+
+.strip {
+  position: relative; /* explizit: NICHT fixed, NICHT sticky */
+  width: 100%;
+  /* Großzügige Höhe als Atem — 88px Min, 96px optimal */
+  min-height: 96px;
+  padding-inline: clamp(24px, 4vw, 64px);
+  padding-block: var(--space-4);
+  background: var(--surface-bg);
+  /* Klassische Magazin-Trennlinie zum Inhalt darunter */
+  border-bottom: 1px solid var(--spc-stone);
+  display: flex;
+  align-items: flex-end; /* Cover-Lockup sitzt visuell am unteren Rand */
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+/* ----------------------------------------------------------------
+   Brand-Column — vertikal gestaffelt: Eyebrow oben, Lockup drunter
+   ---------------------------------------------------------------- */
+
+.brandColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+/* Editorial-Eyebrow als Magazin-Ausgabe-Marker */
+.eyebrow {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: var(--tracking-wide);
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  user-select: none;
+}
+
+.eyebrowSep {
+  color: var(--spc-ash);
+  user-select: none;
+}
+
+/* Lockup-Link: Bildmarke + Wordmark als Magazin-Cover-Logo. Touch-Target
+   wird via Padding angedeutet — kein min-height nötig, weil das Lockup
+   selbst groß genug ist. */
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+  /* Eigene Touch-Target-Padding für mobile Hits */
+  padding-block: var(--space-1);
+}
+
+.lockup:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.lockupMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Höhe der Bildmarke optisch leicht über Wordmark (Cover-Anker) */
+  height: 38px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.lockupMarkImg {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+.lockupWordmark {
+  display: inline-flex;
+  align-items: center;
+  /* Optische Baseline-Justage gegen Bildmarke. Wordmark ist breiter als hoch. */
+  height: 34px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.lockupWordmarkImg {
+  height: 100%;
+  width: auto;
+  display: block;
+}
+
+/* ----------------------------------------------------------------
+   Items rechts — Magazin-Index-Pattern mit Mittelpunkt-Separator
+   ---------------------------------------------------------------- */
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* A11y: Touch-Target ≥ 44px via padding, ohne den Strip optisch aufzublasen */
+  min-height: var(--touch-min);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-1);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: var(--tracking-normal);
+  color: var(--text-strong);
+  text-decoration: none;
+  text-transform: lowercase;
+}
+
+/* Underline links→rechts beim Hover, klassisches Editorial-Detail */
+.link::after {
+  content: '';
+  position: absolute;
+  left: var(--space-1);
+  right: var(--space-1);
+  bottom: calc(var(--space-3) - 6px);
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.link:hover::after,
+.link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.link:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.linkActive::after {
+  /* Aktives Item: permanente 1px-Underline */
+  transform: scaleX(1);
+}
+
+.sep {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: var(--weight-medium);
+  color: var(--spc-ash);
+  line-height: 1;
+  user-select: none;
+}
+
+/* ----------------------------------------------------------------
+   Hero — full-bleed Bühnenbild mit Scrim, Tagline als h1
+   ---------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 80vh;
+  /* Bühnenbild als Background — cover, center */
+  background-image: url('/imagery/arches-warm.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  /* isolate, damit Scrim als blend layer nichts an parent macht */
+  isolation: isolate;
+}
+
+/* Scrim als eigene absolute Layer — Lesbarkeit + Übergang zu Off-White unten */
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.32) 0%,
+    rgba(10, 10, 10, 0.06) 32%,
+    rgba(10, 10, 10, 0) 60%,
+    rgba(247, 246, 242, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  width: 100%;
+  padding-inline: clamp(24px, 5vw, 80px);
+  padding-block: var(--space-9);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight); /* Chillax 200 */
+  font-size: clamp(56px, 9vw, 120px);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--spc-offwhite);
+  text-transform: lowercase;
+  /* Dezenter Schatten für Lesbarkeit auf Bühnenbild — kein Glow */
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.28);
+}
+
+.subline {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+  font-size: clamp(15px, 1.6vw, 19px);
+  line-height: 1.45;
+  letter-spacing: var(--tracking-normal);
+  color: var(--spc-offwhite);
+  text-transform: lowercase;
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.32);
+  /* Slightly muted gegenüber Tagline — Tagline trägt, Subline begleitet */
+  opacity: 0.88;
+}
+
+/* ----------------------------------------------------------------
+   Mobile — < 768px
+   ---------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .strip {
+    min-height: 72px;
+    padding-inline: var(--space-5);
+    padding-block: var(--space-3);
+    gap: var(--space-4);
+  }
+
+  .brandColumn {
+    gap: 2px;
+  }
+
+  /* Mobile: Eyebrow reduziert auf „ausgabe 01" — Atem statt Doppelinfo */
+  .eyebrowFull:nth-child(n + 2) {
+    display: none;
+  }
+
+  .eyebrowSep {
+    display: none;
+  }
+
+  .lockup {
+    gap: var(--space-2);
+  }
+
+  .lockupMark {
+    height: 30px;
+  }
+
+  .lockupWordmark {
+    height: 26px;
+  }
+
+  /* Items horizontal scrollbar bei sehr wenig Platz — scroll-snap behält
+     den Magazin-Rhythmus. Scrollbar versteckt, Padding gibt Atem. */
+  .items {
+    gap: var(--space-4);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    /* Negative margin gegen Strip-Padding → Items dürfen am Rand bluten */
+    margin-inline-end: calc(var(--space-5) * -1);
+    padding-inline-end: var(--space-5);
+  }
+
+  .items::-webkit-scrollbar {
+    display: none;
+  }
+
+  .item {
+    gap: var(--space-4);
+    scroll-snap-align: start;
+    flex-shrink: 0;
+  }
+
+  .link {
+    font-size: 14px;
+  }
+
+  .sep {
+    font-size: 14px;
+  }
+
+  .hero {
+    min-height: 70vh;
+  }
+
+  .heroContent {
+    padding-block: var(--space-8);
+  }
+}
+
+/* ----------------------------------------------------------------
+   Reduced Motion — Hover-Underline-Transition praktisch instant
+   ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .link::after {
+    transition-duration: 0.01ms;
+  }
+}

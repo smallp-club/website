@@ -1,0 +1,35 @@
+.source {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--spc-slate);
+  margin: 0;
+  font-feature-settings: 'tnum' 1, 'onum' 1;
+}
+
+.publication {
+  font-style: italic;
+}
+
+.n {
+  font-variant-numeric: tabular-nums;
+}
+
+.link {
+  color: var(--spc-slate);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-thickness var(--duration-base) var(--ease-standard);
+}
+
+.link:hover {
+  text-decoration-thickness: 1.5px;
+  color: var(--spc-turquoise-deep);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}

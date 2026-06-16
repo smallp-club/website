@@ -25,6 +25,15 @@
   --gutter: var(--space-5);
   --section-y: var(--space-9);
 
+  /* ---- Interaction Targets ---- */
+  --touch-min: 44px;                /* WCAG/iOS HIG minimum für Touch-Targets */
+
+  /* ---- Responsive Breakpoints (als Referenz für Komponenten-CSS) ---- */
+  --bp-mobile-sm: 480px;            /* schmaler Phone */
+  --bp-mobile: 768px;                /* Phone / kleine Tablets */
+  --bp-tablet: 1024px;               /* Tablet Landscape */
+  --bp-desktop: 1280px;              /* Desktop */
+
   /* ---- Radii — soft, obround-friendly geometry ---- */
   --radius-sm: 8px;
   --radius-md: 14px;
@@ -49,7 +58,11 @@
   /* ---- Motion — calm, no bounce. Ease, fade, gentle. ---- */
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);  /* @kind other */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);       /* @kind other */
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);           /* @kind other */
+  --ease-monumental: cubic-bezier(0.3, 0, 0.1, 1); /* @kind other */
   --duration-fast: 120ms;                          /* @kind other */
   --duration-base: 200ms;                          /* @kind other */
   --duration-slow: 360ms;                          /* @kind other */
+  --duration-reveal: 600ms;                        /* @kind other */
+  --duration-cinematic: 1100ms;                    /* @kind other */
 }

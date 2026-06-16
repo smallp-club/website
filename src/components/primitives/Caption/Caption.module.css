@@ -1,0 +1,14 @@
+.caption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: var(--leading-snug);
+  margin: 0;
+  display: inline-block;
+}
+
+.caption[data-tone='body']   { color: var(--text-body); }
+.caption[data-tone='muted']  { color: var(--text-muted); }
+.caption[data-tone='faint']  { color: var(--text-faint); }
+
+.caption[data-weight='regular'] { font-weight: var(--weight-regular); }
+.caption[data-weight='medium']  { font-weight: var(--weight-medium); }

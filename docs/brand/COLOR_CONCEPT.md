@@ -134,6 +134,27 @@ Die semantische Lesart muss sein: *"Der Fakt war schon immer wahr — der Mythos
 
 Die Chips brauchen deshalb immer ihr Label. Farbe allein ist nie das Signal.
 
+### Geltungsbereich der Doktrin
+
+Die Mythos-Reveal-Doktrin gilt **ausschließlich für die Hero-Sektion auf der Landing-Page** (der eine große Reveal-Moment, COLOR_CONCEPT-Sektionsregel „Mythos-Reveal"). Sie gilt nicht für:
+
+- **Interaktive Karten-Pattern** (Hover/Tap-Reveals wie RP Pull-Focus) — diese haben ihre eigene Mechanik (Tiefe, Blur, Cinematik). Sie sind explorativ, nicht statisch. Der Leser steuert den Reveal selbst und erlebt ihn als Entdeckung, nicht als Korrektur.
+- **Gallery-/Listen-Komponenten** mit mehreren Pärchen, wo der Leser durch die Karten navigiert
+- **Source-Captions und Quellenangaben**, die ohnehin nur als Begleittext erscheinen
+
+Wo das Mythos/Fakt-Pärchen in einer interaktiven Komponente lebt, darf die Mechanik cinematisch sein, solange das Ergebnis nicht „Du hast falsch gedacht" liest. Die sprachliche Brand-Voice (peer, anti-fanfare) bleibt überall gleich.
+
+### Mythos/Fakt-Markierung — gültiges Pattern
+
+**Typografisches Inline-Präfix** in Chillax Regular auf Body-Light. Block-Chips (Pill mit „MYTHOS" / „FAKT" Uppercase) sind verboten.
+
+- **Mythos-Präfix:** `angeblich.` in Sienna (`--spc-sienna`), eine Gewichtsstufe über dem Body
+- **Fakt-Präfix:** `wahr ist.` in Dark Turquoise (`--spc-turquoise-deep`), eine Gewichtsstufe über dem Body
+
+Beide Marker sind lowercase, satzeinleitend, mit Punkt. Das Label-Wort wechselt — die Farbe wechselt mit dem Wort, nicht über das Wort.
+
+**Schreib-Regel für Mythen-/Fakten-Sätze:** Der Folgesatz muss so gebaut sein, dass das Präfix grammatisch davor passt — kein doppeltes „ist", Aussagesatz-Form (kein Notiz-Stil), Relativsätze bekommen ein Korrelat („Wer X, **der** Y"). Lautlese-Test mit Präfix ist Pflicht, bevor neuer Text in den Code geht.
+
 ---
 
 ## Absolut verbotene Kombinationen

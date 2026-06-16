@@ -1,0 +1,305 @@
+/* ============================================================
+ * NavBarA — Material-Morph
+ * Form bleibt, Glas erscheint. Höhe/Padding/Position niemals animiert.
+ * Was wechselt: backdrop-filter, color, opacity der Logo-Varianten,
+ * text-shadow, hairline. Alles über --duration-slow + --ease-out.
+ * ============================================================ */
+
+/* ---------- HERO ---------- */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  /* Bühnenbild full-bleed */
+  background-image:
+    /* Scrim: dunkler Verlauf für Lesbarkeit der Off-White-Typo */
+    linear-gradient(180deg, rgba(10, 10, 10, 0.35) 0%, rgba(10, 10, 10, 0.55) 60%, rgba(10, 10, 10, 0.7) 100%),
+    url('/imagery/arches-warm.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  color: var(--spc-offwhite);
+  isolation: isolate;
+}
+
+.heroInner {
+  width: 100%;
+  max-width: var(--container-max);
+  padding: var(--space-7) var(--gutter);
+  display: grid;
+  justify-items: center;
+  gap: var(--space-7);
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: lowercase;
+  color: var(--spc-offwhite);
+  opacity: 0.86;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.eyebrowDot {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-circle);
+  background: currentColor;
+  display: inline-block;
+}
+
+.tagline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 9vw, 124px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  text-transform: lowercase;
+  color: var(--spc-offwhite);
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.45);
+  margin: 0;
+  max-width: 18ch;
+}
+
+/* ---------- SENTINEL ---------- */
+/* Ein-Pixel-Marker direkt vor der Nav. Sobald er aus dem Viewport
+ * scrollt, weiß der IntersectionObserver: Nav ist gepinnt. */
+.sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* ---------- NAV — STICKY-PIN-TRICK ---------- */
+/* Mechanik:
+ * 1. position: sticky + top: 0  → läuft am Top sticky.
+ * 2. margin-top: calc(-1 * --nav-height) → zieht die Nav VOR dem Sticken
+ *    in den unteren Rand des Hero-Bildes hinein. Dadurch startet sie
+ *    sichtbar auf dem Bühnenbild, scrollt mit dem Hero hoch und dockt
+ *    erst dann am Viewport-Top an. Reine CSS-Lösung, kein JS-Listener.
+ * 3. data-pinned wird vom IntersectionObserver auf den Sentinel
+ *    getoggelt und steuert den Material-Morph. */
+.nav {
+  --nav-height: 64px;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  margin-top: calc(-1 * var(--nav-height));
+  height: var(--nav-height);
+
+  display: flex;
+  align-items: center;
+
+  /* Bottom-State (default, im Hero auf Bühnenbild) */
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 1px solid transparent;
+
+  /* Material-Morph: alle wechselnden Properties gleichzeitig. */
+  transition:
+    backdrop-filter var(--duration-slow) var(--ease-out),
+    -webkit-backdrop-filter var(--duration-slow) var(--ease-out),
+    border-color var(--duration-slow) var(--ease-out);
+}
+
+/* Pinned-State: nur Material, keine Form. */
+.nav[data-pinned='true'] {
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  border-bottom-color: rgba(10, 10, 10, 0.06);
+}
+
+.navInner {
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+}
+
+/* ---------- LOGO LOCKUP ---------- */
+.logoLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  /* Touch-Target ≥ 44px ohne Höhenänderung der Nav. */
+  padding: var(--space-3) 0;
+  text-decoration: none;
+  position: relative;
+  isolation: isolate;
+}
+
+.logoLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+/* Logo-Varianten: beide übereinander, opacity-Crossfade. */
+.logoStack {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.markWrap,
+.wordmarkWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.logoLayer {
+  display: block;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.markWrap .logoLayer:nth-child(2),
+.wordmarkWrap .logoLayer:nth-child(2) {
+  position: absolute;
+  inset: 0;
+}
+
+.mark {
+  height: 24px;
+  width: auto;
+}
+
+.wordmark {
+  height: 20px;
+  width: auto;
+}
+
+/* Bottom-State: Off-White sichtbar, Deep/Black versteckt. */
+.layerOffwhite { opacity: 1; }
+.layerDeep,
+.layerBlack { opacity: 0; }
+
+/* Pinned-State: crossfade zu Deep/Black. */
+.nav[data-pinned='true'] .layerOffwhite { opacity: 0; }
+.nav[data-pinned='true'] .layerDeep,
+.nav[data-pinned='true'] .layerBlack { opacity: 1; }
+
+/* ---------- ITEMS ---------- */
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.itemSeparator {
+  width: 3px;
+  height: 3px;
+  border-radius: var(--radius-circle);
+  background: currentColor;
+  opacity: 0.55;
+  display: inline-block;
+  transition: background-color var(--duration-slow) var(--ease-out);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.itemLink {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  text-transform: lowercase;
+  letter-spacing: 0;
+  text-decoration: none;
+
+  /* Bottom-State: Off-White mit dezentem text-shadow für Lesbarkeit
+   * über dem warmen Bühnenbild. */
+  color: var(--spc-offwhite);
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.4);
+
+  /* Touch-Target via padding, ohne die 64px-Höhe zu sprengen. */
+  padding: var(--space-3) var(--space-2);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-sm);
+
+  transition:
+    color var(--duration-slow) var(--ease-out),
+    text-shadow var(--duration-slow) var(--ease-out);
+}
+
+.itemLink:hover {
+  opacity: 0.82;
+}
+
+.itemLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.itemLink[aria-current='page'] {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+/* Pinned-State: dunkler Text, kein text-shadow mehr. */
+.nav[data-pinned='true'] .itemLink {
+  color: var(--text-strong);
+  text-shadow: none;
+}
+
+.nav[data-pinned='true'] .itemSeparator {
+  opacity: 0.4;
+}
+
+/* ---------- MOBILE ---------- */
+@media (max-width: 768px) {
+  .nav {
+    --nav-height: 56px;
+  }
+
+  .itemLink {
+    font-size: 13px;
+    padding: var(--space-3) var(--space-1);
+  }
+
+  .items {
+    gap: var(--space-3);
+  }
+}
+
+@media (max-width: 480px) {
+  /* Wordmark unter 480px ausblenden, nur Bildmarke trägt die Marke. */
+  .wordmarkWrap {
+    display: none;
+  }
+}
+
+/* ---------- REDUCED MOTION ---------- */
+/* Material-Morph wird zum Hard-Toggle, kein Crossfade mehr. */
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav[data-pinned='true'],
+  .logoLayer,
+  .itemLink,
+  .itemSeparator {
+    transition-duration: 0.01ms;
+  }
+}

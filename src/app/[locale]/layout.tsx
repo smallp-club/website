@@ -2,7 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
-import { SkipToContent } from '@/components/core/SkipToContent';
+import { SkipToContent } from '@/components/primitives/SkipToContent';
 
 type Props = {
   children: React.ReactNode;

@@ -1,0 +1,433 @@
+/* ============================================================
+   NavBarA — Editorial-Klassik
+   NYT/Monocle-Klasse. Glas-Backdrop, Crossfade über data-scrolled.
+   - 68px Desktop / 56px Mobile
+   - Über Hero-Bild: sehr subtiles Glas, Off-White Logo + Border-CTA
+   - Nach Scroll: solides Glas, Black Logo + Accent-CTA, Magazin-Boundary
+   - Sentinel-Pattern (kein Scroll-Listener)
+   ============================================================ */
+
+.sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.nav {
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  width: 100%;
+  isolation: isolate;
+}
+
+/* ---- Backdrop-Layer (Crossfade) ----
+   Zwei separate Layer für sauberes Opacity-Crossfading
+   zwischen Over-Image-Glas und Scrolled-Glas. */
+
+.backdropTop,
+.backdropScrolled {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+/* Über warmem Hero-Bild: sehr subtiles Glas, Off-White getönt. */
+.backdropTop {
+  background-color: rgba(247, 246, 242, 0.32);
+  backdrop-filter: blur(18px) saturate(1.1);
+  -webkit-backdrop-filter: blur(18px) saturate(1.1);
+  /* feine Hairline am unteren Rand, in Off-White-Tönung */
+  box-shadow: inset 0 -1px 0 0 rgba(247, 246, 242, 0.16);
+  opacity: 1;
+}
+
+/* Scrolled: solides Off-White-Glas, klassische Editorial-Hairline. */
+.backdropScrolled {
+  background-color: rgba(247, 246, 242, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: inset 0 -1px 0 0 rgba(10, 10, 10, 0.06);
+  opacity: 0;
+}
+
+.nav[data-scrolled='true'] .backdropTop {
+  opacity: 0;
+}
+
+.nav[data-scrolled='true'] .backdropScrolled {
+  opacity: 1;
+}
+
+/* ---- Innenraum ---- */
+
+.inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: var(--container-max);
+  margin: 0 auto;
+  height: 56px;
+  padding: 0 var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .inner {
+    height: 68px;
+    padding: 0 var(--space-5);
+    gap: var(--space-5);
+  }
+}
+
+/* ---- Brand (Bildmarke + Wordmark + Edition-Marker) ---- */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+  padding: var(--space-1) var(--space-2);
+  /* optischer Ausgleich des Innenpaddings, damit das Logo bündig steht */
+  margin-left: calc(var(--space-2) * -1);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.brand:hover {
+  opacity: 0.82;
+}
+
+.brand:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Bildmarke — immer sichtbar, beide States. */
+.mark {
+  flex-shrink: 0;
+  display: block;
+  height: 24px;
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  .mark {
+    height: 28px;
+  }
+}
+
+/* Wordmark-Slot: stapelt beide Varianten übereinander.
+   Höhe wird vom Off-White-Bild bestimmt, das Black-Bild liegt
+   per absolute drüber. So gibt es keinen Layout-Shift beim Crossfade. */
+.wordmarkSlot {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.wordmark {
+  display: block;
+  height: 18px;
+  width: auto;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 768px) {
+  .wordmark {
+    height: 22px;
+  }
+}
+
+/* Off-White Wordmark trägt die Slot-Höhe. */
+.wordmarkOffwhite {
+  position: relative;
+  opacity: 1;
+}
+
+/* Black Wordmark liegt darüber und blendet ein, wenn gescrollt. */
+.wordmarkBlack {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+
+.nav[data-scrolled='true'] .wordmarkOffwhite {
+  opacity: 0;
+}
+
+.nav[data-scrolled='true'] .wordmarkBlack {
+  opacity: 1;
+}
+
+/* Editorial-Detail: Edition-Marker wie auf einem Zeitungs-Cover.
+   Bewusst klein, in Slate, nur Desktop. Über Bild in Off-White. */
+.edition {
+  display: none;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+  line-height: 1;
+  color: var(--spc-offwhite);
+  opacity: 0.78;
+  transition:
+    color var(--duration-base) var(--ease-standard),
+    opacity var(--duration-base) var(--ease-standard);
+  /* visuell etwas tiefer setzen, baseline-ish zum Wordmark */
+  transform: translateY(1px);
+}
+
+@media (min-width: 900px) {
+  .edition {
+    display: inline-block;
+  }
+}
+
+.nav[data-scrolled='true'] .edition {
+  color: var(--text-muted);
+  opacity: 1;
+}
+
+/* ---- Magazin-Trennlinie zwischen Brand und Items ----
+   1px vertikal, nur Desktop. Über Bild in Off-White, scrolled in Hairline. */
+.divider {
+  display: none;
+  align-self: center;
+  width: 1px;
+  height: 20px;
+  background-color: rgba(247, 246, 242, 0.32);
+  margin-left: auto;
+  margin-right: var(--space-5);
+  transition: background-color var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 900px) {
+  .divider {
+    display: block;
+  }
+}
+
+.nav[data-scrolled='true'] .divider {
+  background-color: rgba(10, 10, 10, 0.12);
+}
+
+/* ---- Items (rechts) ---- */
+
+.items {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .items {
+    gap: var(--space-5);
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+/* ---- Themen-Link (Editorial-Underline) ---- */
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  padding: var(--space-2) var(--space-2);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  /* Default: über Bild = Off-White. */
+  color: var(--spc-offwhite);
+  text-decoration: none;
+  text-transform: lowercase;
+  border-radius: var(--radius-sm);
+  transition: color var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 768px) {
+  .link {
+    font-size: 15px;
+    padding: var(--space-2) var(--space-3);
+  }
+}
+
+.nav[data-scrolled='true'] .link {
+  color: var(--text-strong);
+}
+
+/* Label trägt die Hover-Underline + Active-Underline. */
+.linkLabel {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+/* Underline: 1px, 6px Offset, links→rechts Skalieren auf Hover/Focus.
+   Active = permanent sichtbar. */
+.linkLabel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 1px;
+  background-color: currentColor;
+  opacity: 0;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition:
+    opacity var(--duration-base) var(--ease-standard),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.link:hover .linkLabel::after,
+.link:focus-visible .linkLabel::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+/* Active: permanente Underline (kein Scale-In, statischer Zustand). */
+.link[data-active='true'] .linkLabel::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* ---- CTA-Pill „mitmachen" ----
+   Über Bild: 1px Off-White Border, transparenter BG, Off-White Text.
+   Scrolled: Accent-Fill, Black Text. */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Touch-Target: padding-block trägt 44px, optisch 32px / 36px hoch. */
+  min-height: var(--touch-min);
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  color: var(--spc-offwhite);
+  background-color: transparent;
+  border: 1px solid rgba(247, 246, 242, 0.72);
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  text-transform: lowercase;
+  white-space: nowrap;
+  transition:
+    color var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 768px) {
+  .cta {
+    font-size: 15px;
+    padding: var(--space-2) 18px;
+    min-height: 36px;
+  }
+}
+
+/* Über-Bild-Hover: Off-White-Hauch füllt den Pill aus. */
+.cta:hover {
+  background-color: rgba(247, 246, 242, 0.12);
+  border-color: var(--spc-offwhite);
+  transform: translateY(-1px);
+}
+
+.cta:active {
+  transform: translateY(0);
+}
+
+.cta:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Scrolled: Accent-Pill, klassischer CTA-Look. */
+.nav[data-scrolled='true'] .cta {
+  color: var(--text-on-accent);
+  background-color: var(--accent);
+  border-color: var(--accent);
+}
+
+.nav[data-scrolled='true'] .cta:hover {
+  background-color: var(--accent-press);
+  border-color: var(--accent-press);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav[data-scrolled='true'] .cta:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* ---- Magazin-Section-Boundary unter der Nav ----
+   Nur im Scrolled-State sichtbar. Trennt Nav vom Content
+   wie eine Editorial-Section-Linie. */
+.boundary {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background-color: rgba(10, 10, 10, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+.nav[data-scrolled='true'] .boundary {
+  opacity: 1;
+}
+
+/* ---- Reduced Motion ----
+   Alle Transitions auf praktisch null, Crossfade bleibt instant. */
+
+@media (prefers-reduced-motion: reduce) {
+  .backdropTop,
+  .backdropScrolled,
+  .wordmark,
+  .edition,
+  .divider,
+  .link,
+  .linkLabel::after,
+  .cta,
+  .brand,
+  .boundary {
+    transition-duration: 0.01ms;
+  }
+
+  .cta:hover,
+  .link:hover {
+    transform: none;
+  }
+}

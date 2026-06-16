@@ -1,0 +1,414 @@
+/* ============================================================
+   NavBarC — Polished Strip (Vercel/Readymag-Klasse)
+
+   Top-Strip, fixed sticky. Höhe konstant 64 px.
+   Award-Niveau aus Mikro-Disziplin:
+     - Silent-Crossfade-Material (backdrop-filter fadet 0 → 16 px)
+     - Surface-aware Logo-Switch (Crossfade auf Dark-Section)
+     - Vertikaler Hairline-Separator als Editorial-Marker
+     - Mittelpunkt-Separator zwischen Items
+   ============================================================ */
+
+/* ----------------------------------------------------------------
+   Strip — fixed, immer 64 px hoch
+   ---------------------------------------------------------------- */
+
+.strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  height: 64px;
+
+  /* Top-State: vollkommen schwerelos, kein Material */
+  background: transparent;
+  -webkit-backdrop-filter: blur(0px) saturate(1);
+  backdrop-filter: blur(0px) saturate(1);
+
+  /* Silent-Crossfade: nur backdrop-filter transitionet, kein Background.
+     480 ms `cubic-bezier(0.16, 1, 0.3, 1)` = --ease-out.
+     Color transitionet für Surface-aware Switch. */
+  transition:
+    backdrop-filter var(--duration-slow) var(--ease-out),
+    -webkit-backdrop-filter var(--duration-slow) var(--ease-out),
+    color var(--duration-slow) var(--ease-out);
+
+  color: var(--text-strong);
+}
+
+/* Scrolled-State: Blur fadet ein. KEIN Background, KEIN Border. */
+.strip[data-scrolled='true'] {
+  -webkit-backdrop-filter: blur(16px) saturate(1.15);
+  backdrop-filter: blur(16px) saturate(1.15);
+}
+
+/* Surface-aware: Items + Wordmark werden hell */
+.strip[data-surface='dark'] {
+  color: var(--text-on-inverse);
+}
+
+.stripInner {
+  height: 100%;
+  max-width: var(--container-wide);
+  margin: 0 auto;
+  padding-inline: clamp(24px, 4vw, 48px);
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+}
+
+/* ----------------------------------------------------------------
+   Brand-Lockup — Mark + Wordmark, opacity-Crossfade beider Varianten
+   ---------------------------------------------------------------- */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  min-height: var(--touch-min);
+  /* Touch-Target ohne visuelle Vergrößerung */
+  padding-block: var(--space-2);
+  border-radius: var(--radius-sm);
+}
+
+.brand:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.brandMark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.brandWordmark {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+}
+
+/* Beide Varianten (deep/black + offwhite) liegen übereinander.
+   Crossfade via opacity, kein Layout-Shift. */
+.brandMarkImg,
+.brandWordmarkImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: opacity var(--duration-slow) var(--ease-out);
+}
+
+.brandWordmarkImg {
+  /* Wordmark ist breiter als Höhe — inset+contain reicht nicht für Aspect.
+     Daher: relative width via parent, position absolute mit left:0. */
+  width: auto;
+  height: 24px;
+  inset: auto auto auto 0;
+}
+
+/* Default: Light-Variante (deep/black) sichtbar */
+.brandLight { opacity: 1; }
+.brandDark  { opacity: 0; }
+
+/* Dark-Surface: Crossfade auf Off-White-Variante */
+.strip[data-surface='dark'] .brandLight { opacity: 0; }
+.strip[data-surface='dark'] .brandDark  { opacity: 1; }
+
+/* ----------------------------------------------------------------
+   Hairline-Separator — vertikaler 1 px Editorial-Marker zwischen
+   Logo-Block und Items. Silent-Fade beim Scroll. Nur Desktop, nur
+   wenn 4 Items rechts noch atmen können (siehe Mobile-Media-Query).
+   ---------------------------------------------------------------- */
+
+.hairline {
+  display: inline-block;
+  width: 1px;
+  height: 16px;
+  background: rgba(10, 10, 10, 0.12);
+  margin-left: auto;
+  /* Silent-Fade beim Scrolled-State: leicht zurücktreten */
+  transition:
+    background var(--duration-slow) var(--ease-out),
+    opacity var(--duration-slow) var(--ease-out);
+}
+
+.strip[data-scrolled='true'] .hairline {
+  background: rgba(10, 10, 10, 0.08);
+}
+
+.strip[data-surface='dark'] .hairline {
+  background: rgba(247, 246, 242, 0.18);
+}
+
+/* ----------------------------------------------------------------
+   Items — rechts, Mittelpunkt-Separator zwischen <li>
+   ---------------------------------------------------------------- */
+
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  padding-block: var(--space-2);
+  padding-inline: 2px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: 0;
+  color: inherit;
+  text-decoration: none;
+  text-transform: lowercase;
+  border-radius: var(--radius-sm);
+}
+
+/* Hover-Underline: 1 px, left→right, 240 ms ease-out, offset 6 px */
+.link::after {
+  content: '';
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: calc(var(--space-2) - 6px);
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.link:hover::after,
+.link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.linkActive::after {
+  transform: scaleX(1);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.sep {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  color: currentColor;
+  opacity: 0.4;
+  user-select: none;
+}
+
+/* ----------------------------------------------------------------
+   Hero — full-bleed Bühnenbild, Strip schwebt darüber
+   ---------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  min-height: 92vh;
+  display: flex;
+  align-items: flex-end;
+  padding: var(--space-9) var(--space-7) var(--space-10);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.heroBg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/imagery/arches-warm.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: -2;
+  filter: saturate(0.92) brightness(0.92);
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg,
+      rgba(10, 10, 10, 0.32) 0%,
+      rgba(10, 10, 10, 0.06) 32%,
+      rgba(10, 10, 10, 0.00) 60%,
+      rgba(247, 246, 242, 0.55) 100%);
+  z-index: -1;
+}
+
+.heroInner {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.heroTagline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: var(--spc-offwhite);
+  margin: 0 0 var(--space-4);
+  text-transform: lowercase;
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.35);
+}
+
+.heroTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(64px, 11vw, 144px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+  color: var(--spc-offwhite);
+  margin: 0;
+  text-wrap: balance;
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.28);
+}
+
+/* Sentinel — 1 px hoch, am Hero-Boden. IO triggert Scroll-State. */
+.heroSentinel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------------
+   Demo-Content (Off-White und Dark-Stats-Section für Surface-Test)
+   ---------------------------------------------------------------- */
+
+.demoLight {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  padding: var(--space-10) var(--space-5);
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.demoDark {
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+  padding: var(--space-10) var(--space-5);
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.demoBody {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text-body);
+  max-width: 56ch;
+  margin: 0;
+}
+
+.demoBodyDark {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text-on-inverse);
+  max-width: 56ch;
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------
+   Mobile — < 480 px: Wordmark aus, nur Mark.
+   < 768 px: Hairline aus, Höhe 56 px.
+   ---------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .strip {
+    height: 56px;
+  }
+
+  .stripInner {
+    padding-inline: var(--space-5);
+    gap: var(--space-4);
+  }
+
+  .hairline {
+    display: none;
+  }
+
+  .link {
+    font-size: 14px;
+  }
+
+  .sep {
+    font-size: 14px;
+  }
+
+  .items {
+    gap: var(--space-2);
+  }
+
+  .item {
+    gap: var(--space-2);
+  }
+
+  /* Sentinel-Offset für 56 px Nav anpassen — siehe IO rootMargin
+     in index.tsx (dort hartcodiert 64 px). Auf Mobile akzeptieren wir
+     8 px Toleranz; der Effekt ist visuell ununterscheidbar. */
+}
+
+@media (max-width: 480px) {
+  .brandWordmark {
+    display: none;
+  }
+
+  .brandMark {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Reduced Motion — Crossfades auf 0.01 ms (hard toggle), keine
+   Hover-Underline-Transition.
+   ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .strip,
+  .brandMarkImg,
+  .brandWordmarkImg,
+  .hairline {
+    transition-duration: 0.01ms;
+  }
+
+  .link::after {
+    transition-duration: 0.01ms;
+  }
+}

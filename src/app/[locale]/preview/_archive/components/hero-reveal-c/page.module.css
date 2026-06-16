@@ -1,0 +1,465 @@
+/* ============================================================
+   hero-reveal-c — Typographic Decay + Bildmarke-as-Mask
+   Anti-templated experimental lane.
+   Tokens only — no hex, no !important, all durations via tokens.
+   ============================================================ */
+
+.page {
+  min-height: 100vh;
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  font-family: var(--font-body);
+  scroll-snap-type: y mandatory;
+  /* Smooth snap unless reduced motion. */
+}
+
+.reducedMotion {
+  scroll-snap-type: none;
+}
+
+/* ---- Top nav ---- */
+.topNav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-6);
+  background: color-mix(in srgb, var(--surface-bg) 86%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-faint);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-muted);
+  mix-blend-mode: difference; /* stays readable across surface flips */
+  /* mix-blend-mode + monochrome → graceful contrast on black beat 3 */
+}
+
+.back {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--font-body);
+}
+
+.back:hover {
+  color: var(--text-strong);
+}
+
+.topLabel {
+  font-family: var(--font-body);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-overline);
+  font-size: var(--text-overline);
+}
+
+/* ============================================================
+   Progress Ring — fixed, top-right
+   ============================================================ */
+.ringWrap {
+  position: fixed;
+  top: var(--space-7);
+  right: var(--space-6);
+  z-index: 40;
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  mix-blend-mode: difference;
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  width: 60px;
+  height: 60px;
+}
+
+.ringLabel {
+  position: relative;
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-strong);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.ringNum {
+  font-weight: var(--weight-medium);
+}
+
+.ringSep {
+  color: var(--text-muted);
+  margin: 0 1px;
+}
+
+.ringTotal {
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   Rail — vertical scroll-snap of 4 beats
+   ============================================================ */
+.rail {
+  position: relative;
+}
+
+.beat {
+  position: relative;
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  /* Each beat is twice viewport-tall so sticky child has scroll room. */
+}
+
+/* We need scroll room INSIDE the snap to drive the reveal trigger.
+   Achieve by making the beat 200vh + scroll-snap-align center. */
+.beat {
+  height: 200vh;
+  scroll-snap-align: start;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  align-items: center;
+  padding: var(--space-9) var(--space-7);
+  overflow: hidden;
+  transition: background var(--duration-slow) var(--ease-standard),
+              color var(--duration-slow) var(--ease-standard);
+}
+
+.surfaceLight .sticky {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+}
+
+.surfaceBlack .sticky {
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+}
+
+/* ============================================================
+   Background motif — translucent Kreis + Obround shapes
+   ============================================================ */
+.motif {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.motifShape {
+  position: absolute;
+  display: block;
+  background: color-mix(in srgb, var(--text-strong) 5%, transparent);
+}
+
+.surfaceBlack .motifShape {
+  background: color-mix(in srgb, var(--text-on-inverse) 6%, transparent);
+}
+
+.motifCircleLg {
+  width: 38vmin;
+  height: 38vmin;
+  top: -8vmin;
+  right: -10vmin;
+  border-radius: var(--radius-circle);
+}
+
+.motifObroundMd {
+  width: 26vmin;
+  height: 12vmin;
+  bottom: 18vmin;
+  left: -4vmin;
+  border-radius: var(--radius-pill);
+}
+
+.motifCircleSm {
+  width: 14vmin;
+  height: 14vmin;
+  bottom: -6vmin;
+  right: 22vmin;
+  border-radius: var(--radius-circle);
+}
+
+.motifObroundLg {
+  width: 42vmin;
+  height: 14vmin;
+  top: 12vmin;
+  left: 28vmin;
+  border-radius: var(--radius-pill);
+  background: color-mix(in srgb, var(--text-strong) 3%, transparent);
+}
+
+.surfaceBlack .motifObroundLg {
+  background: color-mix(in srgb, var(--text-on-inverse) 4%, transparent);
+}
+
+/* ============================================================
+   Bildmarke layer — anchored visually behind text
+   ============================================================ */
+.markLayer {
+  position: absolute;
+  top: 50%;
+  left: 6vw;
+  transform: translateY(-50%);
+  z-index: 1;
+  width: clamp(120px, 14vw, 200px);
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+.bildmarke {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.bildmarkeCircle {
+  fill: var(--spc-turquoise);
+}
+
+.bildmarkeStem {
+  fill: var(--spc-turquoise-deep);
+}
+
+.bildmarkeInverted .bildmarkeCircle {
+  fill: var(--spc-turquoise);
+}
+
+.bildmarkeInverted .bildmarkeStem {
+  fill: var(--spc-turquoise);
+}
+
+/* ============================================================
+   Beat number
+   ============================================================ */
+.beatNumber {
+  position: absolute;
+  top: var(--space-8);
+  left: var(--space-7);
+  z-index: 5;
+  font-family: var(--font-display);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: inherit;
+  opacity: 0.6;
+}
+
+.surfaceLight .beatNumber {
+  color: var(--accent-contrast);
+}
+
+.surfaceBlack .beatNumber {
+  color: var(--spc-turquoise);
+}
+
+.beatNumberSep {
+  color: var(--text-muted);
+  margin: 0 var(--space-1);
+}
+
+/* ============================================================
+   Text frame — the editorial line
+   ============================================================ */
+.textFrame {
+  position: relative;
+  z-index: 3;
+  grid-row: 1 / 2;
+  align-self: center;
+  width: 100%;
+  max-width: var(--container-wide);
+  margin: 0 auto;
+}
+
+.line {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(var(--text-display-md), 8.4vw, var(--text-display-2xl));
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  text-transform: lowercase;
+  margin: 0;
+  /* Keep the AnimatePresence siblings stacked in same spot */
+  grid-area: 1 / 1;
+}
+
+/* Stack myth and fact in the same cell so the swap is in-place */
+.textFrame {
+  display: grid;
+  grid-template-areas: 'stage';
+}
+
+.textFrame > * {
+  grid-area: stage;
+}
+
+.lineMyth {
+  color: inherit;
+}
+
+.lineFact {
+  color: inherit;
+}
+
+/* Prefix markers — the brand "marker pattern" */
+.prefixMyth {
+  color: var(--spc-sienna);
+  font-weight: var(--weight-regular);
+  font-style: italic;
+  margin-right: 0.22em;
+  white-space: nowrap;
+}
+
+.prefixFact {
+  color: var(--spc-turquoise-deep);
+  font-weight: var(--weight-regular);
+  font-style: italic;
+  margin-right: 0.22em;
+  white-space: nowrap;
+}
+
+/* On the black beat, deep-turquoise is too dark — escalate to pastel turquoise.
+   This is the only exception to "no Pastel Turquoise as block-text", and the
+   surrounding line text remains off-white, so the Fakt-Chip semantic is preserved
+   through italic + line label, not through being the headline color. */
+.surfaceBlack .prefixFact {
+  color: var(--spc-turquoise);
+}
+
+/* ============================================================
+   Glyph spans — per-letter decay
+   ============================================================ */
+.glyph {
+  display: inline-block;
+  transform-origin: 50% 70%;
+  will-change: transform, opacity, filter;
+}
+
+.glyphSpace {
+  display: inline-block;
+  width: 0.28em;
+}
+
+/* ============================================================
+   Source line
+   ============================================================ */
+.source {
+  position: relative;
+  z-index: 3;
+  grid-row: 2 / 3;
+  align-self: end;
+  margin: 0 auto;
+  max-width: var(--container-max);
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  letter-spacing: var(--tracking-wide);
+  text-transform: lowercase;
+}
+
+.surfaceBlack .source {
+  color: color-mix(in srgb, var(--text-on-inverse) 70%, transparent);
+}
+
+/* ============================================================
+   Scroll hint (beat 1 only)
+   ============================================================ */
+.scrollHint {
+  position: absolute;
+  bottom: var(--space-7);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  text-transform: lowercase;
+  letter-spacing: var(--tracking-wide);
+  z-index: 5;
+}
+
+/* ============================================================
+   Footer
+   ============================================================ */
+.footer {
+  scroll-snap-align: start;
+  min-height: 60vh;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  padding: var(--space-9) var(--space-6);
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  border-top: 1px solid var(--border-faint);
+}
+
+.footerLine {
+  font-family: var(--font-display);
+  font-size: var(--text-display-sm);
+  font-weight: var(--weight-extralight);
+  letter-spacing: var(--tracking-display);
+  text-transform: lowercase;
+  margin: 0 0 var(--space-5);
+}
+
+.footerSub {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-muted);
+  max-width: 56ch;
+  margin: 0 auto;
+  line-height: var(--leading-relaxed);
+}
+
+/* ============================================================
+   Reduced motion overrides
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .page {
+    scroll-snap-type: none;
+  }
+  .glyph {
+    will-change: auto;
+  }
+  .markLayer {
+    transform: translateY(-50%);
+  }
+}
+
+/* ============================================================
+   Smaller viewports — reduce typographic scale, drop motif density
+   ============================================================ */
+@media (max-width: 768px) {
+  .line {
+    font-size: clamp(var(--text-display-sm), 11vw, var(--text-display-lg));
+  }
+  .markLayer {
+    width: clamp(80px, 18vw, 140px);
+    opacity: 0.12;
+  }
+  .motifCircleLg {
+    width: 60vmin;
+    height: 60vmin;
+  }
+  .ringWrap {
+    top: var(--space-6);
+    right: var(--space-5);
+  }
+  .topLabel {
+    display: none;
+  }
+}

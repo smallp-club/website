@@ -1,0 +1,108 @@
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 260px;
+  flex-shrink: 0;
+  background: var(--spc-paper);
+  border-right: 1px solid var(--spc-stone);
+  padding: var(--space-6) var(--space-5);
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: var(--space-7);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--spc-sand);
+}
+
+.brandEyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+}
+
+.brandName {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-md);
+  color: var(--spc-black);
+  letter-spacing: var(--tracking-tight);
+}
+
+.section {
+  margin-bottom: var(--space-6);
+}
+
+.sectionTitle {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--spc-slate);
+  margin: 0 0 var(--space-3);
+}
+
+.itemList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--spc-ink);
+  text-decoration: none;
+  transition:
+    background var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard);
+}
+
+.item:hover {
+  background: var(--spc-sand);
+  color: var(--spc-black);
+}
+
+.itemActive,
+.itemActive:hover {
+  background: var(--surface-deep);
+  color: var(--spc-offwhite);
+}
+
+.itemComing {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--spc-ash);
+  font-style: italic;
+  cursor: not-allowed;
+  user-select: none;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--spc-stone);
+  }
+}

@@ -1,0 +1,366 @@
+/* ============================================================
+   NavBarC — „Floating-Avantgarde"
+   Eine schwebende Glas-Pill statt Top-Strip.
+   Scroll-reaktive Verformung: schrumpft, Wordmark fadet aus,
+   Bildmarke wandert. Slide-in-Underline (links→rechts), Bullet
+   für Active. „calm in detail, avantgarde in form."
+   ============================================================ */
+
+/* Sentinel: 1px-Marker am Seitenanfang. Out-of-View = Scrolled. */
+.sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* ----- Outer Nav: nur Hülle für Positionierung ----- */
+.nav {
+  position: fixed;
+  top: var(--space-4); /* 16 px Abstand zur Viewport-Kante */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  /* Width steuern wir auf der Pill selbst (max-width-Atmung beim Scroll) */
+  width: max-content;
+  max-width: calc(100vw - var(--space-5));
+  pointer-events: none; /* Klicks gehen durch leeren Außenbereich */
+}
+
+/* ----- Die schwebende Glas-Pill — DAS Element ----- */
+.pill {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+
+  /* Glas-Material: Off-White-getöntes Glas. Über warmem Hero-Bild
+     mischen Backdrop-Saturate + Blur die Wärme rein. */
+  background-color: rgba(247, 246, 242, 0.84);
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid rgba(10, 10, 10, 0.06);
+  border-radius: var(--radius-pill); /* signature obround */
+  box-shadow: var(--shadow-lg);
+
+  /* Atmungs-State — Default: expanded */
+  width: 92vw;
+  max-width: 720px;
+  height: 48px;
+  padding: 0 16px;
+
+  /* Verformungs-Motion. Token-basiert, smooth. */
+  transition:
+    max-width var(--duration-slow) var(--ease-out),
+    width var(--duration-slow) var(--ease-out),
+    height var(--duration-slow) var(--ease-out),
+    padding var(--duration-slow) var(--ease-out),
+    box-shadow var(--duration-slow) var(--ease-out),
+    background-color var(--duration-slow) var(--ease-out);
+}
+
+@media (min-width: 768px) {
+  .pill {
+    width: auto;
+    max-width: 720px;
+    min-width: 560px;
+    height: 52px;
+    padding: 0 20px;
+    gap: var(--space-6);
+  }
+}
+
+/* Scrolled-State: Pill kontrahiert. Wordmark fadet aus, Items rücken nach. */
+.nav[data-scrolled='true'] .pill {
+  width: 88vw;
+  max-width: 480px;
+  height: 44px;
+  padding: 0 12px;
+  box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 768px) {
+  .nav[data-scrolled='true'] .pill {
+    width: auto;
+    max-width: 520px;
+    min-width: 360px;
+    height: 48px;
+    padding: 0 14px;
+  }
+}
+
+/* Reduced-Motion: keine animierten Übergänge auf der Pill */
+.nav[data-reduced-motion='true'] .pill {
+  transition: none;
+}
+
+/* ----- Brand: Bildmarke + Wordmark ----- */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-strong);
+  text-decoration: none;
+  min-height: var(--touch-min);
+  /* Touch-Target vergrößern ohne visuellen Versatz */
+  margin-left: calc(var(--space-1) * -1);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  outline: none;
+}
+
+.brand:focus-visible {
+  box-shadow: var(--shadow-focus);
+}
+
+/* Bildmarke (deep-Variante) — bleibt immer sichtbar.
+   Sie ist der bleibende Anker, wenn das Wordmark beim Scroll verschwindet. */
+.mark {
+  display: block;
+  width: auto;
+  height: 20px;
+  flex-shrink: 0;
+  transition: height var(--duration-slow) var(--ease-out);
+}
+
+@media (min-width: 768px) {
+  .mark {
+    height: 24px;
+  }
+}
+
+.nav[data-scrolled='true'] .mark {
+  height: 18px;
+}
+
+@media (min-width: 768px) {
+  .nav[data-scrolled='true'] .mark {
+    height: 22px;
+  }
+}
+
+.nav[data-reduced-motion='true'] .mark {
+  transition: none;
+}
+
+/* Wordmark — fadet im Scrolled-State aus und kollabiert seine Breite,
+   damit die Items aufrücken können (das ist die „Reise"). */
+.wordmark {
+  display: block;
+  width: auto;
+  height: 16px;
+  flex-shrink: 0;
+  opacity: 1;
+  max-width: 220px;
+  transform-origin: left center;
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    max-width var(--duration-slow) var(--ease-out),
+    height var(--duration-slow) var(--ease-out),
+    margin var(--duration-slow) var(--ease-out);
+}
+
+@media (min-width: 768px) {
+  .wordmark {
+    height: 20px;
+  }
+}
+
+.nav[data-scrolled='true'] .wordmark {
+  opacity: 0;
+  max-width: 0;
+  margin-left: calc(var(--space-2) * -1);
+  /* Pointer-Events aus, damit der Brand-Link-Bereich nicht mit ins Leere klickt */
+  pointer-events: none;
+}
+
+.nav[data-reduced-motion='true'] .wordmark {
+  transition: none;
+}
+
+/* ----- Items ----- */
+
+.items {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .items {
+    gap: var(--space-5);
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+/* ----- Link (themen) ----- */
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--touch-min);
+  padding: 10px 0;
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-weight: var(--weight-medium, 500);
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--text-strong);
+  text-decoration: none;
+  text-transform: lowercase;
+  outline: none;
+  border-radius: var(--radius-sm);
+}
+
+@media (min-width: 768px) {
+  .link {
+    font-size: 14px;
+  }
+}
+
+.link:focus-visible {
+  box-shadow: var(--shadow-focus);
+}
+
+/* Slide-in-Underline via ::after, transform-origin: left → rechts wachsend */
+.linkLabel {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 4px;
+}
+
+.linkLabel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1.5px;
+  background-color: var(--text-strong);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+
+/* Hover/Focus: Underline wächst nach rechts */
+.link:hover .linkLabel::after,
+.link:focus-visible .linkLabel::after {
+  transform: scaleX(1);
+}
+
+/* Reduced-Motion: harter Toggle ohne Animation */
+.nav[data-reduced-motion='true'] .linkLabel::after {
+  transition: none;
+}
+
+/* Aktiver Link: kein Underline, dafür Bullet vor dem Label */
+.link[data-active='true'] .linkLabel::after {
+  display: none;
+}
+
+.bullet {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin-right: 6px;
+  border-radius: var(--radius-circle);
+  background-color: var(--spc-turquoise-deep); /* Dark Turquoise — Autorität ohne laut */
+  flex-shrink: 0;
+}
+
+/* ----- CTA-Pill (mitmachen): Inner-Pill in der Outer-Pill ----- */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--touch-min);
+  height: 32px;
+  padding: 0 14px;
+  font-family: var(--font-body, 'Inter', system-ui, sans-serif);
+  font-weight: var(--weight-medium, 500);
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0;
+  text-transform: lowercase;
+  /* Top-State: Black-Pill auf Glas — gewichtig, ruhig */
+  color: var(--text-on-inverse);
+  background-color: var(--text-strong);
+  border-radius: var(--radius-pill);
+  text-decoration: none;
+  outline: none;
+  transition:
+    background-color var(--duration-slow) var(--ease-out),
+    color var(--duration-slow) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    height var(--duration-slow) var(--ease-out),
+    padding var(--duration-slow) var(--ease-out);
+}
+
+@media (min-width: 768px) {
+  .cta {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
+
+/* Scrolled-State: CTA wechselt zur verdienten Turquoise-Pill.
+   Das ist der einzige Moment, in dem Pastel Turquoise in der Nav erscheint. */
+.nav[data-scrolled='true'] .cta {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.cta:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.cta:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.cta:focus-visible {
+  box-shadow: var(--shadow-focus);
+}
+
+.nav[data-scrolled='true'] .cta:hover {
+  background-color: var(--accent-hover);
+}
+
+.nav[data-scrolled='true'] .cta:active {
+  background-color: var(--accent-press);
+}
+
+.nav[data-reduced-motion='true'] .cta {
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.nav[data-reduced-motion='true'] .cta:hover {
+  transform: none;
+}
+
+/* Aktiver CTA: bleibt visuell konsistent — bekommt nur eine subtile Bullet-Andeutung
+   wäre redundant, da CTAs in der Regel zur Ziel-Page führen. Wir markieren Active
+   am CTA über aria-current; visuell minimal: leichter Ring. */
+.cta[data-active='true']:focus-visible {
+  box-shadow: var(--shadow-focus);
+}

@@ -51,3 +51,9 @@ Das ist die Energie. Unerschrocken, warm darunter, kein Herumgeeiere.
 - **Keine medizinischen Ratschläge** — Fakten beschreiben, nicht verschreiben
 - **Kein Toxic Positivity** — "Du bist perfekt wie du bist" ist auch Druck
 - Tagline **"no measure, no pressure"** niemals umformulieren oder paraphrasieren
+
+## Interpunktion
+
+- **Kein Em-Dash (`—`) im Body.** Wo der Em-Dash steht, kommt entweder ein Komma (verbindet) oder ein Punkt (trennt). Em-Dash setzt eine Reflexion ein, was bei Fakten unnötig dramatisiert. Komma trennt zwei eigenständige Aussagen semantisch sauber.
+- **Em-Dash in Section-Headings, Source-Captions und CSS-/Code-Kommentaren** weiterhin erlaubt — das sind keine Brand-Voice-Texte.
+- **Em-Dash in der Tagline** ist verboten — die Tagline ist `no measure, no pressure` mit Komma, niemals mit Em-Dash.

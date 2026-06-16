@@ -1,0 +1,245 @@
+/* ============================================================
+   NavBarA — Editorial-Vergehen (Pentagram-Klasse)
+
+   Strip oben, Brand-Statement darunter. KEIN Sticky, KEIN Reveal.
+   Beides scrollt mit. Wer navigieren will, scrollt nach oben.
+   ============================================================ */
+
+.header {
+  /* Off-White Bühne. Strip + Lockup leben hier zusammen. */
+  position: relative;
+  width: 100%;
+  background: var(--surface-bg);
+  color: var(--text-strong);
+}
+
+/* ----------------------------------------------------------------
+   Strip — Editorial-Header-Items, rechts ausgerichtet
+   ---------------------------------------------------------------- */
+
+.strip {
+  position: relative; /* explizit: NICHT sticky */
+  width: 100%;
+  padding-inline: clamp(24px, 4vw, 64px);
+  padding-block: var(--space-3);
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.stripList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stripItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.stripLink {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  /* Touch-Target ≥ 44px via Padding, ohne den visuellen Strip aufzublasen */
+  min-height: var(--touch-min);
+  padding-block: var(--space-3);
+  padding-inline: var(--space-1);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: var(--tracking-normal);
+  color: var(--text-strong);
+  text-decoration: none;
+  text-transform: lowercase;
+  /* Eigene Underline via ::after, damit text-underline-offset präzise sitzt */
+}
+
+.stripLink::after {
+  content: '';
+  position: absolute;
+  left: var(--space-1);
+  right: var(--space-1);
+  bottom: calc(var(--space-3) - 4px);
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.stripLink:hover::after,
+.stripLink:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.stripLink:focus-visible {
+  outline: none;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-focus);
+}
+
+.stripLinkActive::after {
+  /* Aktives Item: permanente Underline */
+  transform: scaleX(1);
+}
+
+.stripSep {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  color: var(--text-muted);
+  line-height: 1;
+  user-select: none;
+}
+
+/* ----------------------------------------------------------------
+   Brand-Statement — XXL-Lockup mit inline-Bildmarke
+   ---------------------------------------------------------------- */
+
+.brand {
+  padding-inline: clamp(24px, 5vw, 80px);
+  padding-block: var(--space-9) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+}
+
+.lockup {
+  /* Reset h1 Defaults */
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight); /* Chillax 200 */
+  font-size: clamp(80px, 14vw, 168px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  /* Vollbreit — das Statement füllt die Bühne */
+  width: 100%;
+}
+
+.lockupInner {
+  display: inline-flex;
+  align-items: baseline;
+  /* Kein flex-wrap: das Lockup soll als zusammenhängendes Statement
+     wirken. Bei extrem schmalen Viewports skaliert die clamp-Größe. */
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.lockupWord {
+  display: inline-block;
+}
+
+/* Inline-Bildmarke als Letter-Replacement zwischen "small" und "club".
+   Höhe ~ cap-height der Chillax (~0.72 × font-size, dann optisch
+   nachjustiert). Margin-inline ersetzt die zwei Spaces. */
+.lockupMark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Optische Breite eines Buchstabens — etwas schmaler als font-size */
+  height: 0.78em;
+  width: 0.62em;
+  /* Spaces "small p club" werden durch margin-inline visuell rekonstruiert */
+  margin-inline: 0.12em;
+  /* Vertikale Feinjustage: leicht anheben, damit der Mark-Stem auf der
+     Baseline der Buchstaben sitzt (Bildmarke hat einen Abstrich) */
+  transform: translateY(0.05em);
+  position: relative;
+}
+
+.lockupMarkImg {
+  /* Image füllt den Container — das viewBox-Verhältnis bestimmt Optik */
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Eyebrow — kleines Editorial-Detail unter dem Statement */
+.eyebrow {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: var(--tracking-wide);
+  color: var(--spc-slate);
+  text-transform: lowercase;
+}
+
+.eyebrowSep {
+  color: var(--spc-ash);
+  user-select: none;
+}
+
+/* Tagline — Chillax Light, gedämpft. Trägt sich neben dem Statement. */
+.tagline {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(18px, 2.2vw, 24px);
+  line-height: 1.2;
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-slate);
+  text-transform: lowercase;
+}
+
+/* ----------------------------------------------------------------
+   Mobile — < 768px
+   ---------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .strip {
+    padding-inline: var(--space-5);
+    padding-block: var(--space-2);
+    min-height: 36px;
+  }
+
+  .stripLink {
+    font-size: 13px;
+  }
+
+  .stripSep {
+    font-size: 13px;
+  }
+
+  .brand {
+    padding-inline: var(--space-5);
+    padding-block: var(--space-7) var(--space-6);
+    gap: var(--space-4);
+  }
+
+  .lockup {
+    font-size: clamp(56px, 18vw, 88px);
+    letter-spacing: -0.025em;
+  }
+
+  .tagline {
+    font-size: 18px;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Reduced Motion
+   ---------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .stripLink::after {
+    transition-duration: 0.01ms;
+  }
+}

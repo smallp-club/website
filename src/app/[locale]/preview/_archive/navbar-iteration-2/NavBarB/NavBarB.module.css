@@ -1,0 +1,281 @@
+/* ============================================================
+   NavBarB — Whisper-Strip + Brand-Echo
+   ============================================================
+   - Fixed Top-Strip mit Mini-Bildmarke + Items + Mittelpunkt-Separator
+   - Hero mit XXL-Bildmarke off-center als atmosphärisches Echo
+   - Zero motion in der Nav (Award-Detail: Brand-Stille)
+   ============================================================ */
+
+/* ----------------------------------------------------------------
+   Top-Strip — fixed, transparent, permanenter Backdrop-Blur
+   ---------------------------------------------------------------- */
+.strip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+
+  height: 60px;
+  padding-inline: clamp(24px, 4vw, 48px);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+
+  background: transparent;
+  /* Permanenter Glas-Look. Kein Material-Wechsel beim Scroll.
+     saturate(1.1) zieht die Off-White-Wärme dahinter sanft nach vorn. */
+  backdrop-filter: blur(16px) saturate(1.1);
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+}
+
+/* Bildmarke links — Touch-Target ≥ 44px via Padding um die kleine SVG. */
+.markLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-min);
+  min-height: var(--touch-min);
+  margin-inline-start: calc(var(--space-3) * -1); /* Padding optisch ausgleichen */
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+}
+
+.markImg {
+  height: 26px;
+  width: auto;
+  display: block;
+}
+
+/* ----------------------------------------------------------------
+   Items rechts — lowercase, Mittelpunkt-Separator
+   ---------------------------------------------------------------- */
+.items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  padding-block: var(--space-2);
+
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  text-decoration: none;
+  letter-spacing: var(--tracking-normal);
+
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+/* Hover-Underline — links→rechts, 1px, sehr leise.
+   transform-origin links für gerichtetes Einlaufen. */
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--space-2) - 2px);
+  height: 1px;
+  background: var(--text-strong);
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.link:hover::after,
+.link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* Aktiver Link: permanente Underline, sitzt an gleicher Position. */
+.linkActive::after {
+  transform: scaleX(1);
+}
+
+/* Separator zwischen Items: dezenter Mittelpunkt in Slate. */
+.sep {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1;
+  color: var(--text-faint);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* ----------------------------------------------------------------
+   Hero — Bühne für Tagline + Brand-Echo
+   ---------------------------------------------------------------- */
+.hero {
+  position: relative;
+  min-height: 92vh;
+  /* Padding-top = Strip-Höhe + Atem; sorgt dafür, dass der Eyebrow nicht
+     hinter dem Glas-Strip versteckt sitzt. */
+  padding: calc(60px + var(--space-9)) clamp(24px, 4vw, 48px) var(--space-9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-bg);
+  overflow: hidden; /* Echo-Mark darf am Rand anliegen / angeschnitten sein */
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2; /* über dem Echo */
+  max-width: var(--container-max);
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  color: var(--text-muted);
+  text-transform: lowercase;
+  margin: 0 0 var(--space-4);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.eyebrowSep {
+  color: var(--text-faint);
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Tagline — Chillax Extralight, lowercase, ungebremst groß.
+   text-wrap balance hält den Zeilenumbruch ruhig. */
+.tagline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 9vw, 124px);
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  text-wrap: balance;
+  margin: 0;
+  max-width: 16ch;
+}
+
+.subline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 22px;
+  line-height: 1.25;
+  color: var(--text-muted);
+  text-transform: lowercase;
+  margin: var(--space-5) 0 0;
+  max-width: 32ch;
+}
+
+/* ----------------------------------------------------------------
+   Brand-Echo — XXL-Bildmarke off-center, halbtransparent
+   ----------------------------------------------------------------
+   Bottom-right Anker, angeschnitten. Dadurch liest sie als
+   Komposition / Atmosphäre und nicht als zweites Logo. Zero motion.
+   ---------------------------------------------------------------- */
+.echo {
+  position: absolute;
+  bottom: -8%;
+  right: -4%;
+  width: clamp(220px, 38vh, 360px);
+  height: clamp(220px, 38vh, 360px);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.2;
+  /* Kein transform, kein animation. Bewusst still. */
+}
+
+.echoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* ----------------------------------------------------------------
+   Mobile (< 768 px) — Strip kollabiert sauber
+   ---------------------------------------------------------------- */
+@media (max-width: 767px) {
+  .strip {
+    height: 52px;
+    padding-inline: var(--space-4);
+    gap: var(--space-3);
+  }
+
+  .markImg {
+    height: 22px;
+  }
+
+  .items {
+    gap: var(--space-2);
+  }
+
+  .item {
+    gap: var(--space-2);
+  }
+
+  .link {
+    font-size: 13px;
+  }
+
+  .sep {
+    font-size: 13px;
+  }
+
+  .hero {
+    min-height: 80vh;
+    padding-top: calc(52px + var(--space-7));
+    padding-bottom: var(--space-7);
+  }
+
+  .subline {
+    font-size: 18px;
+  }
+
+  /* Echo wandert nach links-unten und wird kleiner — damit die Tagline
+     auf engem Viewport visuell dominant bleibt. */
+  .echo {
+    width: clamp(180px, 32vh, 240px);
+    height: clamp(180px, 32vh, 240px);
+    bottom: -6%;
+    right: auto;
+    left: -8%;
+    opacity: 0.16;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Reduced Motion — alle Transitions auf instant. Echo ist eh statisch.
+   ---------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .link::after {
+    transition-duration: var(--duration-instant);
+  }
+}

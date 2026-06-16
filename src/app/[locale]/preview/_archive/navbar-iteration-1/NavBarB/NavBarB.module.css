@@ -1,0 +1,449 @@
+/* ============================================================
+   NavBarB — „Magazin-Cover-Bold" (Selbstbewusst-editorial)
+   - Großes Wordmark + Bildmarke tragen das Selbstbewusstsein
+   - Glas-Backdrop crossfades zwischen Top- (über Bild) und
+     Scrolled-State (über Off-White/Black-Surface)
+   - Atem-Pulse der Bildmarke im Top-State (4.8s loop)
+   - One-Time-Pulse der CTA beim ersten Mount
+   - Layout-stabile Hover-Gewichts-Sprünge (::before-Geist-Trick)
+   ============================================================ */
+
+/* ---- Sentinel: triggert den Scrolled-State ---- */
+.sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+/* ---- Root-Nav ---- */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  width: 100%;
+  background: transparent;
+  /* Keine eigene Hairline — der dedizierte .hairline-Layer trägt die
+     Ablösung im Scrolled-State. */
+}
+
+/* ---- Glas-Layer: Top-State (über warmem Hero-Bild) ---- */
+.backdropTop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(247, 246, 242, 0.28);
+  backdrop-filter: blur(20px) saturate(1.15);
+  -webkit-backdrop-filter: blur(20px) saturate(1.15);
+  opacity: 1;
+  transition: opacity var(--duration-base) var(--ease-standard);
+  pointer-events: none;
+}
+
+/* ---- Glas-Layer: Scrolled-State (über Off-White / dunkler Surface) ---- */
+.backdropScrolled {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(247, 246, 242, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+  pointer-events: none;
+}
+
+/* ---- Hairline unten — nur im Scrolled-State ---- */
+.hairline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: rgba(10, 10, 10, 0.05);
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-standard);
+  pointer-events: none;
+}
+
+/* ---- State-Crossfade ---- */
+.nav[data-scrolled='true'] .backdropTop {
+  opacity: 0;
+}
+.nav[data-scrolled='true'] .backdropScrolled {
+  opacity: 1;
+}
+.nav[data-scrolled='true'] .hairline {
+  opacity: 1;
+}
+
+/* ---- Inner-Container ---- */
+.inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  height: 68px; /* Mobile */
+}
+
+@media (min-width: 768px) {
+  .inner {
+    height: 84px; /* Desktop — Magazin-Cover-Atem */
+    padding: 0 var(--space-7);
+    gap: var(--space-6);
+  }
+}
+
+/* =========================================================
+   BRAND (Bildmarke + Wordmark)
+   ========================================================= */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--touch-min);
+  text-decoration: none;
+  color: var(--text-strong);
+}
+
+.brand:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+@media (min-width: 768px) {
+  .brand {
+    gap: var(--space-4);
+  }
+}
+
+/* ---- Bildmarke: Atem-Pulse im Top-State ---- */
+.markWrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transform-origin: center center;
+  /* Top-State: ruhiges Glühen (4.8s loop). Wird unten beim Scrolled-State
+     deaktiviert. Nicht hyperaktiv — Atemzug, kein Comic-Bounce. */
+  animation: markBreath 4800ms var(--ease-standard) infinite;
+}
+
+.mark {
+  display: block;
+  height: 28px; /* Mobile */
+  width: auto;
+}
+
+@media (min-width: 768px) {
+  .mark {
+    height: 36px; /* Desktop */
+  }
+}
+
+/* Pulse stoppt sauber im Scrolled-State — die Marke steht ruhig. */
+.nav[data-scrolled='true'] .markWrap {
+  animation: none;
+  transform: scale(1);
+}
+
+/* ---- Wordmark: Crossfade zwischen Off-White und Black ---- */
+.wordmark {
+  position: relative;
+  display: inline-block;
+  height: 22px; /* Mobile */
+  line-height: 0;
+}
+
+@media (min-width: 768px) {
+  .wordmark {
+    height: 28px; /* Desktop */
+  }
+}
+
+.wordmarkImg {
+  display: block;
+  height: 100%;
+  width: auto;
+  transition: opacity var(--duration-base) var(--ease-standard);
+}
+
+/* Die zweite Variante wird absolut über die erste gelegt, damit der
+   Layout-Slot stabil bleibt. */
+.wordmarkBlack {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Top-State: Off-White sichtbar, Black versteckt */
+.wordmarkOffwhite {
+  opacity: 1;
+}
+.wordmarkBlack {
+  opacity: 0;
+}
+
+/* Scrolled-State: Black sichtbar, Off-White versteckt */
+.nav[data-scrolled='true'] .wordmarkOffwhite {
+  opacity: 0;
+}
+.nav[data-scrolled='true'] .wordmarkBlack {
+  opacity: 1;
+}
+
+/* =========================================================
+   NAV-ITEMS
+   ========================================================= */
+
+.items {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+@media (min-width: 768px) {
+  .items {
+    gap: var(--space-6);
+  }
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* =========================================================
+   „THEMEN"-LINK — typografischer Gewichts-Sprung 500 → 600
+   ========================================================= */
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--touch-min);
+  padding: 0 var(--space-2);
+  font-family: var(--font-body);
+  font-size: 15px; /* Mobile */
+  line-height: 1;
+  text-decoration: none;
+  color: var(--text-strong);
+  position: relative;
+  transition: color var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 768px) {
+  .link {
+    font-size: 17px; /* Desktop */
+    padding: 0 var(--space-3);
+  }
+}
+
+/* Top-State: Link in Off-White, damit er über dem warmen Bild lesbar bleibt */
+.nav[data-scrolled='false'] .link {
+  color: var(--spc-offwhite);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+/*
+ * Layout-stabiler Gewichts-Sprung:
+ * ::before reserviert die Breite des Semibold-Labels (unsichtbar) — das
+ * sichtbare Label springt 500 → 600 ohne Layout-Shift, weil der Container
+ * bereits die breitere Form hat.
+ */
+.linkLabel {
+  display: inline-block;
+  position: relative;
+  font-weight: var(--weight-medium); /* 500 */
+  transition: font-weight var(--duration-fast) var(--ease-standard);
+}
+
+.linkLabel::before {
+  content: attr(data-label);
+  display: block;
+  font-weight: var(--weight-semibold); /* 600 — Geist-Layer */
+  font-synthesis: none;
+  height: 0;
+  visibility: hidden;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Hover/Focus: Gewichts-Sprung 500 → 600 ohne Underline */
+.link:hover .linkLabel,
+.link:focus-visible .linkLabel {
+  font-weight: var(--weight-semibold);
+}
+
+/* Active-Link: permanent Semibold + 1.5 px Underline */
+.link[data-active='true'] .linkLabel {
+  font-weight: var(--weight-semibold);
+}
+
+.link[data-active='true'] .linkLabel::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -8px; /* text-underline-offset: 8px Äquivalent */
+  height: 1.5px;
+  background-color: currentColor;
+}
+
+/* =========================================================
+   CTA-PILL „MITMACHEN"
+   ========================================================= */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px; /* Mobile */
+  min-height: var(--touch-min);
+  padding: 0 var(--space-5);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: 0;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transform-origin: center center;
+
+  /* One-Time-Pulse beim ersten Mount: ruhiger Atemzug, einmalig.
+     Wird unten in @media (prefers-reduced-motion) deaktiviert. */
+  animation: ctaIntroPulse 800ms var(--ease-out) 200ms 1 forwards;
+
+  transition:
+    background-color var(--duration-base) var(--ease-standard),
+    color var(--duration-base) var(--ease-standard),
+    border-color var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 768px) {
+  .cta {
+    height: 48px; /* Desktop */
+    font-size: 17px;
+    padding: 0 var(--space-6);
+  }
+}
+
+/* ---- Top-State: solider Off-White-BG mit Black Text ---- */
+.nav[data-scrolled='false'] .cta {
+  background-color: var(--spc-offwhite);
+  color: var(--spc-black);
+  border-color: var(--spc-offwhite);
+}
+
+/* ---- Scrolled-State: --accent BG, Black Text ---- */
+.nav[data-scrolled='true'] .cta {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  border-color: var(--accent);
+}
+
+/* Hover: eine Nuance dunkler + sanfter Lift */
+.cta:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.nav[data-scrolled='false'] .cta:hover {
+  background-color: var(--spc-paper);
+  border-color: var(--spc-paper);
+}
+
+.nav[data-scrolled='true'] .cta:hover {
+  background-color: var(--spc-turquoise-press);
+  border-color: var(--spc-turquoise-press);
+}
+
+.cta:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.cta:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Aktiver CTA (bereits auf /club): dezenter Inner-Ring statt Pulse */
+.cta[data-active='true'] {
+  box-shadow: inset 0 0 0 1.5px var(--spc-turquoise-deep);
+}
+
+/* =========================================================
+   KEYFRAMES
+   ========================================================= */
+
+/* Atem-Pulse der Bildmarke — ruhiges Glühen, kein Bounce */
+@keyframes markBreath {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* One-Time-Pulse der CTA beim ersten Mount */
+@keyframes ctaIntroPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* =========================================================
+   REDUCED-MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .markWrap {
+    animation: none;
+    transform: scale(1);
+  }
+  .cta {
+    animation: none;
+  }
+  .cta:hover {
+    transform: none;
+  }
+  .backdropTop,
+  .backdropScrolled,
+  .hairline,
+  .wordmarkImg,
+  .link,
+  .linkLabel,
+  .cta {
+    transition-duration: 0.01ms;
+  }
+}

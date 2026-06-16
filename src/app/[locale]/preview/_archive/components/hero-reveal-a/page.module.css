@@ -1,0 +1,650 @@
+/* ============================================================
+   Hero-Reveal A — "Aperture"
+   Cinematic editorial mythos-reveal.
+   Off-White world. Color is earned. Type is the persona.
+   ============================================================ */
+
+.page {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: clip;
+}
+
+/* ============================================================
+   Top chrome — minimal, editorial
+   ============================================================ */
+
+.topNav {
+  position: fixed;
+  inset: 0 auto auto 0;
+  width: 100%;
+  padding: var(--space-5) var(--space-7);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 30;
+  pointer-events: none;
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.back {
+  pointer-events: auto;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--duration-base) var(--ease-out);
+}
+
+.back:hover {
+  color: var(--text-strong);
+}
+
+.topLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  letter-spacing: 0.18em;
+  color: var(--text-muted);
+}
+
+/* ============================================================
+   Progress chrome — right edge calibration ticks
+   ============================================================ */
+
+.progress {
+  position: fixed;
+  right: var(--space-7);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-4);
+  pointer-events: none;
+}
+
+.progressNumber {
+  font-family: var(--font-display);
+  font-size: var(--text-caption);
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.progressSep {
+  opacity: 0.55;
+}
+
+.progressTrack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-top: var(--space-2);
+}
+
+.progressTick {
+  display: block;
+  width: 22px;
+  height: 1px;
+  background: var(--border-hairline);
+  transition: background var(--duration-slow) var(--ease-out), width var(--duration-slow) var(--ease-out);
+}
+
+.progressTickPast {
+  background: var(--text-strong);
+  width: 32px;
+}
+
+/* ============================================================
+   Opening — calm setup
+   ============================================================ */
+
+.opener {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-9) var(--space-7);
+  position: relative;
+}
+
+.openerInner {
+  max-width: 880px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.openerOverline {
+  font-size: var(--text-overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--accent-contrast);
+  font-weight: var(--weight-medium);
+}
+
+.openerHeadline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 9vw, 128px);
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+}
+
+.openerHeadlineSoft {
+  color: var(--accent-contrast);
+  font-style: normal;
+}
+
+.openerSub {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+  max-width: 52ch;
+  margin: 0;
+}
+
+.openerScroll {
+  margin-top: var(--space-7);
+  font-size: var(--text-overline);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.openerScroll::after {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 1px;
+  background: var(--text-faint);
+  animation: scrollLine 2.4s var(--ease-out) infinite;
+  transform-origin: left center;
+}
+
+@keyframes scrollLine {
+  0%   { transform: scaleX(0); opacity: 0; }
+  40%  { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; transform-origin: right center; }
+}
+
+/* ============================================================
+   Pair — pinned reveal scene
+   ============================================================ */
+
+.pair {
+  position: relative;
+  /* Tall enough for scroll-pin choreography */
+  height: 240vh;
+}
+
+.pairClosing {
+  /* Closing pair gets a touch less scroll travel — settles quietly */
+  height: 200vh;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+/* ============================================================
+   Background motif — quiet obround/circle scatter (brand texture)
+   Different per pair, never loud.
+   ============================================================ */
+
+.bgMotif {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  z-index: 0;
+}
+
+.bgMotif1 {
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(10, 10, 10, 0.035) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 84% 78%, rgba(10, 10, 10, 0.04) 0 1.2px, transparent 1.6px);
+  background-size: 72px 72px, 96px 96px;
+}
+
+.bgMotif2 {
+  background-image:
+    radial-gradient(circle at 22% 28%, rgba(29, 85, 86, 0.045) 0 1.4px, transparent 1.8px);
+  background-size: 84px 84px;
+}
+
+.bgMotif3 {
+  background-image:
+    radial-gradient(circle at 14% 18%, rgba(10, 10, 10, 0.04) 0 1.4px, transparent 1.8px),
+    radial-gradient(circle at 76% 70%, rgba(192, 90, 56, 0.06) 0 1.4px, transparent 1.8px);
+  background-size: 64px 64px, 112px 112px;
+}
+
+.bgMotif4 {
+  background-image:
+    radial-gradient(circle at 24% 32%, rgba(10, 10, 10, 0.03) 0 1px, transparent 1.6px);
+  background-size: 56px 56px;
+}
+
+/* ============================================================
+   Aperture — signature p-geometry. Circle + Obround.
+   Acts as the visual lens that "opens" to reveal the truth.
+   ============================================================ */
+
+.apertureLayer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.aperture {
+  position: relative;
+  display: grid;
+  place-items: center;
+  will-change: transform;
+}
+
+.apertureRing {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid currentColor;
+  /* The ring inherits its color from the aperture variant below */
+}
+
+.apertureRingMyth {
+  color: var(--spc-sienna);
+}
+
+.apertureRingTruth {
+  color: var(--spc-turquoise-deep);
+  transition: color var(--duration-slow) var(--ease-out);
+}
+
+.apertureCore {
+  position: absolute;
+  inset: 1px;
+  border-radius: inherit;
+  background: currentColor;
+  filter: blur(0.5px);
+}
+
+.apertureCoreMyth {
+  color: var(--spc-sienna);
+}
+
+.apertureCoreTruth {
+  color: var(--spc-turquoise-deep);
+}
+
+/* Aperture shape variants — circles & obrounds, scaling per pair */
+
+.apertureObroundTall {
+  width: clamp(220px, 28vw, 420px);
+  height: clamp(360px, 50vw, 720px);
+  border-radius: 999px;
+}
+
+.apertureCircleWide {
+  width: clamp(360px, 50vw, 720px);
+  height: clamp(360px, 50vw, 720px);
+  border-radius: 50%;
+}
+
+.apertureObroundFullscreen {
+  width: clamp(420px, 72vw, 1180px);
+  height: clamp(520px, 88vh, 980px);
+  border-radius: 999px;
+}
+
+.apertureCircleQuiet {
+  width: clamp(260px, 34vw, 480px);
+  height: clamp(260px, 34vw, 480px);
+  border-radius: 50%;
+}
+
+/* ============================================================
+   Content layout — anchors vary across the four pairs
+   ============================================================ */
+
+.content {
+  position: relative;
+  z-index: 2;
+  width: min(100% - var(--space-7) * 2, 1280px);
+  height: 100%;
+  padding: var(--space-9) 0;
+  display: grid;
+  gap: var(--space-7);
+}
+
+.anchorTopLeft {
+  align-content: start;
+  justify-items: start;
+  text-align: left;
+  padding-top: clamp(112px, 18vh, 200px);
+}
+
+.anchorEditorial {
+  align-content: center;
+  justify-items: end;
+  text-align: right;
+  padding-right: clamp(0px, 4vw, 80px);
+}
+
+.anchorCenteredPeak {
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.anchorStackedClose {
+  align-content: end;
+  justify-items: start;
+  text-align: left;
+  padding-bottom: clamp(96px, 16vh, 180px);
+}
+
+/* ============================================================
+   Meta strip — number + state pill
+   ============================================================ */
+
+.meta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-5);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.metaNumber {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  letter-spacing: 0.06em;
+  color: var(--text-strong);
+}
+
+.metaNumberCurrent {
+  font-size: var(--text-body-md);
+}
+
+.metaNumberSep {
+  color: var(--text-faint);
+  margin: 0 0.1em;
+}
+
+.metaNumberTotal {
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+}
+
+.metaState {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-pill);
+  background: rgba(252, 251, 248, 0.7);
+  backdrop-filter: blur(8px);
+  color: var(--text-muted);
+  font-weight: var(--weight-medium);
+}
+
+.metaDot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--radius-circle);
+  transition: background var(--duration-slow) var(--ease-out);
+}
+
+.metaDotMyth {
+  background: var(--spc-sienna);
+}
+
+.metaDotTruth {
+  background: var(--spc-turquoise-deep);
+}
+
+/* ============================================================
+   Type — the persona. Chillax monumental.
+   ============================================================ */
+
+.textBox {
+  position: relative;
+  max-width: 18ch;
+  width: 100%;
+}
+
+.anchorEditorial .textBox {
+  max-width: 22ch;
+}
+
+.anchorCenteredPeak .textBox {
+  max-width: 26ch;
+}
+
+.anchorStackedClose .textBox {
+  max-width: 20ch;
+}
+
+.text {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  /* Type crescendo across the four pairs (driven inline via parent anchor) */
+  font-size: clamp(48px, 8.2vw, 124px);
+  line-height: 0.98;
+  letter-spacing: -0.022em;
+  color: var(--text-strong);
+  margin: 0;
+  text-wrap: balance;
+  text-transform: lowercase;
+}
+
+.anchorTopLeft .text {
+  font-size: clamp(48px, 7.4vw, 112px);
+}
+
+.anchorEditorial .text {
+  font-size: clamp(52px, 8vw, 124px);
+}
+
+.anchorCenteredPeak .text {
+  /* Peak moment — biggest type */
+  font-size: clamp(56px, 9.6vw, 156px);
+  font-weight: var(--weight-extralight);
+  letter-spacing: -0.028em;
+}
+
+.anchorStackedClose .text {
+  /* Closing pair — calmer scale */
+  font-size: clamp(44px, 6.8vw, 96px);
+}
+
+.myth { /* sienna marker carries the signal */ }
+.fact { /* deep-turquoise marker carries the truth */ }
+
+.prefixMyth {
+  display: inline;
+  color: var(--spc-sienna);
+  font-weight: var(--weight-medium);
+  font-style: italic;
+  margin-right: 0.18em;
+}
+
+.prefixFact {
+  display: inline;
+  color: var(--spc-turquoise-deep);
+  font-weight: var(--weight-medium);
+  font-style: italic;
+  margin-right: 0.18em;
+}
+
+/* ============================================================
+   Source — quiet footer, appears only with the fact
+   ============================================================ */
+
+.sourceFooter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  max-width: 56ch;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.sourceRule {
+  display: inline-block;
+  width: 28px;
+  height: 1px;
+  background: var(--text-faint);
+}
+
+.sourceLabel {
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-overline);
+  color: var(--accent-contrast);
+  font-weight: var(--weight-semibold);
+  font-size: var(--text-overline);
+}
+
+.sourceText {
+  font-family: var(--font-body);
+  color: var(--text-muted);
+  letter-spacing: 0.005em;
+}
+
+/* ============================================================
+   Closing — settling moment
+   ============================================================ */
+
+.closer {
+  min-height: 80vh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-10) var(--space-7);
+  text-align: center;
+}
+
+.closerInner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  align-items: center;
+}
+
+.closerLine {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(40px, 6.5vw, 96px);
+  line-height: 1;
+  letter-spacing: -0.022em;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+}
+
+.closerSub {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ============================================================
+   Responsive — narrower viewports collapse to single-anchor
+   ============================================================ */
+
+@media (max-width: 900px) {
+  .progress {
+    right: var(--space-5);
+    gap: var(--space-3);
+  }
+  .progressTick {
+    width: 14px;
+  }
+  .progressTickPast {
+    width: 22px;
+  }
+
+  .topNav {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .content {
+    width: min(100% - var(--space-5) * 2, 720px);
+    padding: var(--space-8) 0;
+    justify-items: start !important;
+    align-content: center !important;
+    text-align: left !important;
+    padding-top: clamp(80px, 14vh, 140px) !important;
+    padding-bottom: clamp(80px, 14vh, 140px) !important;
+    padding-right: 0 !important;
+  }
+
+  .textBox {
+    max-width: 100% !important;
+  }
+
+  .text {
+    font-size: clamp(40px, 11vw, 80px) !important;
+  }
+
+  .openerHeadline {
+    font-size: clamp(44px, 13vw, 88px);
+  }
+
+  .apertureObroundFullscreen,
+  .apertureCircleWide {
+    width: clamp(240px, 78vw, 480px);
+    height: clamp(280px, 78vw, 540px);
+  }
+}
+
+/* ============================================================
+   Reduced motion — show fact state immediately, no choreography
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .progressTick,
+  .openerScroll::after {
+    transition: none;
+    animation: none;
+  }
+
+  .openerScroll::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}

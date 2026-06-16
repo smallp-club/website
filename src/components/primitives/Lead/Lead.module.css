@@ -1,0 +1,15 @@
+.lead {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+  max-width: 60ch;
+  text-wrap: pretty;
+}
+
+.lead[data-tone='strong'] { color: var(--text-strong); }
+.lead[data-tone='body']   { color: var(--text-body); }
+.lead[data-tone='muted']  { color: var(--text-muted); }
+
+.lead[data-weight='regular'] { font-weight: var(--weight-regular); }
+.lead[data-weight='medium']  { font-weight: var(--weight-medium); }

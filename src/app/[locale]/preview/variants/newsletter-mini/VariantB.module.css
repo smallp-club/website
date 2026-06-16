@@ -1,0 +1,205 @@
+/* ============================================================
+   Newsletter Mini — Variant B "Manifest-Card"
+   Off-White-Karte auf Off-White-Section. Hairline statt Schatten.
+   Obround-Motiv via --radius-2xl. Ein Akzent: Turquoise-Button.
+   ============================================================ */
+
+.section {
+  background: var(--surface-bg);
+  padding: var(--section-y) var(--gutter);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* Scroll-Reveal Ausgangszustand */
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+}
+
+.section[data-revealed='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Card — Obround-Motiv, Hairline-Only ---- */
+
+.card {
+  width: 100%;
+  max-width: 600px;
+  background: var(--surface-bg);
+  border: var(--border-width) solid var(--border-hairline);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-7);
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-5);
+
+  transition:
+    transform var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: var(--space-8);
+    gap: var(--space-6);
+  }
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---- Eyebrow — uppercase, Dark Turquoise, tracking-overline ---- */
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-overline);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-normal);
+  letter-spacing: var(--tracking-overline);
+  text-transform: uppercase;
+  color: var(--accent-contrast);
+  display: inline-block;
+}
+
+/* ---- Headline — Chillax, sentence case, balance ---- */
+
+.headline {
+  margin: 0;
+  /* Heading variant=section liefert die Skala; hier nur Block-Reset. */
+}
+
+/* ---- Form — inline auf Desktop, gestackt Mobile ---- */
+
+.form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (min-width: 560px) {
+  .form {
+    flex-direction: row;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* ---- Button — Turquoise-Pill, einziger Akzent ---- */
+
+.button {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  letter-spacing: var(--tracking-normal);
+
+  height: var(--touch-min);
+  padding: 0 var(--space-6);
+
+  background: var(--accent);
+  color: var(--text-on-accent);
+  border-radius: var(--radius-pill);
+
+  transition:
+    background var(--duration-base) var(--ease-standard),
+    transform var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.button:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.button:active {
+  background: var(--accent-press);
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* ---- Success-State ---- */
+
+.success {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-heading-md);
+  line-height: var(--leading-snug);
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+}
+
+/* ---- Fineprint ---- */
+
+.fineprint {
+  margin: 0;
+}
+
+/* ---- Visually hidden label (a11y) ---- */
+
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Reduced Motion ---- */
+
+@media (prefers-reduced-motion: reduce) {
+  .section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .card {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .button {
+    transition: background var(--duration-fast) var(--ease-standard);
+  }
+
+  .button:hover,
+  .button:active {
+    transform: none;
+    box-shadow: none;
+  }
+}

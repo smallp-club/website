@@ -1,0 +1,15 @@
+.body {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  margin: 0;
+  max-width: 68ch;
+}
+
+.body[data-tone='strong'] { color: var(--text-strong); }
+.body[data-tone='body']   { color: var(--text-body); }
+.body[data-tone='muted']  { color: var(--text-muted); }
+.body[data-tone='faint']  { color: var(--text-faint); }
+
+.body[data-weight='regular'] { font-weight: var(--weight-regular); }
+.body[data-weight='medium']  { font-weight: var(--weight-medium); }

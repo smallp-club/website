@@ -1,0 +1,164 @@
+/* ============================================================
+   VariantA — Newsletter Mini "Stiller Aufruf"
+   Zentriert, viel Whitespace, ein Akzent (Turquoise-Pill).
+   ============================================================ */
+
+.section {
+  background-color: var(--surface-bg);
+  padding-block: var(--section-y);
+  padding-inline: var(--gutter);
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--duration-slow) var(--ease-out),
+    transform var(--duration-slow) var(--ease-out);
+  will-change: opacity, transform;
+}
+
+.section[data-revealed='true'] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+.inner {
+  max-width: var(--container-max);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-6);
+}
+
+.headline {
+  /* Heading-Primitive trägt Chillax 200 lowercase. Hier nur Layout-Bremse. */
+  max-width: 18ch;
+  margin: 0;
+}
+
+.subtitle {
+  max-width: 42ch;
+  margin: 0;
+}
+
+/* ---- Form ---- */
+.form {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--space-3);
+  width: 100%;
+  max-width: 520px;
+  margin-top: var(--space-2);
+}
+
+.label {
+  /* Visually hidden, screen-reader-zugänglich */
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.button {
+  flex: 0 0 auto;
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  padding-inline: var(--space-6);
+  padding-block: 0;
+  height: 56px;
+  min-height: var(--touch-min);
+  border-radius: var(--radius-pill);
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  transition:
+    transform var(--duration-base) var(--ease-standard),
+    background-color var(--duration-base) var(--ease-standard),
+    box-shadow var(--duration-base) var(--ease-standard);
+}
+
+.button:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.button:active {
+  background-color: var(--accent-press);
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+.button:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .button:hover,
+  .button:active {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---- Success-State ---- */
+.success {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-display-sm);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--accent-contrast);
+  margin: var(--space-2) 0 0;
+}
+
+/* ---- Tagline-Echo, sehr leise ---- */
+.echo {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-faint);
+  margin-top: var(--space-7);
+}
+
+/* ---- Mobile: Form stackt ---- */
+@media (max-width: 640px) {
+  .form {
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 420px;
+  }
+
+  .button {
+    width: 100%;
+  }
+
+  .inner {
+    gap: var(--space-5);
+  }
+}
