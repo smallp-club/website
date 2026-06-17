@@ -361,11 +361,14 @@ create table stories (
 **Pre-Login (public `/mit-glied`):**
 - Headline: *„mit-glied. auch ohne-glied."*
 - Wert-Versprechen 3 Punkte:
-  - newsletter, alle 2 wochen, kein spam
+  - newsletter quartalsweise. plus wenn was wichtiges passiert. sonst stille.
   - werkstatt-zugang (drafts mitlesen, quellen-keller)
   - sticker-voucher und vorab-zugang zu merch (sobald shop live ist)
 - *„was es nicht ist"*: kein Abo, kein paid Tier, niemals
-- Magic-Link-Form
+- **Magic-Link-Form mit Newsletter-Opt-In als optionale Checkbox** (Default OFF):
+  - Email-Feld (Pflicht)
+  - Checkbox: *„auch newsletter abonnieren (quartalsweise)"* — DSGVO-sauber als granularer Consent
+  - Auth.js Magic-Link-Callback prüft Checkbox-State und triggert nur dann Brevo-Subscribe via `lib/brevo.ts`
 - *„aktuell noch kein shop — die karte zum runterladen gibt's schon, der sticker kommt wenn der shop kommt."*
 
 **Post-Login (Member-Bereich):**

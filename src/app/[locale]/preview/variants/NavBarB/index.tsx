@@ -32,6 +32,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 
+import { setUnderlineOrigin } from '@/lib/hover';
 import { NAV_ITEMS } from '../../lib/navItems';
 import styles from './NavBarB.module.css';
 
@@ -85,28 +86,29 @@ export function NavBarB() {
               src="/brand/smallpclub-mark-deep.svg"
               alt=""
               className={styles.mark}
-              width={24}
-              height={24}
+              width={28}
+              height={28}
             />
-            <img
-              src="/brand/smallpclub-wordmark-black.svg"
-              alt="small p club"
-              className={styles.wordmark}
-              height={18}
-            />
+            {/* Wordmark in Wrap mit overflow:hidden — kollabiert im pinned-State
+             *  via max-width auf 0 (CSS-Animation), Bildmarke bleibt stehen. */}
+            <span className={styles.wordmarkWrap} aria-hidden="false">
+              <img
+                src="/brand/smallpclub-wordmark-black.svg"
+                alt="small p club"
+                className={styles.wordmark}
+                height={20}
+              />
+            </span>
           </a>
 
           <ul className={styles.items} role="list">
-            {NAV_ITEMS.map((item, index) => (
+            {NAV_ITEMS.map((item) => (
               <li key={item.href} className={styles.item}>
-                {index > 0 && (
-                  <span className={styles.separator} aria-hidden="true">
-                    ·
-                  </span>
-                )}
                 <a
                   href={item.href}
                   className={styles.link}
+                  onMouseEnter={setUnderlineOrigin}
+                  onMouseLeave={setUnderlineOrigin}
                   aria-current={isCurrent(item.href) ? 'page' : undefined}
                 >
                   {item.label}

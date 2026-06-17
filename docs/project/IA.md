@@ -170,7 +170,7 @@ Sektionen:
 
 **Vor Login:**
 - **Headline:** *mit-glied. auch ohne-glied.*
-- **Wert-Versprechen** (3 Punkte, knapp): Newsletter alle 2 Wochen, Erfahrungsberichte (anonym), früher Merch-Zugang
+- **Wert-Versprechen** (3 Punkte, knapp): Newsletter quartalsweise + Ad-hoc bei echten Neuigkeiten, Erfahrungsberichte (anonym), früher Merch-Zugang
 - **Was es nicht ist:** kein Abo, kein paid Tier, niemals
 - **Magic-Link-Form** (eine Email, ein Button)
 

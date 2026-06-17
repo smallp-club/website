@@ -226,7 +226,7 @@ Wenn jemand abgelehnt wird, niemals belehren oder beschämen:
 | Rate Limit | *„zu viele anfragen. probier's in einer stunde nochmal."* |
 | Banned | *„hier kommst du nicht rein. mehr sagen wir nicht."* (kein „Warum", keine Diskussion) |
 | Cooldown | *„24 stunden warten. nicht weil wir misstrauen. weil's hier nicht eilt."* |
-| Submission abgelehnt | *„dein bericht passt nicht zu dem was wir hier machen. wir sagen nicht warum, schreib uns gerne wenn du das verstehen willst: kontakt@smallp.club"* |
+| Submission abgelehnt | *„dein bericht passt nicht zu dem was wir hier machen. wir sagen nicht warum, schreib uns gerne wenn du das verstehen willst: hello@smallp.club"* |
 | Bericht gemeldet | *„danke, wir schauen es uns an."* |
 
 ---

@@ -106,7 +106,7 @@
 
 .nav {
   /* Form-Custom-Properties — werden im pinned-State neu gesetzt. */
-  --nav-height: 48px;
+  --nav-height: 56px;
   --nav-floating-gap: 24px;
   --nav-max-width: 720px;
   --nav-radius: var(--radius-pill);
@@ -153,8 +153,10 @@
 }
 
 /* Pinned-State — Bar.
-   max-width unset → 100vw effektiv, Radius 0, kein Schatten, Hairline statt
-   floating-shadow, Padding nach Viewport skaliert, Margin-bottom 0. */
+   Material geht Full-Bleed (sonst hängt sie mittig im Off-White und sieht
+   schwebend aus). Inhalt drin (navInner) bleibt aber auf --container-max
+   zentriert — Logo + Items behalten ihre Komposition aus dem Hero-State,
+   nur das Material wechselt. Radius 0, Schatten weg, Hairline rein. */
 .nav[data-pinned='true'] {
   --nav-max-width: 100%;
   --nav-radius: 0;
@@ -162,8 +164,8 @@
   --nav-blur: 16px;
   --nav-saturate: 1.15;
   --nav-shadow: none;
-  --nav-padding-x: clamp(24px, 5vw, 64px);
-  --nav-hairline: rgba(10, 10, 10, 0.04);
+  --nav-padding-x: var(--gutter);
+  --nav-hairline: rgba(10, 10, 10, 0.08);
   --nav-floating-gap: 0px;
 }
 
@@ -177,6 +179,8 @@
   justify-content: space-between;
   gap: var(--space-5);
   width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
   height: 100%;
 }
 
@@ -197,14 +201,32 @@
 
 .mark {
   display: block;
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   flex: 0 0 auto;
+}
+
+/* Wordmark-Wrap kollabiert im pinned-State per max-width auf 0.
+   overflow:hidden schneidet sauber ab, opacity fadet zusätzlich. */
+.wordmarkWrap {
+  display: inline-flex;
+  align-items: center;
+  overflow: hidden;
+  max-width: 160px;
+  opacity: 1;
+  transition:
+    max-width var(--duration-slow) var(--ease-out),
+    opacity calc(var(--duration-slow) * 0.6) var(--ease-out);
+}
+
+.nav[data-pinned='true'] .wordmarkWrap {
+  max-width: 0;
+  opacity: 0;
 }
 
 .wordmark {
   display: block;
-  height: 18px;
+  height: 20px;
   width: auto;
   flex: 0 0 auto;
 }
@@ -212,7 +234,7 @@
 .items {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--space-6);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -221,45 +243,65 @@
 .item {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
 }
 
-.separator {
-  display: inline-block;
-  color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: 14px;
-  line-height: 1;
-  user-select: none;
-}
-
+/* Brand-Link-Sprache — identisches Pattern wie SiteFooter:
+   Chillax Medium + lowercase + direction-aware Hairline-Underline.
+   Im Rest klare visuelle Anker durch Weight + Color, Animation auf Hover. */
 .link {
+  position: relative;
   display: inline-flex;
   align-items: center;
   min-height: 44px;
-  padding-inline: 10px;
-  font-family: var(--font-body);
-  font-weight: var(--weight-medium);
-  font-size: 14px;
-  letter-spacing: var(--tracking-normal);
-  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+  color: color-mix(in oklab, var(--text-strong) 78%, var(--surface-bg));
   text-transform: lowercase;
   text-decoration: none;
-  border-radius: var(--radius-sm);
-  transition: color var(--duration-base) var(--ease-out);
+  transition: color 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.link:hover {
-  color: var(--accent-contrast);
+@media (hover: hover) and (pointer: fine) {
+  .link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: var(--underline-origin, right) center;
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .link:hover::after,
+  .link:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--text-strong);
 }
 
 .link:focus-visible {
   outline: none;
   box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
 }
 
 .link[aria-current='page'] {
-  color: var(--accent-contrast);
+  color: var(--text-strong);
+}
+
+.link[aria-current='page']::after {
+  transform: scaleX(1);
+  transform-origin: left center;
 }
 
 /* -------------------------------------------------------------------------
@@ -288,7 +330,7 @@
 
 @media (max-width: 768px) {
   .nav {
-    --nav-height: 44px;
+    --nav-height: 52px;
     --nav-floating-gap: 16px;
     --nav-max-width: 92vw;
     --nav-padding-x: 16px;
@@ -300,23 +342,29 @@
     --nav-floating-gap: 0px;
   }
 
+  .items {
+    gap: var(--space-4);
+  }
+
   .link {
-    padding-inline: 8px;
-    font-size: 13px;
+    font-size: 15px;
   }
 }
 
 @media (max-width: 480px) {
-  .wordmark {
-    display: none;
+  .wordmarkWrap {
+    /* Auf sehr schmalen Devices Wordmark grundsätzlich kollabieren —
+       Items + Bildmarke brauchen den Platz. */
+    max-width: 0;
+    opacity: 0;
   }
 
   .items {
-    gap: 2px;
+    gap: var(--space-3);
   }
 
   .link {
-    padding-inline: 6px;
+    font-size: 14px;
   }
 }
 

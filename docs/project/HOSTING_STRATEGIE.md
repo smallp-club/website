@@ -47,7 +47,7 @@
 
 **Brand-Voice für Mail-Headers:**
 - Absender: `mit-glied <auth@smallp.club>` (lowercase!)
-- Reply-To: `kontakt@smallp.club`
+- Reply-To: `hello@smallp.club`
 
 **Trade-off akzeptiert:** Kein Resend-Dashboard für Open-/Click-Statistiken. Brand-Doktrin verbietet Email-Tracking eh.
 
@@ -134,7 +134,7 @@ was sehen die alle? minimal:
 ### Teil C — Was du tun kannst
 
 ```
-du willst alles löschen: schreib uns kontakt@smallp.club. machen wir.
+du willst alles löschen: schreib uns hello@smallp.club. machen wir.
 du willst wissen was wir über dich haben: schreib uns. wir sagen es dir.
 du willst den newsletter abbestellen: link in jedem newsletter.
 ```
@@ -185,7 +185,7 @@ Diese Migrationen lehnen wir **bewusst ab**, auch wenn sie technisch möglich w�
 ### Vor Phase 4/5 zu klären
 1. ⬜ Bei Auth.js v5 nodemailer-Setup für all-inkl SMTP — Konfigurations-Details (Port 587 TLS, Credentials in Vercel Env)
 2. ⬜ Brevo Sending-Domain `smallp.club` verifizieren — welche DNS-Records bei Cloudflare ergänzen?
-3. ⬜ all-inkl-Postfach `auth@smallp.club` vs `noreply@smallp.club` vs `kontakt@smallp.club` — Brand-Voice-Entscheidung
+3. ✅ all-inkl-Postfächer geklärt: **`mit-glied@smallp.club`** als SMTP-Versand-Postfach für Auth.js Magic Links (mit Auto-Forward an `hello@`), **`hello@smallp.club`** als offizielle Kontakt-Adresse + Reply-To-Header
 4. ⬜ Privacy-Policy-Wortlaut final freigeben
 
 ---

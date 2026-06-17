@@ -63,7 +63,7 @@ falls ihr fragen habt: gerne per mail oder ich rufe an.
 beste grüße
 kevin theermann
 small p club
-kontakt@smallp.club
+hello@smallp.club
 ```
 
 ---
@@ -119,7 +119,7 @@ falls ihr fragen habt: gerne per mail oder ich melde mich direkt unter
 beste grüße aus dem ruhrgebiet
 kevin theermann
 small p club
-kontakt@smallp.club
+hello@smallp.club
 ```
 
 ---

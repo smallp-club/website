@@ -329,7 +329,7 @@ const mythen = [
 │      das denken mehr menschen, als du denkst.            │
 │                                                          │
 │                  [dabei sein]                            │
-│      (newsletter alle 2 wochen. kein spam. immer kostenlos.) │
+│      (newsletter quartalsweise. plus wenn was wichtiges passiert. immer kostenlos.) │
 │                                                          │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -339,7 +339,7 @@ const mythen = [
 **Inhalte:**
 - Headline: `<Heading level={2} variant="lede">das denken mehr menschen, als du denkst.</Heading>`
 - CTA: `<LinkButton variant="accent" size="lg" href="/mit-glied">dabei sein</LinkButton>`
-- Subtext: `<Caption tone="muted">newsletter alle 2 wochen. kein spam. immer kostenlos.</Caption>`
+- Subtext: `<Caption tone="muted">newsletter quartalsweise. plus wenn was wichtiges passiert. immer kostenlos.</Caption>`
 - Plus: Memberzahl-Satz (aus MEMBER_CONCEPT.md Säule 1)
   - <100: *„23 mit-glieder. der club ist klein. das ist okay."*
   - 100-999: *„247 mit-glieder. wir reden noch leise."*
