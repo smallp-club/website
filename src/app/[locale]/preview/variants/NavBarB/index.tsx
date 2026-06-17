@@ -1,46 +1,81 @@
 'use client';
 
 /**
- * NavBarB — Form-Morph (Pill wird Bar)
+ * NavBarB — SiteNav, Iteration 3 (Sticky-Pille + externe Member-Pille + Mobile-Sheet)
  *
- * Mechanik in drei Schichten:
+ * Desktop / Tablet (≥768px):
+ * - Pille schwebt am Hero-Bottom (Glas + Schatten, max-width ~720px).
+ * - Beim Scrollen: Pille dockt 16px unter Viewport-Top, bleibt rund + kompakt.
+ *   Glas wird etwas dichter, Schatten weicher — kein Form-Morph, nur Material.
+ * - Member-Pille lebt AUSSERHALB der Bar als Geschwister, in voller Bar-Höhe.
  *
- * 1) Sticky-Dock per CSS-only
- *    Die Nav sitzt sichtbar am Bottom des Hero, scrollt mit hoch und dockt
- *    am Viewport-Top an — kein JS-Scroll-Listener, kein Layout-Shift.
- *    Trick: `position: sticky; top: 0` + `margin-top: -(navHeight + gap)`.
- *    Der negative Top-Margin zieht die Nav so weit nach oben in den
- *    Layout-Fluss, dass sie nach Sticky-Dock exakt am Top sitzt.
+ * Mobile (<768px):
+ * - Items collapsen, Burger-Button löst Sheet aus.
+ * - Sheet: full-screen Off-White-Overlay mit Items in Chillax Large.
+ *   Schließt via Backdrop, X-Button oder Escape.
+ *   Body-Scroll-Lock, Auto-Focus auf Close-Button.
  *
- * 2) Pin-Detection per Sentinel
- *    Ein 1px-Sentinel direkt vor der Nav. Wenn der aus dem Viewport
- *    rausläuft (entry.isIntersecting === false), ist die Nav gepinnt.
- *    Wir toggeln `data-pinned="true"` auf dem Nav-Element.
- *
- * 3) Form-Morph via CSS-Custom-Properties
- *    Die Pill morpht zur Bar — synchron transitionen über --duration-slow:
- *      --nav-max-width        (720px → 100%)
- *      --nav-radius           (pill  → 0)
- *      --nav-bg-alpha         (0.85  → 0.92)
- *      --nav-blur             (20px  → 16px)
- *      --nav-shadow           (lg    → none/hairline)
- *      --nav-padding-x        (24px  → clamp 24-64)
- *      --nav-floating-gap     (24px  → 0)
- *    Reduced Motion: alle Transitionen 0.01ms (hard-toggle).
+ * Logo: Wordmark bleibt überall (>480px) — kein Crossfade-Zustand mehr.
+ * <480px: hard-toggle zu Bildmarke (Platz-Optimierung, keine Animation).
  */
 
 import { usePathname } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 import { setUnderlineOrigin } from '@/lib/hover';
-import { NAV_ITEMS } from '../../lib/navItems';
+import { MEMBER_NAV_ITEM, NAV_ITEMS } from '../../lib/navItems';
 import styles from './NavBarB.module.css';
+
+function BurgerIcon() {
+  return (
+    <svg
+      viewBox="0 0 256 256"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <line x1="40" y1="80" x2="216" y2="80" />
+      <line x1="40" y1="128" x2="216" y2="128" />
+      <line x1="40" y1="176" x2="216" y2="176" />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg
+      viewBox="0 0 256 256"
+      width="22"
+      height="22"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <line x1="200" y1="56" x2="56" y2="200" />
+      <line x1="56" y1="56" x2="200" y2="200" />
+    </svg>
+  );
+}
 
 export function NavBarB() {
   const pathname = usePathname();
   const [pinned, setPinned] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const sheetId = useId();
 
+  // Pin-Detection.
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -48,68 +83,148 @@ export function NavBarB() {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry) return;
-        // Sentinel out of view = Nav gepinnt am Top.
         setPinned(!entry.isIntersecting);
       },
-      { rootMargin: '0px 0px 0px 0px', threshold: 0 }
+      { rootMargin: '-1px 0px 0px 0px', threshold: 0 },
     );
 
     observer.observe(sentinel);
     return () => observer.disconnect();
   }, []);
 
-  // Normalisiere Pfad gegen aria-current — pathname kann Locale-Prefix tragen.
+  // Mobile-Sheet: Escape-Key, Body-Scroll-Lock, Auto-Focus.
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    closeButtonRef.current?.focus();
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+
+    document.addEventListener('keydown', handleKey);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [menuOpen]);
+
+  // Locale-Strip + Sub-Route-Match für aria-current.
   const isCurrent = (href: string): boolean => {
     if (!pathname) return false;
-    return pathname === href || pathname.endsWith(href);
+    const stripped = pathname.replace(/^\/(de|en)(?=\/|$)/, '') || '/';
+    return stripped === href || stripped.startsWith(`${href}/`);
   };
 
   return (
-    <div className={styles.shell}>
+    <>
       <section className={styles.hero} aria-label="Bühnenbild">
         <div className={styles.heroScrim} aria-hidden="true" />
-        <p className={styles.eyebrow}>seit 2026 · berlin</p>
+        <p className={styles.eyebrow}>seit 2026</p>
         <h1 className={styles.tagline}>no measure, no pressure</h1>
       </section>
 
-      {/* Sentinel direkt vor der Nav — 1px hoher Trigger für Pin-Detection. */}
       <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
 
-      <nav
-        className={styles.nav}
-        data-pinned={pinned ? 'true' : 'false'}
-        aria-label="Hauptnavigation"
-      >
-        <div className={styles.navInner}>
-          <a className={styles.lockup} href="/" aria-label="small p club Startseite">
-            <img
-              src="/brand/smallpclub-mark-deep.svg"
-              alt=""
-              className={styles.mark}
-              width={28}
-              height={28}
-            />
-            {/* Wordmark in Wrap mit overflow:hidden — kollabiert im pinned-State
-             *  via max-width auf 0 (CSS-Animation), Bildmarke bleibt stehen. */}
-            <span className={styles.wordmarkWrap} aria-hidden="false">
-              <img
-                src="/brand/smallpclub-wordmark-black.svg"
-                alt="small p club"
-                className={styles.wordmark}
-                height={20}
-              />
-            </span>
-          </a>
+      <div className={styles.navShell} data-pinned={pinned ? 'true' : 'false'}>
+        <nav className={styles.nav} aria-label="Hauptnavigation">
+          <div className={styles.navInner}>
+            <a className={styles.lockup} href="/" aria-label="small p club Startseite">
+              <span className={styles.logoStack}>
+                <img
+                  src="/brand/smallpclub-wordmark-deep.svg"
+                  alt="small p club"
+                  className={`${styles.logoLayer} ${styles.layerWordmark}`}
+                />
+                <img
+                  src="/brand/smallpclub-mark-deep.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className={`${styles.logoLayer} ${styles.layerMark}`}
+                />
+              </span>
+            </a>
 
-          <ul className={styles.items} role="list">
+            {/* Desktop-Items — auf Mobile via CSS versteckt. */}
+            <ul className={styles.items} role="list">
+              {NAV_ITEMS.map((item) => (
+                <li key={item.href} className={styles.item}>
+                  <a
+                    href={item.href}
+                    className={styles.link}
+                    onMouseEnter={setUnderlineOrigin}
+                    onMouseLeave={setUnderlineOrigin}
+                    aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            {/* Mobile-Burger — nur unter 768px sichtbar. */}
+            <button
+              type="button"
+              className={styles.burger}
+              aria-label="hauptmenü öffnen"
+              aria-expanded={menuOpen}
+              aria-controls={sheetId}
+              onClick={() => setMenuOpen(true)}
+            >
+              <BurgerIcon />
+            </button>
+          </div>
+        </nav>
+
+        <a
+          href={MEMBER_NAV_ITEM.href}
+          className={styles.memberPill}
+          aria-current={isCurrent(MEMBER_NAV_ITEM.href) ? 'page' : undefined}
+        >
+          {MEMBER_NAV_ITEM.label}
+        </a>
+      </div>
+
+      {/* Mobile-Sheet — Off-White Overlay, Items in Chillax Large.
+       *  Brand-konsistent ruhig: kein Slide-Drama, sanftes Fade + leichter
+       *  Translate. Schließt via Backdrop, X oder Escape. */}
+      <div
+        id={sheetId}
+        className={styles.sheet}
+        data-open={menuOpen ? 'true' : 'false'}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Hauptnavigation"
+        aria-hidden={menuOpen ? undefined : 'true'}
+      >
+        <button
+          type="button"
+          className={styles.sheetBackdrop}
+          aria-label="menü schließen"
+          tabIndex={-1}
+          onClick={() => setMenuOpen(false)}
+        />
+        <div className={styles.sheetPanel}>
+          <button
+            ref={closeButtonRef}
+            type="button"
+            className={styles.sheetClose}
+            aria-label="menü schließen"
+            onClick={() => setMenuOpen(false)}
+          >
+            <CloseIcon />
+          </button>
+
+          <ul className={styles.sheetItems} role="list">
             {NAV_ITEMS.map((item) => (
-              <li key={item.href} className={styles.item}>
+              <li key={item.href} className={styles.sheetItem}>
                 <a
                   href={item.href}
-                  className={styles.link}
-                  onMouseEnter={setUnderlineOrigin}
-                  onMouseLeave={setUnderlineOrigin}
+                  className={styles.sheetLink}
                   aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  onClick={() => setMenuOpen(false)}
                 >
                   {item.label}
                 </a>
@@ -117,14 +232,7 @@ export function NavBarB() {
             ))}
           </ul>
         </div>
-      </nav>
-
-      {/* Restseiten-Platzhalter, damit Scroll-Verhalten sichtbar wird. */}
-      <section className={styles.afterStage} aria-label="Folgesektion Platzhalter">
-        <p className={styles.afterCopy}>
-          ab hier läuft die nav als top-bar mit. scrollen, beobachten, formwechsel.
-        </p>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }

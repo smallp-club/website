@@ -1,30 +1,28 @@
 /* =========================================================================
-   NavBarB — Form-Morph (Pill wird Bar)
+   NavBarB — Form-Morph + externe Member-Pille
 
-   Architektur:
-   - .shell trägt den Sticky-Kontext (scroll-container ist <html>/<body>).
-   - .hero ist die Bühne, an deren Bottom die Pill schwebt.
-   - .sentinel ist der 1px-Trigger, der Pin-Detection auslöst.
-   - .nav ist sticky am Top, wird aber durch negativen margin-top so weit
-     hochgezogen, dass sie initial visuell am Hero-Bottom sitzt.
-   - .nav transitioniert alle Form-Properties über CSS-Custom-Properties,
-     die im [data-pinned="true"]-State neu gesetzt werden.
+   Strukturelle Idee:
+   - .navShell ist sticky am Top, trägt Layout + Form-Morph-Properties.
+   - .nav ist das Bar-Material (Glas / Off-White) mit Logo + Items.
+   - .memberPill ist Geschwister, eigenständig, Solid-Accent.
+   - Bei data-pinned='true' morphen Bar + Pille synchron:
+       Bar: Pill → Editorial-Bar (max-width 720 → 100%, radius pill → 0,
+            shadow lg → hairline)
+       Pille: schwebende Floating-Pill mit Schatten → ruhige Pille auf
+            der Bar-Oberfläche, kein Schatten mehr.
+
+   Lockup-Verhalten:
+   - Hero-State: Wordmark (Dark Turquoise) sichtbar
+   - Pinned-State: Wordmark crossfadet zu Bildmarke
    ========================================================================= */
 
-.shell {
-  position: relative;
-  isolation: isolate;
-  background-color: var(--spc-offwhite);
-  color: var(--text-strong);
-}
-
 /* -------------------------------------------------------------------------
-   Hero — Bühnenbild mit Tagline.
+   Hero — 100dvh: stabil gegen iOS-Safari Address-Bar-Reflow.
    ------------------------------------------------------------------------- */
 
 .hero {
   position: relative;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -58,10 +56,10 @@
   transform: translateX(-50%);
   z-index: 1;
   margin: 0;
-  font-family: var(--font-body);
-  font-weight: var(--weight-medium);
-  font-size: 13px;
-  letter-spacing: var(--tracking-wide);
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  letter-spacing: 0.01em;
   color: var(--spc-offwhite);
   text-transform: lowercase;
   text-shadow: 0 1px 12px rgba(10, 10, 10, 0.45);
@@ -82,11 +80,6 @@
   text-shadow: 0 2px 24px rgba(10, 10, 10, 0.42);
 }
 
-/* -------------------------------------------------------------------------
-   Sentinel — 1px-Marker direkt vor der Nav.
-   Wenn er aus dem Viewport scrollt, ist die Nav gepinnt.
-   ------------------------------------------------------------------------- */
-
 .sentinel {
   height: 1px;
   width: 100%;
@@ -94,44 +87,62 @@
 }
 
 /* -------------------------------------------------------------------------
-   Nav — Form-Morph via Custom Properties.
+   NavShell — sticky-Wrapper, trägt Form-Morph via Custom Properties.
 
-   Default-State = Bottom-Pill, schwebend im Hero.
-   data-pinned="true" = Top-Bar, full-width am Viewport-Rand.
+   --shell-max-width morpht: Hero-Komposition (Bar + Gap + Pille) → 100%.
+   ------------------------------------------------------------------------- */
 
-   Der negative margin-top zieht die Nav so weit hoch, dass sie nach
-   Sticky-Dock visuell am Hero-Bottom sitzt — mit dem Floating-Gap als
-   Atem zum Bühnenbild-Rand.
+.navShell {
+  --nav-height: 56px;
+  --shell-gap: var(--space-3);
+  --shell-max-width: calc(720px + var(--shell-gap) + 132px);
+  --shell-padding-x: var(--gutter);
+  --floating-gap: 24px;
+  --sticky-top: 16px;
+
+  position: sticky;
+  top: var(--sticky-top);
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  gap: var(--shell-gap);
+
+  margin-top: calc(-1 * (var(--nav-height) + var(--floating-gap)));
+  margin-bottom: var(--floating-gap);
+  margin-inline: auto;
+
+  width: 100%;
+  max-width: var(--shell-max-width);
+  height: var(--nav-height);
+  padding-inline: var(--shell-padding-x);
+  box-sizing: border-box;
+}
+
+/* Pinned: Pille bleibt rund und kompakt. Nur Material wird ruhiger
+   (weicherer Schatten, dichteres Glas) und die Komposition rückt
+   leicht vom Viewport-Top ab. */
+
+/* -------------------------------------------------------------------------
+   Nav — Bar-Material. Im Hero-State Pill mit Glas + Schatten,
+   im Pinned-State Editorial mit Hairline-bottom.
    ------------------------------------------------------------------------- */
 
 .nav {
-  /* Form-Custom-Properties — werden im pinned-State neu gesetzt. */
-  --nav-height: 56px;
-  --nav-floating-gap: 24px;
-  --nav-max-width: 720px;
   --nav-radius: var(--radius-pill);
   --nav-bg-alpha: 0.85;
   --nav-blur: 20px;
   --nav-saturate: 1.2;
   --nav-shadow: var(--shadow-lg);
-  --nav-padding-x: 24px;
   --nav-hairline: transparent;
+  --nav-padding-x: var(--space-5);
 
-  position: sticky;
-  top: 0;
-  z-index: 100;
-
-  /* Negative margin-top zieht die Nav in den Layout-Fluss hoch. */
-  margin-top: calc(-1 * (var(--nav-height) + var(--nav-floating-gap)));
-  margin-bottom: var(--nav-floating-gap);
-  margin-inline: auto;
-
-  width: 100%;
-  max-width: var(--nav-max-width);
-  height: var(--nav-height);
-
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
   padding-inline: var(--nav-padding-x);
-  padding-block: 12px;
   box-sizing: border-box;
 
   background-color: rgba(247, 246, 242, var(--nav-bg-alpha));
@@ -140,38 +151,25 @@
   border-radius: var(--nav-radius);
   box-shadow: var(--nav-shadow), 0 1px 0 0 var(--nav-hairline);
 
-  /* Synchroner Morph aller Form-Properties. */
   transition:
-    max-width var(--duration-slow) var(--ease-out),
     border-radius var(--duration-slow) var(--ease-out),
     background-color var(--duration-slow) var(--ease-out),
     box-shadow var(--duration-slow) var(--ease-out),
     padding-inline var(--duration-slow) var(--ease-out),
-    margin-bottom var(--duration-slow) var(--ease-out),
-    -webkit-backdrop-filter var(--duration-slow) var(--ease-out),
-    backdrop-filter var(--duration-slow) var(--ease-out);
+    -webkit-backdrop-filter calc(var(--duration-slow) * 0.6) var(--ease-out)
+      calc(var(--duration-slow) * 0.3),
+    backdrop-filter calc(var(--duration-slow) * 0.6) var(--ease-out)
+      calc(var(--duration-slow) * 0.3);
 }
 
-/* Pinned-State — Bar.
-   Material geht Full-Bleed (sonst hängt sie mittig im Off-White und sieht
-   schwebend aus). Inhalt drin (navInner) bleibt aber auf --container-max
-   zentriert — Logo + Items behalten ihre Komposition aus dem Hero-State,
-   nur das Material wechselt. Radius 0, Schatten weg, Hairline rein. */
-.nav[data-pinned='true'] {
-  --nav-max-width: 100%;
-  --nav-radius: 0;
+.navShell[data-pinned='true'] .nav {
+  /* Pille bleibt Pille — Radius nicht angefasst.
+     Glas dichter, Schatten weicher und enger, kein dramatischer Lift. */
   --nav-bg-alpha: 0.92;
-  --nav-blur: 16px;
+  --nav-blur: 18px;
   --nav-saturate: 1.15;
-  --nav-shadow: none;
-  --nav-padding-x: var(--gutter);
-  --nav-hairline: rgba(10, 10, 10, 0.08);
-  --nav-floating-gap: 0px;
+  --nav-shadow: var(--shadow-md);
 }
-
-/* -------------------------------------------------------------------------
-   Nav-Inner — Layout für Lockup + Items.
-   ------------------------------------------------------------------------- */
 
 .navInner {
   display: flex;
@@ -184,11 +182,14 @@
   height: 100%;
 }
 
+/* -------------------------------------------------------------------------
+   Logo-Stack — Wordmark + Mark im selben Slot, Crossfade beim Pin.
+   ------------------------------------------------------------------------- */
+
 .lockup {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  min-height: 44px; /* Touch-Target */
+  min-height: 44px;
   text-decoration: none;
   color: inherit;
   border-radius: var(--radius-sm);
@@ -199,37 +200,33 @@
   box-shadow: var(--shadow-focus);
 }
 
-.mark {
+.logoStack {
+  position: relative;
+  display: inline-block;
+  height: 28px;
+}
+
+.logoLayer {
   display: block;
+  height: 28px;
+  width: auto;
+}
+
+/* Default: Wordmark sichtbar (sie enthält die Bildmarke im 'p'),
+   Bildmarke versteckt. Auf <480px wird's umgekehrt (hard toggle). */
+.layerWordmark {
+  display: block;
+}
+
+.layerMark {
+  display: none;
   width: 28px;
   height: 28px;
-  flex: 0 0 auto;
 }
 
-/* Wordmark-Wrap kollabiert im pinned-State per max-width auf 0.
-   overflow:hidden schneidet sauber ab, opacity fadet zusätzlich. */
-.wordmarkWrap {
-  display: inline-flex;
-  align-items: center;
-  overflow: hidden;
-  max-width: 160px;
-  opacity: 1;
-  transition:
-    max-width var(--duration-slow) var(--ease-out),
-    opacity calc(var(--duration-slow) * 0.6) var(--ease-out);
-}
-
-.nav[data-pinned='true'] .wordmarkWrap {
-  max-width: 0;
-  opacity: 0;
-}
-
-.wordmark {
-  display: block;
-  height: 20px;
-  width: auto;
-  flex: 0 0 auto;
-}
+/* -------------------------------------------------------------------------
+   Items — Brand-Link-Sprache (identisch SiteFooter VoiceLinks).
+   ------------------------------------------------------------------------- */
 
 .items {
   display: flex;
@@ -245,9 +242,6 @@
   align-items: center;
 }
 
-/* Brand-Link-Sprache — identisches Pattern wie SiteFooter:
-   Chillax Medium + lowercase + direction-aware Hairline-Underline.
-   Im Rest klare visuelle Anker durch Weight + Color, Animation auf Hover. */
 .link {
   position: relative;
   display: inline-flex;
@@ -261,6 +255,7 @@
   color: color-mix(in oklab, var(--text-strong) 78%, var(--surface-bg));
   text-transform: lowercase;
   text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
   transition: color 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -285,7 +280,8 @@
 }
 
 .link:hover,
-.link:focus-visible {
+.link:focus-visible,
+.link:active {
   color: var(--text-strong);
 }
 
@@ -305,82 +301,270 @@
 }
 
 /* -------------------------------------------------------------------------
-   Folgesektion — nur ein Atemraum, damit Scroll-Verhalten greift.
+   Mobile-Burger — versteckt auf Desktop, sichtbar unter 768px.
    ------------------------------------------------------------------------- */
 
-.afterStage {
-  min-height: 160vh;
-  padding: var(--section-y) var(--space-5);
-  background-color: var(--spc-offwhite);
+.burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-strong);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.afterCopy {
-  max-width: 640px;
-  margin: 0 auto;
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
-  line-height: var(--leading-relaxed);
-  color: var(--text-muted);
-  text-transform: lowercase;
+.burger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* -------------------------------------------------------------------------
-   Mobile — Pill schmaler, Wordmark unter 480px ausblenden.
+   Member-Pille — Geschwister der Bar, AUSSERHALB.
+   Volle Bar-Höhe → automatisch ≥56px Touch-Target (WCAG AAA).
+
+   Hero-State: schwebt mit eigenem Schatten neben der Pill-Bar.
+   Pinned-State: behält Pill-Radius (sie ist Pille, kein Bar-Stück),
+   verliert aber den dramatischen Schatten — sitzt ruhiger.
+   ------------------------------------------------------------------------- */
+
+.memberPill {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-inline: var(--space-6);
+  border-radius: var(--radius-pill);
+  background-color: var(--accent, #7bdcb5);
+  color: var(--text-on-accent, #0a0a0a);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-transform: lowercase;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow-lg);
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow var(--duration-slow) var(--ease-out),
+    background-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navShell[data-pinned='true'] .memberPill {
+  /* Pille passt sich der ruhigeren Bar-Material-Stufe an —
+     gleicher Schatten-Polish wie die Bar. */
+  box-shadow: var(--shadow-md);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .memberPill:hover {
+    background-color: var(--accent-hover, #62cba0);
+    transform: translateY(-1px);
+  }
+}
+
+.memberPill:active {
+  transform: scale(0.97);
+  background-color: var(--accent-press, #4fbf90);
+}
+
+.memberPill:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.memberPill[aria-current='page'] {
+  background-color: var(--accent-press, #4fbf90);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------
+   Mobile-Sheet — Off-White Overlay, Brand-ruhig.
+   Default ausgeblendet, sichtbar via [data-open='true'].
+   ------------------------------------------------------------------------- */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 240ms;
+}
+
+.sheet[data-open='true'] {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  transition:
+    opacity 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0s;
+}
+
+.sheetBackdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background-color: rgba(10, 10, 10, 0.45);
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+  cursor: pointer;
+}
+
+.sheetPanel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6) var(--space-5) var(--space-9);
+  background-color: var(--spc-offwhite);
+  transform: translateY(-12px);
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sheet[data-open='true'] .sheetPanel {
+  transform: translateY(0);
+}
+
+.sheetClose {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-strong);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheetClose:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.sheetItems {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sheetItem {
+  display: block;
+}
+
+.sheetLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(40px, 9vw, 56px);
+  letter-spacing: var(--tracking-display);
+  line-height: 1.1;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheetLink[aria-current='page'] {
+  color: var(--spc-turquoise-deep);
+}
+
+.sheetLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+/* -------------------------------------------------------------------------
+   Mobile-Layout (<768px).
+   Items collapsen, Burger erscheint. Logo bleibt Wordmark bis <480px.
    ------------------------------------------------------------------------- */
 
 @media (max-width: 768px) {
-  .nav {
+  .navShell {
     --nav-height: 52px;
-    --nav-floating-gap: 16px;
-    --nav-max-width: 92vw;
-    --nav-padding-x: 16px;
+    --shell-gap: var(--space-2);
+    --floating-gap: 16px;
+    --shell-max-width: 92vw;
+    --shell-padding-x: 0;
+    --sticky-top: 12px;
   }
 
-  .nav[data-pinned='true'] {
-    --nav-max-width: 100%;
-    --nav-padding-x: var(--space-5);
-    --nav-floating-gap: 0px;
+  .nav {
+    --nav-padding-x: var(--space-4);
   }
 
   .items {
-    gap: var(--space-4);
+    display: none;
   }
 
-  .link {
+  .burger {
+    display: inline-flex;
+  }
+
+  .memberPill {
+    padding-inline: var(--space-5);
     font-size: 15px;
   }
 }
 
 @media (max-width: 480px) {
-  .wordmarkWrap {
-    /* Auf sehr schmalen Devices Wordmark grundsätzlich kollabieren —
-       Items + Bildmarke brauchen den Platz. */
-    max-width: 0;
-    opacity: 0;
+  /* Logo: hard switch zu Bildmarke. */
+  .layerWordmark {
+    display: none;
+  }
+  .layerMark {
+    display: block;
   }
 
-  .items {
-    gap: var(--space-3);
-  }
-
-  .link {
+  .memberPill {
+    padding-inline: var(--space-4);
     font-size: 14px;
   }
 }
 
 /* -------------------------------------------------------------------------
-   Reduced Motion — Hard-Toggle zwischen Pill und Bar.
-   Tokens setzen --duration-slow auf --duration-instant; zusätzlich
-   garantieren wir hier explizit, dass kein Form-Morph als Animation
-   wahrnehmbar ist.
+   Reduced-Motion.
    ------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
-  .nav {
-    transition-duration: 0.01ms;
-  }
-
-  .link {
-    transition-duration: 0.01ms;
+  .navShell,
+  .nav,
+  .link,
+  .link::after,
+  .memberPill,
+  .sheet,
+  .sheetPanel {
+    transition: none;
   }
 }

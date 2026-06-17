@@ -1,0 +1,46 @@
+.main {
+  padding-block: var(--space-9) var(--space-10);
+}
+
+.header {
+  margin-block-end: var(--space-9);
+}
+
+.section {
+  margin-block-end: var(--space-9);
+}
+
+.section h2 {
+  margin-block-end: var(--space-5);
+}
+
+.addressBlock {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+  margin-block-end: var(--space-5);
+  white-space: pre-line;
+}
+
+.lead {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+  margin-block-end: var(--space-4);
+}
+
+.lead a {
+  color: var(--accent-contrast);
+  text-decoration: underline;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-overline);
+  letter-spacing: 0.01em;
+  color: var(--accent-contrast);
+  margin-block-end: var(--space-2);
+}

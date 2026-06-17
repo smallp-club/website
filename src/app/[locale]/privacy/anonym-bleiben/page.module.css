@@ -1,0 +1,77 @@
+.main {
+  padding-block: var(--space-9) var(--space-10);
+}
+
+.header {
+  margin-block-end: var(--space-9);
+}
+
+.intro {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+  margin-block-end: var(--space-7);
+}
+
+.section {
+  margin-block-end: var(--space-8);
+}
+
+.section h2 {
+  margin-block-end: var(--space-4);
+}
+
+.step {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+  margin-block-end: var(--space-5);
+}
+
+.step strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-heading-sm);
+  color: var(--text-strong);
+  margin-block-end: var(--space-2);
+}
+
+.step .detail {
+  color: var(--text-muted);
+  font-size: var(--text-body-sm);
+  margin-block-start: var(--space-2);
+}
+
+.step .detail code {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  padding: 0.1em 0.5em;
+}
+
+.step a {
+  color: var(--accent-contrast);
+  text-decoration: underline;
+}
+
+.outro {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+  margin-block-start: var(--space-7);
+}
+
+.signOff {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+  margin-block-start: var(--space-7);
+}
+
+.signOff em {
+  font-style: italic;
+}

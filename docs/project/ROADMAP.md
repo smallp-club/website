@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-17 (Session 8 — SiteFooter manifestiert, Brand-Foundation-Pattern, Stack-EU-Migration)
+## Stand: 2026-06-17 (Session 9 — Cloudflare live, Brevo eingerichtet, Hosting/Member-Security konsolidiert)
 
 ---
 
@@ -70,6 +70,57 @@
 - [x] **`getMemberCount`** (`src/lib/members/count.ts`) — Stub für Supabase-Query, Phase 5+
 - [x] **LogoMark** Primitive eingerichtet
 
+## Pre-Launch-Infrastruktur (✅ abgeschlossen, Session 9 — 2026-06-17)
+
+### Cloudflare-Edge (DNS + Proxy + DDoS + WAF)
+- [x] Cloudflare Free Plan vor Vercel + all-inkl produktiv
+- [x] Nameserver bei all-inkl auf `bristol.ns.cloudflare.com` + `corey.ns.cloudflare.com` umgestellt
+- [x] DNS-Records komplett: A `smallp.club` + `www` (Vercel, Proxied), Wildcard `*` (all-inkl, DNS only), MX + SPF + DMARC + DKIM für all-inkl Mail
+- [x] DMARC erweitert um `rua=mailto:rua@dmarc.brevo.com` für Brevo-DOI-Reporting
+- [x] SSL/TLS Mode: **Full (strict)** — Vercel-Cert validiert
+- [x] Always Use HTTPS, Min TLS 1.2, TLS 1.3, HTTP/3, 0-RTT, Brotli, Early Hints, Speed Brain
+- [x] Bot Fight Mode aktiv (kostenlose Bot-Filterung)
+- [x] AI-Crawler **erlaubt** (Brand-Entscheidung: Mission profitiert von AI-Sichtbarkeit, Trade-off Trainings-Daten akzeptiert)
+- [x] Security.txt eingerichtet mit `secure@smallp.club` Kontakt
+- [x] Onion Routing aktiv (Privacy-Bonus für Tor-User)
+- [ ] **Cloudflare Project Galileo** beantragen post-Launch (Brigading-Risiko dokumentieren, Empfehlung Bundesforum Männer)
+
+### Mail-Infrastruktur (DE-Server für inhaltliche Datenflüsse)
+- [x] all-inkl SMTP-Postfach `mit-glied@smallp.club` angelegt (für Auth.js Magic Links in Phase 5)
+- [x] Auto-Forward `mit-glied@` → `hello@smallp.club`
+- [x] Mail-Adressen-Konvention dokumentiert (`hello@` = Kontakt + Reply-To, `mit-glied@` = SMTP-Sender, NIEMALS `kontakt@` oder `noreply@`)
+- [x] SMTP-Credentials in Proton Pass gesichert
+
+### Newsletter (Brevo, EU-Server)
+- [x] Brevo-Account + 2FA aktiviert
+- [x] Sending-Domain `smallp.club` verifiziert (DKIM CNAMEs + Brevo-Code TXT bei Cloudflare angelegt)
+- [x] Subscriber-Liste `mit-glieder` (ID 5) angelegt
+- [x] DOI-Template als React-Email-Komponente (`emails/double-opt-in.tsx`) — Brand-Voice, a11y (Heading + AAA-Kontrast), DSGVO-Block
+- [x] API-Key generiert + in Proton Pass + Vercel Env Vars (`BREVO_API_KEY`, `BREVO_LIST_ID`, `BREVO_SENDER_EMAIL`, `BREVO_SENDER_NAME`, `BREVO_DOI_TEMPLATE_ID`)
+- [x] `src/lib/brevo.ts` — typsicherer Brevo-API-Wrapper (fetch-basiert, kein Package-Bloat)
+- [x] `src/lib/email-validation.ts` — Email-Regex + 37 Disposable-Domains
+- [x] **Newsletter ist OPT-IN beim Member-Login** (granularer Consent), kein Standalone-Subscribe — Brevo wird in Phase 5 von Auth.js-Callback getriggert
+- [ ] **Brevo Sending-Domain DKIM-Propagation** post-Auth-Verify checken
+
+### Hosting-Strategie konsolidiert
+- [x] `docs/project/HOSTING_STRATEGIE.md` als verbindliche Doku (DPF + EU-Region pragmatisch ohne Zusatzkosten)
+- [x] Stack-Migration: Beehiiv → Brevo, Resend → all-inkl SMTP, Umami gestrichen (Brand-Statement „wir messen euch nicht")
+- [x] `docs/tech/STACK.md` aktualisiert auf neuen Stack
+- [x] EU-Region-Forcing dokumentiert für Vercel, Supabase, Upstash (Frankfurt)
+
+### Sicherheit
+- [x] Proton Pass als zentraler Password-Manager (kostenlos, EU-basiert, integriertes 2FA/TOTP)
+- [x] 2FA auf allen kritischen Accounts (Vercel, GitHub, Cloudflare, all-inkl, Brevo)
+- [x] Alle API-Keys in Vercel Env Vars als Sensitive markiert
+- [ ] **DPA-Sammelmappe** zusammenstellen (Vercel, Cloudflare, Supabase, Brevo, all-inkl, Upstash) — verschoben auf Phase 6
+
+### Konzept-Doku abgeschlossen
+- [x] `docs/project/HOSTING_STRATEGIE.md` — DSGVO pragmatisch
+- [x] `docs/project/MEMBER_SECURITY.md` — Drei-Stufen-Moderation + Admin-Bereich + Submit-Confirm-Voice
+- [x] `docs/project/FUNDING_TECH_AUDIT.md` — Förder-Recherche archiviert (nicht verfolgt)
+- [x] Brand-Voice-Update: „auch ohne-glied" (Bindestrich-Reihenfolge final)
+- [x] Newsletter-Frequenz: quartalsweise + Ad-hoc (statt zweiwöchentlich)
+
 ---
 
 ## Phase 2 — Visual Direction (← JETZT)
@@ -104,19 +155,28 @@
 
 ## Phase 5 — Member-Bereich Implementation
 
-### Pre-Launch-Pflicht (siehe MEMBER_CONCEPT.md Sektion 10)
-- [ ] Auth-Wall + Magic-Link (Auth.js v5 + Resend)
-- [ ] Pre-Login-Page `/mit-glied` mit Wert-Versprechen
+### Pre-Launch-Pflicht (siehe MEMBER_CONCEPT.md Sektion 10 + MEMBER_SECURITY.md)
+- [ ] Auth-Wall + Magic-Link (Auth.js v5 + **all-inkl SMTP** mit `mit-glied@smallp.club`-Postfach)
+- [ ] Pre-Login-Page `/mit-glied` mit Wert-Versprechen + Newsletter-Opt-In-Checkbox (granularer Consent)
 - [ ] Member-Slot (Drawer mit Pseudonym, Datum, Logout, Karte-Download)
-- [ ] Onboarding-Sequence (3 stille Schritte)
+- [ ] Onboarding-Sequence (3 stille Schritte + Brand-Statement-Schwelle „mit-glied werden. auch ohne-glied.")
 - [ ] **Logout-on-all-devices** als first-class Feature
 - [ ] **Account-Löschung** ein-Klick (DSGVO-Pflicht)
-- [ ] Erfahrungsberichte-Form mit Auto-Vorsortierung
-- [ ] Auto-Vorsortierung: Längen-Check, Keyword-Blacklist, Tone-Detection
-- [ ] Kevin's Final-Kuratierungs-Inbox
+- [ ] Erfahrungsberichte-Form mit Schreib-Prompts (5 Stück, siehe MEMBER_CONCEPT.md Sektion 5)
+- [ ] **Drei-Stufen-Moderation-System** (Hard-Reject / Flag-High / Flag-Low / Pass) inkl. Normalisierungs-Pipeline (Confusables, Leetspeak, ZWJ-Strip)
+- [ ] **Brigading-Quarantäne** via 5-Wort-Shingle-Fingerprint
+- [ ] **Telefonseelsorge-Hinweis-Strip** bei Suizid-Marker (content-getriggert, nicht prompt-getriggert)
+- [ ] **Submit-Confirm-Voice prompt-sensitiv** (3 Register: kennen wir / gut(es) / notiert)
+- [ ] **Admin-Bereich** `/mit-glied/admin/*` mit Role-Check + RLS + TOTP-2FA + kurzer Session-Timeout + Audit-Log
+- [ ] Cloudflare Turnstile vor Magic-Link-Form
+- [ ] Disposable-Email-Block (`lib/email-validation.ts` schon vorhanden)
+- [ ] Rate Limiting via Upstash Redis (5/IP-Tag, 3/Email-Stunde, 1 Account/IP-Tag)
+- [ ] 24h Cooldown vor erstem Submission
+- [ ] Ban-Mechanismus (Account + Email-Hash + IP-Hash auf Block-Liste)
+- [ ] Brevo-Subscribe-Trigger in Auth.js-Callback (conditional auf Newsletter-Opt-In-Checkbox)
 - [ ] Mit-Glied-Karte als PDF/PNG-Generator
 - [ ] Memberzahl-Satz auf Landing (mit Schwellen-Voice-Wechsel)
-- [ ] `/stimmen` Public-Wall mit kuratierten Berichten
+- [ ] `/stimmen` Public-Wall mit kuratierten Berichten + Report-Knopf
 - [ ] Bildmarken-Status-Indikator (Member sieht Ring um Bildmarke)
 
 ### Launch-Bootstrap
@@ -136,14 +196,20 @@
 
 - [ ] **Sitemap-Generator** mit Hard-Exclude für `/mit-glied/*`, `/api/*`, `/auth/*`
 - [ ] **robots.txt** mit Disallow-Regeln (post-Launch live schalten)
-- [ ] **AVV-Sammelmappe** (Vercel, Supabase, Resend, Beehiiv, Upstash, Umami)
+- [ ] **DPA-Sammelmappe** (Vercel, Cloudflare, Supabase, Brevo, all-inkl, Upstash) — alle DPAs als PDF gesammelt
 - [ ] **Vercel DPA signieren** (Vercel → Settings → Legal)
+- [ ] **Cloudflare DPA** runterladen (Dashboard → DPA)
+- [ ] **Privacy Policy schreiben** — peer-Voice, alle Anbieter transparent benennen (siehe HOSTING_STRATEGIE.md Sektion 4)
+- [ ] **Impressum** schreiben (TMG §5)
+- [ ] **Kontakt-Page** schreiben
+- [ ] **Privacy-Helper-Page `/privacy/anonym-bleiben`** schreiben (siehe IA.md Sektion 5)
 - [ ] **DSGVO-Audit** — Datenschutzerklärung benennt alle Drittdienste
+- [ ] **Brevo Email-Tracking deaktivieren** vor erstem Newsletter (Open/Click-Pixel sind anti-Brand)
 - [ ] **Stripe / Shopify** — vorerst nicht, kommt mit Shop in Phase 8
 - [ ] **OneDrive-Pfad-Problem lösen** — Repo aus `OneDrive-adessoGroup/` raus nach `~/Code/smallp-website`
-- [ ] **Beehiiv Open/Click-Tracking deaktivieren** vor erstem Newsletter
 - [ ] **Steuerberater-Termin** (30 min, ~80–120€) — Bestätigung dass `/unterstuetzen` reine Verlinkung steuerlich neutral ist, schriftlich dokumentieren
 - [ ] **noindex entfernen** (Launch-Switch)
+- [ ] **Cloudflare Project Galileo** beantragen (mit Empfehlung von Bundesforum Männer)
 
 ## Phase 7 — Funding-Page (NACH Landing-MVP)
 
@@ -252,3 +318,9 @@
 - **Memory `project_logistics_doctrine.md`** — niemals eigene Logistik, Print-on-Demand für alles
 - **Eyebrows sind lowercase** (Brand-Voice durchgängig, nicht UPPERCASE-tracked)
 - **Dev-Workflow:** Webpack-Mode (`--webpack`) für Library/Preview wegen Turbopack-Routing-Bug, OneDrive-Pfad-Problem
+- **Newsletter ist OPT-IN beim Member-Login** (granularer Consent), kein Standalone-Subscribe-Flow
+- **Mail-Adressen:** hello@ = Kontakt + Reply-To, mit-glied@ = SMTP-Sender. NIEMALS kontakt@ oder noreply@
+- **Drei-Stufen-Moderation** für Erfahrungsberichte: Hard-Reject / Flag-High / Flag-Low / Pass (siehe MEMBER_SECURITY.md Linie 3)
+- **Admin-Bereich** im Member-System (`/mit-glied/admin/*`), nicht extern: eine Auth-Mechanik, RLS + TOTP-2FA + Audit-Log
+- **DSGVO-Position:** Inhalts-Daten in DE/EU (all-inkl SMTP, Brevo FR), Infrastruktur DPF-zertifiziert + EU-Region. Kein vollständig-DE-Stack wegen Zusatzkosten
+- **Schritt für Schritt:** eine Entscheidung pro Antwort, keine Multi-Phase-Anleitungen (Memory `feedback_step_by_step.md`)

@@ -1,0 +1,105 @@
+.main {
+  padding-block: var(--space-9) var(--space-10);
+}
+
+.header {
+  margin-block-end: var(--space-9);
+}
+
+.stand {
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  margin-block-start: var(--space-3);
+}
+
+.section {
+  margin-block-end: var(--space-9);
+}
+
+.section h2 {
+  margin-block-end: var(--space-5);
+}
+
+.section h3 {
+  margin-block-end: var(--space-3);
+  margin-block-start: var(--space-6);
+}
+
+.brandBlock {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+  margin-block-end: var(--space-6);
+  white-space: pre-line;
+}
+
+.lead {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+  margin-block-end: var(--space-4);
+}
+
+.provider {
+  margin-block-end: var(--space-6);
+}
+
+.providerName {
+  font-family: var(--font-body);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+  margin-block-end: var(--space-2);
+}
+
+.providerDetail {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-muted);
+  margin-block-end: var(--space-1);
+}
+
+.providerDetail a {
+  color: var(--accent-contrast);
+  text-decoration: underline;
+}
+
+.cookieTable {
+  border-collapse: collapse;
+  margin-block-end: var(--space-5);
+  width: 100%;
+}
+
+.cookieTable th,
+.cookieTable td {
+  border-bottom: 1px solid var(--border-hairline);
+  padding: var(--space-3) var(--space-4);
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+}
+
+.cookieTable th {
+  font-weight: var(--weight-medium);
+  color: var(--text-strong);
+}
+
+.cookieTable td {
+  color: var(--text-strong);
+}
+
+.signOff {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+  margin-block-start: var(--space-7);
+}
+
+.signOff em {
+  font-style: italic;
+}

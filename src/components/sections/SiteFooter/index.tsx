@@ -50,6 +50,7 @@ const SERVICE_LINKS = [
   { href: '/kontakt', label: 'kontakt' },
   { href: '/impressum', label: 'impressum' },
   { href: '/datenschutz', label: 'datenschutz' },
+  { href: '/privacy/anonym-bleiben', label: 'anonym bleiben' },
 ] as const;
 
 function memberLine(count: number): string {
