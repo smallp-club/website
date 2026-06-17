@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -7,6 +8,32 @@ import { SkipToContent } from '@/components/primitives/SkipToContent';
 import { SiteFooterContainer } from '@/components/sections/SiteFooter/SiteFooterContainer';
 import { SiteNavContainer } from '@/components/sections/SiteNav/SiteNavContainer';
 import '../globals.css';
+
+/**
+ * Favicon-Set. Light-Varianten kommen automatisch aus `src/app/icon.{svg,png}`
+ * und `src/app/apple-icon.png` (Next.js Auto-Mount). Hier ergänzen wir nur die
+ * Dark-Varianten mit `prefers-color-scheme`-Media-Query.
+ *
+ * SVG-Favicon hat zusätzlich einen eigenen Dark-Switch eingebaut — moderne
+ * Browser nutzen es direkt, ältere fallen auf die PNG-Varianten zurück.
+ */
+export const metadata: Metadata = {
+  icons: {
+    icon: [
+      {
+        url: '/icon-dark.png',
+        type: 'image/png',
+        media: '(prefers-color-scheme: dark)',
+      },
+    ],
+    apple: [
+      {
+        url: '/apple-icon-dark.png',
+        media: '(prefers-color-scheme: dark)',
+      },
+    ],
+  },
+};
 
 const inter = Inter({
   subsets: ['latin'],
