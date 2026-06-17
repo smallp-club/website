@@ -1,0 +1,674 @@
+/* =========================================================================
+   NavBarB — Sticky-Komposition mit subtilem Material-Tweak.
+
+   Strukturelle Idee:
+   - .navShell ist sticky am Viewport-Top, trägt Layout + Custom Properties.
+   - .nav ist das Bar-Material (Glas auf Off-White) mit Logo + Items.
+   - .memberPill ist Geschwister der Bar, AUSSERHALB, eigenständig.
+   - Beim Andocken bleibt die Pille rund + kompakt — kein Form-Morph.
+     Nur das Material wird ruhiger: Glas etwas dichter, Schatten weicher.
+   - Glas-Refraction-Polish: ein radial-Highlight folgt dem Cursor über
+     der Bar (--mx / --my via Pointer-Event).
+
+   Mobile (<768 px):
+   - Items collapsen, Burger triggert Off-White-Sheet.
+   - Bar shrinkt auf Content-Breite (Logo + Burger eng beieinander).
+   ========================================================================= */
+
+/* -------------------------------------------------------------------------
+   Hero — 100dvh, stabil gegen iOS-Safari Address-Bar-Reflow.
+   ------------------------------------------------------------------------- */
+
+.hero {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(48px, 8vh, 96px) var(--space-5);
+  background-image: url('/imagery/arches-warm.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}
+
+.heroScrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 10, 10, 0.32) 0%,
+      rgba(10, 10, 10, 0.18) 40%,
+      rgba(10, 10, 10, 0.42) 100%
+    );
+  pointer-events: none;
+}
+
+.eyebrow {
+  position: absolute;
+  top: clamp(24px, 5vh, 48px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: var(--spc-offwhite);
+  text-transform: lowercase;
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.45);
+}
+
+.tagline {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(56px, 9vw, 124px);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  color: var(--spc-offwhite);
+  text-transform: lowercase;
+  text-align: center;
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.42);
+}
+
+.sentinel {
+  height: 1px;
+  width: 100%;
+  pointer-events: none;
+}
+
+/* -------------------------------------------------------------------------
+   NavShell — sticky-Wrapper. Flex-Layout für Bar + Member-Pille.
+
+   --shell-max-width 880 px = Bar-Pill (~720 px) + Gap + Member-Pill (~130 px).
+   Komposition zentriert mit max. atmender Hero-Bottom-Schwebe.
+   --sticky-top mit env(safe-area-inset-top): respektiert iPhone Dynamic
+   Island und Notch — sonst klebt die Bar darunter.
+   ------------------------------------------------------------------------- */
+
+.navShell {
+  --nav-height: 56px;
+  --shell-gap: var(--space-3);
+  --shell-max-width: 880px;
+  --shell-padding-x: var(--gutter);
+  --floating-gap: 24px;
+  --sticky-top: 16px;
+
+  position: sticky;
+  top: max(var(--sticky-top), env(safe-area-inset-top));
+  z-index: 100;
+
+  display: flex;
+  align-items: center;
+  gap: var(--shell-gap);
+
+  margin-top: calc(-1 * (var(--nav-height) + var(--floating-gap)));
+  margin-bottom: var(--floating-gap);
+  margin-inline: auto;
+
+  width: 100%;
+  max-width: var(--shell-max-width);
+  height: var(--nav-height);
+  padding-inline: var(--shell-padding-x);
+  box-sizing: border-box;
+}
+
+/* -------------------------------------------------------------------------
+   Nav — Bar-Material. Hero-State: Pill mit Glas + Schatten.
+   Pinned-State: Glas dichter, Schatten weicher.
+   ------------------------------------------------------------------------- */
+
+.nav {
+  /* Pointer-Position für Glas-Refraction (siehe ::before).
+     Wird vom JS-Handler in NavBarB als Inline-Style überschrieben. */
+  --mx: 50%;
+  --my: 50%;
+
+  --nav-bg-alpha: 0.85;
+  --nav-blur: 20px;
+  --nav-saturate: 1.2;
+  --nav-shadow: var(--shadow-lg);
+
+  position: relative;
+  flex: 1 1 auto;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-inline: var(--space-5);
+  box-sizing: border-box;
+  overflow: hidden; /* clip Refraction-Highlight an Pill-Radius */
+
+  background-color: rgba(247, 246, 242, var(--nav-bg-alpha));
+  -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
+  border-radius: var(--radius-pill);
+  box-shadow: var(--nav-shadow);
+
+  transition:
+    background-color var(--duration-slow) var(--ease-out),
+    box-shadow var(--duration-slow) var(--ease-out),
+    -webkit-backdrop-filter var(--duration-slow) var(--ease-out),
+    backdrop-filter var(--duration-slow) var(--ease-out);
+}
+
+/* Glas-Refraction — subtiler Highlight folgt dem Cursor.
+   Nur sichtbar auf Hover-fähigen Devices. */
+@media (hover: hover) and (pointer: fine) {
+  .nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 220px at var(--mx) var(--my),
+      rgba(255, 255, 255, 0.32) 0%,
+      rgba(255, 255, 255, 0.08) 35%,
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .nav:hover::before {
+    opacity: 1;
+  }
+}
+
+.navShell[data-pinned='true'] .nav {
+  --nav-bg-alpha: 0.92;
+  --nav-blur: 18px;
+  --nav-saturate: 1.15;
+  --nav-shadow: var(--shadow-md);
+}
+
+.navInner {
+  position: relative; /* über ::before-Highlight stapeln */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-5);
+  width: 100%;
+  height: 100%;
+}
+
+/* -------------------------------------------------------------------------
+   Logo-Stack — Wordmark + Mark gestackt; <480 px hard-toggle zu Mark.
+   ------------------------------------------------------------------------- */
+
+.lockup {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: var(--radius-sm);
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lockup:hover {
+    opacity: 0.78;
+  }
+}
+
+.lockup:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.logoStack {
+  position: relative;
+  display: inline-block;
+  height: 28px;
+}
+
+.logoLayer {
+  display: block;
+  height: 28px;
+  width: auto;
+}
+
+.layerWordmark {
+  display: block;
+}
+
+.layerMark {
+  display: none;
+  width: 28px;
+  height: 28px;
+}
+
+/* Im Sticky-Zustand reicht die Bildmarke — Platzgewinn + Lesehinweis
+   „Pille ist jetzt minimal". Hard-Toggle via display, keine Animation. */
+.navShell[data-pinned='true'] .layerWordmark {
+  display: none;
+}
+.navShell[data-pinned='true'] .layerMark {
+  display: block;
+}
+
+/* -------------------------------------------------------------------------
+   Items — Brand-Link-Sprache (identisch SiteFooter VoiceLinks).
+   ------------------------------------------------------------------------- */
+
+.items {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  line-height: 1.2;
+  color: color-mix(in oklab, var(--text-strong) 78%, var(--surface-bg));
+  text-transform: lowercase;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 12px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: var(--underline-origin, right) center;
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+  .link:hover::after,
+  .link:focus-visible::after {
+    transform: scaleX(1);
+  }
+}
+
+.link:hover,
+.link:focus-visible,
+.link:active {
+  color: var(--text-strong);
+}
+
+.link:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+.link[aria-current='page'] {
+  color: var(--text-strong);
+}
+
+.link[aria-current='page']::after {
+  transform: scaleX(1);
+  transform-origin: left center;
+}
+
+/* -------------------------------------------------------------------------
+   Mobile-Burger — versteckt auf Desktop, sichtbar unter 768 px.
+   ------------------------------------------------------------------------- */
+
+.burger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-strong);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.burger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* -------------------------------------------------------------------------
+   Member-Pille — Geschwister AUSSERHALB der Bar, in voller Bar-Höhe
+   (Touch-Target ≥AAA). „Türschloss" aus IA.md Sektion 1.
+
+   Türschloss-Schwelle-Polish: ein 1 px Off-White-Hairline-Strich 8 px
+   unter der Pille, nur im Hover sichtbar — verstärkt die „Schwellen"-
+   Lesart visuell, ohne ein Wort hinzuzufügen.
+   ------------------------------------------------------------------------- */
+
+.memberPill {
+  position: relative;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-inline: var(--space-6);
+  border-radius: var(--radius-pill);
+  background-color: var(--accent, #7bdcb5);
+  color: var(--text-on-accent, #0a0a0a);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 16px;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-transform: lowercase;
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow-lg);
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow var(--duration-slow) var(--ease-out),
+    background-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Türschloss-Schwelle */
+@media (hover: hover) and (pointer: fine) {
+  .memberPill::after {
+    content: '';
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    bottom: -10px;
+    height: 1px;
+    background: var(--spc-offwhite);
+    border-radius: var(--radius-pill);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition:
+      transform 320ms cubic-bezier(0.32, 0.72, 0, 1),
+      opacity 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.72;
+    pointer-events: none;
+  }
+  .memberPill:hover::after {
+    transform: scaleX(1);
+  }
+}
+
+.navShell[data-pinned='true'] .memberPill {
+  box-shadow: var(--shadow-md);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .memberPill:hover {
+    background-color: var(--accent-hover, #62cba0);
+    transform: translateY(-1px);
+  }
+}
+
+.memberPill:active {
+  transform: scale(0.97);
+  background-color: var(--accent-press, #4fbf90);
+}
+
+.memberPill:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.memberPill[aria-current='page'] {
+  background-color: var(--accent-press, #4fbf90);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------
+   Mobile-Sheet — Off-White Overlay, Brand-ruhig.
+   ------------------------------------------------------------------------- */
+
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition:
+    opacity 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 240ms;
+}
+
+.sheet[data-open='true'] {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  transition:
+    opacity 240ms cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0s;
+}
+
+.sheetBackdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background-color: rgba(10, 10, 10, 0.45);
+  backdrop-filter: blur(6px) saturate(1.05);
+  -webkit-backdrop-filter: blur(6px) saturate(1.05);
+  cursor: pointer;
+}
+
+.sheetPanel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-6) var(--space-5) var(--space-9);
+  padding-top: max(var(--space-6), env(safe-area-inset-top));
+  padding-bottom: max(var(--space-9), env(safe-area-inset-bottom));
+  background-color: var(--spc-offwhite);
+  transform: translateY(-12px);
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sheet[data-open='true'] .sheetPanel {
+  transform: translateY(0);
+}
+
+.sheetClose {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-strong);
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheetClose:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.sheetItems {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin: var(--space-7) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sheetItem {
+  display: block;
+}
+
+.sheetLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 56px;
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(40px, 9vw, 56px);
+  letter-spacing: var(--tracking-display);
+  line-height: 1.1;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sheetLink[aria-current='page'] {
+  color: var(--spc-turquoise-deep);
+}
+
+.sheetLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+.sheetMemberPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: 64px;
+  margin-top: var(--space-7);
+  padding: var(--space-4) var(--space-7);
+  border-radius: var(--radius-pill);
+  background-color: var(--accent, #7bdcb5);
+  color: var(--text-on-accent, #0a0a0a);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-transform: lowercase;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.sheetMemberPill:active {
+  background-color: var(--accent-press, #4fbf90);
+  transform: scale(0.98);
+}
+
+.sheetMemberPill:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.sheetMemberPill[aria-current='page'] {
+  background-color: var(--accent-press, #4fbf90);
+  font-weight: 600;
+}
+
+/* -------------------------------------------------------------------------
+   Mobile-Layout (<768 px).
+   Items collapsen, Burger erscheint. Bar shrinkt auf Content-Breite,
+   Komposition zentriert.
+   ------------------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .navShell {
+    --nav-height: 52px;
+    --shell-gap: var(--space-2);
+    --floating-gap: 16px;
+    --shell-max-width: max-content;
+    --shell-padding-x: 0;
+    --sticky-top: 12px;
+    justify-content: center;
+  }
+
+  .nav {
+    flex: 0 0 auto;
+    padding-inline: var(--space-4);
+  }
+
+  .navInner {
+    width: auto;
+    gap: var(--space-3);
+    justify-content: flex-start;
+  }
+
+  .items {
+    display: none;
+  }
+
+  .burger {
+    display: inline-flex;
+  }
+
+  .memberPill {
+    padding-inline: var(--space-5);
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .layerWordmark {
+    display: none;
+  }
+  .layerMark {
+    display: block;
+  }
+
+  .memberPill {
+    padding-inline: var(--space-4);
+    font-size: 14px;
+  }
+}
+
+/* -------------------------------------------------------------------------
+   Reduced-Motion — alle Transitionen hart toggeln, Glas-Refraction aus.
+   ------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .navShell,
+  .nav,
+  .nav::before,
+  .lockup,
+  .link,
+  .link::after,
+  .memberPill,
+  .memberPill::after,
+  .sheet,
+  .sheetPanel {
+    transition: none;
+  }
+  .nav::before {
+    display: none;
+  }
+}

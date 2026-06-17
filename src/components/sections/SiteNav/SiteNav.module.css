@@ -1,83 +1,26 @@
 /* =========================================================================
-   NavBarB — Sticky-Komposition mit subtilem Material-Tweak.
+   SiteNav — globale Top-Navigation (Sticky-Komposition).
 
    Strukturelle Idee:
    - .navShell ist sticky am Viewport-Top, trägt Layout + Custom Properties.
    - .nav ist das Bar-Material (Glas auf Off-White) mit Logo + Items.
-   - .memberPill ist Geschwister der Bar, AUSSERHALB, eigenständig.
+   - .memberPill ist Geschwister AUSSERHALB der Bar, eigenständig.
    - Beim Andocken bleibt die Pille rund + kompakt — kein Form-Morph.
-     Nur das Material wird ruhiger: Glas etwas dichter, Schatten weicher.
+     Nur das Material wird ruhiger (Glas dichter, Schatten weicher).
    - Glas-Refraction-Polish: ein radial-Highlight folgt dem Cursor über
      der Bar (--mx / --my via Pointer-Event).
+
+   Modes via data-hero-mode:
+   - false (default): Komposition sitzt direkt am Page-Top mit sticky-Atem.
+     Logo zeigt Bildmarke. Für Inhalts-Pages.
+   - true: Komposition schwebt initial am Hero-Bottom (negativer
+     margin-top), scrollt mit hoch und dockt am Top an. Logo zeigt im
+     Hero-State die Wordmark, switcht beim Pin zur Bildmarke.
 
    Mobile (<768 px):
    - Items collapsen, Burger triggert Off-White-Sheet.
    - Bar shrinkt auf Content-Breite (Logo + Burger eng beieinander).
    ========================================================================= */
-
-/* -------------------------------------------------------------------------
-   Hero — 100dvh, stabil gegen iOS-Safari Address-Bar-Reflow.
-   ------------------------------------------------------------------------- */
-
-.hero {
-  position: relative;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(48px, 8vh, 96px) var(--space-5);
-  background-image: url('/imagery/arches-warm.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden;
-}
-
-.heroScrim {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background:
-    linear-gradient(
-      180deg,
-      rgba(10, 10, 10, 0.32) 0%,
-      rgba(10, 10, 10, 0.18) 40%,
-      rgba(10, 10, 10, 0.42) 100%
-    );
-  pointer-events: none;
-}
-
-.eyebrow {
-  position: absolute;
-  top: clamp(24px, 5vh, 48px);
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: 14px;
-  letter-spacing: 0.01em;
-  color: var(--spc-offwhite);
-  text-transform: lowercase;
-  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.45);
-}
-
-.tagline {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: var(--weight-extralight);
-  font-size: clamp(56px, 9vw, 124px);
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-display);
-  color: var(--spc-offwhite);
-  text-transform: lowercase;
-  text-align: center;
-  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.42);
-}
 
 .sentinel {
   height: 1px;
@@ -87,11 +30,6 @@
 
 /* -------------------------------------------------------------------------
    NavShell — sticky-Wrapper. Flex-Layout für Bar + Member-Pille.
-
-   --shell-max-width 880 px = Bar-Pill (~720 px) + Gap + Member-Pill (~130 px).
-   Komposition zentriert mit max. atmender Hero-Bottom-Schwebe.
-   --sticky-top mit env(safe-area-inset-top): respektiert iPhone Dynamic
-   Island und Notch — sonst klebt die Bar darunter.
    ------------------------------------------------------------------------- */
 
 .navShell {
@@ -110,8 +48,6 @@
   align-items: center;
   gap: var(--shell-gap);
 
-  margin-top: calc(-1 * (var(--nav-height) + var(--floating-gap)));
-  margin-bottom: var(--floating-gap);
   margin-inline: auto;
 
   width: 100%;
@@ -121,14 +57,18 @@
   box-sizing: border-box;
 }
 
+/* Hero-Mode: Komposition wird negativem margin-top in den Hero rein
+   gezogen, sodass sie am Hero-Bottom schwebt. */
+.navShell[data-hero-mode='true'] {
+  margin-top: calc(-1 * (var(--nav-height) + var(--floating-gap)));
+  margin-bottom: var(--floating-gap);
+}
+
 /* -------------------------------------------------------------------------
-   Nav — Bar-Material. Hero-State: Pill mit Glas + Schatten.
-   Pinned-State: Glas dichter, Schatten weicher.
+   Nav — Bar-Material.
    ------------------------------------------------------------------------- */
 
 .nav {
-  /* Pointer-Position für Glas-Refraction (siehe ::before).
-     Wird vom JS-Handler in NavBarB als Inline-Style überschrieben. */
   --mx: 50%;
   --my: 50%;
 
@@ -144,7 +84,7 @@
   align-items: center;
   padding-inline: var(--space-5);
   box-sizing: border-box;
-  overflow: hidden; /* clip Refraction-Highlight an Pill-Radius */
+  overflow: hidden;
 
   background-color: rgba(247, 246, 242, var(--nav-bg-alpha));
   -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
@@ -159,8 +99,7 @@
     backdrop-filter var(--duration-slow) var(--ease-out);
 }
 
-/* Glas-Refraction — subtiler Highlight folgt dem Cursor.
-   Nur sichtbar auf Hover-fähigen Devices. */
+/* Glas-Refraction — Highlight folgt dem Cursor. Nur Hover-Devices. */
 @media (hover: hover) and (pointer: fine) {
   .nav::before {
     content: '';
@@ -189,7 +128,7 @@
 }
 
 .navInner {
-  position: relative; /* über ::before-Highlight stapeln */
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -199,7 +138,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Logo-Stack — Wordmark + Mark gestackt; <480 px hard-toggle zu Mark.
+   Logo-Stack — Wordmark + Bildmarke, hard-switch via display.
    ------------------------------------------------------------------------- */
 
 .lockup {
@@ -243,6 +182,16 @@
   display: none;
   width: 28px;
   height: 28px;
+}
+
+/* Pinned ODER kein heroMode → Bildmarke statt Wordmark. */
+.navShell[data-pinned='true'] .layerWordmark,
+.navShell[data-hero-mode='false'] .layerWordmark {
+  display: none;
+}
+.navShell[data-pinned='true'] .layerMark,
+.navShell[data-hero-mode='false'] .layerMark {
+  display: block;
 }
 
 /* -------------------------------------------------------------------------
@@ -321,7 +270,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Mobile-Burger — versteckt auf Desktop, sichtbar unter 768 px.
+   Mobile-Burger — versteckt auf Desktop.
    ------------------------------------------------------------------------- */
 
 .burger {
@@ -347,12 +296,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Member-Pille — Geschwister AUSSERHALB der Bar, in voller Bar-Höhe
-   (Touch-Target ≥AAA). „Türschloss" aus IA.md Sektion 1.
-
-   Türschloss-Schwelle-Polish: ein 1 px Off-White-Hairline-Strich 8 px
-   unter der Pille, nur im Hover sichtbar — verstärkt die „Schwellen"-
-   Lesart visuell, ohne ein Wort hinzuzufügen.
+   Member-Pille — Geschwister AUSSERHALB der Bar. Türschloss aus IA.md.
    ------------------------------------------------------------------------- */
 
 .memberPill {
@@ -475,8 +419,8 @@
   inset: 0;
   display: flex;
   flex-direction: column;
-  padding: var(--space-6) var(--space-5) var(--space-9);
   padding-top: max(var(--space-6), env(safe-area-inset-top));
+  padding-inline: var(--space-5);
   padding-bottom: max(var(--space-9), env(safe-area-inset-bottom));
   background-color: var(--spc-offwhite);
   transform: translateY(-12px);
@@ -588,8 +532,6 @@
 
 /* -------------------------------------------------------------------------
    Mobile-Layout (<768 px).
-   Items collapsen, Burger erscheint. Bar shrinkt auf Content-Breite,
-   Komposition zentriert.
    ------------------------------------------------------------------------- */
 
 @media (max-width: 768px) {
@@ -643,7 +585,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Reduced-Motion — alle Transitionen hart toggeln, Glas-Refraction aus.
+   Reduced-Motion.
    ------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
