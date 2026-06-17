@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Inter } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { SkipToContent } from '@/components/primitives/SkipToContent';
+import { SiteFooterContainer } from '@/components/sections/SiteFooter/SiteFooterContainer';
 import '../globals.css';
 
 const inter = Inter({
@@ -48,6 +49,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         <SkipToContent />
         <NextIntlClientProvider messages={messages}>
           {children}
+          <SiteFooterContainer />
         </NextIntlClientProvider>
       </body>
     </html>
