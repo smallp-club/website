@@ -237,3 +237,36 @@
   font-size: 0.92em;
   color: var(--spc-black);
 }
+
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.linkListItem {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--spc-black);
+  text-decoration: none;
+  border-bottom: 1px solid var(--spc-stone);
+  padding-bottom: 2px;
+  transition: color 180ms cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 180ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.linkListItem:hover,
+.linkListItem:focus-visible {
+  color: var(--spc-turquoise-deep);
+  border-color: var(--spc-turquoise-deep);
+}
+
+.linkListItem:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}

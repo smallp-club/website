@@ -48,6 +48,7 @@ const sections: NavSection[] = [
   {
     title: 'Sections',
     items: [
+      { name: 'Site Nav',    href: '/components-library/sections/site-nav',    status: 'available' },
       { name: 'Site Footer', href: '/components-library/sections/site-footer', status: 'available' },
     ],
   },
