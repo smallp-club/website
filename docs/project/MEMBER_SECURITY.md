@@ -44,22 +44,30 @@ small p club ist **kein Forum, kein Discord, kein Twitter**. Trolle wollen Bühn
 
 Der 3-Schritt-Onboarding-Flow aus MEMBER_CONCEPT.md wird um einen vierten Schritt erweitert:
 
-**Schritt 0 (vor Magic-Link-Request) — „Bevor du weiter klickst: lies das hier"**
+**Schritt 0 (vor Magic-Link-Request) — Brand-Statement als Selbst-Selektion**
 
-Brand-Voice peer-to-peer (NICHT predigend, KEIN Quiz, KEINE Checkbox):
+Display-Statement in Chillax-Maximalskala. Kein Predigt-Text, kein Quiz, keine Checkbox. Brand-Voice trägt die ganze Bedeutung — wer den Bindestrich-Witz versteht, ist drin; wer ihn nicht versteht, ist auch drin; wer sich nicht angesprochen fühlt, geht von selbst.
 
 ```
-mit-glied. auch ohne-glied.
-
-hier wird niemand verarscht. nicht männer. nicht frauen. nicht queere menschen.
-nicht ärzte. niemand. wir reden über männlichkeit und scham, ohne pharma, ohne
-moralfinger, ohne missionierung. wenn du das nicht teilst, ist das hier
-nicht für dich.
+mit-glied werden. auch ohne-glied.
 
 [verstanden, weiter]
 ```
 
-**Warum das wirkt:** Manhater wollen sofort posten. Ein peer-to-peer Statement vertreibt 80% der Drive-by-Trolle durch reine Reibung. Niemand wird abgewiesen — die Schwelle ist nur hoch genug, dass nur kommt wer wirklich kommen will.
+**Warum kurz statt lang:** Brand-Stille schlägt defensive Aufzählung. Lange „wir-sind-nicht-X"-Texte brechen den ruhigen Brand-Ton und predigen. Das Statement allein reicht als Linie 2, weil Linien 1, 3, 4, 5 die strukturelle Anti-Troll-Funktion tragen (Turnstile, Disposable-Email-Block, Rate Limiting, Cooldown, Auto-Vorsortierung, Toxicity-Filter, Kevin-Final-Kuratierung).
+
+**Backup-Variante (Plan B, falls Drive-by-Spam post-Launch real wird):**
+
+```
+mit-glied werden. auch ohne-glied.
+
+hier wird niemand beschämt. nicht von uns, nicht von dir.
+wenn das nicht passt, dann hier nicht.
+
+[verstanden, weiter]
+```
+
+Diese Variante wird NUR aktiviert, wenn sich zeigt, dass die kurze Form nicht genug Reibung erzeugt.
 
 ### Linie 3 — Content-Moderation (Architektur)
 

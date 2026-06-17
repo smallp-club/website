@@ -39,30 +39,43 @@
 - Kein Headless CMS bis Kevin regelmäßig 2–3+ Inhalte/Monat publiziert
 
 ## Deployment
-- **Vercel** Free Tier — Auto-Deploy bei Push auf `main`
+- **Vercel** Free Tier — Auto-Deploy bei Push auf `main`, EU-Region Frankfurt (`fra1`) forced
+- **Cloudflare** Free Plan vor Vercel — DNS-Authority, Proxy, DDoS, WAF, Bot Fight Mode (siehe Memory `project_cloudflare_setup.md`)
 - Repo: `github.com/smallp-club/website`
 
 ## Newsletter
-- **Beehiiv** — nur API, niemals JS-Embed (Privacy-Regel)
-- Double Opt-In (DSGVO-Pflicht, Beehiiv macht das automatisch)
+- **Brevo** (FR, EU-Server) Free Tier — 300 Mails/Tag = ~9.000/Monat
+- ~~Beehiiv~~ verworfen 2026-06-17 (US-Server, DSGVO-Position schwächer als EU-Alternative)
+- Double Opt-In (DSGVO-Pflicht, Brevo macht das automatisch)
+- Nur API, niemals JS-Embed (Privacy-Regel)
 
 ## Auth (Member Area)
 - **Auth.js v5** — `AUTH_SECRET` (nicht NEXTAUTH_SECRET!)
-- Magic Links via **Resend** (3.000/Monat kostenlos)
+- Magic Links via **all-inkl SMTP** (DE-Mailserver, eh bezahlt)
+- ~~Resend~~ verworfen 2026-06-17 (US-Server, all-inkl ist DE und nicht teurer)
 - Database Sessions (nicht JWT)
 - 3-Layer Protection: Middleware (Edge) + Layout (Server) + Server Actions
 
 ## Datenbank
-- **Supabase** Free Tier (500 MB)
+- **Supabase** Free Tier (500 MB), EU-Region Frankfurt forced
 - Row Level Security auf allen Tabellen
 - Service Role Key: **nur server-side**, niemals `NEXT_PUBLIC_`
 
 ## Rate Limiting
-- **Upstash Redis** Free Tier — auf Login + Newsletter-Signup (Vercel Middleware)
+- **Upstash Redis** Free Tier, EU-Region Frankfurt forced — auf Login + Newsletter-Signup (Vercel Middleware)
 
 ## Analytics
-- **Umami** self-hosted — kein Cookie, DSGVO-konform, kein GA
+- **Zum Launch keine Web-Analytics** — Brand-Statement: „wir messen euch nicht"
+- ~~Umami self-hosted~~ gestrichen 2026-06-17 (Server-Kosten widersprechen Free-Tier-Doktrin)
+- Falls je nötig post-Launch: Pirsch.io (DE, 8€/Monat) re-evaluieren
+- **Niemals:** Google Analytics, GA4, Cloudflare Web Analytics, Plausible Cloud (US)
 - Kein Google Analytics, keine Social Pixel, keine externen Tracking-Scripts
+
+## DSGVO-Strategie
+- **Hosting-Strategie** dokumentiert in `docs/project/HOSTING_STRATEGIE.md`
+- US-Infrastruktur (Vercel/GitHub/Cloudflare/Supabase) bleibt — DPF-zertifiziert + EU-Regions
+- Inhalts-Datenflüsse (Newsletter/Mail) auf DE-/EU-Server migriert
+- Privacy Policy als Brand-Statement, ehrlich + peer-to-peer
 
 ## Shop (später)
 - **Shopify Storefront API** — Architektur vorbereitet (`lib/shopify.ts` Stub)

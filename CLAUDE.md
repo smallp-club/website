@@ -18,6 +18,8 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 - **Informationsarchitektur (komplett: Routes, Templates, Auth, User-Pfade, Privacy)** → @docs/project/IA.md
 - **Member-Konzept (Mehrwert, Erfahrungsberichte, UX, Bootstrap)** → @docs/project/MEMBER_CONCEPT.md
 - **Member-Security (5 Verteidigungslinien, Anti-Troll-Architektur)** → @docs/project/MEMBER_SECURITY.md
+- **Förder-/Tech-Programm-Audit (Archiv, vorerst nicht weiter verfolgt)** → @docs/project/FUNDING_TECH_AUDIT.md
+- **Hosting-Strategie (DPF + DE/EU-Migration kostenneutral)** → @docs/project/HOSTING_STRATEGIE.md
 - **Funding-Konzept (Direkt-Verweis-Modell, Empfänger-Orgs, Brand-Voice)** → @docs/project/FUNDING_CONCEPT.md
 - **Outreach-Mail-Templates (Bundesforum Männer, LAG Jungen*arbeit NRW)** → @docs/project/funding-outreach-templates.md
 - Implementierungsstand, Roadmap, offene Punkte → @docs/project/ROADMAP.md
@@ -43,3 +45,24 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 5. Security ist nicht optional — sensibles Thema
 6. Shopify-Architektur vorbereiten, aber erst nach Launch anbinden
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
+
+## Stand (2026-06-17, Session 8)
+
+**Sections-Tier aktiv.** Erste Section-Komponente manifestiert:
+- [x] SiteFooter → komplett gebaut, WCAG 2.2 AA strict, ins LocaleLayout integriert, Library-Manifest live
+- [x] Brand-Foundation-Pattern extrahiert: `useRevealOnIntersect` (lib/motion), `setUnderlineOrigin` (lib/hover), Phosphor Icons (lib/icons)
+- [x] Server-Wrapper-Pattern: `SiteFooterContainer` mit `unstable_cache` als Vorbild für Live-Daten-Sections
+- [x] Tech-Stack-Migration EU: Cloudflare (DNS+Proxy), Brevo (Newsletter), all-inkl SMTP (Magic Links), Umami gestrichen ("wir messen euch nicht")
+
+**Brand-Link-Sprache final.** Animierte Hairline-Underline mit direction-aware Slide ist die offizielle Link-Mechanik für alle Footer-, Nav- und künftige MDX-Inline-Links. CSS-Variable `--underline-origin` + Helper aus `@/lib/hover`.
+
+**Nächste Schritte:**
+- [ ] **SiteNav** — Top-Pendant zum Footer, Brand-Voice-Anchor mit `[mit-glied]`-Pill. Nutzt `useRevealOnIntersect` + `setUnderlineOrigin`
+- [ ] Phase 2 — Visual Direction für Landing-Sections via imagegen-frontend-web
+- [ ] /club-Page Brand-Kanal-Block (Instagram-Verweis, raus aus Footer-Service-Liste)
+- [ ] Phase 4 Section-Build: HeroLanding, RecognitionBlock, HeroMythReveal, BlackFlipStats, MovementSignal
+
+**Drei Brand-Voice-Entscheidungen (Session 8, final):**
+- Memberzahl: `[N] mit-glieder. auch ohne-glied.` (Bindestrich BLEIBT, brand-distinkter Wortwitz)
+- Manifesto: `ja, wir reden hier über penisse.` (Brand-Voice-Anchor aus VOICE.md)
+- Sign-Off: `wir sind ein club. ohne uns zu messen.` (Kevin's eigenes Wording, spiegelt Tagline-Mission)

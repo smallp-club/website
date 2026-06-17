@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-16 (Session 7 — IA + Member + Funding Konzepte abgeschlossen)
+## Stand: 2026-06-17 (Session 8 — SiteFooter manifestiert, Brand-Foundation-Pattern, Stack-EU-Migration)
 
 ---
 
@@ -37,7 +37,7 @@
 ## Komponenten-Library (✅ abgeschlossen)
 
 - [x] Foundation 1–8 (Ordner-Struktur, Motion-Lib, Primitives, Patterns)
-- [x] 19 Primitives, 6 Patterns + neu: BrandMarquee
+- [x] 19 Primitives, 6 Patterns + BrandMarquee
 - [x] `/components-library` als interne Library mit Sidebar
 - [x] **Audit komplett** — 7 P0/P1/P2 Fixes durch:
   - Token-Konflikt `--duration-*` (Single Source of Truth)
@@ -50,6 +50,25 @@
 - [x] BrandMarquee (Pattern, Mantra-Ticker)
 - [x] CSP-Dev-Mode-Fix (unsafe-eval für Webpack-HMR)
 - [x] Hydration-Bug behoben (doppeltes `<html>` Root vs Locale Layout)
+
+## Sections-Tier (✅ erste Section manifestiert, 2026-06-17)
+
+- [x] **SiteFooter** als erste Section-Komponente manifestiert (`/components-library/sections/site-footer`)
+  - Drei-Zonen-Architektur (Tagline+Manifesto+Memberzahl / Voice-Nav+Verb-Pärchen / Wordmark+Service-Caption)
+  - Top-Bottom-Mission-Klammer: `no measure, no pressure.` ↔ `wir sind ein club. ohne uns zu messen.`
+  - WCAG 2.2 AA strict-audit-tauglich (Multi-Cue Links, Touch-Gate, Focus-Ring im Footer-Scope, Target-Size ≥24px)
+  - 3 Variant-Stories: Bootstrap (1), Default (23), Movement (1247)
+- [x] **SiteFooterContainer** als Server-Component-Wrapper-Pattern (`unstable_cache` 1h, Tag `members`)
+- [x] **SiteFooter ins LocaleLayout integriert** — rendert jetzt auf Homepage und allen Pages
+- [x] Mobile-Verb-Pärchen: verbWord + verbArrow ausgeblendet, nur Targets sichtbar (kollabiert nicht aus Grid)
+
+## Brand-Foundation-Pattern (✅ extrahiert für künftige Sections)
+
+- [x] **`useRevealOnIntersect`** (`src/lib/motion/`) — Entry-Reveal-Hook für alle Sections, mit Pre-Hydration-Flash-Fix via `revealIfAboveFold` Option
+- [x] **`setUnderlineOrigin`** (`src/lib/hover.ts`) — Brand-Link-Standard: animierte Hairline-Underline mit direction-aware Slide. Wird für Footer, künftige Nav und MDX-Inline-Links genutzt.
+- [x] **Phosphor Icons als Brand-Default-Library** (Weight Thin matcht Chillax), inline-SVG in `src/components/icons/` — `ArrowRightThin` als erstes Icon
+- [x] **`getMemberCount`** (`src/lib/members/count.ts`) — Stub für Supabase-Query, Phase 5+
+- [x] **LogoMark** Primitive eingerichtet
 
 ---
 
