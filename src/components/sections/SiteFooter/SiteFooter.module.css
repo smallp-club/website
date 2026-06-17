@@ -609,6 +609,14 @@
   .verbPair {
     align-items: flex-start;
   }
+  /* Mobile: nur Targets sichtbar — Verb-Wort + Pfeil-Icon brachen
+     bei schmalen Viewports aus dem Grid. Reduzierter Footprint, Targets
+     bleiben als Nav-Items klar erkennbar (Hover-Underline funktioniert
+     weiterhin auf dem ganzen Link). */
+  .verbWord,
+  .verbArrow {
+    display: none;
+  }
   .bottomBar {
     flex-direction: column;
     align-items: flex-start;
