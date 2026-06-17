@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-17 (Session 9 — Cloudflare live, Brevo eingerichtet, Hosting/Member-Security konsolidiert)
+## Stand: 2026-06-17 (Session 10 — SiteNav manifestiert + global, Favicon-Set Light/Dark, Preview-Demo-Bühne)
 
 ---
 
@@ -123,6 +123,20 @@
 
 ---
 
+## Sections-Tier (Session 10 — 2026-06-17)
+
+- [x] **SiteNav** manifestiert (`src/components/sections/SiteNav/`)
+  - Sticky-Komposition mit Bar + externer Member-Pille als „Türschloss"
+  - Pille bleibt rund + kompakt im Sticky (kein Form-Morph) — nur Material wird ruhiger
+  - Logo Hard-Switch Wordmark↔Bildmarke (kein Crossfade), heroMode-Prop für Landing-Opt-In
+  - Mobile-Sheet mit Burger, Off-White-Overlay, Chillax-Extralight-Items, Member-Pille als CTA-Block
+  - Award-Polish: Glas-Refraction (Cursor-Tracking) + Türschloss-Schwelle (Hover-Hairline)
+  - WCAG 2.2 AA durch (Multi-Cue Links, Target-Size ≥AAA, Focus-Ring, ARIA komplett)
+  - Library-Manifest unter `/components-library/sections/site-nav`
+- [x] **next-intl Navigation-Wrapper** (`src/i18n/navigation.ts`) — Pflicht-Import für alle UI-Components
+- [x] **`/preview` als Library-Demo-Bühne** mit voller Editorial-Komposition aus Primitives + BrandMarquee
+- [x] **Favicon-Set Light/Dark** via prefers-color-scheme — SVG mit eingebettetem CSS-Switch + PNG-Fallback. Pipeline in `scripts/generate-favicons.mjs`
+
 ## Phase 2 — Visual Direction (← JETZT)
 
 - [ ] **`/imagegen-frontend-web` Moodboards** für Landing + Topic-Pages
@@ -133,8 +147,6 @@
   - Brand-Mark als Wasserzeichen im Hero
   - Imagery (arches-warm.png, steps-bw.png) als Anker
   - Parallax-Band-Section
-  - Sticky-Material-Morph Nav
-- [ ] NavBar Iteration 3 — A · Material-Morph / B · Form-Morph / C · Charakter-Morph (Bottom→Top-Sticky-Pin)
 - [ ] Topic-Demo überarbeiten mit allen Lehren aus HTML-Reference
 
 ## Phase 3 — Page Blueprint

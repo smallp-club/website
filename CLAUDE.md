@@ -46,19 +46,30 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 6. Shopify-Architektur vorbereiten, aber erst nach Launch anbinden
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 
-## Stand (2026-06-17, Session 8)
+## Stand (2026-06-17, Session 10)
 
-**Sections-Tier aktiv.** Erste Section-Komponente manifestiert:
-- [x] SiteFooter → komplett gebaut, WCAG 2.2 AA strict, ins LocaleLayout integriert, Library-Manifest live
-- [x] Brand-Foundation-Pattern extrahiert: `useRevealOnIntersect` (lib/motion), `setUnderlineOrigin` (lib/hover), Phosphor Icons (lib/icons)
-- [x] Server-Wrapper-Pattern: `SiteFooterContainer` mit `unstable_cache` als Vorbild für Live-Daten-Sections
-- [x] Tech-Stack-Migration EU: Cloudflare (DNS+Proxy), Brevo (Newsletter), all-inkl SMTP (Magic Links), Umami gestrichen ("wir messen euch nicht")
+**Sections-Tier hat jetzt zwei manifestierte Komponenten.**
 
-**Brand-Link-Sprache final.** Animierte Hairline-Underline mit direction-aware Slide ist die offizielle Link-Mechanik für alle Footer-, Nav- und künftige MDX-Inline-Links. CSS-Variable `--underline-origin` + Helper aus `@/lib/hover`.
+- [x] **SiteFooter** → WCAG 2.2 AA strict, ins LocaleLayout integriert, Library-Manifest live
+- [x] **SiteNav** → Sticky-Komposition mit Bar + externer Member-Pille („Türschloss" aus IA.md), Mobile-Sheet mit Burger, WCAG 2.2 AA durch, Library-Manifest live, global in LocaleLayout
+- [x] Brand-Foundation-Pattern: `useRevealOnIntersect` (lib/motion), `setUnderlineOrigin` (lib/hover), Phosphor Icons (lib/icons)
+- [x] Server-Wrapper-Pattern: `SiteFooterContainer` + `SiteNavContainer` als Convention
+- [x] **next-intl Navigation-Wrapper** (`src/i18n/navigation.ts` mit `createNavigation(routing)`) — Pflicht-Import für alle UI-Components
+- [x] Tech-Stack-Migration EU: Cloudflare (DNS+Proxy), Brevo (Newsletter), all-inkl SMTP (Magic Links), Umami gestrichen
+- [x] **Favicon-Set Light/Dark** via prefers-color-scheme — SVG mit eingebettetem CSS-Switch + PNG-Fallback via `metadata.icons` media-Query. Pipeline in `scripts/generate-favicons.mjs`
+- [x] **`/preview` als Library-Demo-Bühne** mit voller Editorial-Komposition (Hero + Recognition + BrandMarquee + Mythos/Fakt + Stats-Inverse + Bewegungs-Signal)
+
+**SiteNav-Doktrin:**
+- Pille bleibt rund + kompakt im Sticky (kein Form-Morph zur Full-Bleed-Bar) — nur Material wird ruhiger
+- Member-Pille AUSSERHALB der Bar als Geschwister, volle Bar-Höhe (Touch-Target ≥AAA)
+- Logo-Switch Hard via `display` (kein Crossfade, Kevin: „transition ist ganz schlimm")
+- Modes via `heroMode` Prop: default false (direkt gepinnt, Bildmarke), true (Hero-Bottom-Schwebe mit Wordmark, opt-in für Landing)
+- Award-Polish: Glas-Refraction (radial-Highlight folgt Cursor) + Türschloss-Schwelle (Hover-Hairline unter Pille)
+
+**Brand-Link-Sprache final.** Animierte Hairline-Underline mit direction-aware Slide ist die offizielle Link-Mechanik für alle Footer-, Nav- und künftige MDX-Inline-Links.
 
 **Nächste Schritte:**
-- [ ] **SiteNav** — Top-Pendant zum Footer, Brand-Voice-Anchor mit `[mit-glied]`-Pill. Nutzt `useRevealOnIntersect` + `setUnderlineOrigin`
-- [ ] Phase 2 — Visual Direction für Landing-Sections via imagegen-frontend-web
+- [ ] Phase 2 — Visual Direction für Landing-Sections via `/imagegen-frontend-web`
 - [ ] /club-Page Brand-Kanal-Block (Instagram-Verweis, raus aus Footer-Service-Liste)
 - [ ] Phase 4 Section-Build: HeroLanding, RecognitionBlock, HeroMythReveal, BlackFlipStats, MovementSignal
 
