@@ -1,12 +1,4 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
-import './globals.css';
-
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-});
 
 const siteUrl = 'https://smallp.club';
 const siteTitle = 'small p club — no measure, no pressure';
@@ -36,31 +28,12 @@ export const metadata: Metadata = {
   },
 };
 
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'small p club',
-  url: siteUrl,
-  description: siteDescription,
-  slogan: 'no measure, no pressure',
-  knowsAbout: ['Männlichkeit', 'Körperbild', 'Körpergröße', 'Mental Health', 'Body Image'],
-};
-
-// Root layout has no <html lang> — locale layouts own that
+// Root layout ist Pass-Through — der Locale-Layout owned <html>, <body>,
+// Font-Variable und JSON-LD. Sonst doppeltes <html>/<body> → Hydration-Mismatch.
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html className={inter.variable}>
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-        />
-      </head>
-      <body>{children}</body>
-    </html>
-  );
+  return children;
 }

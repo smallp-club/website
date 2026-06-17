@@ -1,0 +1,25 @@
+.wrap {
+  display: inline-block;
+  line-height: 0;
+  cursor: default;
+}
+
+.wrap[data-trigger='click'],
+.wrap[data-trigger='hover'] {
+  cursor: pointer;
+}
+
+.img {
+  display: block;
+  height: 100%;
+  width: auto;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Focus-Ring für Click-Trigger (Button-Semantik). */
+.wrap[data-trigger='click']:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}

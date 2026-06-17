@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useCountUp } from '@/hooks/useCountUp';
 import styles from './StatPair.module.css';
 
@@ -30,6 +30,13 @@ export interface StatPairProps {
 export function StatPair({ primary, secondary, source, label, id }: StatPairProps) {
   const { ref: refP, value: valP, done: doneP, target: tP } = useCountUp(primary.value, primary.duration ?? 3200);
   const { ref: refS, value: valS, done: doneS, target: tS } = useCountUp(secondary.value, secondary.duration ?? 4000);
+  const reducedMotion = useReducedMotion();
+
+  // Reduced-Motion: alles startet sichtbar, Transitions sind ~0.
+  const initialFade = reducedMotion ? { opacity: 1 } : { opacity: 0 };
+  const revealTransition = (delay: number, duration: number) =>
+    reducedMotion ? { duration: 0 } : { delay, duration };
+  const pctTransition = reducedMotion ? { duration: 0 } : { duration: 0.5 };
 
   return (
     <section id={id} className={styles.section}>
@@ -42,15 +49,15 @@ export function StatPair({ primary, secondary, source, label, id }: StatPairProp
               <span className={styles.countSpacer}>{tP}</span>
               <span className={styles.countDigits}>{valP}</span>
             </span>
-            <motion.span className={styles.pct} animate={{ opacity: doneP ? 1 : 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.5 }}> %</motion.span>
+            <motion.span className={styles.pct} animate={{ opacity: doneP ? 1 : 0 }} initial={initialFade} transition={pctTransition}> %</motion.span>
           </span>
           <span className={styles.srOnly}>{tP} Prozent</span>
           <motion.p
             className={styles.labelBody}
-            initial={{ opacity: 0 }}
+            initial={initialFade}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.6, duration: 0.7 }}
+            transition={revealTransition(0.6, 0.7)}
           >
             {primary.label}
           </motion.p>
@@ -62,15 +69,15 @@ export function StatPair({ primary, secondary, source, label, id }: StatPairProp
               <span className={styles.countSpacer}>{tS}</span>
               <span className={styles.countDigits}>{valS}</span>
             </span>
-            <motion.span className={styles.pct} animate={{ opacity: doneS ? 1 : 0 }} initial={{ opacity: 0 }} transition={{ duration: 0.5 }}> %</motion.span>
+            <motion.span className={styles.pct} animate={{ opacity: doneS ? 1 : 0 }} initial={initialFade} transition={pctTransition}> %</motion.span>
           </span>
           <span className={styles.srOnly}>{tS} Prozent</span>
           <motion.p
             className={styles.labelBody}
-            initial={{ opacity: 0 }}
+            initial={initialFade}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 0.8, duration: 0.7 }}
+            transition={revealTransition(0.8, 0.7)}
           >
             {secondary.label}
           </motion.p>
@@ -78,10 +85,10 @@ export function StatPair({ primary, secondary, source, label, id }: StatPairProp
 
         <motion.p
           className={styles.source}
-          initial={{ opacity: 0 }}
+          initial={initialFade}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ delay: 1.2, duration: 0.6 }}
+          transition={revealTransition(1.2, 0.6)}
         >
           {source}
         </motion.p>

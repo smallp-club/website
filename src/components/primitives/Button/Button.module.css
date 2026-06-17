@@ -127,6 +127,18 @@
   box-shadow: none;
 }
 
+/* Hover-IN nutzt --ease-out (premium-ankommen), Hover-OUT bleibt --ease-standard
+   aus der Base-Transition. Asymmetrie zwischen Ankunft und Abgang — subtile
+   Micro-Wahrnehmung, kein lautes Detail. */
+.button:hover:not(:disabled) {
+  transition:
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    color var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+
 /* Focus universal */
 .button:focus-visible {
   outline: none;

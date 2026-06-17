@@ -14,6 +14,14 @@
 - **Inter** via `next/font/google` — build-time download, kein Google-Request zur Laufzeit (Privacy)
 - System-Stack für Body-Text
 
+## Icons
+- **Phosphor Icons** ([phosphoricons.com](https://phosphoricons.com)) — Brand-Default-Library, MIT-Lizenz
+- **Brand-Default-Weight: Thin** (stroke 8 im 256×256-viewBox) — matcht Chillax Light/Extralight, editorial-fein
+- **Implementation: Inline-SVG-Komponenten** in `src/components/icons/` — keine Package-Install nötig, Server-Component-friendly, `currentColor` für Token-Integration
+- **Wenn Member-Area kommt (Phase 5+):** zusätzlich `@phosphor-icons/react` für Client-Components mit vielen Icons
+- **Begründung der Wahl:** 9000+ Icons (größte MIT-Coverage), sechs Weights (Thin / Light / Regular / Bold / Fill / Duotone) matchen Chillax-Variable-Font-Logic. Wir bauen Hierarchie durch Weight, nicht durch verschiedene Libraries
+- **Aktiv abgelehnt:** Material Symbols (Google-corporate), Fontawesome (Web-2000-Stil), generische Stock-Icon-Packs
+
 ## Animationen
 - **Framer Motion** — komponenten-level: scroll reveals, MythFact-Interaktionen, page transitions
 - **Vanilla Custom Hooks** — useParallax, useCountUp, Marquee via pure CSS `@keyframes`

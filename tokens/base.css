@@ -54,14 +54,15 @@ a {
   text-decoration-thickness: 1px;
 }
 
-/* Overline / eyebrow label utility */
+/* Overline / eyebrow label utility — siehe Eyebrow-Primitive für Komponenten-Nutzung.
+   Lowercase + Chillax Light, in Linie mit der Brand-Stimme. */
 .spc-overline {
-  font-family: var(--font-body);
-  font-size: var(--text-overline);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-overline);
-  text-transform: uppercase;
-  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: var(--weight-light);
+  letter-spacing: 0.01em;
+  text-transform: lowercase;
+  color: var(--accent-contrast);
 }
 
 ::selection {
@@ -74,20 +75,21 @@ a {
   outline-offset: 2px;
 }
 
-/* Motion tokens — consumed by all animated components via var(--duration-*) */
+/* Motion-Override für Reduced-Motion.
+   Die kanonischen Motion-Tokens (--duration-*, --ease-*) leben in tokens/spacing.css.
+   Hier nur --duration-instant + der globale prefers-reduced-motion-Override,
+   der alle Durations auf ~0 schrumpft. */
 :root {
   --duration-instant: 0.01ms;
-  --duration-fast:    0.15s;
-  --duration-base:    0.25s;
-  --duration-slow:    0.4s;
-  --ease-out:         cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --duration-fast: var(--duration-instant);
-    --duration-base: var(--duration-instant);
-    --duration-slow: var(--duration-instant);
+    --duration-fast:      var(--duration-instant);
+    --duration-base:      var(--duration-instant);
+    --duration-slow:      var(--duration-instant);
+    --duration-reveal:    var(--duration-instant);
+    --duration-cinematic: var(--duration-instant);
   }
   html { scroll-behavior: auto; }
 }

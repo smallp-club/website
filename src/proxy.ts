@@ -9,13 +9,23 @@ function generateNonce(): string {
 }
 
 function buildCsp(nonce: string): string {
+  const isDev = process.env.NODE_ENV !== 'production';
+  // Dev: Next.js Webpack-HMR braucht eval() für React-Refresh + WebSocket für Live-Reload.
+  // Production: strikte CSP, kein unsafe-eval, kein ws:.
+  const scriptSrc = isDev
+    ? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval'`
+    : `script-src 'self' 'nonce-${nonce}'`;
+  const connectSrc = isDev
+    ? "connect-src 'self' ws: wss:"
+    : "connect-src 'self'";
   return [
     "default-src 'none'",
-    `script-src 'self' 'nonce-${nonce}'`,
+    scriptSrc,
     "style-src 'self' 'unsafe-inline'",
     "font-src 'self'",
     "img-src 'self' data:",
-    "connect-src 'self'",
+    connectSrc,
+    "manifest-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",

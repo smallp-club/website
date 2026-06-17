@@ -1,3 +1,5 @@
+'use client';
+
 import { SubmitButton } from './index';
 import { FormField } from '../FormField';
 import { Input } from '../Input';

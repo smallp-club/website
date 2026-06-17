@@ -106,6 +106,12 @@ export default function ComponentsLibraryIndex() {
               <p className={styles.cardSub}>Z-Pattern-Grid mit Tiefen-Reveal-Karten</p>
             </Link>
           </li>
+          <li>
+            <Link href="/components-library/patterns/brand-marquee" className={styles.card}>
+              <h3 className={styles.cardName}>Brand Marquee</h3>
+              <p className={styles.cardSub}>Mantra-Ticker · Brand-Stille als Bewegung</p>
+            </Link>
+          </li>
         </ul>
       </section>
 

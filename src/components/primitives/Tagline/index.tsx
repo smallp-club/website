@@ -1,5 +1,5 @@
-import { forwardRef, type HTMLAttributes, type ElementType } from 'react';
-import styles from './Tagline.module.css';
+import { forwardRef, type HTMLAttributes } from 'react';
+import { Heading } from '../Heading';
 
 export type TaglineLevel = 1 | 2;
 export type TaglineVariant = 'display' | 'lede';
@@ -18,21 +18,16 @@ export interface TaglineProps extends Omit<HTMLAttributes<HTMLHeadingElement>, '
  * keinen Text-Prop — der String ist Brand-DNA und gehört hier ein einziges Mal
  * geschrieben. Casing, Komma, Punctuation sind unveränderlich.
  *
- * Default: `<h1>` in Chillax Extralight, lowercase. Für Sub-Anker als `<h2>`
- * mit `level={2}` oder visuell kleiner via `variant="lede"`.
+ * Visual + Casing-Logik wird an `Heading` delegiert — gleiche Skalen, kein
+ * doppeltes CSS, ein Wahrheits-Ort. Tagline ist die Brand-Schutz-Schicht
+ * darum herum.
  */
 export const Tagline = forwardRef<HTMLHeadingElement, TaglineProps>(
-  function Tagline({ level = 1, variant = 'display', className, ...rest }, ref) {
-    const Tag = `h${level}` as ElementType;
+  function Tagline({ level = 1, variant = 'display', ...rest }, ref) {
     return (
-      <Tag
-        ref={ref}
-        data-variant={variant}
-        className={[styles.tagline, className].filter(Boolean).join(' ')}
-        {...rest}
-      >
+      <Heading ref={ref} level={level} variant={variant} {...rest}>
         no measure, no pressure
-      </Tag>
+      </Heading>
     );
   }
 );

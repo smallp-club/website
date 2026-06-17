@@ -1,0 +1,106 @@
+/* BrandMarquee — kontinuierliches Mantra-Band, Brand-Stille als Bewegung.
+   Black auf Off-White ist der natürliche visuelle Bruch.
+   Reduced-Motion: zeigt erste paar Items statisch, keine Animation. */
+
+.marquee {
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: var(--space-6) 0;
+  contain: layout paint;
+}
+
+.marquee[data-tone='inverse'] {
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+}
+
+.marquee[data-tone='deep'] {
+  background: var(--surface-deep);
+  color: var(--text-on-deep);
+}
+
+.marquee[data-tone='light'] {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  border-top: 1px solid var(--border-faint);
+  border-bottom: 1px solid var(--border-faint);
+}
+
+.track {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: marquee-left var(--marquee-speed, 40s) linear infinite;
+}
+
+.marquee[data-direction='right'] .track {
+  animation-name: marquee-right;
+}
+
+.marquee[data-pause-on-hover='true']:hover .track,
+.marquee[data-pause-on-hover='true']:focus-within .track {
+  animation-play-state: paused;
+}
+
+.item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-7);
+  padding: 0 var(--space-7);
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  font-size: clamp(22px, 2.4vw, 30px);
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.item[data-alt='true'] {
+  color: var(--spc-ash);
+}
+
+/* Bildmarken-Separator — Brand-Akzent. <img> rendert die SVG nativ in ihrer
+   ViewBox, kein subtiler Edge-Crop wie bei background-image+contain. */
+.mark {
+  display: inline-block;
+  height: 0.78em;
+  width: auto;
+  flex-shrink: 0;
+  user-select: none;
+}
+
+/* translate3d statt translateX — zwingt GPU-Layer, glättet Sub-Pixel-Jumps
+   am Loop-Restart die als Flackern wahrgenommen werden. */
+@keyframes marquee-left {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
+}
+
+@keyframes marquee-right {
+  from { transform: translate3d(-50%, 0, 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+/* Reduced-Motion: keine Animation, erste Items statisch sichtbar. */
+@media (prefers-reduced-motion: reduce) {
+  .track {
+    animation: none;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Mobile: kleiner + engere Gaps, sonst frisst die Marquee zu viel Höhe. */
+@media (max-width: 768px) {
+  .marquee {
+    padding: var(--space-5) 0;
+  }
+  .item {
+    gap: var(--space-5);
+    padding: 0 var(--space-5);
+    font-size: clamp(18px, 5vw, 22px);
+  }
+}

@@ -86,8 +86,11 @@ Text: `--text-on-deep`. Links: `--spc-turquoise` (einzige Stelle wo Pastel Turqu
 **Fact-Chip:** `--accent` Hintergrund, `--text-on-accent`, Label "Fakt" immer sichtbar. Kontrast 12,02:1 — kein Größenproblem.
 
 ### Überlines / Eyebrow-Labels
-Farbe: `--accent-contrast` (`--spc-turquoise-deep`). Uppercase, `--tracking-overline`.
+Farbe: `--accent-contrast` (`--spc-turquoise-deep`) als Default, `--spc-slate` als muted-Variante.
+Lowercase, near-normal tracking (`0.01em`), Chillax Light, 14px.
 Kein Turquoise, kein Sienna — Dark Turquoise hat Autorität ohne laut zu sein.
+
+**Warum lowercase statt uppercase-tracked:** Die Brand-Stimme ist durchgängig lowercase (Wordmark, Tagline, Display-Headlines). Eine uppercase-tracked Eyebrow würde diese Stimme über jeder Sektion brechen — und ist außerdem das gesättigte AI-Scaffolding-Pattern 2026. Lowercase hält die Eyebrow als ruhiges Strukturlabel innerhalb des eigenen typografischen Registers.
 
 ### Inputs
 

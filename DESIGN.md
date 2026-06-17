@@ -100,7 +100,7 @@ Chillax is self-hosted via `tokens/fonts.css` (woff2 + woff). Variable axis 200�
 | Short display claims ("no measure, no pressure") | **display-lowercase** | Chillax Extralight (200) |
 | Section headings, card titles | Sentence case | Chillax Medium–Regular |
 | Body copy, captions | Sentence case | Inter Regular |
-| Overlines / category labels | UPPERCASE + tracked | Inter or Chillax, `--tracking-overline: 0.16em` |
+| Overlines / category labels | lowercase, tight tracking | Chillax Light, 14px, near-normal letter-spacing |
 
 Never uppercase a display headline. Never title-case a Chillax claim. "Headlines sind typografische Haltung."
 
@@ -202,12 +202,15 @@ Two semantic chip types, each with a label (never colour alone):
 
 ### Overlines
 
-- Font: Inter or Chillax
-- Size: `--text-overline` (12px)
-- Color: `--spc-turquoise-deep` (`#1D5556`)
-- Transform: uppercase
-- Tracking: `--tracking-overline` (0.16em)
-- Used to announce section type ("Corporate Design", "Fakten", "Mythos")
+- Font: Chillax (matches the brand's lowercase voice)
+- Size: 14px
+- Weight: `--weight-light` (300)
+- Color: `--spc-turquoise-deep` (`#1D5556`) — default; muted variant uses `--spc-slate`
+- Transform: lowercase
+- Tracking: near-normal (`0.01em`)
+- Used to announce section type ("forschung", "fakten", "kapitel 02 / 04")
+
+**Why lowercase, not uppercase-tracked:** the brand voice is lowercase end-to-end (wordmark, tagline, display headlines). An uppercase-tracked eyebrow above every section would break that voice — and is also the saturated 2026 AI scaffolding pattern. Lowercase keeps the eyebrow as a quiet structural label inside the brand's own typographic register.
 
 ### Navigation
 

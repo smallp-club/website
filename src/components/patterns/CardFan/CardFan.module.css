@@ -80,12 +80,30 @@
   position: relative;
   z-index: 2;
   pointer-events: none;
+  border-radius: var(--radius-lg);
+}
+
+.stage:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 .stage .fanContainer,
 .stage .nav,
 .stage .navCounter {
   pointer-events: auto;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .fanContainer {

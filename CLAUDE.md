@@ -15,6 +15,11 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 - Tech Stack, alle Tool-Entscheidungen → @docs/tech/STACK.md
 - Security & Privacy Prinzipien → @docs/tech/SECURITY.md
 - Story Architecture, Konzeptstand → @docs/project/CONCEPT.md
+- **Informationsarchitektur (komplett: Routes, Templates, Auth, User-Pfade, Privacy)** → @docs/project/IA.md
+- **Member-Konzept (Mehrwert, Erfahrungsberichte, UX, Bootstrap)** → @docs/project/MEMBER_CONCEPT.md
+- **Member-Security (5 Verteidigungslinien, Anti-Troll-Architektur)** → @docs/project/MEMBER_SECURITY.md
+- **Funding-Konzept (Direkt-Verweis-Modell, Empfänger-Orgs, Brand-Voice)** → @docs/project/FUNDING_CONCEPT.md
+- **Outreach-Mail-Templates (Bundesforum Männer, LAG Jungen*arbeit NRW)** → @docs/project/funding-outreach-templates.md
 - Implementierungsstand, Roadmap, offene Punkte → @docs/project/ROADMAP.md
 - Visuelles Design-System → @DESIGN.md
 - Forschungsquellen (Mythen, Fakten, Psychologie, DACH) → @docs/content/RESEARCH.md

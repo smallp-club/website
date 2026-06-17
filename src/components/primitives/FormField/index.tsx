@@ -12,6 +12,12 @@ export interface FormFieldProps {
   helperText?: string;
   /** Fehlermeldung. Wenn vorhanden, hat Vorrang vor `helperText`. Peer-Voice, kein „!" */
   error?: string;
+  /**
+   * Optionaler Voice-Anker vor dem Fehler-Text (Default „hinweis.").
+   * Brand-Pattern: atomares Präfix mit Punkt, gefolgt vom Vollsatz. Lautlese-Test:
+   * „hinweis. das passt noch nicht …" Auf `null` setzen für kein Präfix.
+   */
+  errorPrefix?: string | null;
   /** Visuell sichtbar oder via sr-only versteckt (z. B. Inline-Newsletter). */
   labelVariant?: LabelVariant;
   /** Pflicht-Feld markieren — fügt aria-required hinzu, KEIN Asterisk. */
@@ -39,6 +45,7 @@ export function FormField({
   hint,
   helperText,
   error,
+  errorPrefix = 'hinweis.',
   labelVariant = 'visible',
   required,
   children,
@@ -75,6 +82,11 @@ export function FormField({
       )}
       {error && (
         <p id={errorId} className={styles.error} role="alert">
+          {errorPrefix && (
+            <>
+              <span className={styles.errorPrefix}>{errorPrefix}</span>{' '}
+            </>
+          )}
           {error}
         </p>
       )}

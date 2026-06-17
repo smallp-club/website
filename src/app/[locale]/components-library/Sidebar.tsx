@@ -42,11 +42,14 @@ const sections: NavSection[] = [
       { name: 'Stat Pair Topo',    href: '/components-library/patterns/stat-pair-topo',    status: 'available' },
       { name: 'Card Fan',          href: '/components-library/patterns/card-fan',          status: 'available' },
       { name: 'Pull Focus Grid',   href: '/components-library/patterns/pull-focus-grid',   status: 'available' },
+      { name: 'Brand Marquee',     href: '/components-library/patterns/brand-marquee',     status: 'available' },
     ],
   },
   {
     title: 'Sections',
-    items: [],
+    items: [
+      { name: 'Site Footer', href: '/components-library/sections/site-footer', status: 'available' },
+    ],
   },
 ];
 

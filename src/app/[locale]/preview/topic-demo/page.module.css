@@ -1,0 +1,123 @@
+/* Topic-Demo — eigene Layouts nur dort wo Primitives nicht reichen.
+   Alles andere übernimmt Section, Container, Stack, Patterns. */
+
+.heroEyebrow {
+  margin-bottom: var(--space-5);
+}
+
+.heroLead {
+  max-width: 56ch;
+  color: var(--text-muted);
+  margin-top: var(--space-6);
+}
+
+.heroSource {
+  margin-top: var(--space-7);
+}
+
+.recognitionStack {
+  max-width: 56ch;
+}
+
+.recognitionBody + .recognitionBody {
+  margin-top: var(--space-5);
+}
+
+.recognitionSource {
+  margin-top: var(--space-6);
+}
+
+/* Black-Flip-Section: monumentale Zahl, ein Atemzug.
+   Stats sind ihr eigener Akzent, kein Sienna, kein Turquoise. */
+.blackBlock {
+  text-align: center;
+}
+
+.blackEyebrow {
+  color: var(--spc-turquoise);
+  margin-bottom: var(--space-7);
+  display: block;
+}
+
+.blackNumber {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(120px, 22vw, 240px);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  color: var(--text-on-inverse);
+  margin: 0;
+  text-transform: lowercase;
+}
+
+.blackBody {
+  max-width: 48ch;
+  margin: var(--space-7) auto 0;
+  color: var(--text-on-inverse);
+  opacity: 0.8;
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+}
+
+.blackSource {
+  margin-top: var(--space-7);
+  color: var(--text-on-inverse);
+  opacity: 0.55;
+  font-size: var(--text-caption);
+  font-family: var(--font-body);
+  line-height: 1.5;
+  font-style: italic;
+}
+
+/* CTA-Section: Tagline-Anker + ruhige Newsletter-Einladung. */
+.ctaStack {
+  text-align: center;
+  max-width: 48ch;
+  margin: 0 auto;
+}
+
+.ctaBody {
+  margin-top: var(--space-7);
+  color: var(--text-muted);
+  font-size: var(--text-body-lg);
+  line-height: var(--leading-relaxed);
+}
+
+.ctaButton {
+  margin-top: var(--space-7);
+}
+
+/* Footer-Echo: nur Wordmark + Mini-Note. */
+.footerInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  color: var(--text-on-deep);
+}
+
+.footerWordmark {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-md);
+  text-transform: lowercase;
+}
+
+.footerNote {
+  font-size: var(--text-caption);
+  opacity: 0.7;
+}
+
+/* Demo-Notice oben — markiert klar dass das nur ein Eindruck ist. */
+.notice {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--spc-turquoise-deep);
+  color: var(--text-on-inverse);
+  font-size: var(--text-caption);
+  letter-spacing: 0.04em;
+  text-transform: lowercase;
+  padding: var(--space-3) var(--space-5);
+  text-align: center;
+}

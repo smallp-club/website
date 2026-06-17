@@ -14,7 +14,7 @@ export function FormFieldDemo() {
 
       <FormField
         label="Email"
-        error="Das sieht nicht nach Email aus."
+        error="das sieht noch nicht nach einer email aus."
       >
         <Input type="email" name="error-email" defaultValue="kaputt" />
       </FormField>

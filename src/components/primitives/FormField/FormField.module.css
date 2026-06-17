@@ -50,7 +50,12 @@
 .error {
   font-family: var(--font-body);
   font-size: var(--text-caption);
-  color: var(--spc-sienna);
+  color: var(--text-strong);
   margin: 0;
   line-height: var(--leading-snug);
+}
+
+.errorPrefix {
+  font-weight: var(--weight-medium);
+  margin-right: 0.25em;
 }

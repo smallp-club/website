@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { EASE_OUT } from '@/lib/motion';
 import styles from './PullFocusGrid.module.css';
@@ -25,18 +25,75 @@ export interface PullFocusGridProps {
  * Desktop = Hover, Mobile = Tap mit pulsiertem Obround-Affordance.
  */
 export function PullFocusGrid({ items, label, id }: PullFocusGridProps) {
+  const gridRef = useRef<HTMLDivElement>(null);
   const [lockedId, setLockedId] = useState<string | null>(null);
+
   function toggleLocked(itemId: string) {
     setLockedId(prev => (prev === itemId ? null : itemId));
+  }
+
+  function focusCardAt(index: number) {
+    const card = gridRef.current?.querySelector<HTMLButtonElement>(
+      `[data-card-index="${index}"]`
+    );
+    card?.focus();
+  }
+
+  function handleGridKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
+    if (items.length === 0) return;
+    const target = e.target as HTMLElement;
+    const currentRaw = target.dataset.cardIndex;
+    if (currentRaw === undefined) return;
+    const currentIndex = parseInt(currentRaw, 10);
+    if (Number.isNaN(currentIndex)) return;
+
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown': {
+        e.preventDefault();
+        focusCardAt((currentIndex + 1) % items.length);
+        break;
+      }
+      case 'ArrowLeft':
+      case 'ArrowUp': {
+        e.preventDefault();
+        focusCardAt((currentIndex - 1 + items.length) % items.length);
+        break;
+      }
+      case 'Home': {
+        e.preventDefault();
+        focusCardAt(0);
+        break;
+      }
+      case 'End': {
+        e.preventDefault();
+        focusCardAt(items.length - 1);
+        break;
+      }
+      case 'Escape': {
+        if (lockedId) {
+          e.preventDefault();
+          setLockedId(null);
+        }
+        break;
+      }
+    }
   }
 
   return (
     <section id={id} className={styles.section}>
       {label && <h2 className={styles.label}>{label}</h2>}
-      <div className={styles.grid}>
-        {items.map((item) => (
+      <div
+        ref={gridRef}
+        className={styles.grid}
+        role="group"
+        aria-label={label ?? 'Mythos-Fakt-Karten'}
+        onKeyDown={handleGridKeyDown}
+      >
+        {items.map((item, index) => (
           <PullFocusCard
             key={item.id}
+            cardIndex={index}
             myth={item.myth}
             fact={item.fact}
             source={item.source}
@@ -50,6 +107,7 @@ export function PullFocusGrid({ items, label, id }: PullFocusGridProps) {
 }
 
 interface PullFocusCardInternalProps {
+  cardIndex: number;
   myth: string;
   fact: string;
   source: string;
@@ -57,7 +115,7 @@ interface PullFocusCardInternalProps {
   onToggle: () => void;
 }
 
-function PullFocusCard({ myth, fact, source, isLocked, onToggle }: PullFocusCardInternalProps) {
+function PullFocusCard({ cardIndex, myth, fact, source, isLocked, onToggle }: PullFocusCardInternalProps) {
   const reducedMotion = useReducedMotion() ?? false;
   const cardRef = useRef<HTMLButtonElement>(null);
   const inView = useInView(cardRef, { once: true, amount: 0.4 });
@@ -83,7 +141,9 @@ function PullFocusCard({ myth, fact, source, isLocked, onToggle }: PullFocusCard
   }
 
   function handleClick() {
-    if (!canHover) onToggle();
+    // Toggelt das Lock immer — Maus, Touch und Keyboard (Enter/Space) gleich behandelt.
+    // Auf Desktop: Hover öffnet, Click fixiert. Auf Touch: Tap öffnet/schließt.
+    onToggle();
   }
 
   const mythAnimate = reducedMotion
@@ -111,6 +171,7 @@ function PullFocusCard({ myth, fact, source, isLocked, onToggle }: PullFocusCard
       type="button"
       ref={cardRef}
       className={styles.card}
+      data-card-index={cardIndex}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
       onClick={handleClick}

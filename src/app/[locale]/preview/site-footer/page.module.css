@@ -1,0 +1,75 @@
+/* Preview-Page für SiteFooter — demonstriert Sticky-Reveal-Mechanik.
+   Body fährt weg, Footer kommt aus dem Boden hervor.
+   Echo der Mythos-Reveal-Doktrin "Vorhang fällt, wird nicht hochgezogen". */
+
+.pageWrapper {
+  position: relative;
+}
+
+/* Body ist über dem Footer, hat solid Off-White Background,
+   verdeckt den Footer beim Scroll. Flex column damit der Sentinel
+   am Body-Boden landet (für den Footer-Reveal-Trigger). */
+.body {
+  position: relative;
+  z-index: 2;
+  background: var(--surface-bg);
+  min-height: 200vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.intro {
+  padding: 48px 32px;
+  max-width: 720px;
+}
+
+.preEyebrow {
+  font-size: 13px;
+  color: var(--spc-slate);
+  letter-spacing: 0.04em;
+  margin: 0 0 12px;
+}
+
+.h1 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(40px, 6vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+  margin: 0 0 24px;
+}
+
+.lede {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--spc-slate);
+  max-width: 600px;
+  margin: 0 0 16px;
+}
+
+.scrollFiller {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 80vh;
+}
+
+.fillerNote {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--spc-slate);
+  opacity: 0.5;
+  letter-spacing: 0.04em;
+}
+
+/* Footer ist sticky am Bottom — sitzt von Anfang an unter dem Body
+   (z-index: 1 — unter dem Body mit z-index: 2). */
+.revealFooter {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  /* Footer macht seine eigene Höhe via Section-Padding */
+}

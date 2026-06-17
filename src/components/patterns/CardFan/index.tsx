@@ -84,6 +84,28 @@ export function CardFan({ items, label, id }: CardFanProps) {
   function handlePrev() { goTo(activeIndex - 1); }
   function handleNext() { goTo(activeIndex + 1); }
 
+  function handleStageKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (items.length === 0) return;
+    switch (e.key) {
+      case 'ArrowLeft':
+        e.preventDefault();
+        handlePrev();
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        handleNext();
+        break;
+      case 'Home':
+        e.preventDefault();
+        goTo(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        goTo(items.length - 1);
+        break;
+    }
+  }
+
   function handleZoneMove(e: React.MouseEvent, zone: 'left' | 'right') {
     cursorX.set(e.clientX - 55);
     cursorY.set(e.clientY - 55);
@@ -127,23 +149,26 @@ export function CardFan({ items, label, id }: CardFanProps) {
     <section id={id} className={styles.section}>
       {label && <h2 className={styles.label}>{label}</h2>}
 
+      {/* Maus-only Hot-Zones — Tab-Flow nutzt die Stage + Nav-Buttons */}
       <button
         type="button"
+        tabIndex={-1}
         className={`${styles.hotZone} ${styles.hotZoneLeft}`}
         onMouseEnter={(e) => handleZoneEnter(e, 'left')}
         onMouseMove={(e) => handleZoneMove(e, 'left')}
         onMouseLeave={handleZoneLeave}
         onClick={handlePrev}
-        aria-label="Vorherige Karte"
+        aria-hidden="true"
       />
       <button
         type="button"
+        tabIndex={-1}
         className={`${styles.hotZone} ${styles.hotZoneRight}`}
         onMouseEnter={(e) => handleZoneEnter(e, 'right')}
         onMouseMove={(e) => handleZoneMove(e, 'right')}
         onMouseLeave={handleZoneLeave}
         onClick={handleNext}
-        aria-label="Nächste Karte"
+        aria-hidden="true"
       />
 
       <AnimatePresence>
@@ -162,7 +187,14 @@ export function CardFan({ items, label, id }: CardFanProps) {
         )}
       </AnimatePresence>
 
-      <div className={styles.stage}>
+      <div
+        className={styles.stage}
+        role="group"
+        aria-roledescription="Karten-Stapel"
+        aria-label={label ?? 'Karten'}
+        tabIndex={0}
+        onKeyDown={handleStageKeyDown}
+      >
         <motion.div
           className={styles.fanContainer}
           drag={isMobile ? 'x' : false}
@@ -196,6 +228,7 @@ export function CardFan({ items, label, id }: CardFanProps) {
                 transition={{ duration: 0.5, ease: EASE_OUT }}
                 onClick={() => { if (!isActive) goTo(i); }}
                 aria-hidden={!isActive}
+                aria-current={isActive ? 'true' : undefined}
                 aria-label={isActive ? undefined : `Karte: ${item.headline}`}
               >
                 <div className={styles.cardInner}>
@@ -231,8 +264,11 @@ export function CardFan({ items, label, id }: CardFanProps) {
           >
             <ChevronArrow direction="left" />
           </button>
-          <span className={styles.navCounter} aria-live="polite">
+          <span className={styles.navCounter} aria-hidden="true">
             {activeIndex + 1} / {items.length}
+          </span>
+          <span className={styles.srOnly} aria-live="polite" aria-atomic="true">
+            Karte {activeIndex + 1} von {items.length}{items[activeIndex] ? `: ${items[activeIndex].headline}` : ''}
           </span>
           <button
             type="button"
