@@ -4,6 +4,7 @@ import { Container } from '@/components/primitives/Container';
 import { Heading } from '@/components/primitives/Heading';
 import { Section } from '@/components/primitives/Section';
 
+import { ClearSiteDataButton } from './ClearSiteDataButton';
 import styles from './page.module.css';
 
 export const metadata: Metadata = {
@@ -30,10 +31,28 @@ export default function AnonymBleibenPage() {
             wir sehen dich nicht.
           </p>
 
+          <section className={styles.section}>
+            <Heading level={2} variant="section">
+              ein-klick löschen
+            </Heading>
+            <p className={styles.step}>
+              du kannst alles, was wir auf deinem gerät gespeichert haben, mit
+              einem klick löschen: cookies, login-session, alle daten unserer
+              site.
+            </p>
+            <div className={styles.buttonRow}>
+              <ClearSiteDataButton />
+            </div>
+            <p className={styles.step}>
+              was der button nicht kann: deinen browser-verlauf löschen. dafür
+              siehst du unten die anleitung.
+            </p>
+          </section>
+
           <p className={styles.intro}>
-            wenn du nicht willst, dass jemand sieht, dass du hier warst — zum
+            wenn du nicht willst, dass jemand sieht, dass du hier warst, zum
             beispiel auf einem geteilten rechner oder weil dein browser über
-            ein konto synchronisiert — hier sind die wege:
+            ein konto synchronisiert: hier sind die wege.
           </p>
 
           <section className={styles.section}>
@@ -83,7 +102,7 @@ export default function AnonymBleibenPage() {
             <p className={styles.step}>
               <strong>wenn dein hauptbrowser synchronisiert.</strong>
               chrome mit google-konto, safari mit icloud, edge mit
-              microsoft-konto — diese landen oft in deinem profil. ein
+              microsoft-konto. diese landen oft in deinem profil. ein
               zweitbrowser (firefox, brave, tor) ohne sync hat das problem
               nicht.
             </p>
@@ -97,7 +116,7 @@ export default function AnonymBleibenPage() {
               <strong>für maximale anonymität.</strong>
               der tor-browser verschleiert deine ip-adresse, auch gegenüber
               deinem internet-anbieter. unsere site funktioniert über tor ohne
-              extra-schritte — wir leiten tor-traffic durch, ohne dich mit
+              extra-schritte. wir leiten tor-traffic durch, ohne dich mit
               sicherheits-checks zu nerven.
               <span className={styles.detail}>
                 <a href="https://www.torproject.org">torproject.org</a>{' '}

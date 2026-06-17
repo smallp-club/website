@@ -58,6 +58,10 @@
   text-decoration: underline;
 }
 
+.buttonRow {
+  margin-block: var(--space-5) var(--space-6);
+}
+
 .outro {
   font-family: var(--font-body);
   font-size: var(--text-body-md);

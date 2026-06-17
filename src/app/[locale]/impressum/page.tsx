@@ -89,7 +89,7 @@ export default function ImpressumPage() {
               Texte, Bilder, Code auf dieser Site stehen unter unserem
               Urheberrecht. Wenn du was nutzen willst (Zitate, Verlinkungen,
               Verwendung), schreib uns kurz: hello@smallp.club. Wir sind nicht
-              streng — aber wir wollen wissen wo unsere Inhalte landen.
+              streng, aber wir wollen wissen wo unsere Inhalte landen.
             </p>
             <p className={styles.lead}>
               Open-Source-Anteile des Codes (sofern später unter MIT

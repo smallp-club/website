@@ -1,23 +1,22 @@
 /* =========================================================================
-   NavBarB — Form-Morph + externe Member-Pille
+   NavBarB — Sticky-Komposition mit subtilem Material-Tweak.
 
    Strukturelle Idee:
-   - .navShell ist sticky am Top, trägt Layout + Form-Morph-Properties.
-   - .nav ist das Bar-Material (Glas / Off-White) mit Logo + Items.
-   - .memberPill ist Geschwister, eigenständig, Solid-Accent.
-   - Bei data-pinned='true' morphen Bar + Pille synchron:
-       Bar: Pill → Editorial-Bar (max-width 720 → 100%, radius pill → 0,
-            shadow lg → hairline)
-       Pille: schwebende Floating-Pill mit Schatten → ruhige Pille auf
-            der Bar-Oberfläche, kein Schatten mehr.
+   - .navShell ist sticky am Viewport-Top, trägt Layout + Custom Properties.
+   - .nav ist das Bar-Material (Glas auf Off-White) mit Logo + Items.
+   - .memberPill ist Geschwister der Bar, AUSSERHALB, eigenständig.
+   - Beim Andocken bleibt die Pille rund + kompakt — kein Form-Morph.
+     Nur das Material wird ruhiger: Glas etwas dichter, Schatten weicher.
+   - Glas-Refraction-Polish: ein radial-Highlight folgt dem Cursor über
+     der Bar (--mx / --my via Pointer-Event).
 
-   Lockup-Verhalten:
-   - Hero-State: Wordmark (Dark Turquoise) sichtbar
-   - Pinned-State: Wordmark crossfadet zu Bildmarke
+   Mobile (<768 px):
+   - Items collapsen, Burger triggert Off-White-Sheet.
+   - Bar shrinkt auf Content-Breite (Logo + Burger eng beieinander).
    ========================================================================= */
 
 /* -------------------------------------------------------------------------
-   Hero — 100dvh: stabil gegen iOS-Safari Address-Bar-Reflow.
+   Hero — 100dvh, stabil gegen iOS-Safari Address-Bar-Reflow.
    ------------------------------------------------------------------------- */
 
 .hero {
@@ -87,21 +86,24 @@
 }
 
 /* -------------------------------------------------------------------------
-   NavShell — sticky-Wrapper, trägt Form-Morph via Custom Properties.
+   NavShell — sticky-Wrapper. Flex-Layout für Bar + Member-Pille.
 
-   --shell-max-width morpht: Hero-Komposition (Bar + Gap + Pille) → 100%.
+   --shell-max-width 880 px = Bar-Pill (~720 px) + Gap + Member-Pill (~130 px).
+   Komposition zentriert mit max. atmender Hero-Bottom-Schwebe.
+   --sticky-top mit env(safe-area-inset-top): respektiert iPhone Dynamic
+   Island und Notch — sonst klebt die Bar darunter.
    ------------------------------------------------------------------------- */
 
 .navShell {
   --nav-height: 56px;
   --shell-gap: var(--space-3);
-  --shell-max-width: calc(720px + var(--shell-gap) + 132px);
+  --shell-max-width: 880px;
   --shell-padding-x: var(--gutter);
   --floating-gap: 24px;
   --sticky-top: 16px;
 
   position: sticky;
-  top: var(--sticky-top);
+  top: max(var(--sticky-top), env(safe-area-inset-top));
   z-index: 100;
 
   display: flex;
@@ -119,52 +121,67 @@
   box-sizing: border-box;
 }
 
-/* Pinned: Pille bleibt rund und kompakt. Nur Material wird ruhiger
-   (weicherer Schatten, dichteres Glas) und die Komposition rückt
-   leicht vom Viewport-Top ab. */
-
 /* -------------------------------------------------------------------------
-   Nav — Bar-Material. Im Hero-State Pill mit Glas + Schatten,
-   im Pinned-State Editorial mit Hairline-bottom.
+   Nav — Bar-Material. Hero-State: Pill mit Glas + Schatten.
+   Pinned-State: Glas dichter, Schatten weicher.
    ------------------------------------------------------------------------- */
 
 .nav {
-  --nav-radius: var(--radius-pill);
+  /* Pointer-Position für Glas-Refraction (siehe ::before).
+     Wird vom JS-Handler in NavBarB als Inline-Style überschrieben. */
+  --mx: 50%;
+  --my: 50%;
+
   --nav-bg-alpha: 0.85;
   --nav-blur: 20px;
   --nav-saturate: 1.2;
   --nav-shadow: var(--shadow-lg);
-  --nav-hairline: transparent;
-  --nav-padding-x: var(--space-5);
 
+  position: relative;
   flex: 1 1 auto;
-  min-width: 0;
   height: 100%;
   display: flex;
   align-items: center;
-  padding-inline: var(--nav-padding-x);
+  padding-inline: var(--space-5);
   box-sizing: border-box;
+  overflow: hidden; /* clip Refraction-Highlight an Pill-Radius */
 
   background-color: rgba(247, 246, 242, var(--nav-bg-alpha));
   -webkit-backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
   backdrop-filter: blur(var(--nav-blur)) saturate(var(--nav-saturate));
-  border-radius: var(--nav-radius);
-  box-shadow: var(--nav-shadow), 0 1px 0 0 var(--nav-hairline);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--nav-shadow);
 
   transition:
-    border-radius var(--duration-slow) var(--ease-out),
     background-color var(--duration-slow) var(--ease-out),
     box-shadow var(--duration-slow) var(--ease-out),
-    padding-inline var(--duration-slow) var(--ease-out),
-    -webkit-backdrop-filter calc(var(--duration-slow) * 0.6) var(--ease-out)
-      calc(var(--duration-slow) * 0.3),
-    backdrop-filter calc(var(--duration-slow) * 0.6) var(--ease-out)
-      calc(var(--duration-slow) * 0.3);
+    -webkit-backdrop-filter var(--duration-slow) var(--ease-out),
+    backdrop-filter var(--duration-slow) var(--ease-out);
+}
+
+/* Glas-Refraction — subtiler Highlight folgt dem Cursor.
+   Nur sichtbar auf Hover-fähigen Devices. */
+@media (hover: hover) and (pointer: fine) {
+  .nav::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      circle 220px at var(--mx) var(--my),
+      rgba(255, 255, 255, 0.32) 0%,
+      rgba(255, 255, 255, 0.08) 35%,
+      transparent 65%
+    );
+    opacity: 0;
+    transition: opacity 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .nav:hover::before {
+    opacity: 1;
+  }
 }
 
 .navShell[data-pinned='true'] .nav {
-  /* Pille bleibt Pille — Radius nicht angefasst.
-     Glas dichter, Schatten weicher und enger, kein dramatischer Lift. */
   --nav-bg-alpha: 0.92;
   --nav-blur: 18px;
   --nav-saturate: 1.15;
@@ -172,18 +189,17 @@
 }
 
 .navInner {
+  position: relative; /* über ::before-Highlight stapeln */
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-5);
   width: 100%;
-  max-width: var(--container-max);
-  margin-inline: auto;
   height: 100%;
 }
 
 /* -------------------------------------------------------------------------
-   Logo-Stack — Wordmark + Mark im selben Slot, Crossfade beim Pin.
+   Logo-Stack — Wordmark + Mark gestackt; <480 px hard-toggle zu Mark.
    ------------------------------------------------------------------------- */
 
 .lockup {
@@ -193,6 +209,13 @@
   text-decoration: none;
   color: inherit;
   border-radius: var(--radius-sm);
+  transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lockup:hover {
+    opacity: 0.78;
+  }
 }
 
 .lockup:focus-visible {
@@ -212,8 +235,6 @@
   width: auto;
 }
 
-/* Default: Wordmark sichtbar (sie enthält die Bildmarke im 'p'),
-   Bildmarke versteckt. Auf <480px wird's umgekehrt (hard toggle). */
 .layerWordmark {
   display: block;
 }
@@ -272,7 +293,6 @@
     transform-origin: var(--underline-origin, right) center;
     transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
   }
-
   .link:hover::after,
   .link:focus-visible::after {
     transform: scaleX(1);
@@ -301,7 +321,7 @@
 }
 
 /* -------------------------------------------------------------------------
-   Mobile-Burger — versteckt auf Desktop, sichtbar unter 768px.
+   Mobile-Burger — versteckt auf Desktop, sichtbar unter 768 px.
    ------------------------------------------------------------------------- */
 
 .burger {
@@ -327,15 +347,16 @@
 }
 
 /* -------------------------------------------------------------------------
-   Member-Pille — Geschwister der Bar, AUSSERHALB.
-   Volle Bar-Höhe → automatisch ≥56px Touch-Target (WCAG AAA).
+   Member-Pille — Geschwister AUSSERHALB der Bar, in voller Bar-Höhe
+   (Touch-Target ≥AAA). „Türschloss" aus IA.md Sektion 1.
 
-   Hero-State: schwebt mit eigenem Schatten neben der Pill-Bar.
-   Pinned-State: behält Pill-Radius (sie ist Pille, kein Bar-Stück),
-   verliert aber den dramatischen Schatten — sitzt ruhiger.
+   Türschloss-Schwelle-Polish: ein 1 px Off-White-Hairline-Strich 8 px
+   unter der Pille, nur im Hover sichtbar — verstärkt die „Schwellen"-
+   Lesart visuell, ohne ein Wort hinzuzufügen.
    ------------------------------------------------------------------------- */
 
 .memberPill {
+  position: relative;
   flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
@@ -361,9 +382,31 @@
     background-color 220ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Türschloss-Schwelle */
+@media (hover: hover) and (pointer: fine) {
+  .memberPill::after {
+    content: '';
+    position: absolute;
+    left: 25%;
+    right: 25%;
+    bottom: -10px;
+    height: 1px;
+    background: var(--spc-offwhite);
+    border-radius: var(--radius-pill);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition:
+      transform 320ms cubic-bezier(0.32, 0.72, 0, 1),
+      opacity 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0.72;
+    pointer-events: none;
+  }
+  .memberPill:hover::after {
+    transform: scaleX(1);
+  }
+}
+
 .navShell[data-pinned='true'] .memberPill {
-  /* Pille passt sich der ruhigeren Bar-Material-Stufe an —
-     gleicher Schatten-Polish wie die Bar. */
   box-shadow: var(--shadow-md);
 }
 
@@ -391,7 +434,6 @@
 
 /* -------------------------------------------------------------------------
    Mobile-Sheet — Off-White Overlay, Brand-ruhig.
-   Default ausgeblendet, sichtbar via [data-open='true'].
    ------------------------------------------------------------------------- */
 
 .sheet {
@@ -434,6 +476,8 @@
   display: flex;
   flex-direction: column;
   padding: var(--space-6) var(--space-5) var(--space-9);
+  padding-top: max(var(--space-6), env(safe-area-inset-top));
+  padding-bottom: max(var(--space-9), env(safe-area-inset-bottom));
   background-color: var(--spc-offwhite);
   transform: translateY(-12px);
   transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -505,9 +549,47 @@
   border-radius: var(--radius-sm);
 }
 
+.sheetMemberPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  min-height: 64px;
+  margin-top: var(--space-7);
+  padding: var(--space-4) var(--space-7);
+  border-radius: var(--radius-pill);
+  background-color: var(--accent, #7bdcb5);
+  color: var(--text-on-accent, #0a0a0a);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 24px;
+  letter-spacing: -0.005em;
+  line-height: 1;
+  text-transform: lowercase;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  box-shadow: var(--shadow-md);
+}
+
+.sheetMemberPill:active {
+  background-color: var(--accent-press, #4fbf90);
+  transform: scale(0.98);
+}
+
+.sheetMemberPill:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.sheetMemberPill[aria-current='page'] {
+  background-color: var(--accent-press, #4fbf90);
+  font-weight: 600;
+}
+
 /* -------------------------------------------------------------------------
-   Mobile-Layout (<768px).
-   Items collapsen, Burger erscheint. Logo bleibt Wordmark bis <480px.
+   Mobile-Layout (<768 px).
+   Items collapsen, Burger erscheint. Bar shrinkt auf Content-Breite,
+   Komposition zentriert.
    ------------------------------------------------------------------------- */
 
 @media (max-width: 768px) {
@@ -515,13 +597,21 @@
     --nav-height: 52px;
     --shell-gap: var(--space-2);
     --floating-gap: 16px;
-    --shell-max-width: 92vw;
+    --shell-max-width: max-content;
     --shell-padding-x: 0;
     --sticky-top: 12px;
+    justify-content: center;
   }
 
   .nav {
-    --nav-padding-x: var(--space-4);
+    flex: 0 0 auto;
+    padding-inline: var(--space-4);
+  }
+
+  .navInner {
+    width: auto;
+    gap: var(--space-3);
+    justify-content: flex-start;
   }
 
   .items {
@@ -539,7 +629,6 @@
 }
 
 @media (max-width: 480px) {
-  /* Logo: hard switch zu Bildmarke. */
   .layerWordmark {
     display: none;
   }
@@ -554,17 +643,23 @@
 }
 
 /* -------------------------------------------------------------------------
-   Reduced-Motion.
+   Reduced-Motion — alle Transitionen hart toggeln, Glas-Refraction aus.
    ------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   .navShell,
   .nav,
+  .nav::before,
+  .lockup,
   .link,
   .link::after,
   .memberPill,
+  .memberPill::after,
   .sheet,
   .sheetPanel {
     transition: none;
+  }
+  .nav::before {
+    display: none;
   }
 }

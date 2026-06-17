@@ -69,10 +69,25 @@
   text-decoration: underline;
 }
 
+.tableWrap {
+  margin-block-end: var(--space-5);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .cookieTable {
   border-collapse: collapse;
-  margin-block-end: var(--space-5);
+  min-width: 480px;
   width: 100%;
+}
+
+.cookieTable caption {
+  caption-side: top;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  margin-block-end: var(--space-3);
+  text-align: left;
 }
 
 .cookieTable th,
@@ -82,6 +97,7 @@
   text-align: left;
   font-family: var(--font-body);
   font-size: var(--text-body-sm);
+  vertical-align: top;
 }
 
 .cookieTable th {
@@ -91,6 +107,15 @@
 
 .cookieTable td {
   color: var(--text-strong);
+}
+
+.cookieTable code,
+.providerDetail code {
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-caption);
+  padding: 0.1em 0.5em;
 }
 
 .signOff {

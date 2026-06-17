@@ -63,7 +63,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
               hello@smallp.club
             </p>
             <p className={styles.lead}>
-              einen datenschutzbeauftragten haben wir nicht — wir sind dafür zu
+              einen datenschutzbeauftragten haben wir nicht, wir sind dafür zu
               klein (unter 20 personen, keine verarbeitung sensibler daten in
               massenproduktion gemäß § 38 abs. 1 bdsg).
             </p>
@@ -89,7 +89,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
 
             <div className={styles.provider}>
               <p className={styles.providerName}>
-                Vercel Inc. (San Francisco, USA — Region Frankfurt, DPF)
+                Vercel Inc. (San Francisco, USA, Region Frankfurt, DPF)
               </p>
               <p className={styles.providerDetail}>
                 Was: stellt die Site bereit, sieht Anfragen und IP-Adressen
@@ -111,7 +111,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
 
             <div className={styles.provider}>
               <p className={styles.providerName}>
-                Cloudflare Inc. (San Francisco, USA — EU-Edge, DPF)
+                Cloudflare Inc. (San Francisco, USA, EU-Edge, DPF)
               </p>
               <p className={styles.providerDetail}>
                 Was: DNS, DDoS-Schutz, Bot-Filterung. Sieht IP-Adressen kurz,
@@ -133,7 +133,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
 
             <div className={styles.provider}>
               <p className={styles.providerName}>
-                GitHub Inc. (Microsoft, San Francisco, USA — DPF)
+                GitHub Inc. (Microsoft, San Francisco, USA, DPF)
               </p>
               <p className={styles.providerDetail}>
                 Was: lagert unseren Code. Sieht keine Besucher-Daten.
@@ -154,7 +154,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
 
             <div className={styles.provider}>
               <p className={styles.providerName}>
-                Supabase Inc. (US-Mutter — EU-Region Frankfurt, DPF)
+                Supabase Inc. (US-Mutter, EU-Region Frankfurt, DPF)
               </p>
               <p className={styles.providerDetail}>
                 Was: speichert (sobald Member-Bereich live ist) deine
@@ -174,7 +174,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
 
             <div className={styles.provider}>
               <p className={styles.providerName}>
-                Upstash Inc. (US-Mutter — EU-Region Frankfurt, DPF)
+                Upstash Inc. (US-Mutter, EU-Region Frankfurt, DPF)
               </p>
               <p className={styles.providerDetail}>
                 Was: Rate-Limiting gegen Spam und Brute-Force. Speichert kurz
@@ -199,7 +199,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
 
             <div className={styles.provider}>
               <p className={styles.providerName}>
-                ALL-INKL.COM — Neue Medien Münnich (Friedersdorf, Deutschland)
+                ALL-INKL.COM / Neue Medien Münnich (Friedersdorf, Deutschland)
               </p>
               <p className={styles.providerDetail}>
                 Was: betreibt unseren Mail-Server. Verschickt Login-Magic-Links
@@ -224,7 +224,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
                 Sendinblue SAS / Brevo (Paris, Frankreich)
               </p>
               <p className={styles.providerDetail}>
-                Was: verschickt unseren Newsletter — aber nur wenn du beim
+                Was: verschickt unseren Newsletter, aber nur wenn du beim
                 Mit-Glied-Werden die Newsletter-Option ausdrücklich angehakt
                 hast.
               </p>
@@ -295,7 +295,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
               <li>Kein Affiliate-Tracking, keine Werbung</li>
               <li>
                 Keine Web-Analytics-Tools (kein Plausible, kein Umami, kein
-                Posthog) — wir messen euch absichtlich nicht
+                Posthog). wir messen euch absichtlich nicht
               </li>
               <li>Keine Heatmaps, kein Session-Replay</li>
               <li>
@@ -339,7 +339,7 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
             </ul>
             <p className={styles.lead}>
               nach löschung speichern wir nichts mehr von dir, außer wenn wir
-              gesetzlich müssen (z.b. rechnungen aus dem shop — gesetzliche
+              gesetzlich müssen (z.b. rechnungen aus dem shop, gesetzliche
               aufbewahrungspflicht 10 jahre nach hgb).
             </p>
 
@@ -387,44 +387,50 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
             <Heading level={2} variant="section">
               cookies (die wenigen die wir setzen)
             </Heading>
-            <table className={styles.cookieTable}>
-              <thead>
-                <tr>
-                  <th>Cookie</th>
-                  <th>Zweck</th>
-                  <th>Dauer</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>
-                    <code>NEXT_LOCALE</code>
-                  </td>
-                  <td>merkt sich deine Sprache (Deutsch oder Englisch)</td>
-                  <td>1 Jahr</td>
-                </tr>
-                <tr>
-                  <td>
-                    <code>authjs.session-token</code>
-                  </td>
-                  <td>dein Login-Cookie wenn du mit-glied bist</td>
-                  <td>30 Tage</td>
-                </tr>
-                <tr>
-                  <td>
-                    <code>__cf_bm</code>
-                  </td>
-                  <td>Cloudflare Bot-Schutz</td>
-                  <td>30 Minuten</td>
-                </tr>
-              </tbody>
-            </table>
+            <div className={styles.tableWrap}>
+              <table className={styles.cookieTable}>
+                <caption>
+                  Übersicht aller von uns gesetzten Cookies (technisch
+                  notwendig, keine Tracking-Cookies).
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Cookie</th>
+                    <th scope="col">Zweck</th>
+                    <th scope="col">Dauer</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <code>NEXT_LOCALE</code>
+                    </td>
+                    <td>merkt sich deine Sprache (Deutsch oder Englisch)</td>
+                    <td>1 Jahr</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>authjs.session-token</code>
+                    </td>
+                    <td>dein Login-Cookie wenn du mit-glied bist</td>
+                    <td>30 Tage</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <code>__cf_bm</code>
+                    </td>
+                    <td>Cloudflare Bot-Schutz</td>
+                    <td>30 Minuten</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <p className={styles.lead}>
               mehr nicht. keine tracking-cookies. keine marketing-cookies.
               keine third-party-cookies.
             </p>
             <p className={styles.lead}>
-              cookie-banner haben wir keinen — weil wir keine
+              cookie-banner haben wir keinen, weil wir keine
               zustimmungspflichtigen cookies setzen. die drei oben sind alle
               technisch notwendig im sinne von § 25 abs. 2 ttdsg.
             </p>

@@ -1,30 +1,43 @@
 'use client';
 
 /**
- * NavBarB — SiteNav, Iteration 3 (Sticky-Pille + externe Member-Pille + Mobile-Sheet)
+ * NavBarB — SiteNav (Sticky-Komposition mit subtilem Material-Tweak).
  *
- * Desktop / Tablet (≥768px):
- * - Pille schwebt am Hero-Bottom (Glas + Schatten, max-width ~720px).
- * - Beim Scrollen: Pille dockt 16px unter Viewport-Top, bleibt rund + kompakt.
- *   Glas wird etwas dichter, Schatten weicher — kein Form-Morph, nur Material.
- * - Member-Pille lebt AUSSERHALB der Bar als Geschwister, in voller Bar-Höhe.
+ * Mechanik:
+ * - .navShell ist sticky am Viewport-Top, enthält Bar + Member-Pille als
+ *   Geschwister. Bleibt rund + kompakt — keine Form-Morph zu Full-Bleed.
+ * - Beim Andocken wird nur das Material ruhiger: Glas dichter, Schatten
+ *   weicher und enger. Pille behält Pill-Radius und max-width überall.
+ * - Member-Pille lebt AUSSERHALB der Bar als Geschwister, volle Bar-Höhe
+ *   (≥56 px Touch-Target = WCAG AAA). Sie ist das „Türschloss" aus
+ *   IA.md Sektion 1 — nicht ein fünftes Nav-Item.
  *
- * Mobile (<768px):
- * - Items collapsen, Burger-Button löst Sheet aus.
- * - Sheet: full-screen Off-White-Overlay mit Items in Chillax Large.
- *   Schließt via Backdrop, X-Button oder Escape.
- *   Body-Scroll-Lock, Auto-Focus auf Close-Button.
+ * Mobile (<768 px):
+ * - Items collapsen, Burger triggert Off-White-Sheet.
+ * - Sheet: Chillax Extralight 40–56 px, schließt via Backdrop/X/Escape.
+ *   Body-Scroll-Lock + Auto-Focus + Member-Pille als CTA-Block unten.
  *
- * Logo: Wordmark bleibt überall (>480px) — kein Crossfade-Zustand mehr.
- * <480px: hard-toggle zu Bildmarke (Platz-Optimierung, keine Animation).
+ * Logo:
+ * - >480 px: Wordmark bleibt überall — kein Crossfade.
+ * - <480 px: hard switch zu Bildmarke (Platz-Optimierung).
+ *
+ * Polish:
+ * - Glas-Refraction: subtiler radial-Highlight folgt dem Cursor über der
+ *   Bar — Glas-Material wird interaktiv ohne laut zu werden.
+ * - Türschloss-Schwelle: 1 px Off-White-Hairline unter der Member-Pille
+ *   im Hover — verstärkt das IA-Konzept visuell.
  */
 
-import { usePathname } from 'next/navigation';
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 
+import { Link, usePathname } from '@/i18n/navigation';
 import { setUnderlineOrigin } from '@/lib/hover';
 import { MEMBER_NAV_ITEM, NAV_ITEMS } from '../../lib/navItems';
 import styles from './NavBarB.module.css';
+
+// SSR-safe useLayoutEffect — vermeidet Server-Side-Warning.
+const useIsomorphicLayoutEffect =
+  typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
 function BurgerIcon() {
   return (
@@ -72,10 +85,23 @@ export function NavBarB() {
   const [pinned, setPinned] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const sheetId = useId();
 
-  // Pin-Detection.
+  /**
+   * FOUC-Fix: pre-paint Sentinel-Position lesen, damit pinned-Initialwert
+   * dem echten Scroll-Stand entspricht. Sonst Flash der „falschen" Pille
+   * bei Refresh mitten in Page.
+   */
+  useIsomorphicLayoutEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const rect = sentinel.getBoundingClientRect();
+    setPinned(rect.top < 0);
+  }, []);
+
+  /** Live-Pin-Detection per IntersectionObserver. */
   useEffect(() => {
     const sentinel = sentinelRef.current;
     if (!sentinel) return;
@@ -92,7 +118,7 @@ export function NavBarB() {
     return () => observer.disconnect();
   }, []);
 
-  // Mobile-Sheet: Escape-Key, Body-Scroll-Lock, Auto-Focus.
+  /** Mobile-Sheet: Escape, Body-Scroll-Lock, Auto-Focus. */
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -111,11 +137,23 @@ export function NavBarB() {
     };
   }, [menuOpen]);
 
-  // Locale-Strip + Sub-Route-Match für aria-current.
+  /**
+   * Glas-Refraction: Pointer-Position als CSS-Vars auf die Bar setzen.
+   * --mx / --my werden in NavBarB.module.css für einen radial-gradient
+   * Highlight genutzt, der dem Cursor folgt.
+   */
+  const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
+    const target = navRef.current;
+    if (!target) return;
+    const rect = target.getBoundingClientRect();
+    target.style.setProperty('--mx', `${((e.clientX - rect.left) / rect.width) * 100}%`);
+    target.style.setProperty('--my', `${((e.clientY - rect.top) / rect.height) * 100}%`);
+  };
+
+  // Mit next-intl usePathname kommt der Pfad bereits OHNE Locale-Prefix.
   const isCurrent = (href: string): boolean => {
     if (!pathname) return false;
-    const stripped = pathname.replace(/^\/(de|en)(?=\/|$)/, '') || '/';
-    return stripped === href || stripped.startsWith(`${href}/`);
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
@@ -129,29 +167,41 @@ export function NavBarB() {
       <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
 
       <div className={styles.navShell} data-pinned={pinned ? 'true' : 'false'}>
-        <nav className={styles.nav} aria-label="Hauptnavigation">
+        <nav
+          ref={navRef}
+          className={styles.nav}
+          aria-label="Hauptnavigation"
+          onPointerMove={handlePointerMove}
+        >
           <div className={styles.navInner}>
-            <a className={styles.lockup} href="/" aria-label="small p club Startseite">
+            <Link className={styles.lockup} href="/" aria-label="small p club Startseite">
               <span className={styles.logoStack}>
+                {/* eslint-disable-next-line @next/next/no-img-element --
+                    SVG: next/image würde Optimizer-Routes triggern, was für
+                    SVG keinen Benefit hat. SiteFooter-Pattern. */}
                 <img
                   src="/brand/smallpclub-wordmark-deep.svg"
                   alt="small p club"
+                  width={148}
+                  height={28}
                   className={`${styles.logoLayer} ${styles.layerWordmark}`}
                 />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src="/brand/smallpclub-mark-deep.svg"
                   alt=""
                   aria-hidden="true"
+                  width={28}
+                  height={28}
                   className={`${styles.logoLayer} ${styles.layerMark}`}
                 />
               </span>
-            </a>
+            </Link>
 
-            {/* Desktop-Items — auf Mobile via CSS versteckt. */}
             <ul className={styles.items} role="list">
               {NAV_ITEMS.map((item) => (
                 <li key={item.href} className={styles.item}>
-                  <a
+                  <Link
                     href={item.href}
                     className={styles.link}
                     onMouseEnter={setUnderlineOrigin}
@@ -159,12 +209,11 @@ export function NavBarB() {
                     aria-current={isCurrent(item.href) ? 'page' : undefined}
                   >
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
 
-            {/* Mobile-Burger — nur unter 768px sichtbar. */}
             <button
               type="button"
               className={styles.burger}
@@ -178,18 +227,15 @@ export function NavBarB() {
           </div>
         </nav>
 
-        <a
+        <Link
           href={MEMBER_NAV_ITEM.href}
           className={styles.memberPill}
           aria-current={isCurrent(MEMBER_NAV_ITEM.href) ? 'page' : undefined}
         >
           {MEMBER_NAV_ITEM.label}
-        </a>
+        </Link>
       </div>
 
-      {/* Mobile-Sheet — Off-White Overlay, Items in Chillax Large.
-       *  Brand-konsistent ruhig: kein Slide-Drama, sanftes Fade + leichter
-       *  Translate. Schließt via Backdrop, X oder Escape. */}
       <div
         id={sheetId}
         className={styles.sheet}
@@ -220,17 +266,26 @@ export function NavBarB() {
           <ul className={styles.sheetItems} role="list">
             {NAV_ITEMS.map((item) => (
               <li key={item.href} className={styles.sheetItem}>
-                <a
+                <Link
                   href={item.href}
                   className={styles.sheetLink}
                   aria-current={isCurrent(item.href) ? 'page' : undefined}
                   onClick={() => setMenuOpen(false)}
                 >
                   {item.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
+
+          <Link
+            href={MEMBER_NAV_ITEM.href}
+            className={styles.sheetMemberPill}
+            aria-current={isCurrent(MEMBER_NAV_ITEM.href) ? 'page' : undefined}
+            onClick={() => setMenuOpen(false)}
+          >
+            {MEMBER_NAV_ITEM.label}
+          </Link>
         </div>
       </div>
     </>
