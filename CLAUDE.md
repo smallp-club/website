@@ -46,6 +46,38 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 6. Shopify-Architektur vorbereiten, aber erst nach Launch anbinden
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 
+## Stand (2026-06-19, Session 12 — 404-Seite manifestiert)
+
+**404-Page als `FourCmReveal` offiziell live** unter `src/app/[locale]/not-found.tsx` UND `src/app/not-found.tsx` (Root). Konzept: `4,04 cm` als Maßangabe-Wortwitz. Choreografie:
+- 0–900 ms Lineal rollt von links aus (schwarze Ticks, 1px Baseline + kurze alle 24 px + lange alle 96 px wie auf der Startseite). Bleed rechts aus dem Viewport („läuft ins Off")
+- 900–1900 ms Count-Up `0,00 → 4,04 cm` (`tabular-nums`, Chillax Extralight) + Turquoise-Tick wandert synchron mit + Readout/Zonen-Text fadet pro Schwelle ein
+- ab 1900 ms: Tick + Panel ankern bei 4,04, Hover-Mechanik aktiv
+- Voice: `diese seite gibt's nicht in der größe. andere schon.`
+- CTA: zwei Primary-Pill-Buttons `[club]` `[mythen]` statt einer Zurück-Pille (Plural-Logik der „andere schon")
+- Layout left-aligned editorial (entscheidung Kevin: nicht zentriert, damit Lineal-Bleed sinnvoll bleibt)
+
+**Hover-Verhalten auf dem Lineal (Easter-Egg-Mechanik):**
+- Tick + Readout (z. B. `5,9 CM`) + Zone-Text als statische Inline-Row unten links unter dem Lineal (Desktop UND Mobile, gleiches Layout)
+- Tick folgt Cursor mit weicher Spring-Bewegung, Zone wechselt je cm-Position
+- Mouse-Leave: Tick bleibt an letzter Hover-Position (kein Snap-back zum Anker — Kevin's Doktrin)
+- Hover gated auf `countDone`, damit Count-Up und Cursor-Update nicht kollidieren
+
+**Geteilter Voice-Pool unter `src/lib/measure-voice.ts`** (Single Source of Truth):
+- 11 Zonen-Stufen von 3,5 cm bis >50 cm, alle lowercase
+- `includeSelfReference: true` aktiviert 404-spezifischen `genau hier wohnt diese seite.` im 3,5–5 cm-Bereich
+- Hero-MeasureLine zieht aus demselben Pool (Voice-Konsistenz)
+- Stillstand-Text lowercase: `du hältst inne. die meisten tun das hier.`
+- Kevin's Picks finalisiert: B für 18,6–25 (`pornos zeigen das oberste prozent.`), A für 25,1–50 (`wer hier noch misst, sucht etwas anderes.`)
+
+**Root-not-found bekommt Nav + Footer nachgerüstet**: rendert eigene `html`/`body` mit hartem `NextIntlClientProvider locale="de"` + direktem `messages/de.json`-Import. Heißt: egal welchen 404-Pfad Next.js triggert, der User sieht überall den gleichen Frame.
+
+**Verworfene 404-Alternativen bleiben als Sandboxes liegen:**
+- `LostPGame` (Konzept 1 — Drag-and-Drop „verlorenes p") in `src/components/sections/LostPGame/`
+- `SpectatorEye` (Konzept 8 — Cursor-folgendes Auge mit Wegschau-Geste) in `src/components/sections/SpectatorEye/`, Preview unter `/preview/404-spectator`
+- Preview-Route `/preview/404-cm` als FourCmReveal-Test-Sandbox
+
+**AI-Slop-Frühwarnung erweitert:** Kevin lehnt sofort ab wenn Hint-Texte/Easter-Hints zu „cleverly cryptic" werden (Hairline + `(probier ruhig.)` flog raus). Brand-Voice bleibt direkt, nie quasi-poetisch-koket.
+
 ## Stand (2026-06-19, Session 11)
 
 **Phase-3-Review-Bühne live unter `/preview/phase-3-c`** mit 20 Items (9 Templates + 11 Pages). Maßband-Anchor-TOC links, Wireframes mit Box-Stack + Visual-Akzent, „varianten gewählt"-Tabelle pro Item. Patterns / Stop-States / Cross-cutting für spätere Phasen archiviert in `phase-3-c/backlog.ts`.
