@@ -26,6 +26,53 @@
   isolation: isolate;
 }
 
+/* ── Hero-Imagery — Brand-Anker hinter dem Statement.
+   Obround-Form (pill-radius) rechts angeschnitten via translateX.
+   Sichtbar nur während Phase 0 (opacity vom Statement gesteuert).
+   Aktueller stand: Sand-Gradient als Placeholder, wird durch echtes
+   Bildmotiv ersetzt sobald Magnific-Output oder Shooting da ist. */
+.heroImageryLayer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center end;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+  will-change: opacity;
+}
+
+.heroImagery {
+  width: 60vw;
+  max-width: 720px;
+  aspect-ratio: 1.35 / 1;
+  border-radius: var(--radius-pill);
+  /* Sand-Placeholder. Stand-in für echtes Bild im Brand-Farbraum
+     ohne Wellness-Drift — wird ersetzt. */
+  background:
+    radial-gradient(
+      ellipse at 35% 40%,
+      rgba(255, 255, 255, 0.55) 0%,
+      transparent 60%
+    ),
+    linear-gradient(
+      135deg,
+      #e9e2d1 0%,
+      #d6cab3 55%,
+      #b8ac91 100%
+    );
+  /* Rechts angeschnitten — ein Drittel läuft aus dem viewport raus */
+  transform: translateX(32%);
+}
+
+@media (max-width: 719px) {
+  .heroImagery {
+    width: 78vw;
+    aspect-ratio: 1.2 / 1;
+    transform: translateX(40%);
+  }
+}
+
 /* ── Phase 0: MEGA-Statement als Einstieg.
    Identischer 1200px-Container wie der editorial-stack, linksbündig
    ausgerichtet (place-content center start). */

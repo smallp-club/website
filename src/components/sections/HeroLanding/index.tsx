@@ -418,6 +418,17 @@ export function HeroLanding() {
   return (
     <section ref={ref} className={styles.wrap} aria-label="ankunft">
       <div className={styles.sticky}>
+        {/* ── Hero-Imagery — Brand-Anker hinter dem Statement, in Obround-Form
+            rechts angeschnitten. Aktuell Sand-Gradient als Placeholder.
+            Wird durch echtes Bildmotiv (Magnific oder Shooting) ersetzt. */}
+        <motion.div
+          className={styles.heroImageryLayer}
+          style={reduced ? { opacity: 0 } : { opacity: statementOpacity }}
+          aria-hidden="true"
+        >
+          <div className={styles.heroImagery} />
+        </motion.div>
+
         {/* ── Phase 0: MEGA-Statement als Einstieg */}
         <motion.div
           className={styles.statementLayer}
