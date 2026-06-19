@@ -1,0 +1,7 @@
+/* Page-Shell für die Hero-E-Bühne.
+   min-height + Off-White-bg auf der main-ebene sichert dass beim Refresh
+   kein Footer-Flash durchscheint, bevor das HeroE-CSS-Modul greift. */
+.shell {
+  min-height: 100dvh;
+  background: var(--surface-bg);
+}

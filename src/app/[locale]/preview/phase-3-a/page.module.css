@@ -1,0 +1,268 @@
+/* Phase 3 — Mechanik A: „mitlesen."
+   Linear scrollen. Verb-Pärchen am rechten Block-Rand. Kommentar immer sichtbar. */
+
+.page {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  min-height: 100dvh;
+}
+
+/* ── Block-Container: ein Punkt = ein Block */
+.block {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+  padding: var(--space-7) 0;
+  border-bottom: 1px solid var(--border-faint);
+  transition: background 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (min-width: 720px) {
+  .block {
+    grid-template-columns: minmax(0, 1fr) 140px;
+    gap: var(--space-6);
+    align-items: start;
+  }
+}
+
+.block[data-state='passt'] {
+  background: var(--surface-sunken);
+  padding-left: var(--space-5);
+  padding-right: var(--space-5);
+  margin-left: calc(-1 * var(--space-5));
+  margin-right: calc(-1 * var(--space-5));
+  border-radius: var(--radius-md);
+  border-bottom: 1px solid transparent;
+}
+
+.block[data-state='nochnicht'] {
+  background: var(--surface-sunken);
+  padding-left: var(--space-5);
+  padding-right: var(--space-5);
+  margin-left: calc(-1 * var(--space-5));
+  margin-right: calc(-1 * var(--space-5));
+  border-radius: var(--radius-md);
+  border-bottom: 1px solid transparent;
+  position: relative;
+}
+
+.block[data-state='nochnicht']::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: var(--space-7);
+  width: 3px;
+  height: 32px;
+  background: var(--spc-sienna);
+  border-radius: 2px;
+}
+
+.blockBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.blockEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.blockTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(24px, 2.6vw, 32px);
+  line-height: 1.12;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.blockText {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 58ch;
+}
+
+/* ── Verb-Pärchen `passt.` / `noch nicht.` */
+.verbPair {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-1);
+}
+
+@media (max-width: 719px) {
+  .verbPair {
+    flex-direction: row;
+    padding-top: 0;
+    gap: var(--space-5);
+  }
+}
+
+.verb {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 15px;
+  line-height: 1.4;
+  text-transform: lowercase;
+  letter-spacing: 0.005em;
+  color: var(--spc-slate);
+  cursor: default;
+  user-select: none;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.verb::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: transparent;
+  transition: background 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.verb:hover::after,
+.verb:focus-visible::after {
+  background: var(--accent-contrast);
+}
+
+.verbActive {
+  color: var(--text-strong);
+}
+
+.verbActive::after {
+  background: var(--text-strong);
+}
+
+.verbActiveAlt {
+  color: var(--spc-sienna);
+}
+
+.verbActiveAlt::after {
+  background: var(--spc-sienna);
+}
+
+/* ── Kommentarfeld immer sichtbar drunter */
+.commentSlot {
+  grid-column: 1 / -1;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-faint);
+  margin-top: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.commentLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.commentPlaceholder {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--spc-ash);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  font-style: italic;
+}
+
+.commentFilled {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+}
+
+/* ── Done-State */
+.doneBox {
+  padding: var(--space-7) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.doneText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.4vw, 28px);
+  line-height: 1.3;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.005em;
+}
+
+.doneCaption {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--spc-slate);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Mechanik-Klammer */
+.mechBox {
+  padding: var(--space-7) var(--space-5);
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mechEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--spc-turquoise);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.mechTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.1;
+  color: var(--spc-offwhite);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.mechBody {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--spc-stone);
+  margin: 0;
+  max-width: 60ch;
+}

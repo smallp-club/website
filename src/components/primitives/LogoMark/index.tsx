@@ -17,12 +17,14 @@ export interface LogoMarkProps {
   className?: string;
 }
 
-const colorToHex: Record<LogoMarkColor, string> = {
-  deep:       '#1D5556',
-  black:      '#0A0A0A',
-  offwhite:   '#F7F6F2',
-  turquoise:  '#7BDCB5',
-  sienna:     '#C05A38',
+/* CSS-Variablen statt Hex-Literale, damit Theming/Dark-Mode später nicht am
+   LogoMark vorbeiläuft. Token-Doktrin: keine Farb-Strings in TSX. */
+const colorToVar: Record<LogoMarkColor, string> = {
+  deep:      'var(--spc-turquoise-deep)',
+  black:     'var(--spc-black)',
+  offwhite:  'var(--spc-offwhite)',
+  turquoise: 'var(--spc-turquoise)',
+  sienna:    'var(--spc-sienna)',
 };
 
 // Mark als zwei Strokes: Hodensack-Kreis + P-Linie.
@@ -96,7 +98,7 @@ export function LogoMark({
   };
 
   const rotate = reducedMotion ? 0 : (standing ? standAngle : 0);
-  const stroke = colorToHex[color];
+  const stroke = colorToVar[color];
 
   return (
     <span

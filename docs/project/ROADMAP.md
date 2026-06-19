@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-17 (Session 10 — SiteNav manifestiert + global, Favicon-Set Light/Dark, Preview-Demo-Bühne)
+## Stand: 2026-06-19 (Session 11 — Phase-3-Review-Bühne live, Phase-4-Patterns vorgebaut, Code-Cleanup Cluster 2 erledigt)
 
 ---
 
@@ -137,33 +137,39 @@
 - [x] **`/preview` als Library-Demo-Bühne** mit voller Editorial-Komposition aus Primitives + BrandMarquee
 - [x] **Favicon-Set Light/Dark** via prefers-color-scheme — SVG mit eingebettetem CSS-Switch + PNG-Fallback. Pipeline in `scripts/generate-favicons.mjs`
 
-## Phase 2 — Visual Direction (← JETZT)
+## Phase 2 — Visual Direction (parallel zu Phase 3)
 
-- [ ] **`/imagegen-frontend-web` Moodboards** für Landing + Topic-Pages
-- [ ] Kevin Feedback auf Moodboards
+- [x] **Konzept-Bühne `/preview/phase-2`** — Magnific-Brand-Header (LoRA-Override), 5 Section-Karten mit Job, Brand-Ankern, Komposition-Optionen, Magnific-Prompts und Anti-Pattern. Globale Klammer für Konsistenz über alle Bilder, Feedback-Loop dokumentiert
+- [ ] **Magnific-Bilder** generieren — Kevin macht manuell, CIRO-LoRA bei smallp-Prompts abwählen
+- [ ] Kevin Feedback auf Bilder
 - [ ] Visuelle Säulen aus HTML-Reference übernehmen:
   - Hero-Color-Split (Black + Dark-Turquoise)
   - Display-Skala bis 140px
   - Brand-Mark als Wasserzeichen im Hero
   - Imagery (arches-warm.png, steps-bw.png) als Anker
   - Parallax-Band-Section
-- [ ] Topic-Demo überarbeiten mit allen Lehren aus HTML-Reference
 
-## Phase 3 — Page Blueprint
+## Phase 3 — Page Blueprint (← Review läuft)
 
-- [ ] Landing-Page Sektions-Reihenfolge final
-- [ ] Mythos-Detail-Page Template
-- [ ] Magazin-Essay Template
-- [ ] Partner-Story Template
+- [x] **Review-Bühne `/preview/phase-3-c` live** — Maßband-Anchor-TOC links (IntersectionObserver-Active-Tick mit Strong-Ease-Out-Easing, CSS-`overflow-clip-margin` für negative-position Ticks), Items mit Wireframes + strukturierte Varianten-Tabelle („varianten gewählt: nav/hero/footer/container/etc."), Mobile-`<details>`-TOC
+- [x] **20 Items konsolidiert** (statt 77) — 9 Templates + 11 Pages. Patterns, Stop-States und Cross-cutting für spätere Phasen archiviert in `phase-3-c/backlog.ts`
+- [x] **Wireframe-Pattern manifestiert** — stilisiertes Box-Stack-Skelett mit proportionaler Höhe (sm/md/lg/xl) und Visual-Akzent (normal/inverse/accent/sienna). Inverse als Slate-Grau, nicht Black (Stats-Doktrin-Schutz)
+- [x] **Voice-Pass komplett** — Em-Dashes im Body raus, Tech-Slang weg, AI-Slop-Check via humanizer-Skill
+- [x] **Brand-Audit + A11y-Audit + Security-Audit + Dev-Audit durch** — alle drei Fix-Pakete (Brand+Voice / A11y+UX / Performance+Security) abgearbeitet
+- [x] **X-Robots-Tag** Defense-in-Depth im `proxy.ts` für `/preview/*`, `/components-library/*`, `/mit-glied/*`, `/auth/*`
+- [x] **Kevin Review durch 2026-06-19** — alle 20 Items „passt erstmal", Feinjustierung wenn alles steht (Notiz: Suspense-Klärung in Punkt 02 als „streamt nach" finalisiert)
 
 ## Phase 4 — Section Designs + Code (je Section: Bild → Feedback → Code)
 
-- [ ] Hero
-- [ ] Recognition
-- [ ] Mythos-Reveal × 3
-- [ ] Stats (Black-Flip, einziger inverse Block)
-- [ ] Bewegungs-Signal mit Newsletter-CTA
-- [ ] Footer (Dark Turquoise)
+- [x] **Pattern-Review-Bühne `/preview/phase-4-c` vorgebaut** — 11 globale Mechaniken (hero-slot-varianten, mythos-reveal, inline-präfix, cardfan, brandlink, sitenav-states, continue-reading, source-list, memberzahl-satz, bildmarken-ring, member-zitat) mit Wireframes + varianten-tabelle, gleiche Bühnen-Architektur wie phase-3-c
+- [ ] Kevin geht 11 Pattern-Mechaniken durch
+- [ ] Section-Build (nach Phase 2 + 3 Review-Abschluss):
+  - Hero
+  - Recognition
+  - Mythos-Reveal × 3
+  - Stats (Black-Flip, einziger inverse Block)
+  - Bewegungs-Signal mit Newsletter-CTA
+  - Footer (Dark Turquoise — bereits manifestiert)
 
 ## Phase 5 — Member-Bereich Implementation
 
@@ -336,3 +342,6 @@
 - **Admin-Bereich** im Member-System (`/mit-glied/admin/*`), nicht extern: eine Auth-Mechanik, RLS + TOTP-2FA + Audit-Log
 - **DSGVO-Position:** Inhalts-Daten in DE/EU (all-inkl SMTP, Brevo FR), Infrastruktur DPF-zertifiziert + EU-Region. Kein vollständig-DE-Stack wegen Zusatzkosten
 - **Schritt für Schritt:** eine Entscheidung pro Antwort, keine Multi-Phase-Anleitungen (Memory `feedback_step_by_step.md`)
+- **Code-Cleanup-Backlog komplett** (Session 11, 2026-06-19): Cluster 1 + 3 via SCSS-Migration in Session 9 erledigt. Cluster 2 in Session 11: CSS-Reset entdoppelt (`globals.css` → `tokens/base.css`), `lib/motion.ts` + `lib/motion/` zu einem Folder konsolidiert, SiteFooter `'de-DE'`-Hardcode auf `useLocale()` umgestellt, LogoMark Hex-Farben auf CSS-Vars
+- **Phase-3/4-Review-Bühnen-Pattern** (Session 11): Maßband-TOC + Items mit Wireframes + Varianten-Tabelle + Schluss-Klammer. Analog wiederverwendbar für Phase 5 (Stop-States) und Phase 6 (Cross-cutting). Geteilte Komponenten (TocNav, WireframeBlock) aktuell pro Phase dupliziert — bei 3. Verwendung in `_shared`-Folder promoten (lib-wächst-mit-bedarf-Doktrin)
+- **AI-Slop-Routine** (Session 11): nach jedem größeren Daten-Block (items.ts mit Beschreibungen, Voice-Texte, Doku) humanizer-Skill aufrufen. Em-Dashes im Body, `+` als Wort-Trenner, Tech-Slang systematisch entfernen. Title und Comments behalten Em-Dash (VOICE.md erlaubt)

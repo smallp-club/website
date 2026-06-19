@@ -68,11 +68,7 @@
 
 /* Inter is injected via next/font/google in layout.tsx — no @font-face needed here */
 
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Box-sizing + margin/padding reset lebt in tokens/base.css als Single Source. */
 
 html {
   -webkit-font-smoothing: antialiased;

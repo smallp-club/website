@@ -46,7 +46,21 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 6. Shopify-Architektur vorbereiten, aber erst nach Launch anbinden
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 
-## Stand (2026-06-17, Session 10)
+## Stand (2026-06-19, Session 11)
+
+**Phase-3-Review-Bühne live unter `/preview/phase-3-c`** mit 20 Items (9 Templates + 11 Pages). Maßband-Anchor-TOC links, Wireframes mit Box-Stack + Visual-Akzent, „varianten gewählt"-Tabelle pro Item. Patterns / Stop-States / Cross-cutting für spätere Phasen archiviert in `phase-3-c/backlog.ts`.
+
+**Phase-4-Pattern-Bühne vorgebaut unter `/preview/phase-4-c`** mit 11 Pattern-Mechaniken (Hero-Slot-Varianten, Mythos-Reveal, Inline-Präfix, CardFan, BrandLink, SiteNav-States, Continue-Reading, Source-List, Memberzahl-Satz, Bildmarken-Ring, Member-Zitat). Gleiche Architektur wie phase-3-c — bei 3. Verwendung in `_shared/`-Folder promoten.
+
+**Code-Cleanup-Backlog (Cluster 1/2/3) komplett erledigt** (Memory `project_code_cleanup_backlog.md`). Cluster 2 in Session 11: CSS-Reset entdoppelt, `lib/motion.ts` + `lib/motion/` konsolidiert, SiteFooter Locale-Hardcode auf `useLocale()`, LogoMark Hex-Farben auf CSS-Vars.
+
+**/club Brand-Kanal-Block live** — Instagram-Verweis (`@smallpclub`) mit Brand-Hairline-Underline-Pattern und ehrlichem Outbound-Hinweis (kein Tracking).
+
+**X-Robots-Tag** Defense-in-Depth im `proxy.ts` für `/preview/*`, `/components-library/*`, `/mit-glied/*`, `/auth/*`.
+
+**AI-Slop-Routine etabliert** (Memory `feedback_ai_slop_routine.md`): nach jedem Daten- oder Voice-Block humanizer-Skill ziehen. Em-Dash im Body raus, „+" als Wort-Trenner raus, Tech-Slang weg. Titles und Comments behalten Em-Dash (VOICE.md erlaubt für Headings).
+
+**Stand 2026-06-17, Session 10**
 
 **Sections-Tier hat jetzt zwei manifestierte Komponenten.**
 
@@ -69,9 +83,11 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 **Brand-Link-Sprache final.** Animierte Hairline-Underline mit direction-aware Slide ist die offizielle Link-Mechanik für alle Footer-, Nav- und künftige MDX-Inline-Links.
 
 **Nächste Schritte:**
-- [ ] Phase 2 — Visual Direction für Landing-Sections via `/imagegen-frontend-web`
-- [ ] /club-Page Brand-Kanal-Block (Instagram-Verweis, raus aus Footer-Service-Liste)
-- [ ] Phase 4 Section-Build: HeroLanding, RecognitionBlock, HeroMythReveal, BlackFlipStats, MovementSignal
+- [ ] Kevin geht `/preview/phase-3-c` durch (20 Items) — Antworten landen als Notiz in IA.md
+- [ ] Kevin geht `/preview/phase-4-c` durch (11 Pattern-Mechaniken)
+- [ ] Phase 2 — Magnific-Bilder generieren (Kevin manuell mit Brand-Header aus `/preview/phase-2`, CIRO-LoRA abwählen)
+- [ ] Phase 4 Section-Build: HeroLanding, RecognitionBlock, HeroMythReveal, BlackFlipStats, MovementSignal — nach Phase 2 + 3 Review-Abschluss
+- [ ] /club voll ausbauen (origin, mission, was-wir-nicht-sind) — aktuell nur Stub + Brand-Kanal-Block
 
 **Drei Brand-Voice-Entscheidungen (Session 8, final):**
 - Memberzahl: `[N] mit-glieder. auch ohne-glied.` (Bindestrich BLEIBT, brand-distinkter Wortwitz)

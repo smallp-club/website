@@ -1,0 +1,111 @@
+/* PageStub — Brand-konforme Skelett-Page für unausgebaute Routen. */
+
+.page {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  min-height: 100dvh;
+}
+
+.skeletonLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.skeletonList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-width: 64ch;
+}
+
+.skeletonItem {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: baseline;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-faint);
+}
+
+.skeletonItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.skeletonNum {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: 22px;
+  line-height: 1;
+  color: var(--accent-contrast);
+  letter-spacing: -0.01em;
+}
+
+.skeletonText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.skeletonLabelText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.3;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.005em;
+}
+
+.skeletonMeta {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+}
+
+.noteText {
+  max-width: 60ch;
+}
+
+.phaseBox {
+  padding: var(--space-7) var(--space-5);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 64ch;
+}
+
+.phaseEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.phaseText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(20px, 2.2vw, 24px);
+  line-height: 1.3;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.005em;
+  max-width: 56ch;
+}

@@ -46,6 +46,16 @@ export default function proxy(request: NextRequest) {
   res.headers.set('x-nonce', nonce); // Layout reads this to pass nonce to Next.js scripts
   res.headers.set('Referrer-Policy', 'no-referrer');
 
+  // Defense-in-Depth: interne Preview-Routen + Library + Member-Bereich
+  // bekommen explizites X-Robots-Tag, unabhängig vom globalen robots.txt.
+  // Greift auch nach Launch wenn robots.txt selektiv geöffnet wird.
+  const path = request.nextUrl.pathname;
+  if (
+    /^\/(?:de|en)?\/?(?:preview|components-library|mit-glied|auth)/.test(path)
+  ) {
+    res.headers.set('X-Robots-Tag', 'noindex, nofollow');
+  }
+
   return res;
 }
 

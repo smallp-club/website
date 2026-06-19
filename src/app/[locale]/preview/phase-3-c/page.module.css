@@ -1,0 +1,634 @@
+/* Phase 3 — Mechanik C: „werkbank."
+   Sticky-Anchor-Nav links. Pro Punkt eine Frage als Eingabe-Feld am Block-Ende.
+   Stille = Konsens. Hairline-Marker in Nav für kommentierte Punkte. */
+
+.page {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  min-height: 100dvh;
+}
+
+/* scroll-behavior: smooth lebt jetzt in tokens/base.css als Brand-Default
+   (auto bei prefers-reduced-motion ist dort schon vorhanden). */
+
+/* ── Layout: Sticky-Anchor-Nav links + Editorial-Spalte mittig */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+@media (min-width: 960px) {
+  .layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: var(--space-9);
+  }
+}
+
+/* ── Sticky-Anchor-Nav.
+   Top-Offset = SiteNav-Höhe + Atem.
+
+   Bei 43+ Items wird die TOC höher als der Viewport. Wir scrollen INNERHALB
+   der TOC via overflow-y: auto. Die Maßband-Ticks ragen negativ nach links
+   raus — `overflow-x: clip` mit `overflow-clip-margin: 20px` erlaubt 20px
+   Erweiterung der sichtbaren Region nach links, ohne overflow-x: auto zu
+   triggern (das würde die Ticks abschneiden).
+
+   Browser-Baseline 2026: Chrome 90+, Safari 16.4+, Firefox 102+. */
+.toc {
+  position: sticky;
+  top: calc(var(--space-9) + var(--space-5));
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4) 0 var(--space-4) var(--space-4);
+  border-left: 1px solid var(--border-hairline);
+  max-height: calc(100dvh - var(--space-9) - var(--space-7));
+  overflow-y: auto;
+  overflow-x: clip;
+  /* 28px deckt den Active-Tick (12px) plus scaleX(2)-Verlängerung (24px)
+     plus 4px Puffer für die Hover-/Focus-Variante ab. */
+  overflow-clip-margin: 28px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--spc-stone) transparent;
+}
+
+/* Mobile: Desktop-Sticky-Nav wird versteckt, stattdessen rendert TocNav
+   die <details>-Variante drüber. */
+@media (max-width: 959px) {
+  .toc {
+    display: none;
+  }
+}
+
+/* ── Mobile <details>-Variante: kollabierbar, kein Maßband, brand-konforme Stille */
+.tocMobile {
+  display: none;
+}
+
+@media (max-width: 959px) {
+  .tocMobile {
+    display: block;
+    border-bottom: 1px solid var(--border-hairline);
+    margin-bottom: var(--space-6);
+  }
+}
+
+.tocMobileSummary {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  color: var(--text-strong);
+  padding: var(--space-3) 0;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  min-height: 44px;
+}
+
+.tocMobileSummary::-webkit-details-marker {
+  display: none;
+}
+
+.tocMobileSummary::after {
+  content: '+';
+  margin-left: auto;
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: 22px;
+  color: var(--spc-slate);
+  line-height: 1;
+  transition: transform 240ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tocMobile[open] .tocMobileSummary::after {
+  transform: rotate(45deg);
+}
+
+.tocMobileSummary > span {
+  color: var(--spc-slate);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.tocMobileList {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) 0 var(--space-4);
+}
+
+.tocLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0 0 var(--space-2);
+}
+
+/* Gruppen-Container innerhalb der TOC. Pro Gruppe ein Sub-Label. */
+.tocGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-4);
+}
+
+.tocGroup:not(:first-child) {
+  padding-top: var(--space-4);
+}
+
+.tocGroupLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-2);
+}
+
+.tocLink {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-body);
+  text-decoration: none;
+  line-height: 1.4;
+  padding: var(--space-1) 0;
+  text-transform: lowercase;
+  position: relative;
+  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tocLink:hover,
+.tocLink:focus-visible {
+  color: var(--accent-contrast);
+}
+
+.tocLink:focus-visible {
+  outline: 2px solid var(--accent-contrast);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* Brand-Link Hairline (direction-aware) — identisches Pattern wie SiteFooter/SiteNav.
+   --underline-origin wird per JS auf left/right gesetzt, je nach Maus-Eintrittsseite.
+   transition: 320ms slow expo-out für ruhiges Slide-Gefühl. */
+.tocLinkLabel {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tocLinkLabel::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: var(--underline-origin, right) center;
+    transition: transform 320ms cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .tocLink:hover .tocLinkLabel::after,
+  .tocLink:focus-visible .tocLinkLabel::after {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tocLinkLabel::after {
+    transition: opacity 200ms ease;
+    transform: scaleX(1);
+    opacity: 0;
+  }
+
+  .tocLink:hover .tocLinkLabel::after,
+  .tocLink:focus-visible .tocLinkLabel::after {
+    opacity: 1;
+  }
+}
+
+/* Maßband-Mechanik (Vorlage: MeasureLine-Pattern).
+   Ein Tick pro Eintrag, default 12px. Active wechselt Farbe (Black) UND
+   verdoppelt die Länge nach links raus — zwei Visual-Cues. Reine Color
+   auf 1px-Strich war zu schwach lesbar.
+
+   Easing: Kowalski's Strong ease-out (cubic-bezier(0.23, 1, 0.32, 1)).
+   Transition auf transform + background, GPU-acceleriert. */
+.tocLink::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-4) - 1px - 12px);
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  background: var(--spc-stone);
+  transform: translateY(-50%) scaleX(1);
+  transform-origin: right center;
+  pointer-events: none;
+  transition:
+    background-color 240ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 280ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* will-change nur wenn Tick gerade animiert wird — sonst permanenter
+   GPU-Layer für 20 Ticks gleichzeitig (Kowalski-Hygiene). */
+.tocLink:hover::before,
+.tocLink:focus-visible::before,
+.tocLink[data-active='true']::before {
+  will-change: transform, background-color;
+}
+
+.tocLink:hover::before,
+.tocLink:focus-visible::before {
+  background: var(--spc-slate);
+}
+
+.tocLink[data-active='true']::before {
+  background: var(--text-strong);
+  /* 2× Länge nach links — deutlich wahrnehmbarer Maßband-„Du bist hier"-Tick. */
+  transform: translateY(-50%) scaleX(2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tocLink::before {
+    transition: background-color 200ms ease;
+  }
+
+  .tocLink[data-active='true']::before {
+    transform: translateY(-50%) scaleX(1);
+  }
+}
+
+/* Active-Mark-Span (Legacy) — wird nicht mehr benutzt, da der ::before-Tick
+   per data-active eingefärbt wird. Span bleibt im DOM für a11y-neutrale
+   Symmetrie mit der Mobile-Variante. */
+.tocActiveMark {
+  display: none;
+}
+
+/* Mobile: Maßband-Mechanik weg — die vertikale Linie wird zur Bottom-Border,
+   das Tick-Vokabular bricht. Stattdessen flache Link-Liste mit Touch-Target ≥44px. */
+@media (max-width: 959px) {
+  .tocLink::before,
+  .tocActiveMark {
+    display: none;
+  }
+
+  .tocLink {
+    padding: var(--space-3) 0;
+    font-size: 15px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* ── Gruppen-Container in der Editorial-Spalte */
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  padding: var(--space-9) 0;
+  border-bottom: 1px solid var(--border-faint);
+  scroll-margin-top: calc(var(--space-9) + var(--space-3));
+}
+
+.group:first-of-type {
+  padding-top: 0;
+}
+
+.group:last-of-type {
+  border-bottom: none;
+}
+
+.groupHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-bottom: var(--space-5);
+}
+
+.groupEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.groupTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.02em;
+}
+
+.groupCaption {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(17px, 2vw, 20px);
+  line-height: 1.4;
+  color: var(--text-body);
+  margin: 0;
+  text-transform: lowercase;
+  max-width: 56ch;
+}
+
+/* ── Punkt-Liste */
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  /* Item-Title soll nach Hash-Sprung NICHT unter der Sticky-SiteNav verschwinden */
+  scroll-margin-top: calc(var(--space-9) + var(--space-3));
+}
+
+/* Item-Content: zwei Spalten, links Text, rechts Wireframe (wenn vorhanden) */
+.itemContent {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .itemContent {
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: var(--space-7);
+    align-items: start;
+  }
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+/* Wireframe scrollt mit dem Item — kein Sticky.
+   Sticky war eine Race mit der TOC (gleiches top-Offset) UND fror auf Item
+   N ein während User Item N+1 las. Editorial liest ruhiger ohne dritte
+   Sticky-Layer (SiteNav, TOC sind genug). */
+.itemWireframe {
+  display: flex;
+  justify-content: flex-start;
+}
+
+@media (min-width: 720px) {
+  .itemWireframe {
+    justify-content: flex-end;
+  }
+}
+
+.itemEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.itemTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.6vw, 30px);
+  line-height: 1.15;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.itemText {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ── Varianten-Tabelle: strukturierte Substanz-Notizen pro Item.
+   Definition-List mit Key | Value, ruhig editorial. */
+.variants {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: var(--space-4) 0 0;
+  padding: var(--space-4) 0 0;
+  border-top: 1px solid var(--border-faint);
+  max-width: 60ch;
+}
+
+.variantsLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  margin: 0 0 var(--space-2);
+}
+
+.variantRow {
+  display: grid;
+  grid-template-columns: 100px minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: baseline;
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-faint);
+}
+
+.variantRow:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+@media (max-width: 559px) {
+  .variantRow {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+}
+
+.variantKey {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.variantValue {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-body);
+  margin: 0;
+}
+
+/* ── Single-Question-Eingabe am Block-Ende */
+.questionSlot {
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border-faint);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 60ch;
+}
+
+.question {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 17px;
+  line-height: 1.4;
+  color: var(--spc-slate);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: 0.005em;
+}
+
+.answer {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: 0.005em;
+}
+
+/* ── Done-State */
+.doneBox {
+  padding: var(--space-7) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  border-top: 1px solid var(--border-hairline);
+}
+
+.doneText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.4vw, 28px);
+  line-height: 1.3;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.005em;
+}
+
+.doneCaption {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--spc-slate);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Schluss-Klammer (Brand-Doktrin: nur Stats-Section ist inverse, deshalb hier sunken statt black) */
+.mechBox {
+  padding: var(--space-7) var(--space-5);
+  background: var(--surface-sunken);
+  color: var(--text-body);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.mechEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.mechTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.1;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.mechBody {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ── Mobile-Feintuning unter 720px: kompaktere Rhythmen ohne Brand-Stille zu killen */
+@media (max-width: 719px) {
+  .layout {
+    padding: 0 var(--space-4);
+    gap: var(--space-5);
+  }
+
+  .itemList {
+    gap: var(--space-7);
+  }
+
+  .mechBox {
+    padding: var(--space-6) var(--space-5);
+  }
+
+  .doneBox {
+    padding: var(--space-6) 0;
+  }
+
+  .itemText {
+    font-size: 15px;
+  }
+
+  .question,
+  .answer {
+    font-size: 16px;
+  }
+}

@@ -1,0 +1,279 @@
+/* Phase 3 — Voice-Vergleich.
+   Drei Voice-Varianten in Mechanik B („am rand.") gestapelt zum Live-Vergleich.
+   Lebt nur hier — keine Promotion, das ist eine Wahl-Bühne. */
+
+.page {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  min-height: 100dvh;
+}
+
+/* ── Intro */
+.introBox {
+  padding: var(--space-5);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  max-width: 60ch;
+}
+
+.introBoxText {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+}
+
+/* ── Variant-Separator (die ruhige Klammer zwischen den drei Varianten) */
+.variantHeader {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.variantLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--accent-contrast);
+  margin: 0;
+}
+
+.variantKey {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+/* ── Voice-spezifischer Header („wir gehen das durch.") */
+.voiceH1 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(40px, 5vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+}
+
+.voiceSubLead {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.45;
+  color: var(--text-body);
+  margin: 0;
+  text-transform: lowercase;
+  max-width: 58ch;
+}
+
+/* ── Mechanik B („am rand."): Editorial-Spalte mittig + Notiz-Margin rechts */
+
+.itemGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-5);
+}
+
+@media (min-width: 880px) {
+  .itemGrid {
+    grid-template-columns: minmax(0, 640px) minmax(220px, 1fr);
+    gap: var(--space-9);
+  }
+}
+
+.item {
+  display: contents;
+}
+
+.itemBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding-bottom: var(--space-7);
+  position: relative;
+}
+
+.itemBody[data-flag='true']::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 0.4em;
+  width: 3px;
+  height: 28px;
+  background: var(--spc-sienna);
+  border-radius: 2px;
+}
+
+.itemEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.itemFlag {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--spc-sienna);
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.itemTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(22px, 2.4vw, 28px);
+  line-height: 1.15;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.itemText {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 58ch;
+}
+
+/* ── Margin-Notiz-Slot (rechts daneben, leiser, kleinere Skala) */
+.marginSlot {
+  padding-top: var(--space-5);
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--border-faint);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  align-self: start;
+}
+
+@media (max-width: 879px) {
+  .marginSlot {
+    border-left: none;
+    border-top: 1px solid var(--border-faint);
+    padding-top: var(--space-4);
+    padding-left: 0;
+  }
+}
+
+.marginNote {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+}
+
+.marginPlaceholder {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--spc-ash);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  font-style: italic;
+}
+
+/* ── Done-State am Ende einer Variant-Sektion */
+.doneBox {
+  padding: var(--space-6) var(--space-5);
+  border-top: 1px solid var(--border-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.doneText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(20px, 2vw, 24px);
+  line-height: 1.3;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.005em;
+}
+
+.doneCaption {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--spc-slate);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ── Decision-Klammer am Ende der Page */
+.decisionBox {
+  padding: var(--space-7) var(--space-5);
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.decisionTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.1;
+  color: var(--spc-offwhite);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.decisionBody {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--spc-stone);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.decisionList {
+  display: flex;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-wrap: wrap;
+}
+
+.decisionTag {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  color: var(--spc-turquoise);
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid rgba(123, 220, 181, 0.35);
+  border-radius: var(--radius-pill);
+  text-transform: lowercase;
+}

@@ -1,11 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useLocale } from 'next-intl';
 import { Section } from '@/components/primitives/Section';
 import { Container } from '@/components/primitives/Container';
 import { ArrowRightThin } from '@/components/icons/ArrowRightThin';
 import { setUnderlineOrigin } from '@/lib/hover';
-import { useRevealOnIntersect } from '@/lib/motion/useRevealOnIntersect';
+import { useRevealOnIntersect } from '@/lib/motion';
 import styles from './SiteFooter.module.css';
 
 export interface SiteFooterProps {
@@ -45,17 +46,20 @@ const VOICE_LINKS = [
  * Instagram-Verweis ("wir sind hier auch: @smallpclub").
  */
 const SERVICE_LINKS = [
-  { href: '/partner', label: 'partner' },
-  { href: '/magazin', label: 'magazin' },
+  { href: '/unterstuetzen', label: 'unterstützen' },
+  { href: '/stimmen', label: 'stimmen' },
   { href: '/kontakt', label: 'kontakt' },
   { href: '/impressum', label: 'impressum' },
   { href: '/datenschutz', label: 'datenschutz' },
   { href: '/privacy/anonym-bleiben', label: 'anonym bleiben' },
 ] as const;
 
-function memberLine(count: number): string {
+/* Member-Satz mit locale-sensitiver Zahl-Formatierung. Locale wird vom
+   Component-Body übergeben (useLocale aus next-intl). BCP-47 → Intl.NumberFormat
+   versteht „de" und „en" direkt. */
+function memberLine(count: number, locale: string): string {
   const noun = count === 1 ? 'mit-glied' : 'mit-glieder';
-  const formatted = count.toLocaleString('de-DE');
+  const formatted = count.toLocaleString(locale);
   return `${formatted} ${noun}. auch ohne-glied.`;
 }
 
@@ -71,6 +75,7 @@ function memberLine(count: number): string {
  * Sidebar — Editorial-Kolophon-Move, erdet die Service-Items am Boden.
  */
 export function SiteFooter({ memberCount = 23, forceRevealed }: SiteFooterProps = {}) {
+  const locale = useLocale();
   /**
    * threshold 0.4 = Footer-Stagger triggert erst wenn ~40% des Footers
    * im Viewport sind — User ist im Footer-Bereich angekommen.
@@ -119,7 +124,7 @@ export function SiteFooter({ memberCount = 23, forceRevealed }: SiteFooterProps 
             ja, wir reden hier über penisse.
           </p>
 
-          <p className={styles.memberLine}>{memberLine(memberCount)}</p>
+          <p className={styles.memberLine}>{memberLine(memberCount, locale)}</p>
 
           <hr className={styles.hairline} aria-hidden="true" />
 

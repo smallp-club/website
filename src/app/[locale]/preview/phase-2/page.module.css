@@ -1,0 +1,423 @@
+/* Phase 2 — Visual Direction Bühne.
+   Eigene lokale Styles für Sticky-Anchor-Nav, Prompt-Boxen, Section-Karten.
+   Lebt nur hier — keine Promotion in lib bis zweite Verwendung (CLAUDE.md). */
+
+.page {
+  background: var(--surface-bg);
+  color: var(--text-strong);
+  min-height: 100dvh;
+}
+
+/* ── Sticky-Anchor-Nav (rechts auf Desktop, oben kollabiert auf Mobile) */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-7);
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-5);
+}
+
+@media (min-width: 960px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) 240px;
+    gap: var(--space-9);
+  }
+}
+
+.toc {
+  position: sticky;
+  top: calc(var(--space-9) + var(--space-4));
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  border-left: 1px solid var(--border-hairline);
+  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  margin-top: var(--space-9);
+}
+
+.tocLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0 0 var(--space-1);
+}
+
+.tocLink {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-body);
+  text-decoration: none;
+  line-height: 1.4;
+  padding: var(--space-1) 0;
+  transition: color 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.tocLink:hover,
+.tocLink:focus-visible {
+  color: var(--accent-contrast);
+}
+
+.tocLink:focus-visible {
+  outline: 2px solid var(--accent-contrast);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+@media (max-width: 959px) {
+  .toc {
+    position: static;
+    margin-top: 0;
+  }
+}
+
+/* ── Hinweis-Strip (LoRA-Warnung im Hero) */
+.notice {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-5);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+  border-left: 3px solid var(--spc-sienna);
+  max-width: 680px;
+}
+
+.noticeLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 14px;
+  color: var(--spc-sienna);
+  margin: 0 0 var(--space-1);
+  letter-spacing: 0.01em;
+}
+
+.noticeBody {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* ── Workflow-Reihenfolge */
+.workflowList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  counter-reset: workflow;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.workflowItem {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: baseline;
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-faint);
+}
+
+.workflowItem:last-child {
+  border-bottom: none;
+}
+
+.workflowNum {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: 40px;
+  line-height: 1;
+  color: var(--accent-contrast);
+  text-align: right;
+  letter-spacing: -0.02em;
+}
+
+.workflowName {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  font-size: 22px;
+  color: var(--text-strong);
+  margin: 0 0 var(--space-1);
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.workflowWhy {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0;
+  max-width: 56ch;
+}
+
+/* ── Section-Karten */
+.card {
+  background: var(--surface-card);
+  border: 1px solid var(--border-faint);
+  border-radius: var(--radius-lg);
+  padding: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  scroll-margin-top: var(--space-9);
+}
+
+.cardEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(28px, 3.5vw, 40px);
+  line-height: 1.05;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.015em;
+}
+
+.cardJob {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 20px;
+  line-height: 1.4;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 56ch;
+}
+
+.cardSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.cardSectionLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bullet {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-body);
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.bullet::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 8px;
+  height: 1px;
+  background: var(--text-muted);
+}
+
+.bulletAnti {
+  color: var(--spc-sienna);
+}
+
+.bulletAnti::before {
+  background: var(--spc-sienna);
+}
+
+/* ── Prompt-Block (monospace, kopierbar via Selection) */
+.prompt {
+  background: var(--surface-inverse);
+  color: var(--text-on-inverse);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  overflow-x: auto;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.promptHeaderLabel {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-turquoise);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+}
+
+/* ── Brand-Klammer-Box (Master-Prompt-Header) */
+.masterBox {
+  background: var(--spc-black);
+  color: var(--text-on-inverse);
+  border-radius: var(--radius-lg);
+  padding: var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.masterHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.masterEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 13px;
+  color: var(--spc-turquoise);
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+  margin: 0;
+}
+
+.masterTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.1;
+  color: var(--spc-offwhite);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.01em;
+}
+
+.masterBody {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--spc-stone);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.masterPrompt {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--spc-offwhite);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  font-family: var(--font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  user-select: text;
+  -webkit-user-select: text;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ── Loop-Section am Ende */
+.loopList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  counter-reset: loop;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.loopItem {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: baseline;
+}
+
+.loopItem::before {
+  counter-increment: loop;
+  content: counter(loop, decimal-leading-zero);
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: 18px;
+  color: var(--accent-contrast);
+  letter-spacing: -0.01em;
+}
+
+.loopText {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 58ch;
+}
+
+/* ── Brand-globale Klammer (Konsistenz-Liste) */
+.consistencyGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .consistencyGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.consistencyCell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background: var(--surface-sunken);
+  border-radius: var(--radius-md);
+}
+
+.consistencyKey {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.consistencyVal {
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+}

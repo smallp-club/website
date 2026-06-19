@@ -1,0 +1,212 @@
+.wrap {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--space-7) var(--space-5);
+  overflow: hidden;
+  /* OFF-BRAND first-frame: kaltes grau, kein off-white. */
+  background: #ECECEC;
+  transition: background-color 800ms ease-out;
+}
+
+.wrap:has(.brand) {
+  background: var(--surface-bg);
+}
+
+/* ── OFF-BRAND engine ui */
+.engine {
+  width: 100%;
+  max-width: 640px;
+  background: #F8F8F8;
+  border: 1px solid #C8C8C8;
+  padding: var(--space-6);
+  border-radius: 2px;
+  font-family: ui-monospace, 'SF Mono', 'Menlo', monospace;
+  color: #2A2A2A;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset;
+}
+
+.engineHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid #D8D8D8;
+  margin-bottom: var(--space-6);
+}
+
+.engineLabel {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #4A4A4A;
+}
+
+.engineMeta {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 0.04em;
+}
+
+.displays {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.display {
+  background: #FFFFFF;
+  border: 1px solid #D8D8D8;
+  padding: var(--space-5) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.displayLabel {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #6A6A6A;
+}
+
+.displayValue {
+  font-size: clamp(32px, 7vw, 56px);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #1A1A1A;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  /* Tabular damit Wechsel nicht layoutet */
+  min-width: 4ch;
+  text-align: center;
+}
+
+.displayUnit {
+  font-size: 11px;
+  color: #888;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sliderRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.sliderLabel {
+  font-size: 11px;
+  color: #6A6A6A;
+  letter-spacing: 0.04em;
+}
+
+.slider {
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  height: 32px;
+  cursor: ew-resize;
+  touch-action: none;
+}
+
+.slider::-webkit-slider-runnable-track {
+  height: 2px;
+  background: #B0B0B0;
+}
+
+.slider::-moz-range-track {
+  height: 2px;
+  background: #B0B0B0;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  background: #2A2A2A;
+  border: 2px solid #FFFFFF;
+  margin-top: -13px;
+  cursor: ew-resize;
+  border-radius: 1px;
+}
+
+.slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: #2A2A2A;
+  border: 2px solid #FFFFFF;
+  cursor: ew-resize;
+  border-radius: 1px;
+}
+
+.engineSource {
+  font-size: 11px;
+  color: #888;
+  margin: 0 0 var(--space-3) 0;
+  letter-spacing: 0.02em;
+}
+
+.hint {
+  font-size: 11px;
+  color: #888;
+  margin: 0;
+  letter-spacing: 0.04em;
+  text-align: right;
+  font-style: italic;
+}
+
+/* ── BRAND-Reveal nach Bruch */
+.brand {
+  text-align: center;
+  max-width: 1000px;
+  padding: var(--space-5);
+}
+
+.brandEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-overline);
+  letter-spacing: 0.04em;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  margin: 0 0 var(--space-5) 0;
+}
+
+.tagline {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(48px, 11vw, 144px);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  margin: 0 0 var(--space-4) 0;
+  text-wrap: balance;
+}
+
+.subTagline {
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.4vw, 19px);
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+@media (max-width: 540px) {
+  .displays {
+    grid-template-columns: 1fr;
+  }
+  .engine {
+    padding: var(--space-5) var(--space-4);
+  }
+}

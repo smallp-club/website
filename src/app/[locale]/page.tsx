@@ -1,7 +1,9 @@
+import { HeroLanding } from '@/components/sections/HeroLanding';
+
 export default function HomePage() {
   return (
     <main id="main-content">
-      {/* Hero kommt hier */}
+      <HeroLanding />
     </main>
   );
 }

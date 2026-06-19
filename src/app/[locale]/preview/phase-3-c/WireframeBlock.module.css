@@ -1,0 +1,102 @@
+/* WireframeBlock — stilisiertes Page-Skelett.
+   Off-White-Bühne mit leiser Stone-Border. Sektionen als gestapelte
+   Boxen mit Hairline-Trennung. Inverse / Accent / Sienna als Visual-
+   Varianten. */
+
+.figure {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  /* Wireframe hat eine feste Höhe damit alle Items vergleichbar aussehen */
+  width: 100%;
+  max-width: 360px;
+}
+
+.caption {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: 12px;
+  color: var(--spc-slate);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+}
+
+/* Skelett-Stack — kein border, keine Card-Mini-Optik. Hairlines zwischen
+   Sektionen tragen die Struktur. Editorial-Skizze, nicht Vorlagen-Card. */
+.stack {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-bg);
+  overflow: hidden;
+  height: clamp(300px, 32vh, 420px);
+}
+
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--space-2) var(--space-3);
+  min-height: 28px;
+  border-bottom: 1px solid var(--spc-stone);
+  background: var(--surface-bg);
+}
+
+.section:last-child {
+  border-bottom: none;
+}
+
+/* Visual-Varianten — alle als Stein-Grau-Skala, kein Black, kein Sienna-Fill.
+   Wireframe ist Skelett, nicht Designvorlage. Black-Block-Inflation
+   gewöhnt das Auge an Stats-Doktrin-Bruch. */
+.section[data-emphasis='inverse'] {
+  background: var(--spc-slate);
+  color: var(--surface-bg);
+}
+
+.section[data-emphasis='inverse'] .sectionLabel {
+  color: var(--surface-bg);
+}
+
+.section[data-emphasis='inverse'] .sectionMeta {
+  color: var(--spc-sand);
+}
+
+.section[data-emphasis='inverse'] {
+  border-bottom-color: transparent;
+}
+
+.section[data-emphasis='accent'] {
+  background: var(--spc-turquoise-wash);
+}
+
+.section[data-emphasis='accent'] .sectionLabel {
+  color: var(--accent-contrast);
+}
+
+/* sienna-emphasis ist nicht mehr in Verwendung (Mythos-Reveal-Wireframe
+   nutzt jetzt meta-Note statt Background-Fill). Definition behalten als
+   no-op-Reset, falls Daten-Drift später wieder „sienna" enthält. */
+.section[data-emphasis='sienna'] {
+  background: var(--surface-bg);
+}
+
+.sectionLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  font-size: 13px;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  letter-spacing: -0.005em;
+  line-height: 1.25;
+}
+
+.sectionMeta {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--spc-slate);
+  line-height: 1.3;
+}

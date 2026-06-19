@@ -479,9 +479,9 @@ Konstanten überall: du-Anrede, lowercase in Display, kein Em-Dash im Body, Inli
 |---|---|---|
 | **0 — Konzept** | Brand, Voice, Color, Story, IA | ✅ abgeschlossen |
 | **1 — Foundation** | Tech-Stack, Tokens, Komponenten-Library | ✅ abgeschlossen |
-| **2 — Visual Direction** | imagegen Moodboards für Landing + Topic-Pages, Kevin Feedback | offen |
-| **3 — Section-Designs** | Hero, Recognition, Mythos-Reveal, Stats, Bewegungs-Signal, Footer | offen |
-| **4 — Code & Content** | 6 Mythen MDX, 3 Essays MDX, Landing-Sections coden, Service-Pages | offen |
+| **2 — Visual Direction** | Konzept-Bühne `/preview/phase-2` live, Magnific-Brand-Header dokumentiert. Bilder kommen wenn Kevin sie generiert | Bühne fertig, Bilder offen |
+| **3 — Page Blueprint** | Review-Bühne `/preview/phase-3-c` mit 20 Items (9 Templates + 11 Pages), Maßband-TOC, Wireframes, „varianten gewählt"-Tabelle. Kevin Review 2026-06-19: alle 20 Items „passt erstmal", Feinjustierung wenn alles steht | ✅ Review durch |
+| **4 — Pattern-Mechaniken + Section-Build** | Pattern-Bühne `/preview/phase-4-c` vorgebaut (11 Mechaniken). Section-Build folgt nach Phase 2 + Pattern-Review | Pattern-Bühne live |
 | **5 — Member-Bereich** | Auth.js v5 Setup, Magic-Link, Stories-Table in Supabase | offen |
 | **6 — Pre-Launch-Checks** | Sitemap-Generator + robots.txt, AVV-Sammelmappe, DSGVO-Audit | offen |
 | **7 — Launch** | `noindex` entfernen, Newsletter live, Live-Domain | offen |
@@ -521,6 +521,7 @@ Konstanten überall: du-Anrede, lowercase in Display, kein Em-Dash im Body, Inli
 
 ### Geklärt
 1. **Schreibarbeit:** Kevin schreibt die 6 Mythen + 3 Essays solo. → IA bleibt mit 6 Mythen / 3 Essays Launch-Pflicht.
+8. **Phase-3-Page-Blueprint-Review** (2026-06-19): Alle 20 Items (9 Templates + 11 Pages) angenommen „passt erstmal". Konsens: Feinjustierung erst wenn alles steht. Notierte Punkte: Suspense in member-app-shell als „streamt nach" (lade-skeleton statt blocker) finalisiert. Wireframes und Varianten-Tabellen sind als Pattern für Phase 4/5/6 etabliert.
 
 ### Eigenständige Folge-Konzepte (separat zu erarbeiten)
 2. **Member-Bereich** — Erfahrungsberichte, Anonymität, Bootstrap-Strategie, Auth-Flow-Details. Verweis: Memory `project_member_area_concept.md` enthält bereits offene Fragen aus früheren Sessions. **Eigenes Konzept-Dokument folgt** (`docs/project/MEMBER_CONCEPT.md`).

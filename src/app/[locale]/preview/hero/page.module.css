@@ -1,0 +1,141 @@
+.main {
+  min-height: 100dvh;
+  background: var(--surface-bg);
+  padding: var(--space-9) var(--space-5) var(--space-9);
+}
+
+.header {
+  max-width: 720px;
+  margin: 0 auto var(--space-9);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-overline);
+  letter-spacing: 0.04em;
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+  margin: 0;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(36px, 7vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.025em;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+}
+
+.lead {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.grid {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 720px) {
+  .grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+}
+
+.card {
+  display: block;
+}
+
+.cardLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg, 22px);
+  background: var(--surface-card);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 200ms ease-out, transform 200ms ease-out;
+  min-height: 280px;
+  position: relative;
+}
+
+.cardLink:hover,
+.cardLink:focus-visible {
+  border-color: var(--text-strong);
+  transform: translateY(-2px);
+}
+
+.cardLink:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 4px;
+}
+
+.slug {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(22px, 3vw, 28px);
+  line-height: 1.1;
+  color: var(--text-strong);
+  margin: 0;
+  text-transform: lowercase;
+  letter-spacing: -0.015em;
+}
+
+.cardMechanic {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+  color: var(--text-body);
+  margin: 0;
+}
+
+.cardRisk {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.riskLabel {
+  color: var(--text-signal);
+  font-weight: 500;
+}
+
+.cta {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: var(--text-body-md);
+  color: var(--accent-contrast);
+  text-transform: lowercase;
+}

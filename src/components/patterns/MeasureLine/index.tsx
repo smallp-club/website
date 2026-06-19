@@ -14,6 +14,7 @@ import {
   useReducedMotion,
 } from 'framer-motion';
 import { EASE_OUT } from '@/lib/motion';
+import { getMeasureZoneText, MEASURE_STILLSTAND_TEXT } from '@/lib/measure-voice';
 import styles from './MeasureLine.module.css';
 
 export interface MeasureLineProps {
@@ -21,15 +22,6 @@ export interface MeasureLineProps {
   label?: string;
   id?: string;
 }
-
-// TODO: Brand-Voice-Review der Zone-Statements + Stillstand-Text steht aus
-// (Kevin will Content später überarbeiten).
-function getZoneText(mm: number): string | null {
-  if (mm >= 120 && mm <= 145) return 'Hier wohnen die meisten. Still.';
-  if (mm > 185) return 'Pornos haben diese Kurve verschoben.';
-  return null;
-}
-const STILLSTAND_TEXT = 'Du hältst inne. Die meisten tun das hier.';
 
 /**
  * MeasureLine — interaktiver Maßstrich, der ins Off läuft.
@@ -127,9 +119,9 @@ export function MeasureLine({ label, id }: MeasureLineProps) {
     for (let mm = 0; mm <= Math.ceil(trackMm); mm += 25) tickMms.push(mm);
   }
 
-  const zoneText = getZoneText(shownMm);
+  const zoneText = getMeasureZoneText(shownMm);
   const contentType = showStillstand ? 'stillstand' : zoneText ? `zone-${zoneText}` : 'mm';
-  const statement: string | null = showStillstand ? STILLSTAND_TEXT : zoneText ?? null;
+  const statement: string | null = showStillstand ? MEASURE_STILLSTAND_TEXT : zoneText ?? null;
 
   return (
     <section

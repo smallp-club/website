@@ -7,11 +7,17 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  /* Brand-Default: ruhiger smooth-scroll bei Anchor-Sprüngen, Section-Navigation,
+     IntersectionObserver-getriggerte Active-States. Reduced-Motion wird unten
+     im prefers-reduced-motion-Block auf auto gestellt. */
+  scroll-behavior: smooth;
 }
 
 body {
