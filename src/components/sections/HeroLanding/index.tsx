@@ -62,7 +62,10 @@ const STUDY_VALUES_MOBILE = [
   '18,0', '18,8', '20,5', '22,5', '25,5',
 ];
 
-const STATEMENT = 'über das hier.';
+// Frage → Antwort. Die unausgesprochene Annahme wird aufgegriffen,
+// die Brand antwortet ruhig: das thema ist groß, der penis ist es nicht.
+const STATEMENT_QUESTION = 'kleiner penis?';
+const STATEMENT_ANSWER = 'großes thema.';
 const HEADLINE = 'und?';
 
 const EASE_MORPH_IN = [0.22, 1, 0.36, 1] as const;
@@ -433,7 +436,10 @@ export function HeroLanding() {
                   }
           }
         >
-          <h1 className={styles.statement}>{STATEMENT}</h1>
+          <h1 className={styles.statement}>
+            <span className={styles.statementLine}>{STATEMENT_QUESTION}</span>
+            <span className={styles.statementLine}>{STATEMENT_ANSWER}</span>
+          </h1>
         </motion.div>
 
         {/* Editorial-Stack: Voice → Source → Zahl linksbündig */}

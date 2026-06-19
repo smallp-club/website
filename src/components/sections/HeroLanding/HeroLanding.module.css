@@ -55,6 +55,12 @@
   user-select: text;
 }
 
+/* Frage und antwort visuell getrennt — block-display, damit der
+   rhetorische rhythmus auch ohne text-wrap-zufall trägt. */
+.statementLine {
+  display: block;
+}
+
 /* Editorial-Stack — content bleibt linksbündig formatiert, ABER der
    container ist zentriert via margin-inline auto. Damit liegt das
    gesamtbild im gleichgewicht zwischen linker und rechter viewport-kante.
