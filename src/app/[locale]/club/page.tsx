@@ -1,11 +1,9 @@
 /**
- * /club — Mission-Page (Stub).
+ * /club — Mission-Page.
  *
- * Vollständiger Page-Aufbau (origin, mission, was-wir-nicht-sind, team)
- * kommt in Phase 4. Aktuell nur die Brand-Kanal-Section (Instagram), die in
- * der ROADMAP als offen vermerkt war.
- *
- * Voice: peer, kein Push („wir sind hier auch"), lowercase, brand-konform.
+ * Phase 4 Build-Start: ClubHero ist manifestiert (Editorial-Split mit
+ * Snapshot-Foto). Origin, Mission, „was wir nicht sind", Team kommen
+ * Section für Section. Brand-Kanal-Block (Instagram) bleibt am Ende.
  */
 
 import { Section } from '@/components/primitives/Section';
@@ -15,6 +13,7 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
+import { ClubHero } from '@/components/sections/ClubHero';
 
 import styles from './page.module.css';
 
@@ -26,21 +25,7 @@ export const metadata = {
 export default function ClubPage() {
   return (
     <main id="main-content">
-      {/* ── Stub-Hinweis (kommt mit Phase 4 weg) */}
-      <Section tone="light" rhythm="loose" firstOfPage aria-label="eröffnung">
-        <Container width="default">
-          <Stack gap={5}>
-            <Eyebrow>club.</Eyebrow>
-            <Heading level={1} variant="display">
-              wir reden über das hier.
-            </Heading>
-            <Body tone="muted">
-              origin, mission und „was wir nicht sind" kommen mit phase 4.
-              bis dahin: der eine block, den die seite jetzt schon trägt.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+      <ClubHero />
 
       {/* ── Brand-Kanal-Block (Instagram) */}
       <Section tone="light" rhythm="standard" aria-label="wir sind hier auch">

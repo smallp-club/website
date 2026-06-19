@@ -26,61 +26,6 @@
   isolation: isolate;
 }
 
-/* ── Hero-Imagery — Brand-Anker hinter dem Statement.
-   Obround-Form (pill-radius) rechts angeschnitten via translateX.
-   Sichtbar nur während Phase 0 (opacity vom Statement gesteuert).
-   Aktueller stand: Sand-Gradient als Placeholder, wird durch echtes
-   Bildmotiv ersetzt sobald Magnific-Output oder Shooting da ist. */
-.heroImageryLayer {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-content: center end;
-  pointer-events: none;
-  z-index: 1;
-  overflow: hidden;
-  will-change: opacity;
-}
-
-.heroImagery {
-  width: 60vw;
-  max-width: 720px;
-  aspect-ratio: 1.35 / 1;
-  border-radius: var(--radius-pill);
-  overflow: hidden;
-  /* Rechts angeschnitten — ein Drittel läuft aus dem viewport raus */
-  transform: translateX(32%);
-  /* Subtler Off-White-bg als platzhalter bevor das webp geladen ist —
-     vermeidet bg-jump beim ersten paint. */
-  background: var(--surface-sunken, #ece8dc);
-}
-
-.heroImagery picture,
-.heroImagery picture > img,
-.heroImageryImg {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  /* Brand-Hit (Sessel mit Boxershort + T-Shirt + Jeans) sitzt
-     mittig-rechts im quellbild. */
-  object-position: 55% 55%;
-}
-
-@media (max-width: 719px) {
-  /* Mobile: Obround sitzt voll sichtbar unter dem text, mit atem zum
-     text oben und zum maßband unten. Kein anschneiden mehr. */
-  .heroImageryLayer {
-    place-content: end center;
-    padding-bottom: 12vh;
-  }
-  .heroImagery {
-    width: 64vw;
-    aspect-ratio: 1.45 / 1;
-    transform: none;
-  }
-}
-
 /* ── Phase 0: MEGA-Statement als Einstieg.
    Identischer 1200px-Container wie der editorial-stack, linksbündig
    ausgerichtet (place-content center start). */
@@ -108,12 +53,6 @@
   max-width: 100%;
   text-wrap: balance;
   user-select: text;
-}
-
-/* Frage und antwort visuell getrennt — block-display, damit der
-   rhetorische rhythmus auch ohne text-wrap-zufall trägt. */
-.statementLine {
-  display: block;
 }
 
 /* Editorial-Stack — content bleibt linksbündig formatiert, ABER der
@@ -163,23 +102,6 @@
   font-feature-settings: 'kern' 1, 'ss01';
   will-change: font-variation-settings, opacity, filter, transform;
   grid-area: 1 / 1;
-}
-
-/* Mobile weight-stages — drei klassen statt kontinuierlicher axis-animation.
-   Kein font-variation-settings-Übergang auf Mobile: stufenlos-Axis ist
-   CPU-intensiv auf WebKit. Transition hier bewusst kurz (120ms) als
-   weicher klassen-switch. */
-.numberWeightLow {
-  font-variation-settings: 'wght' 200;
-  transition: font-variation-settings 120ms ease;
-}
-.numberWeightMid {
-  font-variation-settings: 'wght' 500;
-  transition: font-variation-settings 120ms ease;
-}
-.numberWeightHigh {
-  font-variation-settings: 'wght' 800;
-  transition: font-variation-settings 120ms ease;
 }
 
 .unit {
@@ -439,20 +361,7 @@
 }
 
 .headlineChar {
-  display: inline-block;
   will-change: opacity, transform, filter, font-variation-settings;
-}
-
-/* Fragezeichen + Punkt brauchen luft links, sonst kollidieren sie mit dem
-   vorhergehenden buchstaben durch ihren erhöhten end-scale. */
-.headlineCharAccent {
-  margin-left: 0.12em;
-}
-
-/* Leerzeichen-Platzhalter in der char-by-char reveal. */
-.headlineSpace {
-  display: inline-block;
-  width: 0.28em;
 }
 
 /* ── Tagline — identischer 1200px-Container, zentriert */
@@ -489,18 +398,11 @@
 }
 
 @media (max-width: 719px) {
-  /* Mobile: kürzere scroll-distanz — 500dvh statt 800dvh.
-     Sequenz dauert sonst subjektiv zu lange auf kleineren screens. */
-  .wrap {
-    height: 500dvh;
-  }
   .statement {
     font-size: clamp(40px, 11vw, 88px);
   }
   .statementLayer {
     padding: var(--space-5);
-    /* Mobile: kein scale/transform — nur opacity. will-change reduzieren. */
-    will-change: opacity;
   }
   .sticky {
     padding-left: var(--space-5);
@@ -511,13 +413,6 @@
   }
   .number {
     font-size: clamp(120px, 32vw, 200px);
-    /* Mobile: kein filter/transform animiert, nur opacity + font-variation via klassen.
-       will-change schlank halten damit WebKit weniger compositing-layer aufmacht. */
-    will-change: opacity;
-  }
-  .numberWrap {
-    /* Mobile: kein scale/filter auf numberWrap */
-    will-change: opacity;
   }
   .numberStack {
     min-width: 3ch;
@@ -552,20 +447,8 @@
   .headline {
     font-size: clamp(72px, 28vw, 200px);
   }
-  .headlineLayer {
-    /* Mobile: opacity-fade statt clip-path. will-change nur opacity. */
-    will-change: opacity;
-  }
-  .headlineChar {
-    /* Mobile: HeadlineChar wird gar nicht gerendert, aber als fallback. */
-    will-change: opacity;
-  }
   .tagline {
     font-size: clamp(40px, 14vw, 96px);
-  }
-  .taglineLayer {
-    /* Mobile: kein scale/filter animiert. */
-    will-change: opacity, transform;
   }
   .ruler {
     height: 60px;

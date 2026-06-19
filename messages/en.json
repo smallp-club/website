@@ -17,7 +17,13 @@
     "heading": "you belong here.",
     "subheading": "Join the community.",
     "emailPlaceholder": "your@email.com",
-    "cta": "Join now"
+    "cta": "Join now",
+    "hero": {
+      "eyebrow": "the club",
+      "headline": "headline pending voice pass.",
+      "subline": "short subline, one sentence in brand voice — pending voice pass.",
+      "imageAlt": "a bicycle helmet with a small p club sticker hangs on a wall hook in the hallway of an apartment. daylight, a bench with a scarf and keys, jackets on the wardrobe."
+    }
   },
   "common": {
     "myth": "Myth",

@@ -1,0 +1,105 @@
+/* ClubHero — Editorial Split (Text 5fr / Bild 7fr) auf Desktop,
+   Stack (Bild oben, Text unten) auf Mobile. Snapshot-Foto trägt Wärme,
+   Off-White-Surface trägt die Brand-Stille. */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-7);
+  align-items: center;
+  width: 100%;
+}
+
+/* ====================================================================
+   Mobile: Bild oben (DOM-Reihenfolge stimmt schon), volle Breite, 3:2
+   ==================================================================== */
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--surface-sunken);
+}
+
+.image {
+  object-fit: cover;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.headline {
+  /* Display-Variant trägt schon Chillax 200, lowercase, clamp aus
+     Heading-Primitive. Hier nur Subline-Breite limitieren. */
+}
+
+.subline {
+  max-width: 38ch;
+}
+
+/* ====================================================================
+   Desktop ≥1024px (64rem) — Editorial Split: Bild rechts, Text links.
+   DOM-Reihenfolge bleibt Bild→Text (Mobile-First). Auf Desktop
+   reorder via grid-column.
+   ==================================================================== */
+
+@media (min-width: 64rem) {
+  .grid {
+    grid-template-columns: 5fr 7fr;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  .imageWrap {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .text {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+/* ====================================================================
+   Entry-Reveal — Text + Bild faden in einer Familie, Bild +200ms
+   (Editorial-Stagger, kein Drama).
+   ==================================================================== */
+
+.grid .text,
+.grid .imageWrap {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 600ms cubic-bezier(0.32, 0.72, 0, 1),
+    transform 600ms cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: opacity, transform;
+}
+
+.grid[data-revealed] .text {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0ms;
+}
+
+.grid[data-revealed] .imageWrap {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 200ms;
+}
+
+/* Reduced-Motion: keine Bewegung, kein Stagger — sofort sichtbar. */
+@media (prefers-reduced-motion: reduce) {
+  .grid .text,
+  .grid .imageWrap {
+    opacity: 1;
+    transform: none;
+    transition-duration: 0ms;
+    transition-delay: 0ms;
+  }
+}

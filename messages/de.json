@@ -17,7 +17,13 @@
     "heading": "du bist richtig hier.",
     "subheading": "Werde Teil der Community.",
     "emailPlaceholder": "deine@email.de",
-    "cta": "Dabei sein"
+    "cta": "Dabei sein",
+    "hero": {
+      "eyebrow": "der club",
+      "headline": "headline kommt mit voice-schritt.",
+      "subline": "kurze subline, ein satz, brand-voice — kommt mit voice-schritt.",
+      "imageAlt": "ein fahrradhelm mit small-p-club-sticker hängt am wandhaken im flur einer wohnung. tageslicht, eine bank mit schal und schlüsseln, jacken an der garderobe."
+    }
   },
   "common": {
     "myth": "Mythos",
