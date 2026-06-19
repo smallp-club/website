@@ -1,0 +1,55 @@
+/* RecognitionBlock — eigenständiger Atemzug zwischen Hero und Mythos.
+   100dvh, Off-White, monumentale Schrift zentriert. Nullfarbe. */
+
+.wrap {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  background: var(--surface-bg);
+  display: grid;
+  place-content: center;
+  padding-block: var(--space-9);
+  padding-inline: max(var(--space-5), calc((100vw - 1200px) / 2));
+}
+
+.inner {
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+}
+
+.statement {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: clamp(56px, 9vw, 140px);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+  text-transform: lowercase;
+  margin: 0;
+  text-wrap: balance;
+}
+
+/* Frage und antwort visuell getrennt — block-display, damit der
+   rhetorische rhythmus auch ohne text-wrap-zufall trägt. */
+.statementLine {
+  display: block;
+  will-change: opacity, transform;
+}
+
+@media (max-width: 719px) {
+  .wrap {
+    /* Mobile: paar nuancen mehr atem oben/unten gegen den brand-rhythmus */
+    padding-block: clamp(var(--space-9), 18vh, 20vh);
+  }
+  .statement {
+    font-size: clamp(40px, 11vw, 88px);
+    line-height: 1.0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .statementLine {
+    will-change: auto;
+  }
+}
