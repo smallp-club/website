@@ -66,15 +66,16 @@
 }
 
 @media (max-width: 719px) {
-  /* Mobile: Obround wandert unter den text. Mehr platz, kein überlapp.
-     Angeschnitten nach unten — wirkt wie ein „auftauchen" aus dem rand. */
+  /* Mobile: Obround sitzt voll sichtbar unter dem text, mit atem zum
+     text oben und zum maßband unten. Kein anschneiden mehr. */
   .heroImageryLayer {
     place-content: end center;
+    padding-bottom: 12vh;
   }
   .heroImagery {
-    width: 84vw;
-    aspect-ratio: 1.4 / 1;
-    transform: translateY(38%);
+    width: 64vw;
+    aspect-ratio: 1.45 / 1;
+    transform: none;
   }
 }
 
