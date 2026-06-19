@@ -14,6 +14,16 @@
  *
  * Brand-Doktrin: Off-White dauerhaft, Stats bleibt einziger Black-Flip
  * der seite. Hero ist editorial-still mit konkretem mess-element.
+ *
+ * Mobile-Optimierung (iOS Chrome / WebKit):
+ * - blur-Animationen vollständig raus (teuerste GPU-Op auf WebKit)
+ * - font-variation-settings axis-Animationen ersetzt durch CSS-Klassen-Switch
+ * - HeadlineChar per-Char-Rendering ersetzt durch ein einzelnes motion.span
+ * - AnimatePresence mode='wait' statt 'popLayout', kein blur in enter/exit
+ * - clip-path ersetzt durch opacity-fade
+ * - scale-Animationen auf statement/tagline/number entfernt
+ * - height: 500dvh statt 800dvh (im CSS-Modul)
+ * - STUDY_VALUES auf 20 Werte reduziert
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -43,7 +53,16 @@ const STUDY_VALUES = [
   '19,5', '20,5', '21,5', '22,5', '23,5', '24,5', '25,5',
 ];
 
-const STATEMENT = 'ja, wir reden hier über penisse.';
+// Mobile: 20 kuratierte Werte — gleichmäßig verteilt über die volle skala.
+// Weniger AnimatePresence-cycles = weniger Compositing-Druck auf WebKit.
+const STUDY_VALUES_MOBILE = [
+  '2,0', '3,2', '4,8', '6,0', '7,2',
+  '8,4', '9,6', '10,8', '12,0', '13,12',
+  '14,0', '14,8', '15,6', '16,4', '17,2',
+  '18,0', '18,8', '20,5', '22,5', '25,5',
+];
+
+const STATEMENT = 'über das hier.';
 const HEADLINE = 'und?';
 
 const EASE_MORPH_IN = [0.22, 1, 0.36, 1] as const;
@@ -64,6 +83,42 @@ function getCmCaption(cm: number): {
   if (cm <= 16.4) return { text: 'durchschnitt. wissenschaftlich.', tone: 'fakt' };
   if (cm <= 22) return { text: 'groß. angeblich.', tone: 'mythos' };
   return { text: 'egal. wirklich.', tone: 'fakt' };
+}
+
+// Mobile: font-weight-stage via CSS-Klasse, kein axis-anim.
+// Drei stufen statt kontinuierlicher useTransform-Animation.
+type WeightStage = 'low' | 'mid' | 'high';
+
+function getWeightStage(progress: number): WeightStage {
+  if (progress < 0.28) return 'low';
+  if (progress < 0.38) return 'mid';
+  return 'high';
+}
+
+function getWeightClass(stage: WeightStage): string {
+  if (stage === 'low') return styles.numberWeightLow ?? '';
+  if (stage === 'mid') return styles.numberWeightMid ?? '';
+  return styles.numberWeightHigh ?? '';
+}
+
+/**
+ * useIsMobile — lokaler hook ohne lib-file.
+ * matchMedia max-width 719px matcht dem breakpoint im CSS-Modul.
+ * SSR-sicher: startet auf false, setzt sich nach mount.
+ */
+function useIsMobile(): boolean {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(max-width: 719px)');
+    setIsMobile(mq.matches);
+    const handle = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handle);
+    return () => mq.removeEventListener('change', handle);
+  }, []);
+
+  return isMobile;
 }
 
 type CharProps = {
@@ -197,6 +252,7 @@ export function HeroLanding() {
   const reduced = useReducedMotion();
   const [idx, setIdx] = useState(0);
   const [isTouch, setIsTouch] = useState(false);
+  const isMobile = useIsMobile();
 
   // Touch-Device-Detection: scroll-hint wechselt zu "wischen"
   useEffect(() => {
@@ -215,31 +271,44 @@ export function HeroLanding() {
 
   const scrollYProgress = useTransform(rawProgress, [0, 0.78], [0, 1]);
 
+  // Mobile: aktive werte-liste mit 20 statt 50 werten
+  const activeValues = isMobile ? STUDY_VALUES_MOBILE : STUDY_VALUES;
+
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
     if (reduced) return;
     const numberWindow = (p - 0.18) / (0.44 - 0.18);
     if (numberWindow >= 0 && numberWindow <= 1) {
       const next = Math.min(
-        Math.floor(numberWindow * STUDY_VALUES.length),
-        STUDY_VALUES.length - 1,
+        Math.floor(numberWindow * activeValues.length),
+        activeValues.length - 1,
       );
       setIdx(next);
     } else if (p < 0.18) {
       setIdx(0);
     } else {
-      setIdx(STUDY_VALUES.length - 1);
+      setIdx(activeValues.length - 1);
     }
   });
 
-  // Weight-Animation synchron zum werte-window (0.18 → 0.44).
+  // Desktop only: smooth wght-axis-Animation
   const wght = useTransform(scrollYProgress, [0.18, 0.44], [200, 900]);
   const wghtString = useTransform(wght, (w) => `'wght' ${Math.round(w)}`);
+
+  // Mobile: weight-stage via schwellwert (re-render nur bei stage-wechsel,
+  // nicht jeden frame — sonst zerschießt der setState den scroll-perf-win).
+  const [weightStage, setWeightStage] = useState<WeightStage>('low');
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    if (!isMobile) return;
+    const next = getWeightStage(p);
+    setWeightStage((prev) => (prev !== next ? next : prev));
+  });
 
   const statementOpacity = useTransform(
     scrollYProgress,
     [0, 0.06, 0.12],
     [1, 1, 0],
   );
+  // Desktop: scale + y auf statement
   const statementScale = useTransform(scrollYProgress, [0.06, 0.12], [1, 0.92]);
   const statementY = useTransform(scrollYProgress, [0.06, 0.12], [0, -40]);
 
@@ -262,6 +331,7 @@ export function HeroLanding() {
     [numberAppearOpacity, numberFadeOpacity] as MotionValue<number>[],
     ([a, b]) => Math.min(a as number, b as number),
   );
+  // Desktop only: scale + blur auf number
   const numberScale = useTransform(
     scrollYProgress,
     [0.38, 0.415, 0.435],
@@ -298,6 +368,7 @@ export function HeroLanding() {
     [0.7, 0.7, 0],
   );
 
+  // Desktop: clip-path-Reveal auf headlineLayer
   const clipTop = useTransform(scrollYProgress, [0.46, 0.54], [50, 0]);
   const clipBottom = useTransform(scrollYProgress, [0.46, 0.54], [50, 0]);
   const headlineClipPath = useTransform(
@@ -305,8 +376,16 @@ export function HeroLanding() {
     ([t, b]) => `inset(${t as number}% 0 ${b as number}% 0)`,
   );
 
+  // Mobile: headline einfach opacity-fade, kein clip-path
+  const headlineOpacityMobile = useTransform(
+    scrollYProgress,
+    [0.46, 0.54],
+    [0, 1],
+  );
+
   const taglineOpacity = useTransform(scrollYProgress, [0.64, 0.74], [0, 1]);
   const taglineY = useTransform(scrollYProgress, [0.64, 0.74], [40, 0]);
+  // Desktop only: scale + blur auf tagline
   const taglineScale = useTransform(scrollYProgress, [0.64, 0.78], [0.8, 1]);
   const taglineBlur = useTransform(scrollYProgress, [0.64, 0.74], [12, 0]);
   const taglineFilter = useTransform(taglineBlur, (b) => `blur(${b}px)`);
@@ -320,7 +399,7 @@ export function HeroLanding() {
   const headlineSettleScale = useTransform(scrollYProgress, [0.60, 0.68], [1, 0.4]);
   const headlineSettleY = useTransform(scrollYProgress, [0.60, 0.68], [0, -160]);
 
-  const currentValue = STUDY_VALUES[idx] ?? STUDY_VALUES[0] ?? '0';
+  const currentValue = activeValues[idx] ?? activeValues[0] ?? '0';
   const currentCm = parseFloat(currentValue.replace(',', '.'));
 
   let runningCharIdx = 0;
@@ -329,6 +408,9 @@ export function HeroLanding() {
     if (c !== ' ') runningCharIdx++;
     return { char: c, index: i, charIndex };
   });
+
+  // Mobile: weight-klasse aus aktueller stage (3-stufig statt smooth axis)
+  const mobileWeightClass = isMobile ? getWeightClass(weightStage) : '';
 
   return (
     <section ref={ref} className={styles.wrap} aria-label="ankunft">
@@ -339,11 +421,16 @@ export function HeroLanding() {
           style={
             reduced
               ? { opacity: 0 }
-              : {
-                  opacity: statementOpacity,
-                  scale: statementScale,
-                  y: statementY,
-                }
+              : isMobile
+                ? {
+                    // Mobile: nur opacity, kein scale, kein y
+                    opacity: statementOpacity,
+                  }
+                : {
+                    opacity: statementOpacity,
+                    scale: statementScale,
+                    y: statementY,
+                  }
           }
         >
           <h1 className={styles.statement}>{STATEMENT}</h1>
@@ -370,36 +457,61 @@ export function HeroLanding() {
             style={
               reduced
                 ? { opacity: 0 }
-                : {
-                    opacity: numberOpacity,
-                    scale: numberScale,
-                    filter: numberFilter,
-                  }
+                : isMobile
+                  ? {
+                      // Mobile: nur opacity, kein scale, kein blur
+                      opacity: numberOpacity,
+                    }
+                  : {
+                      opacity: numberOpacity,
+                      scale: numberScale,
+                      filter: numberFilter,
+                    }
             }
             aria-hidden="true"
           >
             <div className={styles.numberStack}>
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span
-                  key={currentValue}
-                  className={styles.number}
-                  style={
-                    reduced
-                      ? { fontVariationSettings: `'wght' 400` }
-                      : { fontVariationSettings: wghtString }
-                  }
-                  initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -8, filter: 'blur(6px)' }}
-                  transition={{
-                    opacity: { duration: 0.18, ease: EASE_MORPH_IN },
-                    y: { duration: 0.22, ease: EASE_MORPH_IN },
-                    filter: { duration: 0.18, ease: EASE_MORPH_IN },
-                  }}
-                >
-                  {currentValue}
-                </motion.span>
-              </AnimatePresence>
+              {isMobile ? (
+                // Mobile: AnimatePresence mode='wait', kein blur in transition
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={currentValue}
+                    className={`${styles.number} ${mobileWeightClass}`}
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -6 }}
+                    transition={{
+                      opacity: { duration: 0.14, ease: EASE_MORPH_IN },
+                      y: { duration: 0.16, ease: EASE_MORPH_IN },
+                    }}
+                  >
+                    {currentValue}
+                  </motion.span>
+                </AnimatePresence>
+              ) : (
+                // Desktop: popLayout mit blur-transitions
+                <AnimatePresence mode="popLayout" initial={false}>
+                  <motion.span
+                    key={currentValue}
+                    className={styles.number}
+                    style={
+                      reduced
+                        ? { fontVariationSettings: `'wght' 400` }
+                        : { fontVariationSettings: wghtString }
+                    }
+                    initial={{ opacity: 0, y: 8, filter: 'blur(6px)' }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{ opacity: 0, y: -8, filter: 'blur(6px)' }}
+                    transition={{
+                      opacity: { duration: 0.18, ease: EASE_MORPH_IN },
+                      y: { duration: 0.22, ease: EASE_MORPH_IN },
+                      filter: { duration: 0.18, ease: EASE_MORPH_IN },
+                    }}
+                  >
+                    {currentValue}
+                  </motion.span>
+                </AnimatePresence>
+              )}
             </div>
             <motion.span
               className={styles.unit}
@@ -441,12 +553,17 @@ export function HeroLanding() {
           style={
             reduced
               ? { opacity: 0 }
-              : {
-                  opacity: headlineLayerOpacity,
-                  clipPath: headlineClipPath,
-                  scale: headlineSettleScale,
-                  y: headlineSettleY,
-                }
+              : isMobile
+                ? {
+                    // Mobile: opacity-fade statt clip-path + scale + y
+                    opacity: headlineOpacityMobile,
+                  }
+                : {
+                    opacity: headlineLayerOpacity,
+                    clipPath: headlineClipPath,
+                    scale: headlineSettleScale,
+                    y: headlineSettleY,
+                  }
           }
         >
           <motion.h2
@@ -454,11 +571,14 @@ export function HeroLanding() {
             style={
               reduced
                 ? { opacity: 0 }
-                : { opacity: headlineSettleOpacity }
+                : isMobile
+                  ? undefined
+                  : { opacity: headlineSettleOpacity }
             }
           >
-            {reduced
-              ? HEADLINE
+            {reduced || isMobile
+              ? // Reduced-motion und Mobile: ein einzelnes span, kein per-Char-Rendering
+                HEADLINE
               : headlineChars.map(({ char, index, charIndex }) => (
                   <HeadlineChar
                     key={`${char}-${index}`}
@@ -476,12 +596,18 @@ export function HeroLanding() {
           style={
             reduced
               ? { opacity: 1, y: 0, scale: 1, filter: 'blur(0)' }
-              : {
-                  opacity: taglineOpacity,
-                  y: taglineY,
-                  scale: taglineScale,
-                  filter: taglineFilter,
-                }
+              : isMobile
+                ? {
+                    // Mobile: nur opacity + y, kein scale, kein blur
+                    opacity: taglineOpacity,
+                    y: taglineY,
+                  }
+                : {
+                    opacity: taglineOpacity,
+                    y: taglineY,
+                    scale: taglineScale,
+                    filter: taglineFilter,
+                  }
           }
         >
           <h1 className={styles.tagline}>

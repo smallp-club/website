@@ -104,6 +104,23 @@
   grid-area: 1 / 1;
 }
 
+/* Mobile weight-stages — drei klassen statt kontinuierlicher axis-animation.
+   Kein font-variation-settings-Übergang auf Mobile: stufenlos-Axis ist
+   CPU-intensiv auf WebKit. Transition hier bewusst kurz (120ms) als
+   weicher klassen-switch. */
+.numberWeightLow {
+  font-variation-settings: 'wght' 200;
+  transition: font-variation-settings 120ms ease;
+}
+.numberWeightMid {
+  font-variation-settings: 'wght' 500;
+  transition: font-variation-settings 120ms ease;
+}
+.numberWeightHigh {
+  font-variation-settings: 'wght' 800;
+  transition: font-variation-settings 120ms ease;
+}
+
 .unit {
   font-family: var(--font-display);
   font-weight: var(--weight-light);
@@ -411,11 +428,18 @@
 }
 
 @media (max-width: 719px) {
+  /* Mobile: kürzere scroll-distanz — 500dvh statt 800dvh.
+     Sequenz dauert sonst subjektiv zu lange auf kleineren screens. */
+  .wrap {
+    height: 500dvh;
+  }
   .statement {
     font-size: clamp(40px, 11vw, 88px);
   }
   .statementLayer {
     padding: var(--space-5);
+    /* Mobile: kein scale/transform — nur opacity. will-change reduzieren. */
+    will-change: opacity;
   }
   .sticky {
     padding-left: var(--space-5);
@@ -426,6 +450,13 @@
   }
   .number {
     font-size: clamp(120px, 32vw, 200px);
+    /* Mobile: kein filter/transform animiert, nur opacity + font-variation via klassen.
+       will-change schlank halten damit WebKit weniger compositing-layer aufmacht. */
+    will-change: opacity;
+  }
+  .numberWrap {
+    /* Mobile: kein scale/filter auf numberWrap */
+    will-change: opacity;
   }
   .numberStack {
     min-width: 3ch;
@@ -460,8 +491,20 @@
   .headline {
     font-size: clamp(72px, 28vw, 200px);
   }
+  .headlineLayer {
+    /* Mobile: opacity-fade statt clip-path. will-change nur opacity. */
+    will-change: opacity;
+  }
+  .headlineChar {
+    /* Mobile: HeadlineChar wird gar nicht gerendert, aber als fallback. */
+    will-change: opacity;
+  }
   .tagline {
     font-size: clamp(40px, 14vw, 96px);
+  }
+  .taglineLayer {
+    /* Mobile: kein scale/filter animiert. */
+    will-change: opacity, transform;
   }
   .ruler {
     height: 60px;
