@@ -68,11 +68,11 @@
 }
 
 @media (max-width: 719px) {
-  /* Mobile: Obround sitzt voll sichtbar unter dem text, mit atem zum
-     text oben und zum maßband unten. Kein anschneiden mehr. */
+  /* Mobile: Obround mittig unter dem text mit atem zum statement (oben)
+     und zum maßband (unten). Kein anschneiden mehr. */
   .heroImageryLayer {
     place-content: end center;
-    padding-bottom: 12vh;
+    padding-bottom: 22vh;
   }
   .heroImagery {
     width: 64vw;
@@ -498,8 +498,10 @@
     font-size: clamp(40px, 11vw, 88px);
   }
   .statementLayer {
-    padding: var(--space-5);
-    /* Mobile: kein scale/transform — nur opacity. will-change reduzieren. */
+    /* Mobile: Statement sitzt oben in der oberen viewport-zone,
+       damit das obround darunter genug atemraum hat. */
+    padding: 14vh var(--space-5) var(--space-5);
+    place-content: start start;
     will-change: opacity;
   }
   .sticky {

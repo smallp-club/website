@@ -506,22 +506,17 @@ export function HeroLanding() {
           >
             <div className={styles.numberStack}>
               {isMobile ? (
-                // Mobile: AnimatePresence mode='wait', kein blur in transition
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={currentValue}
-                    className={`${styles.number} ${mobileWeightClass}`}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{
-                      opacity: { duration: 0.14, ease: EASE_MORPH_IN },
-                      y: { duration: 0.16, ease: EASE_MORPH_IN },
-                    }}
-                  >
-                    {currentValue}
-                  </motion.span>
-                </AnimatePresence>
+                // Mobile: plain span. AnimatePresence mode='wait' hat
+                // exit-animations queued und einzelne werte verschluckt —
+                // sahen aus als würden zahlen nicht hochzählen.
+                // Direkt rendern, react re-rendert bei setIdx, currentValue
+                // wechselt sichtbar bei jedem scroll-tick.
+                <span
+                  key={currentValue}
+                  className={`${styles.number} ${mobileWeightClass}`}
+                >
+                  {currentValue}
+                </span>
               ) : (
                 // Desktop: popLayout mit blur-transitions
                 <AnimatePresence mode="popLayout" initial={false}>
