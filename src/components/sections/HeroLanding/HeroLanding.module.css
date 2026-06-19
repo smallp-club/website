@@ -47,22 +47,23 @@
   max-width: 720px;
   aspect-ratio: 1.35 / 1;
   border-radius: var(--radius-pill);
-  /* Sand-Placeholder. Stand-in für echtes Bild im Brand-Farbraum
-     ohne Wellness-Drift — wird ersetzt. */
-  background:
-    radial-gradient(
-      ellipse at 35% 40%,
-      rgba(255, 255, 255, 0.55) 0%,
-      transparent 60%
-    ),
-    linear-gradient(
-      135deg,
-      #e9e2d1 0%,
-      #d6cab3 55%,
-      #b8ac91 100%
-    );
+  overflow: hidden;
   /* Rechts angeschnitten — ein Drittel läuft aus dem viewport raus */
   transform: translateX(32%);
+  /* Subtler Off-White-bg als platzhalter bevor das webp geladen ist —
+     vermeidet bg-jump beim ersten paint. */
+  background: var(--surface-sunken, #ece8dc);
+}
+
+.heroImagery picture,
+.heroImagery picture > img,
+.heroImageryImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Subjekt sitzt rechts unten im quellbild — leicht in den rahmen ziehen */
+  object-position: 60% 60%;
 }
 
 @media (max-width: 719px) {

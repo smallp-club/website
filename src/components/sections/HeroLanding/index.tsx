@@ -418,15 +418,32 @@ export function HeroLanding() {
   return (
     <section ref={ref} className={styles.wrap} aria-label="ankunft">
       <div className={styles.sticky}>
-        {/* ── Hero-Imagery — Brand-Anker hinter dem Statement, in Obround-Form
-            rechts angeschnitten. Aktuell Sand-Gradient als Placeholder.
-            Wird durch echtes Bildmotiv (Magnific oder Shooting) ersetzt. */}
+        {/* ── Hero-Imagery — Brand-Anker hinter dem Statement, in Obround-Form.
+            Responsive WebP-Set via picture/srcset, sizes synchronisiert
+            mit den CSS-widths (Desktop 60vw, Mobile 64vw).
+            Source liegt in public/imagery/_source/hero-anchor.png,
+            wird via `npm run optimize-imagery` neu komprimiert. */}
         <motion.div
           className={styles.heroImageryLayer}
           style={reduced ? { opacity: 0 } : { opacity: statementOpacity }}
           aria-hidden="true"
         >
-          <div className={styles.heroImagery} />
+          <div className={styles.heroImagery}>
+            <picture>
+              <source
+                type="image/webp"
+                srcSet="/imagery/hero-anchor-480w.webp 480w, /imagery/hero-anchor-768w.webp 768w, /imagery/hero-anchor-1280w.webp 1280w"
+                sizes="(max-width: 719px) 64vw, 60vw"
+              />
+              <img
+                src="/imagery/hero-anchor-1280w.webp"
+                alt=""
+                loading="eager"
+                decoding="async"
+                className={styles.heroImageryImg}
+              />
+            </picture>
+          </div>
         </motion.div>
 
         {/* ── Phase 0: MEGA-Statement als Einstieg */}
