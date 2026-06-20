@@ -224,7 +224,6 @@
 - [ ] **DSGVO-Audit** — Datenschutzerklärung benennt alle Drittdienste
 - [ ] **Brevo Email-Tracking deaktivieren** vor erstem Newsletter (Open/Click-Pixel sind anti-Brand)
 - [ ] **Stripe / Shopify** — vorerst nicht, kommt mit Shop in Phase 8
-- [ ] **OneDrive-Pfad-Problem lösen** — Repo aus `OneDrive-adessoGroup/` raus nach `~/Code/smallp-website`
 - [ ] **Steuerberater-Termin** (30 min, ~80–120€) — Bestätigung dass `/unterstuetzen` reine Verlinkung steuerlich neutral ist, schriftlich dokumentieren
 - [ ] **noindex entfernen** (Launch-Switch)
 - [ ] **Cloudflare Project Galileo** beantragen (mit Empfehlung von Bundesforum Männer)
@@ -335,7 +334,7 @@
 - **Bildmarke ist 2 Strokes** (Hodensack-Kreis + P-Stem mit gerundetem Ende) — Logo-Animationen müssen anatomisch korrekt sein
 - **Memory `project_logistics_doctrine.md`** — niemals eigene Logistik, Print-on-Demand für alles
 - **Eyebrows sind lowercase** (Brand-Voice durchgängig, nicht UPPERCASE-tracked)
-- **Dev-Workflow:** Webpack-Mode (`--webpack`) für Library/Preview wegen Turbopack-Routing-Bug, OneDrive-Pfad-Problem
+- **Dev-Workflow:** Repo seit 2026-06-20 unter `/Users/kethe.theermann/smallpclub` (raus aus OneDrive). Turbopack startet in 2,5s, HMR sauber, Build in 14s. Webpack-Fallback (`npx next dev --webpack`) nur noch als Notnagel.
 - **Newsletter ist OPT-IN beim Member-Login** (granularer Consent), kein Standalone-Subscribe-Flow
 - **Mail-Adressen:** hello@ = Kontakt + Reply-To, mit-glied@ = SMTP-Sender. NIEMALS kontakt@ oder noreply@
 - **Drei-Stufen-Moderation** für Erfahrungsberichte: Hard-Reject / Flag-High / Flag-Low / Pass (siehe MEMBER_SECURITY.md Linie 3)
