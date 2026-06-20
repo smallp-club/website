@@ -4,14 +4,16 @@
   height: 800dvh;
   background: var(--surface-bg);
   color: var(--text-strong);
-  overflow: clip;
+  /* WICHTIG: overflow visible, sonst bricht position: sticky.
+     Die einzelnen layer (.sticky) clippen selbst via overflow hidden. */
 }
 
 .sticky {
-  position: fixed;
+  /* position: sticky statt fixed — löst sich automatisch wenn der wrap
+     durchgescrollt ist, sodass nachfolgende sections (Recognition, Footer)
+     sichtbar werden. */
+  position: sticky;
   top: 0;
-  left: 0;
-  right: 0;
   height: 100dvh;
   display: flex;
   flex-direction: column;
