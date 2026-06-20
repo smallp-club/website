@@ -77,13 +77,25 @@ html {
 }
 
 body {
-  background-color: var(--spc-offwhite);
+  /* Body-bg = footer-bg (Dark Turquoise), damit der reveal-bereich
+     zwischen content-ende und footer-oberkante visuell seamless ist. */
+  background-color: var(--surface-deep);
   color: var(--spc-black);
   font-family: var(--font-body);
   font-size: var(--text-body-md);
   line-height: var(--leading-relaxed);
   min-height: 100dvh;
   overflow-x: hidden;
+}
+
+/* Footer-Reveal-Pattern: SiteFooter ist position: fixed; bottom: 0; z-index: 0.
+   Main wird darüber gelegt (z-index: 1) mit opaque off-white bg und margin-bottom
+   100dvh — sodass beim scrollen am ende der footer „aufgedeckt" wird. */
+main {
+  position: relative;
+  z-index: 1;
+  background-color: var(--spc-offwhite);
+  margin-bottom: 100dvh;
 }
 
 a {
