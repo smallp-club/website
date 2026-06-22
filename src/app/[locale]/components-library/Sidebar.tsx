@@ -28,6 +28,7 @@ const sections: NavSection[] = [
     items: [
       { name: 'Layout',          href: '/components-library/primitives/layout',           status: 'available' },
       { name: 'Typo',            href: '/components-library/primitives/typo',             status: 'available' },
+      { name: 'Brand',           href: '/components-library/primitives/brand',           status: 'available' },
       { name: 'Skip To Content', href: '/components-library/primitives/skip-to-content', status: 'available' },
       { name: 'Button',          href: '/components-library/primitives/button',          status: 'available' },
       { name: 'Input',           href: '/components-library/primitives/input',           status: 'available' },

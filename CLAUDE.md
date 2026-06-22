@@ -45,6 +45,7 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 5. Security ist nicht optional — sensibles Thema
 6. Shopify-Architektur vorbereiten, aber erst nach Launch anbinden
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
+8. **Library-Doktrin:** Reuse-First. Vor jedem Build → erst Library prüfen, ob schon vorhanden. Neue Library-Komponenten sind props-getrieben, mobile-first, a11y-baseline (kein Audit am Ende), token-getrieben, korrekt benannt + dokumentiert. Standard: @docs/tech/COMPONENT_LIBRARY_STANDARD.md
 
 ## Stand (2026-06-19, Session 12 — 404-Seite manifestiert)
 

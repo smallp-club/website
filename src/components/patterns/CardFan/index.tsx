@@ -8,7 +8,7 @@ import {
   useSpring,
   useReducedMotion,
 } from 'framer-motion';
-import { ChevronArrow } from '@/components/primitives/ChevronArrow';
+import { ChevronArrow } from '@/components/icons/ChevronArrow';
 import { EASE_OUT } from '@/lib/motion';
 import styles from './CardFan.module.css';
 

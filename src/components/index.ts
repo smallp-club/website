@@ -12,7 +12,6 @@
 
 // Primitives
 export { SkipToContent } from './primitives/SkipToContent';
-export { ChevronArrow } from './primitives/ChevronArrow';
 export { Container } from './primitives/Container';
 export type { ContainerProps, ContainerWidth } from './primitives/Container';
 export { Section } from './primitives/Section';
