@@ -1,0 +1,82 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+  max-width: 60ch;
+}
+
+.number {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  color: var(--text-on-inverse);
+}
+
+.numberValue {
+  font-family: var(--font-display);
+  font-weight: var(--weight-extralight);
+  font-size: clamp(120px, 22vw, 240px);
+  line-height: 0.85;
+  letter-spacing: var(--tracking-display);
+  font-variant-numeric: tabular-nums;
+}
+
+.numberUnit {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(20px, 2.4vw, 28px);
+  line-height: 1;
+  letter-spacing: var(--tracking-tight);
+  color: var(--spc-stone);
+}
+
+.lead {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(28px, 4vw, 48px);
+  line-height: 1.1;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-on-inverse);
+  margin: 0;
+  max-width: 22ch;
+  text-wrap: balance;
+}
+
+.punchline {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: clamp(20px, 2.4vw, 28px);
+  line-height: 1.2;
+  color: var(--spc-stone);
+  margin: 0;
+}
+
+.source {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--spc-stone);
+  margin: 0;
+  font-feature-settings: 'tnum' 1, 'onum' 1;
+}
+
+.source cite {
+  font-style: italic;
+}
+
+.sourceN {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 768px) {
+  .stack {
+    gap: var(--space-6);
+  }
+  .numberValue {
+    font-size: clamp(96px, 28vw, 160px);
+  }
+  .lead {
+    font-size: clamp(22px, 6vw, 32px);
+  }
+}
