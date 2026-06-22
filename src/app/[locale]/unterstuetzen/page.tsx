@@ -1,26 +1,71 @@
-import { PageStub } from '@/components/PageStub';
+import { Section } from '@/components/primitives/Section';
+import { Container } from '@/components/primitives/Container';
+import { Stack } from '@/components/primitives/Stack';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Heading } from '@/components/primitives/Heading';
+import { Body } from '@/components/primitives/Body';
+import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
-  title: 'unterstuetzen. — small p club',
-  description: 'wir nehmen keine spenden direkt an. wir verweisen direkt auf zwei gemeinnützige orgs.',
+  title: 'unterstützen. — small p club',
+  description: 'spenden gehen direkt an die, die die arbeit machen. wir nehmen kein geld an.',
 };
 
 export default function UnterstuetzenPage() {
   return (
-    <PageStub
-      eyebrow="weitergeben"
-      title="wir nehmen kein geld."
-      lead="spenden gehen direkt an die, die die arbeit machen. wir verweisen auf zwei kuratierte gemeinnützige orgs. geld fließt nie über uns."
-      skeleton={[
-        { label: 'eyebrow plus h1', meta: '„weitergeben" als eyebrow, h1 „wir nehmen kein geld."' },
-        { label: 'haltungsaussage', meta: '„spenden gehen direkt an die, die die arbeit machen. wir tauchen in deiner überweisung nicht auf."' },
-        { label: 'empfänger-karte 1: bundesforum männer', meta: 'politische arbeit zu männlichkeit, progressiv, berlin, bundesweit. logo plus haltungs-statement plus ausgehender link mit no-referrer' },
-        { label: 'empfänger-karte 2: lag jungen*arbeit nrw', meta: 'strukturelle arbeit zu männlichkeitsbildern, säkular, queer-inklusiv, dortmund, ruhrgebiet' },
-        { label: 'transparenz-statement', meta: '„bei uns gibt es keine spenden-bilanz. wir leiten nichts weiter, also gibt es auch nichts zu berichten."' },
-        { label: 'sitefooter', meta: 'standard' },
-      ]}
-      phase="kommt nach phase 4. erst empfänger-outreach (mail an beide orgs für freigabe), dann content. blockiert nicht den launch."
-      note="ausgehende links mit rel='noopener noreferrer' und referrerpolicy='no-referrer'. kein utm-tracking. datenschutz-erklärung erweitert um outbound-hinweis."
-    />
+    <main id="main-content">
+      <Section tone="light" rhythm="standard" aria-label="unterstützen hero">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>unterstützen</Eyebrow>
+            <Heading level={1} variant="display">spenden gehen direkt an die, die die arbeit machen.</Heading>
+            <Body>wir nehmen kein geld an. wir zeigen nur den weg. selbst-beschränkung ist die brand.</Body>
+            <Caption tone="muted" as="p">brand-statement aus FUNDING_CONCEPT.md, finalisiert 2026-06-16.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="warum direkt">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>warum so</Eyebrow>
+            <Heading level={2} variant="lede">wir verkaufen sticker, das reicht uns.</Heading>
+            <Body>männergesundheit als feld braucht mehr als eine awareness-seite. die orgs unten machen seit jahren die strukturelle arbeit. wir haben reichweite, sie haben infrastruktur.</Body>
+            <Caption tone="muted" as="p">pass-through-modell verworfen wegen UWG- und steuer-risiko.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="empfänger">
+        <Container width="default">
+          <Stack gap={4}>
+            <Eyebrow>empfänger</Eyebrow>
+            <Heading level={2} variant="lede">zwei kuratierte organisationen.</Heading>
+            <Body>bundesforum männer (bundesweit politisch, berlin) — und LAG jungen*arbeit nrw (lokal strukturell, dortmund). säkular, queer-inklusiv, gemeinnützig. spendenquittung jeweils direkt von der org.</Body>
+            <Caption tone="muted" as="p">zwei karten-block. logo-freigabe nach outreach-mails (kommt nach landing-launch).</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="was wir nicht bekommen">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>was wir davon haben</Eyebrow>
+            <Heading level={2} variant="lede">nichts direktes. das ist der punkt.</Heading>
+            <Body>die orgs bekommen planungssicherheit. du bekommst, dass dein geld ankommt. wir sind die brücke.</Body>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="kein anzeichen">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>kein zähler, keine quittung</Eyebrow>
+            <Heading level={2} variant="lede">bei uns gibt es keine spenden-bilanz.</Heading>
+            <Body>wir leiten nichts weiter, also gibt es nichts zu berichten. die orgs sind selbst transparent. schau dir ihre jahresberichte an.</Body>
+          </Stack>
+        </Container>
+      </Section>
+    </main>
   );
 }

@@ -1,29 +1,61 @@
-import { PageStub } from '@/components/PageStub';
+import { Section } from '@/components/primitives/Section';
+import { Container } from '@/components/primitives/Container';
+import { Stack } from '@/components/primitives/Stack';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Heading } from '@/components/primitives/Heading';
+import { Body } from '@/components/primitives/Body';
+import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
-  title: 'essay. — small p club',
-  description: 'editorial-essay aus dem small p club magazin.',
+  title: 'magazin · essay. — small p club',
+  description: 'ein essay aus dem magazin.',
   robots: { index: false, follow: false },
 };
 
-export default function MagazinDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default function MagazinEssayPage() {
   return (
-    <PageStub
-      eyebrow="magazin · essay"
-      title="ein essay."
-      lead="editorial-artikel-template angewendet auf magazin-essays. langform, voice beobachtend-essayistisch. kein member-zitat (das gibt es nur in mythen-detail-pages)."
-      skeleton={[
-        { label: 'editorial-hero (editorial-titel-block)', meta: 'kein mythos-reveal hier, sondern direkter titel mit eyebrow und datum' },
-        { label: 'mdx-inhalt (prose 60 zeichen-breit)', meta: '600 bis 1200 wörter. zwischen-titel, inline-links, optional zitate' },
-        { label: 'quellen-liste', meta: 'optional, wenn der essay fakten zitiert' },
-        { label: 'weiterlesen', meta: '2 bis 3 kuratierte verwandte essays oder mythen (cross-typ erlaubt)' },
-      ]}
-      phase="kommt mit phase 4 (section-build) und content-pass."
-      note={'rhythmus nach launch: ein essay pro monat. autor-default „small p club", pseudonyme erlaubt, klartextnamen mit aktivem ok.'}
-    />
+    <main id="main-content">
+      <Section tone="light" rhythm="standard" aria-label="essay hero">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>magazin · essay</Eyebrow>
+            <Heading level={1} variant="display">ein essay.</Heading>
+            <Body>editorial-hero mit eyebrow, headline, kurzem teaser. autor optional (default „small p club"), pseudonym erlaubt für persönliche stücke.</Body>
+            <Caption tone="muted" as="p">essay-text kommt mit dem schreib-pass.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="essay body">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>fließtext</Eyebrow>
+            <Heading level={2} variant="lede">prose, 60 zeichen breit.</Heading>
+            <Body>mdx-content mit zwischen-titeln, inline-links zu mythen, source-references. typografie wie ein gedrucktes magazin, kein web-listicle-rhythmus.</Body>
+            <Caption tone="muted" as="p">mdx-pipeline kommt mit phase 4 (section-build).</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="quellen">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>quellen</Eyebrow>
+            <Heading level={2} variant="lede">am ende, nicht im weg.</Heading>
+            <Body>structured-data-liste (autor, journal, jahr, n-zahl). für essays meist weniger als bei mythen, aber spezifisch zitiert wo es zählt.</Body>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="weiterlesen">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>weiterlesen</Eyebrow>
+            <Heading level={2} variant="lede">zwei verwandte mythen, ein anderer essay.</Heading>
+            <Body>kuratiert. keine empfehlungs-engine, kein „beliebt"-zähler.</Body>
+          </Stack>
+        </Container>
+      </Section>
+    </main>
   );
 }

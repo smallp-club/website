@@ -1,4 +1,10 @@
-import { PageStub } from '@/components/PageStub';
+import { Section } from '@/components/primitives/Section';
+import { Container } from '@/components/primitives/Container';
+import { Stack } from '@/components/primitives/Stack';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Heading } from '@/components/primitives/Heading';
+import { Body } from '@/components/primitives/Body';
+import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
   title: 'mythen. — small p club',
@@ -7,18 +13,38 @@ export const metadata = {
 
 export default function MythenListePage() {
   return (
-    <PageStub
-      eyebrow="mythen · liste"
-      title="mythen."
-      lead="die fakten-bibliothek. sechs mythen zum launch, vertikaler karten-stapel. jeder eintrag verlinkt auf eine eigene detail-seite mit fakt und quelle."
-      skeleton={[
-        { label: 'eyebrow plus heading', meta: 'chillax light, schlanker hero' },
-        { label: 'cardfan (slot)', meta: 'vertikaler karten-stapel, sechs einträge zum launch, ein mythos pro karte mit teaser-text und „angeblich."-präfix' },
-        { label: 'optional: such-zeile am ende', meta: 'erst wenn liste größer als 12 einträge wächst' },
-        { label: 'sitefooter', meta: 'voll mit voice-nav und verb-pärchen' },
-      ]}
-      phase="kommt mit phase 4 (section-build) und content-pass (kevin schreibt die sechs mythen)."
-      note="die liste nutzt das index-listen-template, gleich wie /magazin und /partner. unterschiede nur in voice-modus und mdx-frontmatter."
-    />
+    <main id="main-content">
+      <Section tone="light" rhythm="standard" aria-label="mythen hero">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>mythen</Eyebrow>
+            <Heading level={1} variant="display">die fakten-bibliothek.</Heading>
+            <Body>sechs mythen zum launch. jeder eintrag eine eigene detail-seite mit fakt, quelle und einordnung.</Body>
+            <Caption tone="muted" as="p">voller hero kommt mit content-pass.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="mythen übersicht">
+        <Container width="default">
+          <Stack gap={4}>
+            <Eyebrow>übersicht</Eyebrow>
+            <Heading level={2} variant="lede">sechs mythen, vertikaler karten-stapel.</Heading>
+            <Body>cardfan-pattern aus der library. jede karte ein mythos-teaser mit inline-präfix „angeblich.", klick führt zur detail-seite.</Body>
+            <Caption tone="muted" as="p">cardfan-instanz kommt sobald die sechs mythen geschrieben sind.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="rhythmus">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>rhythmus</Eyebrow>
+            <Heading level={2} variant="lede">ein mythos pro quartal.</Heading>
+            <Body>kein content-druck. wenn die quelle solide ist, kommt der mythos. nicht früher.</Body>
+          </Stack>
+        </Container>
+      </Section>
+    </main>
   );
 }

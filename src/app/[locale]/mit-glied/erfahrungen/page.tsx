@@ -1,25 +1,51 @@
-import { PageStub } from '@/components/PageStub';
+import { Section } from '@/components/primitives/Section';
+import { Container } from '@/components/primitives/Container';
+import { Stack } from '@/components/primitives/Stack';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Heading } from '@/components/primitives/Heading';
+import { Body } from '@/components/primitives/Body';
+import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
-  title: 'erfahrungen. — mit-glied',
+  title: 'erfahrungen. — small p club',
+  description: 'eigene erfahrungsberichte im member-bereich.',
   robots: { index: false, follow: false },
 };
 
-export default function ErfahrungenPage() {
+export default function ErfahrungenListePage() {
   return (
-    <PageStub
-      eyebrow="mit-glied · erfahrungen"
-      title="eigene erfahrungen."
-      lead="übersicht deiner eingereichten erfahrungsberichte. status: pending, approved, rejected. neue berichte einreichen über das form."
-      skeleton={[
-        { label: 'member-header', meta: 'pseudonym-pille' },
-        { label: 'eyebrow plus h1', meta: '„eigene erfahrungen." plus „was du eingereicht hast"' },
-        { label: 'eigene berichte liste', meta: 'pro eintrag: prompt-marker, kurz-zitat, status-marker (pending, approved, rejected, ohne grund-anzeige)' },
-        { label: 'cta: neuen bericht einreichen', meta: 'führt auf /mit-glied/erfahrungen/neu' },
-        { label: 'member-footer', meta: 'standard' },
-      ]}
-      phase="kommt mit phase 5 (member-bereich pre-launch-pflicht)."
-      note="datenquelle: supabase stories tabelle mit rls (user sieht nur eigene). status-voice: ohne grund-anzeige, sonst beschämungs-energie."
-    />
+    <main id="main-content">
+      <Section tone="light" rhythm="standard" aria-label="erfahrungen hero">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>mit-glied · erfahrungen</Eyebrow>
+            <Heading level={1} variant="display">deine berichte.</Heading>
+            <Body>was du eingereicht hast — status pending, approved oder rejected. kein „nächster bericht"-button, kein engagement-loop. brand-stille.</Body>
+            <Caption tone="muted" as="p">supabase-rls liefert nur deine eigenen rows.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="bericht einreichen">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>neu</Eyebrow>
+            <Heading level={2} variant="lede">bericht einreichen.</Heading>
+            <Body>fünf prompts zur auswahl, dann fließtext (80 bis 1500 zeichen). pseudonym wird mit-gespeichert, alter-range optional.</Body>
+            <Caption tone="muted" as="p">link zum form-flow unter /mit-glied/erfahrungen/neu.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="public-wall hinweis">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>was public ist</Eyebrow>
+            <Heading level={2} variant="lede">approved-berichte landen auf /stimmen.</Heading>
+            <Body>kuratiert durch kevin nach drei-stufen-moderation. dein pseudonym erscheint, dein name nicht.</Body>
+          </Stack>
+        </Container>
+      </Section>
+    </main>
   );
 }

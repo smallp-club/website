@@ -1,25 +1,41 @@
-import { PageStub } from '@/components/PageStub';
+import { Section } from '@/components/primitives/Section';
+import { Container } from '@/components/primitives/Container';
+import { Stack } from '@/components/primitives/Stack';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Heading } from '@/components/primitives/Heading';
+import { Body } from '@/components/primitives/Body';
+import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
-  title: 'post. — mit-glied',
+  title: 'post. — small p club',
+  description: 'newsletter-archiv. alles, was wir je geschickt haben.',
   robots: { index: false, follow: false },
 };
 
 export default function PostPage() {
   return (
-    <PageStub
-      eyebrow="mit-glied · post"
-      title="newsletter-archiv."
-      lead="alle bisherigen newsletter dauerhaft abrufbar. sortierbar, suchbar. auch für später beigetretene."
-      skeleton={[
-        { label: 'member-header', meta: 'pseudonym-pille' },
-        { label: 'eyebrow plus h1', meta: '„newsletter-archiv." plus „alles was wir je geschickt haben."' },
-        { label: 'archiv-liste', meta: 'newsletter nach datum sortiert, mit teaser-zeile und betreff' },
-        { label: 'newsletter-detail (sub-route)', meta: 'voller newsletter-inhalt als mdx oder html, brand-formatiert' },
-        { label: 'member-footer', meta: 'standard' },
-      ]}
-      phase="kommt mit phase 5b (member-launch-inhalt)."
-      note="datenquelle: brevo api oder mdx-duplikate. kein fomo für spät-beigetretene — wer reinkommt, kann nachholen."
-    />
+    <main id="main-content">
+      <Section tone="light" rhythm="standard" aria-label="post hero">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>mit-glied · post</Eyebrow>
+            <Heading level={1} variant="display">alles, was wir je geschickt haben.</Heading>
+            <Body>kein fomo für spät-beigetretene. wer reinkommt, kann nachholen.</Body>
+            <Caption tone="muted" as="p">daten-pull aus brevo-archiv oder mdx-mirror.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="newsletter-liste">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>archiv</Eyebrow>
+            <Heading level={2} variant="lede">chronologisch, suchbar, klein.</Heading>
+            <Body>liste mit datum, betreff, ersten zwei zeilen. klick öffnet den vollen newsletter im member-bereich, nicht als externer brevo-link.</Body>
+            <Caption tone="muted" as="p">erste drei newsletter zum launch (kevin seedet manuell).</Caption>
+          </Stack>
+        </Container>
+      </Section>
+    </main>
   );
 }

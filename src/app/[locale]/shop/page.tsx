@@ -1,4 +1,10 @@
-import { PageStub } from '@/components/PageStub';
+import { Section } from '@/components/primitives/Section';
+import { Container } from '@/components/primitives/Container';
+import { Stack } from '@/components/primitives/Stack';
+import { Eyebrow } from '@/components/primitives/Eyebrow';
+import { Heading } from '@/components/primitives/Heading';
+import { Body } from '@/components/primitives/Body';
+import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
   title: 'shop. — small p club',
@@ -7,19 +13,49 @@ export const metadata = {
 
 export default function ShopPage() {
   return (
-    <PageStub
-      eyebrow="shop · launch phase 8"
-      title="trag die haltung."
-      lead="sticker und kleidung. print-on-demand mit direkt-versand, keine eigene logistik. kommt mit dem shop, nicht zum launch der seite."
-      skeleton={[
-        { label: 'hero · trag-die-haltung-claim', meta: 'chillax-extralight, off-white, ein bild-anker' },
-        { label: 'produkt-grid · sticker + kleidung', meta: 'shopify storefront api, kein zeit-druck' },
-        { label: 'größentabelle für kleidung', meta: 'gender-neutral, eu + us + uk-größen' },
-        { label: 'versandhinweis', meta: 'print-on-demand-anbieter sichtbar, lieferzeit ehrlich' },
-        { label: 'sitefooter', meta: 'voll mit voice-nav und verb-pärchen' },
-      ]}
-      phase="kommt mit phase 8 (post-launch). bis dahin: keine produkte, keine paywall, keine ankündigung."
-      note="vorkaufsrecht für mit-glieder läuft über mail-mechanik (48 stunden vor public-drop), nicht als ui-banner."
-    />
+    <main id="main-content">
+      <Section tone="light" rhythm="standard" aria-label="shop hero">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>shop · launch phase 8</Eyebrow>
+            <Heading level={1} variant="display">trag die haltung.</Heading>
+            <Body>sticker und kleidung kommen mit dem shop. print-on-demand mit direkt-versand, keine eigene logistik. kein „kauf jetzt" — ein artefakt zum tragen.</Body>
+            <Caption tone="muted" as="p">shopify storefront api, post-launch. bis dahin nur diese route.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="produkt-grid">
+        <Container width="default">
+          <Stack gap={4}>
+            <Eyebrow>produkte</Eyebrow>
+            <Heading level={2} variant="lede">sticker zuerst, kleidung danach.</Heading>
+            <Body>karten-grid, jedes produkt mit klarem preis und liefer-info. keine cross-selling-banner, kein abandoned-cart-pop-up.</Body>
+            <Caption tone="muted" as="p">produkt-pull aus shopify, ISR mit 24h-revalidate.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="größentabelle">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>größen</Eyebrow>
+            <Heading level={2} variant="lede">gender-neutral, eu plus us plus uk.</Heading>
+            <Body>einmal-tabelle für alle kleidungs-produkte. brand-konsistent ruhig, keine drama-illustrationen.</Body>
+          </Stack>
+        </Container>
+      </Section>
+
+      <Section tone="light" rhythm="standard" aria-label="versandhinweis">
+        <Container width="prose">
+          <Stack gap={4}>
+            <Eyebrow>versand</Eyebrow>
+            <Heading level={2} variant="lede">print-on-demand-anbieter sichtbar, lieferzeit ehrlich.</Heading>
+            <Body>wer produziert was, wo wird verschickt, wie lange dauert es. kein hidden-fee, kein „kostenloser versand"-trick.</Body>
+            <Caption tone="muted" as="p">vorkaufsrecht für mit-glieder läuft über mail-mechanik, nicht als ui-banner.</Caption>
+          </Stack>
+        </Container>
+      </Section>
+    </main>
   );
 }
