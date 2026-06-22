@@ -20,7 +20,7 @@ export default function ErfahrungenListePage() {
           <Stack gap={4}>
             <Eyebrow>mit-glied · erfahrungen</Eyebrow>
             <Heading level={1} variant="display">deine berichte.</Heading>
-            <Body>was du eingereicht hast — status pending, approved oder rejected. kein „nächster bericht"-button, kein engagement-loop. brand-stille.</Body>
+            <Body>was du eingereicht hast, status pending, approved oder rejected. kein „nächster bericht"-button, kein engagement-loop. brand-stille.</Body>
             <Caption tone="muted" as="p">supabase-rls liefert nur deine eigenen rows.</Caption>
           </Stack>
         </Container>

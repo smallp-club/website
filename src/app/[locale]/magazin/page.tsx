@@ -20,7 +20,7 @@ export default function MagazinListePage() {
             <Eyebrow>magazin</Eyebrow>
             <Heading level={1} variant="display">lange texte. lesbarer ton.</Heading>
             <Body>essays von 600 bis 1.200 wörtern. keine listicles, keine „fünf tipps". einer pro spur zum launch.</Body>
-            <Caption tone="muted" as="p">voller hero kommt mit content-pass.</Caption>
+            <Caption tone="muted" as="p">voller hero kommt mit dem schreib-pass.</Caption>
           </Stack>
         </Container>
       </Section>
@@ -31,7 +31,7 @@ export default function MagazinListePage() {
             <Eyebrow>zum launch</Eyebrow>
             <Heading level={2} variant="lede">drei essays. einer pro spur.</Heading>
             <Body>kulturkritik (warum das thema seit jahrzehnten tabu ist), psychologie (spectatoring, locker-room-syndrom), persönlich-essayistisch (aufwachsen mit dem druck).</Body>
-            <Caption tone="muted" as="p">karten-grid erscheint mit den ersten drei essays.</Caption>
+            <Caption tone="muted" as="p">karten-grid kommt mit dem schreib-pass.</Caption>
           </Stack>
         </Container>
       </Section>

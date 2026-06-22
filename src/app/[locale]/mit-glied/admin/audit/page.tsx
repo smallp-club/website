@@ -18,7 +18,7 @@ export default function AdminAuditPage() {
       <Section tone="light" rhythm="standard" aria-label="audit hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>mit-glied · admin · audit</Eyebrow>
+            <Eyebrow>admin · audit</Eyebrow>
             <Heading level={1} variant="display">audit-log.</Heading>
             <Body>letzte 100 aktionen mit timestamp, admin-id, action-typ (approve, reject, ban, unban, role-change), target.</Body>
             <Caption tone="muted" as="p">read-only, append-only. supabase-table admin_audit_log mit index auf created_at desc.</Caption>
@@ -40,7 +40,7 @@ export default function AdminAuditPage() {
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>einträge</Eyebrow>
-            <Heading level={2} variant="lede">zeile pro aktion, jung-zuerst.</Heading>
+            <Heading level={2} variant="lede">zeile pro aktion, neueste zuerst.</Heading>
             <Body>kein bearbeiten, kein löschen. transparenz ist der ganze sinn.</Body>
           </Stack>
         </Container>

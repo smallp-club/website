@@ -20,7 +20,7 @@ export default function MitGliedPage() {
             <Eyebrow>mit-glied</Eyebrow>
             <Heading level={1} variant="display">mit-glied. auch ohne-glied.</Heading>
             <Body>kein abo, kein passwort, kein konto. eine mail genügt. magic-link kommt rein, klick, drin.</Body>
-            <Caption tone="muted" as="p">brand-statement aus VOICE.md, kommt mit content-pass.</Caption>
+            <Caption tone="muted" as="p">brand-statement aus VOICE.md, voller hero kommt mit dem schreib-pass.</Caption>
           </Stack>
         </Container>
       </Section>
@@ -52,7 +52,7 @@ export default function MitGliedPage() {
             <Eyebrow>loslegen</Eyebrow>
             <Heading level={2} variant="lede">email, magic-link, fertig.</Heading>
             <Body>form-block mit cloudflare-turnstile, disposable-email-block, optionaler newsletter-opt-in-checkbox (granularer consent).</Body>
-            <Caption tone="muted" as="p">magic-link-form kommt mit phase 5 (auth.js + all-inkl smtp).</Caption>
+            <Caption tone="muted" as="p">magic-link-form kommt mit phase 5.</Caption>
           </Stack>
         </Container>
       </Section>

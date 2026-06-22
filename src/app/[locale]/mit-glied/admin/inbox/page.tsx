@@ -18,7 +18,7 @@ export default function AdminInboxPage() {
       <Section tone="light" rhythm="standard" aria-label="inbox hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>mit-glied · admin · inbox</Eyebrow>
+            <Eyebrow>admin · inbox</Eyebrow>
             <Heading level={1} variant="display">inbox.</Heading>
             <Body>liste der eingereichten erfahrungen. defaultsortierung: flag-high zuerst, dann nach datum. filter nach status (pending, approved, rejected) und flags.</Body>
             <Caption tone="muted" as="p">supabase-rls mit role=admin policy, keine status-leaks.</Caption>

@@ -20,7 +20,7 @@ export default function PostPage() {
           <Stack gap={4}>
             <Eyebrow>mit-glied · post</Eyebrow>
             <Heading level={1} variant="display">alles, was wir je geschickt haben.</Heading>
-            <Body>kein fomo für spät-beigetretene. wer reinkommt, kann nachholen.</Body>
+            <Body>wer später kommt, kann nachlesen. nichts ist weg.</Body>
             <Caption tone="muted" as="p">daten-pull aus brevo-archiv oder mdx-mirror.</Caption>
           </Stack>
         </Container>

@@ -32,7 +32,7 @@ export default function KellerPage() {
             <Eyebrow>filter</Eyebrow>
             <Heading level={2} variant="lede">kategorie, jahr, studientyp.</Heading>
             <Body>vier kategorien (anatomie, psychologie, gesellschaft, DACH). filter-toggle als chip-row, kein dropdown-overlay.</Body>
-            <Caption tone="muted" as="p">filter-mechanik kommt mit phase 5 (klein gehalten).</Caption>
+            <Caption tone="muted" as="p">filter-mechanik kommt mit phase 5.</Caption>
           </Stack>
         </Container>
       </Section>

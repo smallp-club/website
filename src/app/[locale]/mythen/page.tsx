@@ -20,7 +20,7 @@ export default function MythenListePage() {
             <Eyebrow>mythen</Eyebrow>
             <Heading level={1} variant="display">die fakten-bibliothek.</Heading>
             <Body>sechs mythen zum launch. jeder eintrag eine eigene detail-seite mit fakt, quelle und einordnung.</Body>
-            <Caption tone="muted" as="p">voller hero kommt mit content-pass.</Caption>
+            <Caption tone="muted" as="p">voller hero kommt mit dem schreib-pass.</Caption>
           </Stack>
         </Container>
       </Section>
@@ -30,8 +30,8 @@ export default function MythenListePage() {
           <Stack gap={4}>
             <Eyebrow>übersicht</Eyebrow>
             <Heading level={2} variant="lede">sechs mythen, vertikaler karten-stapel.</Heading>
-            <Body>cardfan-pattern aus der library. jede karte ein mythos-teaser mit inline-präfix „angeblich.", klick führt zur detail-seite.</Body>
-            <Caption tone="muted" as="p">cardfan-instanz kommt sobald die sechs mythen geschrieben sind.</Caption>
+            <Body>jede karte ein mythos-teaser mit inline-präfix „angeblich.", klick führt zur detail-seite.</Body>
+            <Caption tone="muted" as="p">cardfan-pattern aus der library, kommt mit dem schreib-pass.</Caption>
           </Stack>
         </Container>
       </Section>

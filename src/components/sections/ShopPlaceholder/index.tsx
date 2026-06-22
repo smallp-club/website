@@ -21,7 +21,7 @@ export function ShopPlaceholder() {
           <h2 className={styles.headline}>trag die haltung.</h2>
           <p className={styles.body}>
             sticker und kleidung kommen mit dem shop. print-on-demand, direkt-versand,
-            keine eigene logistik. kein „kauf jetzt" — ein artefakt zum tragen.
+            keine eigene logistik. kein „kauf jetzt", ein artefakt zum tragen.
           </p>
           <div className={styles.placeholder} aria-hidden="true" />
         </div>

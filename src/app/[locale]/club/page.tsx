@@ -40,7 +40,7 @@ export default function ClubPage() {
               die erkenntnis: das thema bleibt seit der jugend mit den meisten und niemand sagt was.
             </Body>
             <Caption tone="muted" as="p">
-              voller origin-text kommt mit dem content-pass.
+              voller origin-text kommt mit dem schreib-pass.
             </Caption>
           </Stack>
         </Container>
@@ -59,7 +59,7 @@ export default function ClubPage() {
               die sagt: du bist gut so wie du bist.
             </Body>
             <Caption tone="muted" as="p">
-              voller mission-text kommt mit dem content-pass.
+              voller mission-text kommt mit dem schreib-pass.
             </Caption>
           </Stack>
         </Container>
@@ -78,7 +78,7 @@ export default function ClubPage() {
               wir reden darüber. das ist die ganze methode.
             </Body>
             <Caption tone="muted" as="p">
-              die vollständige abgrenzungs-liste kommt mit dem content-pass.
+              die vollständige abgrenzungs-liste kommt mit dem schreib-pass.
             </Caption>
           </Stack>
         </Container>
@@ -96,7 +96,7 @@ export default function ClubPage() {
               wer dazukommt, taucht hier auf. mit vorname und einem satz rolle. mehr nicht.
             </Body>
             <Caption tone="muted" as="p">
-              team-block erscheint sobald jemand dazukommt.
+              solo bleibt solo, bis nicht mehr.
             </Caption>
           </Stack>
         </Container>

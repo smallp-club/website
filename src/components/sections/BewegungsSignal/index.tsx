@@ -24,7 +24,7 @@ export function BewegungsSignal() {
             das denken mehr menschen, als du denkst.
           </p>
           <h2 className={styles.headline}>
-            werde mit-glied. auch ohne-glied.
+            mit-glied. auch ohne-glied.
           </h2>
           <form
             className={styles.form}
@@ -40,7 +40,7 @@ export function BewegungsSignal() {
                 id="mit-glied-email"
                 name="email"
                 type="email"
-                placeholder="deine@email"
+                placeholder="du@email.de"
                 autoComplete="email"
                 required
               />

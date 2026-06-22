@@ -31,7 +31,8 @@ export default function WerkstattPage() {
           <Stack gap={4}>
             <Eyebrow>mythen · drafts</Eyebrow>
             <Heading level={2} variant="lede">was gerade entsteht.</Heading>
-            <Body>mdx-files mit frontmatter-flag <code>draft: true</code>. inklusive recherche-notizen, durchgestrichener sätze. kein read-tracking.</Body>
+            <Body>inklusive recherche-notizen, durchgestrichener sätze. kein read-tracking, kein „letzte position".</Body>
+            <Caption tone="muted" as="p">mdx-files mit frontmatter-flag <code>draft: true</code>.</Caption>
           </Stack>
         </Container>
       </Section>

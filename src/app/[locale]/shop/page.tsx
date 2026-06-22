@@ -17,9 +17,9 @@ export default function ShopPage() {
       <Section tone="light" rhythm="standard" aria-label="shop hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>shop · launch phase 8</Eyebrow>
+            <Eyebrow>shop</Eyebrow>
             <Heading level={1} variant="display">trag die haltung.</Heading>
-            <Body>sticker und kleidung kommen mit dem shop. print-on-demand mit direkt-versand, keine eigene logistik. kein „kauf jetzt" — ein artefakt zum tragen.</Body>
+            <Body>sticker und kleidung kommen mit dem shop. print-on-demand mit direkt-versand, keine eigene logistik. kein „kauf jetzt", ein artefakt zum tragen.</Body>
             <Caption tone="muted" as="p">shopify storefront api, post-launch. bis dahin nur diese route.</Caption>
           </Stack>
         </Container>

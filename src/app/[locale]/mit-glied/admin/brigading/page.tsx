@@ -18,7 +18,7 @@ export default function AdminBrigadingPage() {
       <Section tone="light" rhythm="standard" aria-label="brigading hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>mit-glied · admin · brigading</Eyebrow>
+            <Eyebrow>admin · brigading</Eyebrow>
             <Heading level={1} variant="display">brigading-quarantäne.</Heading>
             <Body>5-wort-shingle-fingerprint detection. wenn ein shingle drei mal innerhalb 24 stunden aus verschiedenen accounts auftaucht, geht die ganze welle in quarantäne.</Body>
             <Caption tone="muted" as="p">leer wenn keine welle aktiv. das ist der normalfall.</Caption>

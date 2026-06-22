@@ -20,7 +20,7 @@ export default function EingangPage() {
           <Stack gap={4}>
             <Eyebrow>eingang</Eyebrow>
             <Heading level={1} variant="display">du bist drin.</Heading>
-            <Body>chillax xl, off-white, sonst nichts. drei sekunden später erscheint ein pfeil nach unten — der führt zum onboarding-schritt 2.</Body>
+            <Body>chillax xl, off-white, sonst nichts. drei sekunden später erscheint ein pfeil nach unten. der führt zum onboarding-schritt 2.</Body>
             <Caption tone="muted" as="p">kein progress-indikator, kein „schritt 1 von 3", kein confetti.</Caption>
           </Stack>
         </Container>
@@ -32,7 +32,7 @@ export default function EingangPage() {
             <Eyebrow>pseudonym</Eyebrow>
             <Heading level={2} variant="lede">leser-xxxx, auto-vergeben.</Heading>
             <Body>vier alphanumerische zeichen, lowercase. wenn du anders heißen willst, klick. wenn nicht, klick auch nicht.</Body>
-            <Caption tone="muted" as="p">change-form kommt mit phase 5, supabase profiles-table.</Caption>
+            <Caption tone="muted" as="p">change-form kommt mit phase 5.</Caption>
           </Stack>
         </Container>
       </Section>
@@ -43,7 +43,7 @@ export default function EingangPage() {
             <Eyebrow>sticker</Eyebrow>
             <Heading level={2} variant="lede">einlöse-code für den shop, post-launch.</Heading>
             <Body>sticker-voucher per mail. einmal-code, 6 monate gültig. wenn der shop noch nicht da ist, gibt es die mit-glied-karte zum runterladen.</Body>
-            <Caption tone="muted" as="p">voucher-mechanik kommt mit phase 8 (shop-launch).</Caption>
+            <Caption tone="muted" as="p">voucher-mechanik kommt mit phase 8.</Caption>
           </Stack>
         </Container>
       </Section>

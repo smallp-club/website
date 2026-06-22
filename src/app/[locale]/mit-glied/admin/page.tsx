@@ -18,7 +18,7 @@ export default function AdminDashboardPage() {
       <Section tone="light" rhythm="standard" aria-label="admin hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>mit-glied · admin · dashboard</Eyebrow>
+            <Eyebrow>admin</Eyebrow>
             <Heading level={1} variant="display">admin.</Heading>
             <Body>kuratierungs-zentrale. pending heute, pending gesamt, letzte 24 stunden, flag-high ungesichtet. zahl plus wort, nichts weiter.</Body>
             <Caption tone="muted" as="p">role-check (profiles.role = admin) + totp-2fa + 2h session-timeout.</Caption>

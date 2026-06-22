@@ -18,7 +18,7 @@ export default function ErfahrungDetailPage() {
       <Section tone="light" rhythm="standard" aria-label="bericht hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>mit-glied · erfahrungen · einzeln</Eyebrow>
+            <Eyebrow>mit-glied · erfahrungen · detail</Eyebrow>
             <Heading level={1} variant="display">ein bericht.</Heading>
             <Body>einzelner bericht im member-bereich. uuid im pfad ist nicht enumerier-bar, nur per direkt-link erreichbar. brand-stille statt forums-listen-stil.</Body>
             <Caption tone="muted" as="p">supabase-row, rls verteidigt zugriff auf eigene oder approved-berichte.</Caption>
@@ -26,7 +26,7 @@ export default function ErfahrungDetailPage() {
         </Container>
       </Section>
 
-      <Section tone="light" rhythm="standard" aria-label="prompt-zeile">
+      <Section tone="light" rhythm="standard" aria-label="prompt">
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>prompt</Eyebrow>

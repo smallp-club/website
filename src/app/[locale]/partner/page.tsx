@@ -27,7 +27,7 @@ export default function PartnerListePage() {
               strukturell das machen, wofür wir reichweite haben.
             </Body>
             <Caption tone="muted" as="p">
-              vollständiger haltungstext kommt mit phase 4 (content-pass).
+              vollständiger haltungstext kommt mit dem schreib-pass.
             </Caption>
           </Stack>
         </Container>
@@ -42,7 +42,7 @@ export default function PartnerListePage() {
               noch leer. ehrlich.
             </Heading>
             <Body>
-              wir bauen langsam. wer dazukommt, taucht hier als logo auf — klein,
+              wir bauen langsam. wer dazukommt, taucht hier als logo auf. klein,
               ruhig, ohne pitch.
             </Body>
             <Caption tone="muted" as="p">
@@ -81,7 +81,7 @@ export default function PartnerListePage() {
             </Heading>
             <Body>
               kein formular, kein crm. eine mail an{' '}
-              <a href="mailto:hello@smallp.club">hello@smallp.club</a> genügt — am
+              <a href="mailto:hello@smallp.club">hello@smallp.club</a> genügt. am
               besten mit zwei sätzen wer ihr seid und was ihr macht.
             </Body>
           </Stack>

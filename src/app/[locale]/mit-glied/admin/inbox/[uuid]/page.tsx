@@ -18,7 +18,7 @@ export default function AdminInboxDetailPage() {
       <Section tone="light" rhythm="standard" aria-label="einreichung hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>mit-glied · admin · inbox · detail</Eyebrow>
+            <Eyebrow>admin · inbox · detail</Eyebrow>
             <Heading level={1} variant="display">eine einreichung.</Heading>
             <Body>kuratierungs-detail. pseudonym, einreichungs-zeit, prompt, alter-range, volltext, flags-detail, aktionen. ban verlangt totp-re-auth.</Body>
             <Caption tone="muted" as="p">audit-log schreibt jede aktion mit timestamp + admin-id.</Caption>
@@ -26,7 +26,7 @@ export default function AdminInboxDetailPage() {
         </Container>
       </Section>
 
-      <Section tone="light" rhythm="standard" aria-label="flag-streifen">
+      <Section tone="light" rhythm="standard" aria-label="flags">
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>flags</Eyebrow>
@@ -51,7 +51,7 @@ export default function AdminInboxDetailPage() {
           <Stack gap={4}>
             <Eyebrow>flag-detail</Eyebrow>
             <Heading level={2} variant="lede">treffer-tokens sichtbar.</Heading>
-            <Body>z. b. „suizid: wollte mich umbringen" oder „doxx-email: muster max@..." — jede match-zeile mit dem konkreten match.</Body>
+            <Body>z. b. „suizid: wollte mich umbringen" oder „doxx-email: muster max@...". jede match-zeile mit dem konkreten match.</Body>
           </Stack>
         </Container>
       </Section>
@@ -61,7 +61,7 @@ export default function AdminInboxDetailPage() {
           <Stack gap={4}>
             <Eyebrow>aktionen</Eyebrow>
             <Heading level={2} variant="lede">durchlassen, nicht durch, sperren.</Heading>
-            <Body>accent-pill (durchlassen), signal-pill (nicht durch), ink-pill (sperren — mit totp-re-auth-modal). audit-log am ende der seite zeigt frühere aktionen.</Body>
+            <Body>accent-pill (durchlassen), signal-pill (nicht durch), ink-pill (sperren, mit totp-re-auth-modal). audit-log am ende der seite zeigt frühere aktionen.</Body>
           </Stack>
         </Container>
       </Section>

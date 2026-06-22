@@ -9,6 +9,7 @@ import { Caption } from '@/components/primitives/Caption';
 export const metadata = {
   title: 'partner · story. — small p club',
   description: 'eine partner-story.',
+  robots: { index: false, follow: false },
 };
 
 export default function PartnerStoryPage() {

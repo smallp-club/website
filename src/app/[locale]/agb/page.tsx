@@ -20,7 +20,7 @@ export default function AgbPage() {
             <Eyebrow>service · agb</Eyebrow>
             <Heading level={1} variant="display">agb.</Heading>
             <Body>kommt mit phase 8, weil vorher keine produkte verkauft werden. service-page in schlichter prose-breite, kein juristen-deutsch, ehrlicher ton.</Body>
-            <Caption tone="muted" as="p">anwalts-review pflicht vor freigabe.</Caption>
+            <Caption tone="muted" as="p">der text geht erst raus, wenn die anwältin durch ist.</Caption>
           </Stack>
         </Container>
       </Section>

@@ -18,7 +18,7 @@ export default function AdminBlocklistPage() {
       <Section tone="light" rhythm="standard" aria-label="blocklist hero">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>mit-glied · admin · blocklist</Eyebrow>
+            <Eyebrow>admin · blocklist</Eyebrow>
             <Heading level={1} variant="display">blocklist.</Heading>
             <Body>email-hash und ip-hash der gebannten identitäten. sha-256, kein klartext. unban entzieht den block-eintrag.</Body>
             <Caption tone="muted" as="p">hash-basiert, weil dsgvo. originale email/ip wird nie gespeichert.</Caption>

@@ -7,7 +7,7 @@ import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
-  title: 'verify. — auth',
+  title: 'verify. — small p club',
   robots: { index: false, follow: false },
 };
 
@@ -20,7 +20,7 @@ export default function AuthVerifyPage() {
             <Eyebrow>auth · verify</Eyebrow>
             <Heading level={1} variant="display">check deine mails.</Heading>
             <Body>wir haben dir einen link geschickt. ein klick, und du bist drin.</Body>
-            <Caption tone="muted" as="p">token single-use, 15-min-expiry. server-side verify, dann redirect auf /mit-glied/eingang.</Caption>
+            <Caption tone="muted" as="p">der link gilt 15 minuten. einmal klicken, dann ist er weg.</Caption>
           </Stack>
         </Container>
       </Section>
@@ -40,7 +40,7 @@ export default function AuthVerifyPage() {
           <Stack gap={4}>
             <Eyebrow>privacy</Eyebrow>
             <Heading level={2} variant="lede">du kannst hier auch anonym bleiben.</Heading>
-            <Body>wenn du diese seite aus dem browser-verlauf entfernen willst — wir zeigen dir wie. drei klicks pro browser, ohne alarmismus.</Body>
+            <Body>wenn du diese seite aus dem browser-verlauf entfernen willst, wir zeigen dir wie. drei klicks pro browser, ohne alarmismus.</Body>
             <Caption tone="muted" as="p">link zu /privacy/anonym-bleiben.</Caption>
           </Stack>
         </Container>

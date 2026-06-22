@@ -32,7 +32,7 @@ export default function MagazinEssayPage() {
             <Eyebrow>fließtext</Eyebrow>
             <Heading level={2} variant="lede">prose, 60 zeichen breit.</Heading>
             <Body>mdx-content mit zwischen-titeln, inline-links zu mythen, source-references. typografie wie ein gedrucktes magazin, kein web-listicle-rhythmus.</Body>
-            <Caption tone="muted" as="p">mdx-pipeline kommt mit phase 4 (section-build).</Caption>
+            <Caption tone="muted" as="p">mdx-pipeline kommt mit phase 4.</Caption>
           </Stack>
         </Container>
       </Section>

@@ -22,8 +22,8 @@ export default function KontaktPage() {
               kontakt
             </Heading>
             <p className={styles.lead}>
-              schreib uns. wir lesen alles, antworten wenn&apos;s was zu sagen
-              gibt.
+              schreib uns. wir lesen alles. wir antworten, wenn was
+              zurückzuschreiben ist.
             </p>
           </header>
 

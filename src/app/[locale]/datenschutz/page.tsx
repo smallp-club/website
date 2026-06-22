@@ -475,9 +475,6 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
               neue datenkategorien) erwähnen wir im nächsten newsletter.
             </p>
             <p className={styles.signOff}>
-              wir bauen das hier nicht für vertrauen aus pdf. wir bauen es weil
-              es ehrlich ist.
-              <br />
               <em>— small p club</em>
               <br />
               <em>no measure, no pressure.</em>

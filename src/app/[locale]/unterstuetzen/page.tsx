@@ -19,7 +19,7 @@ export default function UnterstuetzenPage() {
           <Stack gap={4}>
             <Eyebrow>unterstützen</Eyebrow>
             <Heading level={1} variant="display">spenden gehen direkt an die, die die arbeit machen.</Heading>
-            <Body>wir nehmen kein geld an. wir zeigen nur den weg. selbst-beschränkung ist die brand.</Body>
+            <Body>wir nehmen kein geld an. wir zeigen nur den weg.</Body>
             <Caption tone="muted" as="p">brand-statement aus FUNDING_CONCEPT.md, finalisiert 2026-06-16.</Caption>
           </Stack>
         </Container>
@@ -41,7 +41,7 @@ export default function UnterstuetzenPage() {
           <Stack gap={4}>
             <Eyebrow>empfänger</Eyebrow>
             <Heading level={2} variant="lede">zwei kuratierte organisationen.</Heading>
-            <Body>bundesforum männer (bundesweit politisch, berlin) — und LAG jungen*arbeit nrw (lokal strukturell, dortmund). säkular, queer-inklusiv, gemeinnützig. spendenquittung jeweils direkt von der org.</Body>
+            <Body>bundesforum männer (bundesweit politisch, berlin) und LAG Jungen*arbeit NRW (lokal strukturell, dortmund). säkular, queer-inklusiv, gemeinnützig. spendenquittung jeweils direkt von der org.</Body>
             <Caption tone="muted" as="p">zwei karten-block. logo-freigabe nach outreach-mails (kommt nach landing-launch).</Caption>
           </Stack>
         </Container>
