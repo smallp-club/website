@@ -19,7 +19,7 @@ export default function ErfahrungNeuPage() {
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>mit-glied · erfahrung schreiben</Eyebrow>
-            <Heading level={1} variant="display">erzähl, was zu erzählen ist.</Heading>
+            <Heading level={1} variant="display">dein bericht. ein prompt, dein text.</Heading>
             <Body>fünf prompts zur auswahl. einer wählt den ton, der text macht den rest. 80 bis 1500 zeichen.</Body>
           </Stack>
         </Container>

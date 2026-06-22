@@ -15,13 +15,13 @@ export const LANDING_MYTHEN: MythosRevealItem[] = [
   {
     id: 'mythos-partner-zufriedenheit',
     myth: 'partner sind damit nicht zufrieden.',
-    fact: '85 prozent der partner sind es. nur 55 prozent der männer.',
+    fact: '85 prozent der partner sind zufrieden. nur 55 prozent der männer.',
     source: 'Lever, Frederick & Peplau, Psychology of Men & Masculinity, 2006, n=52.000',
   },
   {
     id: 'mythos-humor-schutzschild',
     myth: 'wer drüber lacht, hat kein problem damit.',
-    fact: 'der witz schützt, statt zu beweisen, dass keiner nötig wäre.',
+    fact: 'der witz ist die rüstung, nicht der beweis.',
     source: 'Sharp & Oates, Aesthetic Surgery Journal, 2019',
   },
 ];

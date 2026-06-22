@@ -18,7 +18,7 @@ export default function MagazinListePage() {
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>magazin</Eyebrow>
-            <Heading level={1} variant="display">lange texte. lesbarer ton.</Heading>
+            <Heading level={1} variant="display">lange texte. selten, aber dann ganz.</Heading>
             <Body>essays von 600 bis 1.200 wörtern. keine listicles, keine „fünf tipps". einer pro spur zum launch.</Body>
             <Caption tone="muted" as="p">voller hero kommt mit dem schreib-pass.</Caption>
           </Stack>

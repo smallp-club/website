@@ -8,7 +8,7 @@ import { Caption } from '@/components/primitives/Caption';
 
 export const metadata = {
   title: 'mythen. — small p club',
-  description: 'die fakten-bibliothek. mythen mit fakten dagegen, quellen offen.',
+  description: 'sechs mythen, sechs fakten dagegen, quellen offen.',
 };
 
 export default function MythenListePage() {
@@ -18,7 +18,7 @@ export default function MythenListePage() {
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>mythen</Eyebrow>
-            <Heading level={1} variant="display">die fakten-bibliothek.</Heading>
+            <Heading level={1} variant="display">sechs mythen. sechs fakten dagegen.</Heading>
             <Body>sechs mythen zum launch. jeder eintrag eine eigene detail-seite mit fakt, quelle und einordnung.</Body>
             <Caption tone="muted" as="p">voller hero kommt mit dem schreib-pass.</Caption>
           </Stack>

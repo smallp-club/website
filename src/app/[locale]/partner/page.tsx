@@ -24,7 +24,7 @@ export default function PartnerListePage() {
             </Heading>
             <Body>
               wir suchen keine sponsoren. wir suchen organisationen, die seit jahren
-              strukturell das machen, wofür wir reichweite haben.
+              die arbeit machen, wofür wir gerade erst reichweite haben.
             </Body>
             <Caption tone="muted" as="p">
               vollständiger haltungstext kommt mit dem schreib-pass.
