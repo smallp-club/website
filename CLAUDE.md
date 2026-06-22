@@ -47,6 +47,44 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 8. **Library-Doktrin:** Reuse-First. Vor jedem Build → erst Library prüfen, ob schon vorhanden. Neue Library-Komponenten sind props-getrieben, mobile-first, a11y-baseline (kein Audit am Ende), token-getrieben, korrekt benannt + dokumentiert. Standard: @docs/tech/COMPONENT_LIBRARY_STANDARD.md
 
+## Stand (2026-06-23, Session 14 — Voice-Audit + 30+ Brand-Fixes über alle 25 Pages)
+
+**Click-Through-Review als nächster Schritt nach Page-Build etabliert** — Multi-Agent-Audit mit `brand-guardian` + `content-strategist` parallel über alle 25 Routes. Pattern: bei Batch-Build mehrerer Pages danach IMMER Voice-Audit, bevor weitergebaut wird (Voice-Drift in Drafts kommt schnell).
+
+**30+ Findings synthetisiert** (P0/P1/P2-Punch-Liste, dedupliziert über beide Agents). Abgearbeitet in drei sauberen Commits:
+
+1. **Sofort-Fix-Batch** (`2090718`):
+   - **Em-Dash-Sweep** an 10 Body-Stellen (VOICE.md verbietet Em-Dash im Body — Komma oder Punkt stattdessen)
+   - **BewegungsSignal Heading** „werde mit-glied. auch ohne-glied." → „mit-glied. auch ohne-glied." (Brand-Statement-Mantra-Form geschützt, kein Imperativ-Prefix)
+   - **/datenschutz Sign-Off** „vertrauen aus pdf" gestrichen (AI-Slop-clever-cryptic raus)
+   - **Caption-Marker standardisiert** auf zwei Formen: `kommt mit phase N.` (Pipeline/Tech) und `kommt mit dem schreib-pass.` (Content) — vorher 7 verschiedene Formulierungen
+   - **Admin-Eyebrows** 4-Level-Breadcrumb auf 1–2-Level reduziert (`mit-glied · admin · inbox · detail` → `admin · inbox · detail`)
+   - **LAG Jungen*arbeit NRW** Eigenname-Konsistenz (war lowercase)
+   - **/partner/[slug]** robots noindex ergänzt (Lücke)
+   - **/shop** Eyebrow `shop · launch phase 8` → `shop`
+   - **/agb** Caption peer-voice statt „anwalts-review pflicht"
+   - **/unterstuetzen** „selbst-beschränkung ist die brand" gestrichen (Meta-Doku-Sprache raus)
+   - **/mit-glied/post** „fomo" Anglizismus → „wer später kommt, kann nachlesen."
+   - **/kontakt** Tonalität entschärft („antworten wenn's was zu sagen gibt" → „wir antworten, wenn was zurückzuschreiben ist")
+   - **/admin/audit** „jung-zuerst" Tech-Slang → „neueste zuerst"
+   - **/club** Crew-Section „dazukommt"-Repetition raus
+   - Tech-Terms aus Bodies in Captions (cardfan-pattern, mdx-files)
+   - **/auth/verify** Metadata-Title-Drift + Caption peer-voice
+   - **BewegungsSignal** Email-Placeholder TLD ergänzt
+   - **aria-labels** Tech-Slang weg
+
+2. **Stats-Punchline** (`eb76fee`): „die meisten liegen falsch." → **„fast alle. die meisten merken es nie."** (Korrektur-Logik-Risiko entschärft, Brand-Doktrin CONCEPT/MEMBER_CONCEPT respektiert)
+
+3. **Hero-Drift + MythosReveal-Anker** (`1058661`):
+   - `/mythen` „die fakten-bibliothek." → **„sechs mythen. sechs fakten dagegen."** (akademisch → herb, Voice-Modus „mit Grätsche")
+   - `/magazin` „lange texte. lesbarer ton." → **„lange texte. selten, aber dann ganz."** (AI-Filler raus)
+   - `/mit-glied/erfahrungen/neu` „erzähl, was zu erzählen ist." → **„dein bericht. ein prompt, dein text."** (Therapie-Prompt-Drift raus)
+   - `/partner` Body „strukturell das machen" → **„die arbeit machen, wofür wir gerade erst reichweite haben."** (NGO-Sprech raus)
+   - **MythosReveal Block 2 Fakt-Bridge:** „sind es" → „sind zufrieden" (sonst hängt Pronomen ohne Mythos-Kontext beim Crossfade)
+   - **MythosReveal Block 3 Lautlese-Fix:** „der witz schützt, statt zu beweisen, dass keiner nötig wäre." → **„der witz ist die rüstung, nicht der beweis."** (Lautlese-Test mit „wahr ist."-Präfix besteht jetzt)
+
+**Multi-Agent-Audit-Pattern etabliert:** für Batch-Reviews (viele Files in einem Rutsch) ist Parallel-Spawn von 2 Disziplin-Agents (brand-guardian + content-strategist) deutlich effizienter als linearer Walk. Beide Audits dedupliziert ergibt eine tight punch-list. Pattern bei künftigen Audit-Runden wiederverwenden.
+
 ## Stand (2026-06-22, Session 13 — Landing voll gebaut + alle Pages als Section-Platzhalter klickbar)
 
 **OneDrive-Migration final.** Repo läuft auf `/Users/kethe.theermann/smallpclub` (raus aus OneDrive). Messungen: Cold-Start 2,5 s (vorher ~9 min), HMR ~500 ms, Production-Build 14 s. `/outsorted` → `_outsorted` (Underscore-Prefix = App-Router-Ignore, Build-Bug behoben).
