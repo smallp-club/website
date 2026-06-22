@@ -24,7 +24,7 @@ export function StatsLanding() {
           <p className={styles.lead}>
             der männer schätzen sich kleiner ein als sie sind.
           </p>
-          <p className={styles.punchline}>die meisten liegen falsch.</p>
+          <p className={styles.punchline}>fast alle. die meisten merken es nie.</p>
           <p className={styles.source}>
             Veale et al., <cite>BJU International</cite>, 2015. n=
             <span className={styles.sourceN}>15.521</span>.
