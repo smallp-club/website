@@ -47,6 +47,49 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 8. **Library-Doktrin:** Reuse-First. Vor jedem Build → erst Library prüfen, ob schon vorhanden. Neue Library-Komponenten sind props-getrieben, mobile-first, a11y-baseline (kein Audit am Ende), token-getrieben, korrekt benannt + dokumentiert. Standard: @docs/tech/COMPONENT_LIBRARY_STANDARD.md
 
+## Stand (2026-06-22, Session 13 — Landing voll gebaut + alle Pages als Section-Platzhalter klickbar)
+
+**OneDrive-Migration final.** Repo läuft auf `/Users/kethe.theermann/smallpclub` (raus aus OneDrive). Messungen: Cold-Start 2,5 s (vorher ~9 min), HMR ~500 ms, Production-Build 14 s. `/outsorted` → `_outsorted` (Underscore-Prefix = App-Router-Ignore, Build-Bug behoben).
+
+**Landing voll komponiert end-to-end** (`src/app/[locale]/page.tsx`):
+1. `HeroLanding` (existing)
+2. `RecognitionBlock` (existing)
+3. **`MythosReveal`** — refactor von 3× `StickyCrossfade` (5400 px scroll) zu einmaligem `PullFocusGrid` (kompakter, Multi-Reveal-Z-Pattern). Daten in `mythen.ts` (Vergleichsdruck / Partner-Zufriedenheit / Humor-Schutzschild).
+4. **`StatsLanding`** — Black-Flip-Singleton, „91 %" + „die meisten liegen falsch.", Quelle Veale 2015. Lokal gebaut statt StatPair erweitert (Lokal-Zuerst-Doktrin).
+5. **`BewegungsSignal`** — Magic-Link-Form als Server-Component, postet auf `/api/mit-glied/start` (Endpoint kommt Phase 5).
+6. **`ShopPlaceholder`** — „trag die haltung." plus dashed-Border-Bild-Slot mit „bild kommt mit phase 2"-Marker.
+7. `SiteFooter` (global aus LocaleLayout).
+
+**Library-Doktrin etabliert** (`docs/tech/COMPONENT_LIBRARY_STANDARD.md` + Memory `project_library_doctrine.md`):
+- Reuse-First: vor jedem Build erst Library prüfen
+- Mobile + a11y als Baseline-Constraint (nicht „Audit am Ende")
+- Manifest-Pflicht für Patterns + Primitives + globale Sections; page-spezifische Section-Wrapper bleiben page-lokal
+- 7-Punkte-Checkliste: props-getrieben, mobile-first, a11y-baseline, brand-voice, token-getrieben, naming, doku
+- CLAUDE.md-Prinzip 8 ergänzt
+
+**Library-Hygiene durchgeführt:**
+- `ChevronArrow` von `primitives/` nach `icons/` (custom-svg, kein Phosphor — Inline-Style-Transform durch Path-Mirror ersetzt)
+- `LogoMark` bekommt `.demo.tsx` + Library-Manifest im neuen Bundle `/components-library/primitives/brand`
+- `StickyCrossfade` Demo: lowercase + Komma statt Em-Dash (Brand-Voice angeglichen)
+
+**Alle 25 Routes klickbar mit echten Section-Platzhaltern** (PageStub komplett raus aus App Router):
+- 24 stub-Pages konvertiert: PageStub-Listen ersetzt durch Section + Container + Stack + Eyebrow + Heading + Body + Caption-Marker pro geplanter Sektion
+- 4 neue Routes: `/shop` (war leer) · `/agb` · `/mit-glied/erfahrungen/[uuid]` · `/mit-glied/admin/inbox/[uuid]`
+- `/club` mit 4 Mid-Sections: Origin · Mission · Was-wir-nicht-sind · Crew (Platzhalter zwischen ClubHero und Brand-Kanal)
+- Alte Stubs `topics/[slug]` und `members/` gelöscht (Cleanup-Aufgabe aus ROADMAP)
+- Smoke-Test: 25 von 25 Routes HTTP 200
+
+**Storybook explizit verworfen.** Storybook ist Doku, kein Runtime — bringt keine Production-Performance. `/components-library/` deckt das mit weniger Pipeline-Overhead ab. Memory + ADR-Entscheidung bleiben gültig.
+
+**Drei Brand-Voice-Festlegungen Landing:**
+- Stats-Voice: `91 %` + `der männer schätzen sich kleiner ein als sie sind.` + `die meisten liegen falsch.` (Veale 2015)
+- Bewegungs-Signal-Voice: `das denken mehr menschen, als du denkst.` + `werde mit-glied. auch ohne-glied.`
+- Shop-Platzhalter-Voice: `trag die haltung.` + Print-on-Demand-Erklärung als Body
+
+**Verworfene/Backlog-Items (geparkt, nicht zu tun bis Pages stehen):**
+- `MeasureLine` — Pattern oder Section-internal? (Entscheidet sich erst nach /mythen + /magazin + Member-Pages-Build)
+- `LogoMark` interne Inline-Style-Verstöße (3, low priority)
+
 ## Stand (2026-06-19, Session 12 — 404-Seite manifestiert)
 
 **404-Page als `FourCmReveal` offiziell live** unter `src/app/[locale]/not-found.tsx` UND `src/app/not-found.tsx` (Root). Konzept: `4,04 cm` als Maßangabe-Wortwitz. Choreografie:
