@@ -47,6 +47,90 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 8. **Library-Doktrin:** Reuse-First. Vor jedem Build → erst Library prüfen, ob schon vorhanden. Neue Library-Komponenten sind props-getrieben, mobile-first, a11y-baseline (kein Audit am Ende), token-getrieben, korrekt benannt + dokumentiert. Standard: @docs/tech/COMPONENT_LIBRARY_STANDARD.md
 
+## Stand (2026-06-23, Session 15 — A+B+C: /club voll, 6 Mythen voll, Member-Foundation end-to-end live)
+
+**10 Commits dieser Session, drei Module abgeschlossen.**
+
+### Modul A — /mythen voll (3 Commits)
+- **`c5f6ef2`** — Listen-Page mit `CardFan` + 6 brand-neutrale Slugs (`koerper-als-bauplan`, `was-herkunft-nicht-ist`, `was-die-kamera-zeigt`, `die-falsche-passform`, `was-der-andere-sagt`, `was-guten-sex-macht`). `src/content/data/myths.ts` als TS-Data-SSOT, Slugs nach Security-Doktrin IA §5 (outing-schutz).
+- **`fc862ad`** — 6 **Detail-Pages** voll geschrieben. `myths.ts` erweitert um `MythDetail` (fact, sourceShort, einordnung[], zweiteLesart, sources[], related[]) plus Helper `getMythBySlug`, `getRelatedMyths`, `getAllMythSlugs`. Template `[slug]/page.tsx` rendert `StickyCrossfade` (Mythos→Fakt-Reveal) + Einordnung + zweite Lesart + Source-Block + CardFan mit verwandten Mythen. SSG via `generateStaticParams`. Quellen: Veale 2015, Lever 2006, Skoda 2019, Reece 2009, Mostafaei 2025, De Sousa 2022, Herbenick 2018. **Kevin sollte voice-pass machen.**
+- **Architektur-Entscheidung: TS-Data statt MDX** für Mythen (kein Editor-Workflow nötig, 6 statische Texte, MDX-Pipeline-Overhead nicht gerechtfertigt). MDX kommt erst mit Magazin (IA.md §6 Migration-Pfad).
+- **Note: `StickyCrossfade.module.css` erzwingt `text-transform: uppercase` aufs Label** — verletzt Brand-Eyebrow-Doktrin (lowercase). Heute umgangen (Label im Hero weggelassen, Kategorie erscheint in Einordnung-Section). CSS-Fix in einer separaten Library-Hygiene-Runde.
+
+### Modul B — /club voll (1 Commit)
+- **`d21f8b3`** — Origin, Mission, „was wir nicht sind", Crew. Drei-Absatz-Rhythmus pro Section, Tagline-Bezug in Mission, Sticker→Haltung→Club-Arc in Origin. Crew bleibt solo-ehrlich. Ersetzt die Platzhalter-Stubs aus Session 13.
+
+### Modul C — Phase 5a Member-Foundation (6 Commits + 2 externe Setups)
+
+**Doktrin-Wechsel: Auth.js v5 → Supabase Auth direkt (`0a01620`).** Grund: `next-auth` zieht `nodemailer` rein, das hat **6 high-severity CVEs** (SMTP Command Injection, CRLF Injection in Headers, OAuth Token Interception). Für reine Magic-Link-Anforderung ohne OAuth-Provider war Auth.js + Supabase-Adapter unverhältnismäßig komplex.
+
+Supabase Auth nativ:
+- Magic-Link über Supabase-eigenen SMTP-Layer (all-inkl im Dashboard konfiguriert, **kein nodemailer im Code**)
+- RLS via `auth.uid()` direkt, kein Adapter-Bridge
+- Session-JWT + Refresh-Token von Supabase verwaltet
+- `@supabase/ssr` für Browser- und Server-Component-Helpers
+- STACK.md + SECURITY.md aktualisiert
+
+**End-to-End Login-Flow live getestet:**
+```
+/mit-glied (Form + Turnstile)
+    ↓ email + opt-in
+Turnstile-Verify → Email-Validation → Disposable-Block → Blocklist → Rate-Limit (Upstash)
+    ↓
+Supabase signInWithOtp → Mail (via all-inkl SMTP)
+    ↓ Klick auf Magic-Link
+/auth/verify (PKCE token_exchange)
+    ↓ Profile-Bootstrap mit unique Pseudonym (Retry-Loop)
+/mit-glied/eingang → „du bist drin." + leser-XXXX + Member-Slot (Logout lokal + global)
+```
+
+**Bausteine (Code):**
+- `supabase/migrations/0001_member_foundation.sql` (`4720db7`) — 6 Tabellen (profiles, stories, blocklist, content_shingles, story_reports, admin_audit_log) + RLS-Policies + `is_admin()`-Helper. Referenziert nativ `auth.users`.
+- `src/lib/supabase/{browser,server,service,middleware}.ts` (`6820147`) — vier Client-Helpers nach `@supabase/ssr`-Pattern. `types.ts` als handgeschriebener Database-Type (kommt mit `supabase gen types` weg).
+- `src/lib/{rate-limit,turnstile,hash}.ts` + `src/lib/members/pseudonym.ts` (`b34f46c`) — Pre-Auth-Pipeline. `pseudonym` via crypto.randomBytes, Pattern `leser-[a-z0-9]{4}` matched DB-Constraint.
+- `src/app/[locale]/mit-glied/actions.ts` + `_components/MagicLinkForm.tsx` + `auth-types.ts` — Server-Action mit voller Sicherheits-Kette, Client-Form mit `useActionState` + Turnstile-Widget via `next/script`, Newsletter-Opt-In als Checkbox. Brand-Voice-Error-Messages aus MEMBER_SECURITY.md §8.
+- `src/app/[locale]/auth/verify/route.ts` (`708f99a`) — PKCE-Token-Exchange via `exchangeCodeForSession()`, Profile-Bootstrap mit Pseudonym-Retry-Loop (8 Versuche bei Collision).
+- `src/app/[locale]/mit-glied/eingang/page.tsx` + `_components/MemberSlot.tsx` + `actions.ts` (`7c5de5c`) — Auth-gated Page via `requireMember()`, MemberSlot mit Pseudonym + Datum + zwei Logout-Buttons (lokal + global). `logoutAction` mit scope local|global.
+- `src/lib/members/auth.ts` — `getCurrentMember()`, `requireMember()`, `requireAdmin()` als Layer-2-Helper.
+- `src/proxy.ts` — CSP um `*.supabase.co` + `challenges.cloudflare.com` erweitert (script-src, connect-src, frame-src). `refreshSupabaseSession` als Side-Effect in middleware-pipeline.
+
+**Externe Setups (Kevin durchgeführt):**
+1. **Supabase-Projekt** `smallp-club Project` (Frankfurt eu-central-1, Free Tier)
+   - URL: `https://adycjakexpseptlhulpf.supabase.co`
+   - Auth → Confirm Email AN, Magic-Link-Expiry 3600s (1h)
+   - URL Configuration: Site URL + Redirect URLs (`http://localhost:3000/auth/verify`, `https://smallp.club/auth/verify`)
+   - SMTP: custom all-inkl konfiguriert (`mit-glied@smallp.club`)
+   - Migration 0001 sauber durchgelaufen, 6 Tabellen im Table Editor sichtbar
+2. **Upstash Redis** `smallp-club-ratelimit` (Frankfurt eu-central-1, Free Tier)
+   - Rate-Limits aktiv: 5/IP/24h + 3/Email/h + 1 Account/IP/24h
+3. **Cloudflare Turnstile** `smallp-club` Site (Managed Mode)
+   - Hostnames: `smallp.club`, `localhost`
+   - Widget zeigt im Form als „Erfolg!" mit invisible Bot-Check
+4. **`.env.local`** mit allen Keys gepflegt (in `.gitignore`, kommt nicht ins Repo)
+
+**Architektur-Entscheidungen:**
+- **C2 (Multi-Device-Sessions) statt C1 (Single-Session)** — Schutz läuft über „auf allen geräten ausloggen"-Button im Member-Slot (Doktrin SECURITY.md, MEMBER_CONCEPT §6 first-class Feature). Trade-off: User muss aktiv ausloggen wenn er Risiko sieht.
+- **Beide Sicherheits-Layer aktiv (Upstash + Turnstile)** statt nur einer — Upstash gegen Spam (Mensch + Bot), Turnstile gegen Bot vor Email-Versand (spart Mail-Kosten + SMTP-Reputation).
+- **Brand-Voice-Error-Translation**: Supabase eigenes 2/h Rate-Limit (`status: 429` / `over_email_send_rate_limit`) wird in Brand-Voice umgesetzt („für diese mail haben wir gerade einen link verschickt. schau in dein postfach.") statt generischem Catch-all.
+
+**Drei Bugs gefunden + gefixt:**
+- `[locale]/auth/verify/page.tsx` Stub aus Session 13 hat den Route-Handler überschattet (next-intl mapped alles in den Locale-Namespace). Page gelöscht, Handler nach `[locale]/auth/verify/route.ts` verschoben.
+- Magic-Link nutzt PKCE (`?code=`), nicht Implicit-Flow (`?token_hash=`). Handler auf `exchangeCodeForSession()` umgebaut.
+- Next.js 16 `'use server'`-Files erlauben **nur async function exports**, keine Objects/Types. `AuthFormState` + `initialAuthFormState` aus `actions.ts` raus, in eigene `auth-types.ts`.
+
+**Was noch zu Phase 5a fehlt (nicht heute):**
+- Onboarding-3-Schritte-Flow (Brand-Statement-Schwelle, Pseudonym-Wahl, Newsletter-Opt-In-Reminder)
+- Pseudonym-Wechsel-Form + Server-Action
+- Account-Löschung mit Re-Auth-Check (DSGVO-Pflicht)
+- Erfahrungsberichte-Form mit Drei-Stufen-Moderation (Hard-Reject / Flag-High / Flag-Low, ~100 Keywords pro Liste, Normalisierungs-Pipeline)
+- Admin-Bereich mit TOTP-2FA + Audit-Log
+- Mit-Glied-Karte PDF/PNG-Generator
+- `/stimmen` Public-Wall (braucht erst kuratierte Berichte)
+- Memberzahl-Satz auf Landing — Wiring an echte DB-Query (Stub `getMemberCount` existiert)
+- Brand-Voice-Email-Templates in Supabase Auth → Emails → Templates (aktuell englisches Default-Template)
+- Vercel Env Vars für Production (aktuell nur lokal in `.env.local`)
+- `StickyCrossfade` label-uppercase CSS-Fix (Library-Hygiene)
+
 ## Stand (2026-06-23, Session 14 — Voice-Audit + 30+ Brand-Fixes über alle 25 Pages)
 
 **Click-Through-Review als nächster Schritt nach Page-Build etabliert** — Multi-Agent-Audit mit `brand-guardian` + `content-strategist` parallel über alle 25 Routes. Pattern: bei Batch-Build mehrerer Pages danach IMMER Voice-Audit, bevor weitergebaut wird (Voice-Drift in Drafts kommt schnell).

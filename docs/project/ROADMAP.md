@@ -1,6 +1,6 @@
 # Roadmap & Implementierungsstand
 
-## Stand: 2026-06-19 (Session 11 — Phase-3-Review-Bühne live, Phase-4-Patterns vorgebaut, Code-Cleanup Cluster 2 erledigt)
+## Stand: 2026-06-23 (Session 15 — A+B+C: /club + 6 Mythen voll, Member-Foundation end-to-end live)
 
 ---
 
@@ -173,29 +173,46 @@
 
 ## Phase 5 — Member-Bereich Implementation
 
-### Pre-Launch-Pflicht (siehe MEMBER_CONCEPT.md Sektion 10 + MEMBER_SECURITY.md)
-- [ ] Auth-Wall + Magic-Link (Auth.js v5 + **all-inkl SMTP** mit `mit-glied@smallp.club`-Postfach)
-- [ ] Pre-Login-Page `/mit-glied` mit Wert-Versprechen + Newsletter-Opt-In-Checkbox (granularer Consent)
-- [ ] Member-Slot (Drawer mit Pseudonym, Datum, Logout, Karte-Download)
-- [ ] Onboarding-Sequence (3 stille Schritte + Brand-Statement-Schwelle „mit-glied werden. auch ohne-glied.")
-- [ ] **Logout-on-all-devices** als first-class Feature
-- [ ] **Account-Löschung** ein-Klick (DSGVO-Pflicht)
+### Phase 5a Foundation (Session 15 — live + funktionsfähig)
+- [x] **Doktrin-Switch:** Auth.js v5 → **Supabase Auth direkt** (nodemailer-CVEs, einfachere Architektur)
+- [x] **DB-Schema** `supabase/migrations/0001_member_foundation.sql` (6 Tabellen + RLS-Policies + `is_admin()`-Helper, im Supabase-Projekt live)
+- [x] **Supabase-Projekt aufgesetzt** Frankfurt eu-central-1, Free Tier, SMTP über all-inkl konfiguriert, Magic-Link-Expiry 1h, Redirect-URLs für localhost + smallp.club
+- [x] **Client-Helpers** `src/lib/supabase/{browser,server,service,middleware}.ts` nach `@supabase/ssr`-Pattern
+- [x] **Pre-Login-Page** `/mit-glied` mit Wert-Versprechen + Newsletter-Opt-In-Checkbox + Turnstile-Widget + Magic-Link-Form
+- [x] **Magic-Link-Server-Action** mit voller Sicherheits-Kette: Turnstile-Verify → Email-Validation → Disposable-Block → Blocklist → Rate-Limit → `signInWithOtp()`. Brand-Voice-Error-Messages aus MEMBER_SECURITY.md §8
+- [x] **Auth-Verify-Route** `[locale]/auth/verify/route.ts` mit PKCE Token-Exchange (`exchangeCodeForSession`) + Profile-Bootstrap mit unique Pseudonym (Retry-Loop)
+- [x] **Pseudonym-Generator** `leser-XXXX` mit `crypto.randomBytes`, DB-Pattern matched (`leser-[a-z0-9]{4,16}`)
+- [x] **Helper-Bibliothek** `lib/rate-limit.ts` (Upstash sliding-window mit Fallback) + `lib/turnstile.ts` (Server-Side Token-Verify mit Fallback) + `lib/hash.ts` (SHA-256 für Email/IP)
+- [x] **Member-Auth-Helpers** `lib/members/auth.ts` (`getCurrentMember()`, `requireMember()`, `requireAdmin()`)
+- [x] **Eingang-Page** `/mit-glied/eingang` mit Auth-Gate + Pseudonym-Anzeige + Beitritts-Datum
+- [x] **Member-Slot** Inline-Block mit Pseudonym + Datum + zwei Logout-Buttons (lokal + global) + Admin-Badge
+- [x] **Logout-on-all-devices** als first-class Feature (`logoutAction` mit `scope: 'global'`)
+- [x] **Proxy/Edge-Middleware** mit Supabase-Session-Refresh + CSP für `*.supabase.co` + `challenges.cloudflare.com`
+- [x] **Cloudflare Turnstile** Site `smallp-club` (Managed Mode, Hostnames `smallp.club` + `localhost`) — Bot-Schutz aktiv
+- [x] **Upstash Redis** `smallp-club-ratelimit` (Frankfurt) — Rate-Limits aktiv: 5/IP/24h + 3/Email/h + 1 Account/IP/24h
+- [x] **Disposable-Email-Block** (`lib/email-validation.ts`, 37 Domains)
+- [x] **End-to-End Live-Test:** Form → Magic-Link → PKCE-Exchange → Profile-Bootstrap → Redirect zu Eingang mit Pseudonym `leser-yaj1`. Alle Sicherheits-Layer scharf.
+
+### Phase 5b Sub-Bauten (offen, Reihenfolge nach Bedarf)
+- [ ] **Onboarding-Sequence** (3 stille Schritte + Brand-Statement-Schwelle „mit-glied werden. auch ohne-glied.")
+- [ ] **Pseudonym-Wechsel-Form** + Server-Action (einmal pro 30 Tage)
+- [ ] **Account-Löschung** ein-Klick mit Re-Auth-Check (DSGVO-Pflicht)
 - [ ] Erfahrungsberichte-Form mit Schreib-Prompts (5 Stück, siehe MEMBER_CONCEPT.md Sektion 5)
 - [ ] **Drei-Stufen-Moderation-System** (Hard-Reject / Flag-High / Flag-Low / Pass) inkl. Normalisierungs-Pipeline (Confusables, Leetspeak, ZWJ-Strip)
 - [ ] **Brigading-Quarantäne** via 5-Wort-Shingle-Fingerprint
 - [ ] **Telefonseelsorge-Hinweis-Strip** bei Suizid-Marker (content-getriggert, nicht prompt-getriggert)
 - [ ] **Submit-Confirm-Voice prompt-sensitiv** (3 Register: kennen wir / gut(es) / notiert)
 - [ ] **Admin-Bereich** `/mit-glied/admin/*` mit Role-Check + RLS + TOTP-2FA + kurzer Session-Timeout + Audit-Log
-- [ ] Cloudflare Turnstile vor Magic-Link-Form
-- [ ] Disposable-Email-Block (`lib/email-validation.ts` schon vorhanden)
-- [ ] Rate Limiting via Upstash Redis (5/IP-Tag, 3/Email-Stunde, 1 Account/IP-Tag)
-- [ ] 24h Cooldown vor erstem Submission
-- [ ] Ban-Mechanismus (Account + Email-Hash + IP-Hash auf Block-Liste)
-- [ ] Brevo-Subscribe-Trigger in Auth.js-Callback (conditional auf Newsletter-Opt-In-Checkbox)
-- [ ] Mit-Glied-Karte als PDF/PNG-Generator
-- [ ] Memberzahl-Satz auf Landing (mit Schwellen-Voice-Wechsel)
+- [ ] **24h Cooldown** vor erstem Submission (Flag in `profiles.first_submission_allowed_at`)
+- [ ] **Ban-Mechanismus** (Account + Email-Hash + IP-Hash auf Block-Liste, UI im Admin-Bereich)
+- [ ] **Brevo-Subscribe-Trigger** im Verify-Route (conditional auf Newsletter-Opt-In aus user_metadata)
+- [ ] **Mit-Glied-Karte** als PDF/PNG-Generator
+- [ ] **Memberzahl-Satz** auf Landing — Stub-Helper `getMemberCount` an echte DB-Query wiren (mit Schwellen-Voice-Wechsel)
 - [ ] `/stimmen` Public-Wall mit kuratierten Berichten + Report-Knopf
-- [ ] Bildmarken-Status-Indikator (Member sieht Ring um Bildmarke)
+- [ ] **Bildmarken-Status-Indikator** (Member sieht Ring um Bildmarke in SiteNav)
+- [ ] **Brand-Voice-Email-Templates** in Supabase Auth → Emails → Templates (deutsch, peer-voice; aktuell englischer Default)
+- [ ] **Vercel Env Vars** für Production (Supabase, Upstash, Turnstile aktuell nur lokal in `.env.local`)
+- [ ] **`StickyCrossfade` label-uppercase CSS-Fix** (verletzt Brand-Eyebrow-Doktrin, heute umgangen)
 
 ### Launch-Bootstrap
 - [ ] **Kevin postet 3 Seed-Erfahrungsberichte** unter Pseudonym (transparent) — sonst ist `/stimmen` initial leer
