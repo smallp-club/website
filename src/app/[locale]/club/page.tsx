@@ -1,9 +1,8 @@
 /**
  * /club — Mission-Page.
  *
- * Phase 4 Build-Start: ClubHero ist manifestiert (Editorial-Split mit
- * Snapshot-Foto). Origin, Mission, „was wir nicht sind", Team kommen
- * Section für Section. Brand-Kanal-Block (Instagram) bleibt am Ende.
+ * ClubHero + Origin + Mission + „was wir nicht sind" + Crew +
+ * Brand-Kanal-Block (Instagram).
  */
 
 import { Section } from '@/components/primitives/Section';
@@ -27,7 +26,7 @@ export default function ClubPage() {
     <main id="main-content">
       <ClubHero />
 
-      {/* ── Origin (Platzhalter — voller Text kommt mit Content-Pass) */}
+      {/* ── Origin */}
       <Section tone="light" rhythm="standard" aria-label="wie es anfing">
         <Container width="prose">
           <Stack gap={4}>
@@ -36,17 +35,27 @@ export default function ClubPage() {
               drei freunde, ein gespräch.
             </Heading>
             <Body>
-              kevin und zwei freunde haben irgendwann darüber geredet. das gespräch war ehrlich.
-              die erkenntnis: das thema bleibt seit der jugend mit den meisten und niemand sagt was.
+              kevin saß mit zwei freunden an einem tisch. irgendwann landete das
+              gespräch beim eigenen körper, bei der größe, beim schweigen darüber.
+              keiner hatte das vorher laut gesagt. alle hatten es seit jahren mit
+              sich rumgetragen.
             </Body>
-            <Caption tone="muted" as="p">
-              voller origin-text kommt mit dem schreib-pass.
-            </Caption>
+            <Body>
+              der punkt war nicht, dass drei männer das thema hatten. der punkt war,
+              dass es bei allen seit der jugend mitläuft. umkleide, urlaub,
+              beziehungen, allein vorm spiegel. seit zehn, fünfzehn, zwanzig jahren.
+              und keiner spricht darüber.
+            </Body>
+            <Body>
+              zuerst gab es sticker. ein kleines p, ein erstes zeichen, dass das
+              thema überhaupt existiert. aus dem zeichen wurde eine haltung. aus
+              der haltung dieser club.
+            </Body>
           </Stack>
         </Container>
       </Section>
 
-      {/* ── Mission (Platzhalter) */}
+      {/* ── Mission */}
       <Section tone="light" rhythm="standard" aria-label="was wir wollen">
         <Container width="prose">
           <Stack gap={4}>
@@ -55,49 +64,56 @@ export default function ClubPage() {
               druck wegnehmen.
             </Heading>
             <Body>
-              nicht durch belehrung, nicht durch bekehrung. durch fakten und durch eine haltung,
-              die sagt: du bist gut so wie du bist.
+              das ist der einzige job. nicht aufklären, nicht überzeugen, nicht
+              heilen. wenn der druck weg ist, lösen sich die meisten fragen von
+              selbst.
             </Body>
-            <Caption tone="muted" as="p">
-              voller mission-text kommt mit dem schreib-pass.
-            </Caption>
+            <Body>
+              fakten stehen daneben, nicht dagegen. sie sind rückendeckung für eine
+              haltung, die der mann sowieso schon spürt, die er aber nie laut
+              ausgesprochen bekommen hat. die haltung sagt: du bist gut so wie du
+              bist. die fakten sagen: das ist auch statistisch wahr.
+            </Body>
+            <Body>
+              no measure, no pressure. nicht als slogan, als überzeugung.
+            </Body>
           </Stack>
         </Container>
       </Section>
 
-      {/* ── Was wir nicht sind (Platzhalter) */}
+      {/* ── Was wir nicht sind */}
       <Section tone="light" rhythm="standard" aria-label="was wir nicht sind">
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>was wir nicht sind</Eyebrow>
             <Heading level={2} variant="lede">
-              keine therapie. keine selbsthilfe. kein wellness.
+              wir korrigieren niemanden.
             </Heading>
             <Body>
-              wir geben keine ratschläge, wir messen niemanden, wir verschreiben nichts.
-              wir reden darüber. das ist die ganze methode.
+              wir sind keine therapie. keine selbsthilfegruppe. kein
+              wellness-portal. wir haben keine app, keine pille, keine methode.
+              wer das sucht, ist hier falsch.
             </Body>
-            <Caption tone="muted" as="p">
-              die vollständige abgrenzungs-liste kommt mit dem schreib-pass.
-            </Caption>
+            <Body>
+              wir reden über das thema. wir stellen fakten daneben. wir tragen
+              das gemeinsam. mehr ist es nicht, und mehr soll es auch nicht sein.
+            </Body>
           </Stack>
         </Container>
       </Section>
 
-      {/* ── Team / Crew (Platzhalter, optional per IA) */}
+      {/* ── Crew */}
       <Section tone="light" rhythm="standard" aria-label="die crew">
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>die crew</Eyebrow>
             <Heading level={2} variant="lede">
-              kevin. solo zum start.
+              kevin. solo, erstmal.
             </Heading>
             <Body>
-              wer dazukommt, taucht hier auf. mit vorname und einem satz rolle. mehr nicht.
+              kevin theermann. designer, brand-owner. macht das hier solo. wer
+              dazukommt, taucht hier auf, mit vorname und einem satz. mehr nicht.
             </Body>
-            <Caption tone="muted" as="p">
-              solo bleibt solo, bis nicht mehr.
-            </Caption>
           </Stack>
         </Container>
       </Section>
