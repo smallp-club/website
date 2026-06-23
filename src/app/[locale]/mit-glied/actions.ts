@@ -111,9 +111,18 @@ export async function requestMagicLink(
       },
     });
     if (error) {
+      console.error('[magic-link] supabase error:', error.status, error.code, error.message);
+      // Supabase-eigenes Rate-Limit (2/Email/h default) brand-voice-konform übersetzen
+      if (error.status === 429 || error.code === 'over_email_send_rate_limit') {
+        return {
+          status: 'error',
+          message: 'für diese mail haben wir gerade einen link verschickt. schau in dein postfach.',
+        };
+      }
       return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
     }
-  } catch {
+  } catch (err) {
+    console.error('[magic-link] unexpected throw:', err);
     return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
   }
 
