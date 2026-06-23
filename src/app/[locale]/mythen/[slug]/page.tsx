@@ -1,38 +1,81 @@
+import { notFound } from 'next/navigation';
 import { Section } from '@/components/primitives/Section';
 import { Container } from '@/components/primitives/Container';
 import { Stack } from '@/components/primitives/Stack';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
+import { Source } from '@/components/primitives/Source';
+import { StickyCrossfade } from '@/components/patterns/StickyCrossfade';
+import { CardFan, type CardFanItem } from '@/components/patterns/CardFan';
+import {
+  getAllMythSlugs,
+  getMythBySlug,
+  getRelatedMyths,
+} from '@/content/data/myths';
 
-export const metadata = {
-  title: 'mythos. — small p club',
-  description: 'mythos und fakt mit quelle und einordnung.',
-  robots: { index: false, follow: false },
-};
+interface PageProps {
+  params: Promise<{ slug: string; locale: string }>;
+}
 
-export default function MythosDetailPage() {
+export function generateStaticParams() {
+  return getAllMythSlugs().map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params;
+  const myth = getMythBySlug(slug);
+  if (!myth) {
+    return {
+      title: 'mythos. — small p club',
+      robots: { index: false, follow: false },
+    };
+  }
+  return {
+    title: 'mythos. — small p club',
+    description: 'no measure, no pressure. ein mythos, ein fakt, eine quelle.',
+    robots: { index: false, follow: false },
+  };
+}
+
+export default async function MythosDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const myth = getMythBySlug(slug);
+  if (!myth) notFound();
+
+  const related = getRelatedMyths(slug);
+  const relatedCards: CardFanItem[] = related.map((m) => ({
+    id: m.slug,
+    eyebrow: `mythos · ${m.category}`,
+    headline: m.myth,
+    body: m.teaser,
+    cta: 'wahr ist.',
+    href: `/mythen/${m.slug}`,
+  }));
+
   return (
     <main id="main-content">
-      <Section tone="light" rhythm="standard" aria-label="mythos hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>mythen · detail</Eyebrow>
-            <Heading level={1} variant="display">ein mythos.</Heading>
-            <Body>editorial-template mit inline-präfix-pattern. „angeblich." in sienna oben, „wahr ist." in dark-turquoise unten. opacity-fade beim scroll.</Body>
-            <Caption tone="muted" as="p">mythos- und fakt-text kommen mit dem schreib-pass.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+      <StickyCrossfade
+        myth={myth.myth}
+        fact={myth.fact}
+        source={myth.sourceShort}
+        id="mythos-hero"
+      />
 
       <Section tone="light" rhythm="standard" aria-label="einordnung">
         <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>einordnung</Eyebrow>
-            <Heading level={2} variant="lede">was die zahl bedeutet.</Heading>
-            <Body>zwei bis drei absätze mdx-fließtext. kontext, keine belehrung. zwischen-titel optional, inline-links zu verwandten mythen.</Body>
-            <Caption tone="muted" as="p">mdx-content kommt mit dem schreib-pass.</Caption>
+          <Stack gap={5}>
+            <Stack gap={3}>
+              <Eyebrow>einordnung · {myth.category}</Eyebrow>
+              <Heading level={2} variant="lede">
+                was die zahl bedeutet.
+              </Heading>
+            </Stack>
+            <Stack gap={4}>
+              {myth.einordnung.map((absatz, i) => (
+                <Body key={i}>{absatz}</Body>
+              ))}
+            </Stack>
           </Stack>
         </Container>
       </Section>
@@ -41,8 +84,10 @@ export default function MythosDetailPage() {
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>zweite lesart</Eyebrow>
-            <Heading level={2} variant="lede">der gesellschaftliche blick.</Heading>
-            <Body>ein absatz, der das muster zeigt. nicht „du hast falsch gedacht", sondern „das thema sitzt seit jahrzehnten an dieser stelle, weil niemand drüber spricht".</Body>
+            <Heading level={2} variant="lede">
+              der gesellschaftliche blick.
+            </Heading>
+            <Body>{myth.zweiteLesart}</Body>
           </Stack>
         </Container>
       </Section>
@@ -51,33 +96,35 @@ export default function MythosDetailPage() {
         <Container width="prose">
           <Stack gap={4}>
             <Eyebrow>quellen</Eyebrow>
-            <Heading level={2} variant="lede">spezifisch zitiert.</Heading>
-            <Body>autor, journal, jahr, n-zahl. ein eintrag pro zeile. keine „studien zeigen"-formel.</Body>
-            <Caption tone="muted" as="p">source-primitive aus der library.</Caption>
+            <Heading level={2} variant="lede">
+              spezifisch zitiert.
+            </Heading>
+            <Stack gap={2}>
+              {myth.sources.map((s, i) => (
+                <Source key={i} {...s} locale="de" />
+              ))}
+            </Stack>
           </Stack>
         </Container>
       </Section>
 
-      <Section tone="light" rhythm="standard" aria-label="weiterlesen">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>weiterlesen</Eyebrow>
-            <Heading level={2} variant="lede">zwei verwandte mythen plus ein essay.</Heading>
-            <Body>kuratiert, nicht algorithmus. „das könnte dich auch interessieren"-sprache ist verboten.</Body>
-          </Stack>
-        </Container>
-      </Section>
-
-      <Section tone="light" rhythm="standard" aria-label="member-zitat">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>aus dem mit-glied-kreis</Eyebrow>
-            <Heading level={2} variant="lede">ein anonymes zitat zum thema.</Heading>
-            <Body>rotierender snippet eines anderen members, pseudonymisiert (leser-xxxx). kein comments-stream, kein reply.</Body>
-            <Caption tone="muted" as="p">erscheint sobald approved-pool nicht leer ist.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+      {related.length > 0 && (
+        <Section tone="light" rhythm="standard" aria-label="weiterlesen">
+          <Container width="prose">
+            <Stack gap={3}>
+              <Eyebrow>weiterlesen</Eyebrow>
+              <Heading level={2} variant="lede">
+                verwandte mythen.
+              </Heading>
+            </Stack>
+          </Container>
+          <CardFan
+            items={relatedCards}
+            label="verwandte mythen"
+            id="related-myths"
+          />
+        </Section>
+      )}
     </main>
   );
 }
