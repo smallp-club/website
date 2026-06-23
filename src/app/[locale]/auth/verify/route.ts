@@ -1,11 +1,13 @@
 /**
- * /auth/verify — Token-Exchange für Magic-Link.
+ * /auth/verify — Token-Exchange für Magic-Link (PKCE-Flow).
  *
- * Supabase sendet den Magic-Link mit `token_hash` und `type` Query-Params.
- * Diese Route:
- *  1. Exchanged Token → Session via supabase.auth.verifyOtp()
- *  2. Stellt sicher, dass ein Profile-Row mit Pseudonym existiert
- *  3. Redirected zu /mit-glied/eingang oder bei Fehler zurück zu /mit-glied
+ * Supabase mit @supabase/ssr nutzt PKCE: der Magic-Link-URL trägt `?code=`,
+ * den wir hier gegen eine Session tauschen. Anschließend wird sichergestellt,
+ * dass ein Profile-Row mit unique Pseudonym existiert, dann Redirect zu /mit-glied/eingang.
+ *
+ * Route liegt unter [locale]/auth/verify weil next-intl jeden Request in den
+ * Locale-Namespace mapped (auch /auth/verify ohne Locale-Prefix wird intern
+ * auf [locale=de]/auth/verify aufgelöst).
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
@@ -14,30 +16,10 @@ import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { generatePseudonym } from '@/lib/members/pseudonym';
 
 const MAX_PSEUDONYM_RETRIES = 8;
-const VALID_OTP_TYPES = new Set([
-  'magiclink',
-  'email',
-  'recovery',
-  'invite',
-  'signup',
-  'email_change',
-] as const);
-type OtpType =
-  | 'magiclink'
-  | 'email'
-  | 'recovery'
-  | 'invite'
-  | 'signup'
-  | 'email_change';
-
-function isOtpType(value: string): value is OtpType {
-  return (VALID_OTP_TYPES as Set<string>).has(value);
-}
 
 async function ensureProfile(userId: string, newsletterOptIn: boolean): Promise<void> {
   const service = createSupabaseServiceClient();
 
-  // Schon ein Profil da?
   const { data: existing } = await service
     .from('profiles')
     .select('user_id')
@@ -45,7 +27,6 @@ async function ensureProfile(userId: string, newsletterOptIn: boolean): Promise<
     .maybeSingle();
   if (existing) return;
 
-  // Neu anlegen mit unique Pseudonym (Retry bei Collision).
   // TODO Phase 5b: `supabase gen types` ersetzt die handgeschriebenen Types
   // in lib/supabase/types.ts, danach kann der `as any`-Cast hier weg.
   for (let attempt = 0; attempt < MAX_PSEUDONYM_RETRIES; attempt++) {
@@ -55,7 +36,6 @@ async function ensureProfile(userId: string, newsletterOptIn: boolean): Promise<
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .insert({ user_id: userId, pseudonym, newsletter_opt_in: newsletterOptIn } as any);
     if (!error) return;
-    // 23505 = unique_violation in PostgreSQL — versuch ein anderes Pseudonym
     if (error.code !== '23505') throw error;
   }
   throw new Error('pseudonym-generation hat zu oft kollidiert');
@@ -63,18 +43,14 @@ async function ensureProfile(userId: string, newsletterOptIn: boolean): Promise<
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
-  const tokenHash = searchParams.get('token_hash');
-  const typeParam = searchParams.get('type');
+  const code = searchParams.get('code');
 
-  if (!tokenHash || !typeParam || !isOtpType(typeParam)) {
+  if (!code) {
     return NextResponse.redirect(`${origin}/mit-glied?error=invalid_link`);
   }
 
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.verifyOtp({
-    token_hash: tokenHash,
-    type: typeParam,
-  });
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 
   if (error || !data.user) {
     return NextResponse.redirect(`${origin}/mit-glied?error=expired_link`);
@@ -88,9 +64,6 @@ export async function GET(request: NextRequest) {
   } catch {
     return NextResponse.redirect(`${origin}/mit-glied?error=profile_create`);
   }
-
-  // TODO Phase 5b: wenn newsletterOptIn → Brevo-Subscribe via lib/brevo.ts.
-  // Bewusst noch nicht verkabelt — Brevo-DOI-Flow braucht separates Test-Setup.
 
   return NextResponse.redirect(`${origin}/mit-glied/eingang`);
 }

@@ -6,11 +6,8 @@ import { FormField } from '@/components/primitives/FormField';
 import { Input } from '@/components/primitives/Input';
 import { SubmitButton } from '@/components/primitives/SubmitButton';
 import { Body } from '@/components/primitives/Body';
-import {
-  requestMagicLink,
-  initialAuthFormState,
-  type AuthFormState,
-} from '../actions';
+import { requestMagicLink } from '../actions';
+import { initialAuthFormState, type AuthFormState } from '../auth-types';
 import styles from './MagicLinkForm.module.css';
 
 interface MagicLinkFormProps {

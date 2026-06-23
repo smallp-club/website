@@ -7,6 +7,7 @@ import { consumeRateLimit } from '@/lib/rate-limit';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import type { AuthFormState } from './auth-types';
 
 /**
  * Pre-Auth-Pipeline für Magic-Link-Send.
@@ -19,14 +20,10 @@ import { createSupabaseServiceClient } from '@/lib/supabase/service';
  *  5. supabase.auth.signInWithOtp() rufen
  *
  * Fehler-Messages folgen MEMBER_SECURITY.md §8 (Brand-Voice).
+ *
+ * AuthFormState + initialAuthFormState liegen in auth-types.ts —
+ * Next.js 16 'use server' erlaubt nur async function exports.
  */
-
-export type AuthFormState =
-  | { status: 'idle' }
-  | { status: 'success'; email: string }
-  | { status: 'error'; message: string };
-
-export const initialAuthFormState: AuthFormState = { status: 'idle' };
 
 async function getClientIp(): Promise<string | null> {
   const hdrs = await headers();
