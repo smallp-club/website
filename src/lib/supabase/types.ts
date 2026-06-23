@@ -1,0 +1,130 @@
+/**
+ * Supabase Database-Types — Handpflege, gespiegelt aus
+ * supabase/migrations/0001_member_foundation.sql.
+ *
+ * Sobald das Supabase-Projekt live ist, ersetzen wir das durch
+ * `supabase gen types typescript --linked > src/lib/supabase/types.gen.ts`
+ * und re-exportieren von hier aus.
+ */
+
+export type PromptKey =
+  | 'das_hab_ich_mal_geglaubt'
+  | 'das_hat_mich_entlastet'
+  | 'das_hat_mich_begleitet'
+  | 'das_hab_ich_anderen_gesagt'
+  | 'das_wuensche_ich_mir';
+
+export type AgeRange =
+  | 'unter_20'
+  | '20_29'
+  | '30_39'
+  | '40_49'
+  | '50_plus';
+
+export type StoryStatus = 'pending' | 'approved' | 'rejected';
+export type ProfileRole = 'member' | 'admin';
+export type AdminAction = 'approve' | 'reject' | 'ban' | 'unban' | 'role_change';
+export type AdminTargetType = 'story' | 'user' | 'blocklist';
+
+export interface ProfileRow {
+  user_id: string;
+  pseudonym: string;
+  pseudonym_changed_at: string | null;
+  role: ProfileRole;
+  first_submission_allowed_at: string | null;
+  newsletter_opt_in: boolean;
+  created_at: string;
+}
+
+export interface StoryRow {
+  id: string;
+  user_id: string;
+  pseudonym: string;
+  prompt_key: PromptKey;
+  body: string;
+  age_range: AgeRange | null;
+  status: StoryStatus;
+  flags: string[];
+  reports_count: number;
+  created_at: string;
+  approved_at: string | null;
+  approved_by: string | null;
+}
+
+export interface BlocklistRow {
+  id: string;
+  email_hash: string;
+  ip_hash: string | null;
+  reason: string | null;
+  banned_at: string;
+  banned_by: string | null;
+}
+
+export interface ContentShingleRow {
+  shingle: string;
+  story_id: string;
+  created_at: string;
+}
+
+export interface StoryReportRow {
+  id: string;
+  story_id: string;
+  reported_at: string;
+  reporter_ip_hash: string | null;
+  reason: string | null;
+}
+
+export interface AdminAuditLogRow {
+  id: string;
+  admin_id: string;
+  action: AdminAction;
+  target_type: AdminTargetType;
+  target_id: string;
+  metadata: Record<string, unknown> | null;
+  created_at: string;
+}
+
+export interface Database {
+  public: {
+    Tables: {
+      profiles: {
+        Row: ProfileRow;
+        Insert: Omit<ProfileRow, 'created_at' | 'pseudonym_changed_at' | 'first_submission_allowed_at' | 'newsletter_opt_in' | 'role'> &
+          Partial<Pick<ProfileRow, 'newsletter_opt_in' | 'role' | 'first_submission_allowed_at'>>;
+        Update: Partial<ProfileRow>;
+      };
+      stories: {
+        Row: StoryRow;
+        Insert: Omit<StoryRow, 'id' | 'status' | 'flags' | 'reports_count' | 'created_at' | 'approved_at' | 'approved_by'> &
+          Partial<Pick<StoryRow, 'status' | 'flags' | 'approved_at' | 'approved_by'>>;
+        Update: Partial<StoryRow>;
+      };
+      blocklist: {
+        Row: BlocklistRow;
+        Insert: Omit<BlocklistRow, 'id' | 'banned_at'> & Partial<Pick<BlocklistRow, 'banned_at'>>;
+        Update: Partial<BlocklistRow>;
+      };
+      content_shingles: {
+        Row: ContentShingleRow;
+        Insert: Omit<ContentShingleRow, 'created_at'> & Partial<Pick<ContentShingleRow, 'created_at'>>;
+        Update: Partial<ContentShingleRow>;
+      };
+      story_reports: {
+        Row: StoryReportRow;
+        Insert: Omit<StoryReportRow, 'id' | 'reported_at'> & Partial<Pick<StoryReportRow, 'reported_at'>>;
+        Update: Partial<StoryReportRow>;
+      };
+      admin_audit_log: {
+        Row: AdminAuditLogRow;
+        Insert: Omit<AdminAuditLogRow, 'id' | 'created_at'> & Partial<Pick<AdminAuditLogRow, 'created_at'>>;
+        Update: Partial<AdminAuditLogRow>;
+      };
+    };
+    Functions: {
+      is_admin: {
+        Args: Record<string, never>;
+        Returns: boolean;
+      };
+    };
+  };
+}
