@@ -8,14 +8,23 @@ Datenbank-Schema und Migrations für den Member-Bereich.
 
 ## Setup-Reihenfolge (für Kevin)
 
-1. Supabase-Projekt anlegen in Region **EU West (Frankfurt)** (Doktrin `HOSTING_STRATEGIE.md`).
-2. Projekt-URL + Anon-Key + Service-Role-Key kopieren.
-3. In Vercel als Env-Vars hinterlegen:
+1. **Supabase-Projekt anlegen** in Region **EU West (Frankfurt)** (Doktrin `HOSTING_STRATEGIE.md`).
+2. **API-Keys kopieren** und in Vercel als Env-Vars hinterlegen:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` (sensitive, niemals `NEXT_PUBLIC_`)
-4. Auth.js Supabase-Adapter installiert dann automatisch sein `next_auth` Schema beim ersten Start.
-5. Danach `0001_member_foundation.sql` im Supabase-SQL-Editor laufen lassen.
+3. **SMTP konfigurieren** im Supabase-Dashboard unter Project Settings → Auth → SMTP:
+   - Host: `w0XXXXXX.kasserver.com` (all-inkl-spezifisch, aus Proton Pass)
+   - Port: `587`
+   - User: `mit-glied@smallp.club`
+   - Password: aus Proton Pass
+   - Sender: `mit-glied@smallp.club`
+   - Sender Name: `mit-glied`
+4. **Auth-Settings** im Supabase-Dashboard:
+   - Magic-Link Expiry: 3600 s (1h, runter von Default 24h — Doktrin SECURITY.md)
+   - Email-Confirmations: aktiv (Doppel-Opt-In)
+   - Allowed Redirect URLs: `https://smallp.club/auth/verify`, lokal `http://localhost:3000/auth/verify`
+5. **Migration laufen lassen** — `0001_member_foundation.sql` im Supabase-SQL-Editor (oder via `supabase db push` wenn CLI installiert).
 
 ## Doktrin
 

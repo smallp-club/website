@@ -12,10 +12,11 @@ Sensibles Thema. Vertrauen ist das Produkt. Security ist nicht optional.
 - Analytics nur via Umami (self-hosted, kein Cookie)
 
 ### Auth
-- **Magic Links only** — kein Passwort = nichts zu klauen
-- `AUTH_SECRET` (nicht NEXTAUTH_SECRET)
-- Callback URLs validieren (kein Open Redirect)
-- Magic Link Expiry ≤ 24h
+- **Magic Links only** via **Supabase Auth** — kein Passwort = nichts zu klauen
+- ~~Auth.js v5 / `AUTH_SECRET`~~ verworfen 2026-06-23 (siehe STACK.md)
+- Callback URLs in Supabase-Dashboard auf Allowlist setzen (kein Open Redirect)
+- Magic Link Expiry ≤ 1h (Supabase-Default 24h herunterdrehen)
+- Token Single-Use (Supabase-Default)
 
 ### Daten
 - **Row Level Security** in Supabase — User sieht nur eigene Daten

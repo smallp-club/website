@@ -50,11 +50,14 @@
 - Nur API, niemals JS-Embed (Privacy-Regel)
 
 ## Auth (Member Area)
-- **Auth.js v5** — `AUTH_SECRET` (nicht NEXTAUTH_SECRET!)
-- Magic Links via **all-inkl SMTP** (DE-Mailserver, eh bezahlt)
+- **Supabase Auth** (Magic-Link direkt, native Integration mit DB + RLS)
+- Magic-Link-SMTP via **all-inkl** (DE-Mailserver), konfiguriert im Supabase-Dashboard unter Project Settings → Auth → SMTP. Kein nodemailer im Code.
+- ~~Auth.js v5~~ verworfen 2026-06-23: nodemailer-Lieferkette hat 6 high-severity CVEs (SMTP Command Injection, CRLF Injection), und für reine Magic-Link-Anforderung war Auth.js-Komplexität (zweite Auth-Quelle neben Supabase, Custom Adapter) unverhältnismäßig
 - ~~Resend~~ verworfen 2026-06-17 (US-Server, all-inkl ist DE und nicht teurer)
-- Database Sessions (nicht JWT)
-- 3-Layer Protection: Middleware (Edge) + Layout (Server) + Server Actions
+- Database Sessions (Supabase nativ, JWT mit kurzem Refresh)
+- RLS via `auth.uid()` direkt, kein Adapter-Bridge
+- 3-Layer Protection: Proxy (Edge) + Layout (Server) + Server Actions
+- Helper-Clients: `@supabase/ssr` für Browser- und Server-Components, `@supabase/supabase-js` mit Service-Role nur in Server Actions/Route Handlers
 
 ## Datenbank
 - **Supabase** Free Tier (500 MB), EU-Region Frankfurt forced

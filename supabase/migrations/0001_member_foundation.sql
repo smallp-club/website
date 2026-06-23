@@ -6,13 +6,14 @@
 -- Blocklist, Brigading-Shingles, Story-Reports, Admin-Audit-Log.
 -- Plus Row-Level-Security-Policies pro Tabelle.
 --
--- Auth.js v5 Supabase-Adapter legt eigene Tabellen unter `next_auth` schema an
--- (users, accounts, sessions, verification_tokens) — siehe @auth/supabase-adapter.
--- Profiles + alle Domain-Tabellen referenzieren `next_auth.users(id)`.
+-- Auth: Supabase Auth direkt (Magic-Link). User-Identitäten liegen in
+-- Supabase's eigenem `auth.users`-Schema. Profiles + alle Domain-Tabellen
+-- referenzieren `auth.users(id)`.
 --
 -- Doktrin-Refs:
 -- - docs/project/MEMBER_CONCEPT.md §8 (Tech-Implementation)
 -- - docs/project/MEMBER_SECURITY.md §6 (Tech-Architektur Ergänzung) + §7 (Admin)
+-- - docs/tech/STACK.md (Auth: Supabase Auth direkt, nicht Auth.js v5)
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Schema + Extensions
@@ -20,17 +21,11 @@
 
 create extension if not exists "pgcrypto";
 
--- Auth.js v5 erwartet ein `next_auth` Schema. Dieses wird normalerweise vom
--- Supabase-Adapter beim ersten Run erstellt; wir legen es defensiv hier an,
--- damit die Foreign-Keys unten nicht beim ersten Migrations-Run scheitern.
-create schema if not exists next_auth;
-
--- Forward-Declaration der users-Tabelle (Auth.js managed sie):
--- next_auth.users(id uuid primary key, email text, ...).
+-- Supabase legt `auth.users` automatisch beim Projekt-Init an.
 -- Wir referenzieren sie nur per FK.
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- profiles — 1:1 zu next_auth.users
+-- profiles — 1:1 zu auth.users
 -- ─────────────────────────────────────────────────────────────────────────────
 
 create table if not exists public.profiles (
@@ -44,7 +39,7 @@ create table if not exists public.profiles (
   newsletter_opt_in boolean not null default false,
   created_at timestamptz not null default now(),
   constraint profiles_user_fkey
-    foreign key (user_id) references next_auth.users(id) on delete cascade
+    foreign key (user_id) references auth.users(id) on delete cascade
 );
 
 create index if not exists profiles_role_idx on public.profiles (role);
@@ -77,9 +72,9 @@ create table if not exists public.stories (
   approved_at timestamptz,
   approved_by uuid,
   constraint stories_user_fkey
-    foreign key (user_id) references next_auth.users(id) on delete cascade,
+    foreign key (user_id) references auth.users(id) on delete cascade,
   constraint stories_approver_fkey
-    foreign key (approved_by) references next_auth.users(id) on delete set null
+    foreign key (approved_by) references auth.users(id) on delete set null
 );
 
 create index if not exists stories_status_created_idx
@@ -99,7 +94,7 @@ create table if not exists public.blocklist (
   banned_at timestamptz not null default now(),
   banned_by uuid,
   constraint blocklist_banner_fkey
-    foreign key (banned_by) references next_auth.users(id) on delete set null
+    foreign key (banned_by) references auth.users(id) on delete set null
 );
 
 create unique index if not exists blocklist_email_hash_uidx on public.blocklist (email_hash);
@@ -153,7 +148,7 @@ create table if not exists public.admin_audit_log (
   metadata jsonb,
   created_at timestamptz not null default now(),
   constraint audit_admin_fkey
-    foreign key (admin_id) references next_auth.users(id) on delete set null
+    foreign key (admin_id) references auth.users(id) on delete set null
 );
 
 create index if not exists audit_log_created_idx on public.admin_audit_log (created_at desc);
