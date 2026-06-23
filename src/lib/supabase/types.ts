@@ -84,47 +84,112 @@ export interface AdminAuditLogRow {
   created_at: string;
 }
 
+export interface ProfileInsert {
+  user_id: string;
+  pseudonym: string;
+  pseudonym_changed_at?: string | null;
+  role?: ProfileRole;
+  first_submission_allowed_at?: string | null;
+  newsletter_opt_in?: boolean;
+  created_at?: string;
+}
+
+export interface StoryInsert {
+  id?: string;
+  user_id: string;
+  pseudonym: string;
+  prompt_key: PromptKey;
+  body: string;
+  age_range?: AgeRange | null;
+  status?: StoryStatus;
+  flags?: string[];
+  reports_count?: number;
+  created_at?: string;
+  approved_at?: string | null;
+  approved_by?: string | null;
+}
+
+export interface BlocklistInsert {
+  id?: string;
+  email_hash: string;
+  ip_hash?: string | null;
+  reason?: string | null;
+  banned_at?: string;
+  banned_by?: string | null;
+}
+
+export interface ContentShingleInsert {
+  shingle: string;
+  story_id: string;
+  created_at?: string;
+}
+
+export interface StoryReportInsert {
+  id?: string;
+  story_id: string;
+  reported_at?: string;
+  reporter_ip_hash?: string | null;
+  reason?: string | null;
+}
+
+export interface AdminAuditLogInsert {
+  id?: string;
+  admin_id: string;
+  action: AdminAction;
+  target_type: AdminTargetType;
+  target_id: string;
+  metadata?: Record<string, unknown> | null;
+  created_at?: string;
+}
+
 export interface Database {
   public: {
     Tables: {
       profiles: {
         Row: ProfileRow;
-        Insert: Omit<ProfileRow, 'created_at' | 'pseudonym_changed_at' | 'first_submission_allowed_at' | 'newsletter_opt_in' | 'role'> &
-          Partial<Pick<ProfileRow, 'newsletter_opt_in' | 'role' | 'first_submission_allowed_at'>>;
+        Insert: ProfileInsert;
         Update: Partial<ProfileRow>;
+        Relationships: [];
       };
       stories: {
         Row: StoryRow;
-        Insert: Omit<StoryRow, 'id' | 'status' | 'flags' | 'reports_count' | 'created_at' | 'approved_at' | 'approved_by'> &
-          Partial<Pick<StoryRow, 'status' | 'flags' | 'approved_at' | 'approved_by'>>;
+        Insert: StoryInsert;
         Update: Partial<StoryRow>;
+        Relationships: [];
       };
       blocklist: {
         Row: BlocklistRow;
-        Insert: Omit<BlocklistRow, 'id' | 'banned_at'> & Partial<Pick<BlocklistRow, 'banned_at'>>;
+        Insert: BlocklistInsert;
         Update: Partial<BlocklistRow>;
+        Relationships: [];
       };
       content_shingles: {
         Row: ContentShingleRow;
-        Insert: Omit<ContentShingleRow, 'created_at'> & Partial<Pick<ContentShingleRow, 'created_at'>>;
+        Insert: ContentShingleInsert;
         Update: Partial<ContentShingleRow>;
+        Relationships: [];
       };
       story_reports: {
         Row: StoryReportRow;
-        Insert: Omit<StoryReportRow, 'id' | 'reported_at'> & Partial<Pick<StoryReportRow, 'reported_at'>>;
+        Insert: StoryReportInsert;
         Update: Partial<StoryReportRow>;
+        Relationships: [];
       };
       admin_audit_log: {
         Row: AdminAuditLogRow;
-        Insert: Omit<AdminAuditLogRow, 'id' | 'created_at'> & Partial<Pick<AdminAuditLogRow, 'created_at'>>;
+        Insert: AdminAuditLogInsert;
         Update: Partial<AdminAuditLogRow>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
     Functions: {
       is_admin: {
         Args: Record<string, never>;
         Returns: boolean;
       };
     };
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }

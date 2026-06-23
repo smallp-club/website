@@ -1,6 +1,7 @@
 import createMiddleware from 'next-intl/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { routing } from './i18n/routing';
+import { refreshSupabaseSession } from './lib/supabase/middleware';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -13,11 +14,12 @@ function buildCsp(nonce: string): string {
   // Dev: Next.js Webpack-HMR braucht eval() für React-Refresh + WebSocket für Live-Reload.
   // Production: strikte CSP, kein unsafe-eval, kein ws:.
   const scriptSrc = isDev
-    ? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval'`
-    : `script-src 'self' 'nonce-${nonce}'`;
+    ? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' https://challenges.cloudflare.com`
+    : `script-src 'self' 'nonce-${nonce}' https://challenges.cloudflare.com`;
+  // Supabase-Auth-Calls über *.supabase.co (Realtime + REST). Turnstile-Telemetry läuft separat.
   const connectSrc = isDev
-    ? "connect-src 'self' ws: wss:"
-    : "connect-src 'self'";
+    ? "connect-src 'self' ws: wss: https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com"
+    : "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com";
   return [
     "default-src 'none'",
     scriptSrc,
@@ -26,6 +28,8 @@ function buildCsp(nonce: string): string {
     "img-src 'self' data:",
     connectSrc,
     "manifest-src 'self'",
+    // Turnstile rendert sein Widget in einem iframe.
+    "frame-src https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
     "form-action 'self'",
@@ -33,15 +37,19 @@ function buildCsp(nonce: string): string {
   ].join('; ');
 }
 
-export default function proxy(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const nonce = generateNonce();
   const csp = buildCsp(nonce);
 
-  // Let next-intl handle locale routing
+  // i18n routing zuerst, danach Supabase-Session-Refresh auf der gleichen Response.
   const response = intlMiddleware(request);
   const res = response ?? NextResponse.next();
 
-  // Inject security headers
+  // Session-Refresh als Side-Effect; schreibt Auth-Cookies zurück wenn nötig.
+  // No-op solange die Supabase-Env-Vars nicht gesetzt sind.
+  await refreshSupabaseSession(request, res);
+
+  // Security-Header
   res.headers.set('Content-Security-Policy', csp);
   res.headers.set('x-nonce', nonce); // Layout reads this to pass nonce to Next.js scripts
   res.headers.set('Referrer-Policy', 'no-referrer');
