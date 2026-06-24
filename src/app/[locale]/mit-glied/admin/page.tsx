@@ -17,7 +17,7 @@ import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
 import { LinkButton } from '@/components/primitives/LinkButton';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import styles from './admin.module.css';
 
@@ -31,7 +31,7 @@ const TWENTY_FOUR_HOURS_AGO = () =>
   new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
 export default async function AdminDashboardPage() {
-  await requireAdmin();
+  await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
 
   // Counts werden parallel geholt — kein Risiko, weil read-only.

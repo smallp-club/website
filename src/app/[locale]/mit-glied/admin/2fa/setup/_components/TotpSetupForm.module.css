@@ -1,0 +1,142 @@
+/* TOTP-Setup-Form — QR + Secret + Code-Input, dann Backup-Codes-View. */
+
+.qr {
+  width: 220px;
+  height: 220px;
+  padding: var(--space-3);
+  background-color: var(--surface-bg);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  align-self: flex-start;
+  display: block;
+}
+
+.secretDetails {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+}
+
+.secretDetails summary {
+  cursor: pointer;
+  padding: var(--space-2) 0;
+}
+
+.secret {
+  display: block;
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+  word-break: break-all;
+  user-select: all;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 420px;
+}
+
+.codeInput {
+  font-family: var(--font-mono);
+  font-size: var(--text-heading-sm);
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+/* ----- Backup-Codes-View ----- */
+
+.codeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2);
+}
+
+@media (min-width: 480px) {
+  .codeList {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.codeItem {
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
+  border-radius: var(--radius-sm);
+}
+
+.codeItem code {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-lg);
+  color: var(--text-strong);
+  letter-spacing: 0.05em;
+  user-select: all;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.printButton {
+  appearance: none;
+  border: 1px solid var(--text-strong);
+  background: transparent;
+  color: var(--text-strong);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  cursor: pointer;
+  min-height: 44px;
+  transition: background-color var(--duration-base, 200ms) ease;
+}
+
+.printButton:hover {
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.05));
+}
+
+.printButton:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.continueLink {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-3) var(--space-5);
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  text-decoration: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  min-height: 44px;
+  transition: background-color var(--duration-base, 200ms) ease;
+}
+
+.continueLink:hover {
+  background-color: var(--accent-hover, var(--accent));
+}
+
+.continueLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+@media print {
+  .actions,
+  .secretDetails,
+  .qr {
+    display: none;
+  }
+}

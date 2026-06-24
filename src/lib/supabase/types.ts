@@ -23,8 +23,17 @@ export type AgeRange =
 
 export type StoryStatus = 'pending' | 'approved' | 'rejected';
 export type ProfileRole = 'member' | 'admin';
-export type AdminAction = 'approve' | 'reject' | 'ban' | 'unban' | 'role_change';
-export type AdminTargetType = 'story' | 'user' | 'blocklist';
+export type AdminAction =
+  | 'approve'
+  | 'reject'
+  | 'ban'
+  | 'unban'
+  | 'role_change'
+  | 'mfa_enroll'
+  | 'mfa_unenroll'
+  | 'mfa_backup_regen'
+  | 'mfa_verify';
+export type AdminTargetType = 'story' | 'user' | 'blocklist' | 'mfa';
 
 export interface ProfileRow {
   user_id: string;
@@ -34,7 +43,24 @@ export interface ProfileRow {
   first_submission_allowed_at: string | null;
   newsletter_opt_in: boolean;
   onboarding_completed_at: string | null;
+  mfa_enrolled_at: string | null;
   created_at: string;
+}
+
+export interface MfaBackupCodeRow {
+  id: string;
+  user_id: string;
+  code_hash: string;
+  used_at: string | null;
+  created_at: string;
+}
+
+export interface MfaBackupCodeInsert {
+  id?: string;
+  user_id: string;
+  code_hash: string;
+  used_at?: string | null;
+  created_at?: string;
 }
 
 export interface StoryRow {
@@ -181,6 +207,12 @@ export interface Database {
         Row: AdminAuditLogRow;
         Insert: AdminAuditLogInsert;
         Update: Partial<AdminAuditLogRow>;
+        Relationships: [];
+      };
+      mfa_backup_codes: {
+        Row: MfaBackupCodeRow;
+        Insert: MfaBackupCodeInsert;
+        Update: Partial<MfaBackupCodeRow>;
         Relationships: [];
       };
     };

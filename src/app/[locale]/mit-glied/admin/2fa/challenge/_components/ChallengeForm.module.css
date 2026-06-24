@@ -1,0 +1,40 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  max-width: 420px;
+}
+
+.codeInput {
+  font-family: var(--font-mono);
+  font-size: var(--text-heading-sm);
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+.modeToggle {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: var(--space-2) 0;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  text-decoration: underline;
+  text-decoration-color: var(--border-hairline);
+  text-underline-offset: 4px;
+  cursor: pointer;
+  align-self: flex-start;
+  min-height: 44px;
+}
+
+.modeToggle:hover {
+  color: var(--text-strong);
+  text-decoration-color: var(--text-strong);
+}
+
+.modeToggle:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}

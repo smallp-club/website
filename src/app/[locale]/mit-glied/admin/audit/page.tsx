@@ -14,7 +14,7 @@ import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
 import { LinkButton } from '@/components/primitives/LinkButton';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { AdminAuditLogRow } from '@/lib/supabase/types';
 import styles from './audit.module.css';
@@ -53,7 +53,7 @@ interface AuditEntry extends AdminAuditLogRow {
 }
 
 export default async function AdminAuditPage() {
-  await requireAdmin();
+  await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

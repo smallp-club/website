@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { hashEmail, hashIp } from '@/lib/hash';
 
@@ -16,7 +16,7 @@ import { hashEmail, hashIp } from '@/lib/hash';
  * Role-Check via requireAdmin().
  */
 export async function banAction(formData: FormData): Promise<void> {
-  const session = await requireAdmin();
+  const session = await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
 
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
@@ -67,7 +67,7 @@ export async function banAction(formData: FormData): Promise<void> {
  * Unban: Blocklist-Eintrag entfernen + Audit-Log.
  */
 export async function unbanAction(formData: FormData): Promise<void> {
-  const session = await requireAdmin();
+  const session = await requireAdminWithMfa();
   const blocklistId = String(formData.get('blocklist_id') ?? '');
   if (!blocklistId) return;
 
@@ -99,7 +99,7 @@ export async function unbanAction(formData: FormData): Promise<void> {
  * vom Inbox-Detail-Ban-Button aufgerufen (story_id → user_id → mail).
  */
 export async function banUserFromStoryAction(formData: FormData): Promise<void> {
-  const session = await requireAdmin();
+  const session = await requireAdminWithMfa();
   const storyId = String(formData.get('story_id') ?? '');
   const reason =
     String(formData.get('reason') ?? '').trim().slice(0, 500) ||

@@ -18,7 +18,7 @@ import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
 import { SubmitButton } from '@/components/primitives/SubmitButton';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../../../erfahrungen/neu/story-types';
@@ -49,7 +49,7 @@ interface PageProps {
 }
 
 export default async function AdminInboxDetailPage({ params }: PageProps) {
-  await requireAdmin();
+  await requireAdminWithMfa();
   const { uuid } = await params;
 
   const service = createSupabaseServiceClient();

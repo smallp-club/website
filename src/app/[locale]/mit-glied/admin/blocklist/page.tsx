@@ -19,7 +19,7 @@ import { Input } from '@/components/primitives/Input';
 import { Textarea } from '@/components/primitives/Textarea';
 import { SubmitButton } from '@/components/primitives/SubmitButton';
 import { LinkButton } from '@/components/primitives/LinkButton';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { BlocklistRow } from '@/lib/supabase/types';
 import { banAction, unbanAction } from './actions';
@@ -46,7 +46,7 @@ function shortHash(h: string | null): string {
 }
 
 export default async function AdminBlocklistPage() {
-  await requireAdmin();
+  await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

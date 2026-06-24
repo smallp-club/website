@@ -19,7 +19,7 @@ import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
 import { LinkButton } from '@/components/primitives/LinkButton';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
 import styles from './brigading.module.css';
@@ -39,7 +39,7 @@ const DATE_TIME = new Intl.DateTimeFormat('de-DE', {
 });
 
 export default async function AdminBrigadingPage() {
-  await requireAdmin();
+  await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

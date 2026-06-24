@@ -17,7 +17,7 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../../erfahrungen/neu/story-types';
@@ -42,7 +42,7 @@ const DATE_TIME = new Intl.DateTimeFormat('de-DE', {
 });
 
 export default async function AdminInboxPage() {
-  await requireAdmin();
+  await requireAdminWithMfa();
 
   const service = createSupabaseServiceClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

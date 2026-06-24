@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { requireAdmin } from '@/lib/members/auth';
+import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 
 /**
@@ -19,7 +19,7 @@ export async function approveStoryAction(formData: FormData): Promise<void> {
   const storyId = String(formData.get('story_id') ?? '');
   if (!storyId) return;
 
-  const session = await requireAdmin();
+  const session = await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
   const now = new Date().toISOString();
 
@@ -56,7 +56,7 @@ export async function rejectStoryAction(formData: FormData): Promise<void> {
   const storyId = String(formData.get('story_id') ?? '');
   if (!storyId) return;
 
-  const session = await requireAdmin();
+  const session = await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
