@@ -1,0 +1,111 @@
+/* ===== Shell-Layout =====
+ *
+ * Mobile: column-flex (mobileBar oben, Sidebar als fixed Drawer raus
+ * aus dem Flow, content nimmt die ganze Breite).
+ * Desktop (>= 1024px): 2-column Grid. Sidebar Cell 1, content Cell 2.
+ * mobileBar wird display:none.
+ *
+ * Backdrop von MemberSidebar ist position:fixed → fällt aus dem
+ * Grid-Flow raus.
+ */
+
+.shell {
+  /* App-Shell: nimmt den vollen Viewport (SiteNav ist auf diesen Routes via
+     NavGate versteckt). Sidebar startet damit sofort am viewport-top und
+     ist sticky funktional, ohne 80px-Hack oder weiße Lücke darüber. */
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg);
+  min-height: 100vh;
+}
+
+@media (min-width: 1024px) {
+  .shell {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    align-items: stretch;
+    gap: 0;
+  }
+}
+
+@media (min-width: 1280px) {
+  .shell {
+    grid-template-columns: 340px 1fr;
+  }
+}
+
+/* ===== Mobile Top-Bar ===== */
+
+.mobileBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--gutter);
+  border-bottom: 1px solid var(--border-hairline);
+  background-color: var(--surface-bg);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+@media (min-width: 1024px) {
+  .mobileBar {
+    display: none;
+  }
+}
+
+.burger {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.burger:hover {
+  border-color: var(--text-strong);
+}
+
+.burger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.burger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background-color: var(--text-strong);
+  border-radius: 1px;
+}
+
+.mobileLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-body-lg);
+  color: var(--text-strong);
+}
+
+/* ===== Content-Area ===== */
+
+.content {
+  background-color: var(--surface-bg);
+  min-width: 0;
+  padding: var(--space-6) var(--gutter) var(--space-9);
+}
+
+@media (min-width: 1024px) {
+  .content {
+    grid-column: 2;
+    grid-row: 1;
+    padding: var(--space-7) var(--space-7) var(--space-11);
+  }
+}

@@ -7,7 +7,9 @@ import { Inter } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { SkipToContent } from '@/components/primitives/SkipToContent';
 import { SiteFooterContainer } from '@/components/sections/SiteFooter/SiteFooterContainer';
+import { FooterGate } from '@/components/sections/SiteFooter/FooterGate';
 import { SiteNavContainer } from '@/components/sections/SiteNav/SiteNavContainer';
+import { NavGate } from '@/components/sections/SiteNav/NavGate';
 import '../globals.css';
 
 /**
@@ -116,9 +118,13 @@ export default async function LocaleLayout({ children, params }: Props) {
       <body>
         <SkipToContent />
         <NextIntlClientProvider messages={messages}>
-          <SiteNavContainer />
+          <NavGate>
+            <SiteNavContainer />
+          </NavGate>
           {children}
-          <SiteFooterContainer />
+          <FooterGate>
+            <SiteFooterContainer />
+          </FooterGate>
         </NextIntlClientProvider>
       </body>
     </html>
