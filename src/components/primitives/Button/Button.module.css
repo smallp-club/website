@@ -139,9 +139,13 @@
     box-shadow var(--duration-base) var(--ease-out);
 }
 
-/* Focus universal */
+/* Focus universal.
+   Outline-Fallback PFLICHT — Windows High-Contrast und Forced-Colors-Mode
+   ignorieren box-shadow komplett. box-shadow ist die Brand-Lesart, outline
+   die a11y-Garantie. Beide zusammen, kein „outline: none". */
 .button:focus-visible {
-  outline: none;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
   box-shadow: var(--shadow-focus);
 }
 

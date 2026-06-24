@@ -81,6 +81,24 @@ a {
   outline-offset: 2px;
 }
 
+/**
+ * Visually-Hidden Utility (sr-only) — WCAG-Standard zum Verstecken von
+ * Inhalten visuell, aber zugänglich für Screen-Reader. Genutzt für
+ * Page-Titel die semantisch h1 brauchen aber visuell vom Hero getragen
+ * werden (z.B. /mythen/[slug] mit StickyCrossfade als visueller Hero).
+ */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* Motion-Override für Reduced-Motion.
    Die kanonischen Motion-Tokens (--duration-*, --ease-*) leben in tokens/spacing.css.
    Hier nur --duration-instant + der globale prefers-reduced-motion-Override,

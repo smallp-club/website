@@ -464,10 +464,10 @@ export function HeroLanding() {
                   }
           }
         >
-          <h1 className={styles.statement}>
+          <h2 className={styles.statement}>
             <span className={styles.statementLine}>{STATEMENT_QUESTION}</span>
             <span className={styles.statementLine}>{STATEMENT_ANSWER}</span>
-          </h1>
+          </h2>
         </motion.div>
 
         {/* Editorial-Stack: Voice → Source → Zahl linksbündig */}

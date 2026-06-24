@@ -55,6 +55,10 @@ export default async function MythosDetailPage({ params }: PageProps) {
 
   return (
     <main id="main-content">
+      {/* Page-Titel als sr-only h1 — StickyCrossfade ist visuell der Hero,
+          rendert aber semantisch als <p>. WCAG verlangt genau eine h1
+          pro Page; der Mythen-Statement ist hier die natürliche Wahl. */}
+      <h1 className="sr-only">mythos: {myth.myth}</h1>
       <StickyCrossfade
         myth={myth.myth}
         fact={myth.fact}
