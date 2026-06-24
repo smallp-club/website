@@ -139,3 +139,33 @@
   box-shadow: var(--shadow-focus);
   border-color: var(--signal);
 }
+
+.banTotpInput {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-lg);
+  letter-spacing: 0.18em;
+  text-align: center;
+  padding: var(--space-3);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-bg);
+  color: var(--text-strong);
+  max-width: 220px;
+  min-height: 48px;
+}
+
+.banTotpInput:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-color: var(--signal);
+}
+
+.reauthError {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
+  border-left: 3px solid var(--signal);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-strong);
+}

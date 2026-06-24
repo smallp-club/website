@@ -46,11 +46,14 @@ const DATE_TIME_LONG = new Intl.DateTimeFormat('de-DE', {
 
 interface PageProps {
   params: Promise<{ uuid: string }>;
+  searchParams: Promise<{ reauth?: string }>;
 }
 
-export default async function AdminInboxDetailPage({ params }: PageProps) {
+export default async function AdminInboxDetailPage({ params, searchParams }: PageProps) {
   await requireAdminWithMfa();
   const { uuid } = await params;
+  const { reauth } = await searchParams;
+  const reauthFailed = reauth === 'failed';
 
   const service = createSupabaseServiceClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -159,6 +162,13 @@ export default async function AdminInboxDetailPage({ params }: PageProps) {
                     blocklist. unwiderruflich. nur bei brigading, hass, oder
                     wiederholten verstößen.
                   </Body>
+                  {reauthFailed && (
+                    <p className={styles.reauthError} role="alert">
+                      der 2fa-code war nicht aktuell. sperren wurde nicht
+                      ausgeführt. nimm den code, der gerade in deiner app
+                      steht, und probier nochmal.
+                    </p>
+                  )}
                   <form action={banUserFromStoryAction} className={styles.banForm}>
                     <input type="hidden" name="story_id" value={story.id} />
                     <label className={styles.banLabel} htmlFor="ban-reason">
@@ -172,6 +182,27 @@ export default async function AdminInboxDetailPage({ params }: PageProps) {
                       className={styles.banTextarea}
                       placeholder="z.b. brigading welle 2026-06-24"
                     />
+                    <label className={styles.banLabel} htmlFor="ban-totp">
+                      bestätigung mit 2fa-code
+                    </label>
+                    <input
+                      id="ban-totp"
+                      type="text"
+                      name="totp_code"
+                      required
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      pattern="[0-9]{6}"
+                      maxLength={6}
+                      spellCheck={false}
+                      placeholder="123456"
+                      className={styles.banTotpInput}
+                    />
+                    <Caption tone="muted" as="span">
+                      sperren ist nicht zurückzunehmen. die sechs ziffern
+                      aus deiner authenticator-app sind die bewusste
+                      bestätigung.
+                    </Caption>
                     <SubmitButton variant="destructive" loadingLabel="sperre …">
                       account löschen + sperren
                     </SubmitButton>

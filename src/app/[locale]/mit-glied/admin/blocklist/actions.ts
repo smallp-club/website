@@ -1,8 +1,10 @@
 'use server';
 
+import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { verifyTotpForReauth } from '@/lib/members/mfa';
 import { hashEmail, hashIp } from '@/lib/hash';
 
 /**
@@ -12,12 +14,18 @@ import { hashEmail, hashIp } from '@/lib/hash';
  * Mail-Hash und IP-Hash werden separat geprüft — Reject mit doppelten
  * Einträgen über DB-Unique-Index (email_hash UNIQUE).
  *
- * Re-Auth via TOTP kommt mit dem Security-Block, bis dahin reicht das
- * Role-Check via requireAdmin().
+ * Re-Auth via TOTP: jeder Ban verlangt einen frischen 6-stelligen Code.
+ * Doktrin MEMBER_SECURITY.md §7. Ohne Code oder bei Falsch-Code → redirect
+ * mit ?reauth=failed, kein DB-write.
  */
 export async function banAction(formData: FormData): Promise<void> {
   const session = await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
+
+  const totpCode = String(formData.get('totp_code') ?? '').trim();
+  if (!(await verifyTotpForReauth(totpCode))) {
+    redirect('/mit-glied/admin/blocklist?reauth=failed');
+  }
 
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const ip = String(formData.get('ip') ?? '').trim();
@@ -65,9 +73,16 @@ export async function banAction(formData: FormData): Promise<void> {
 
 /**
  * Unban: Blocklist-Eintrag entfernen + Audit-Log.
+ * Auch hier Re-Auth via TOTP — Unban ist sensitiv (re-enables Account).
  */
 export async function unbanAction(formData: FormData): Promise<void> {
   const session = await requireAdminWithMfa();
+
+  const totpCode = String(formData.get('totp_code') ?? '').trim();
+  if (!(await verifyTotpForReauth(totpCode))) {
+    redirect('/mit-glied/admin/blocklist?reauth=failed');
+  }
+
   const blocklistId = String(formData.get('blocklist_id') ?? '');
   if (!blocklistId) return;
 
@@ -101,6 +116,12 @@ export async function unbanAction(formData: FormData): Promise<void> {
 export async function banUserFromStoryAction(formData: FormData): Promise<void> {
   const session = await requireAdminWithMfa();
   const storyId = String(formData.get('story_id') ?? '');
+
+  const totpCode = String(formData.get('totp_code') ?? '').trim();
+  if (!(await verifyTotpForReauth(totpCode))) {
+    redirect(`/mit-glied/admin/inbox/${storyId}?reauth=failed`);
+  }
+
   const reason =
     String(formData.get('reason') ?? '').trim().slice(0, 500) ||
     'ban via inbox-detail';

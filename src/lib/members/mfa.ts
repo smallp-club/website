@@ -198,6 +198,32 @@ export async function consumeBackupCode(
   return !updateError;
 }
 
+/**
+ * Re-Auth-Helper für sensitive Admin-Aktionen (Ban, Role-Change).
+ *
+ * Doktrin: MEMBER_SECURITY.md §7 — Ban + Role-Change verlangen erneuten
+ * TOTP-Code als bewusste Bestätigung. Nicht jeder admin-call darf nur mit
+ * der seit Login geltenden aal2-Session laufen.
+ *
+ * Returns true wenn der Code gegen den verified factor passt UND die Session
+ * dadurch eine frische Challenge bestanden hat. Bei false: ablehnen.
+ *
+ * Nimmt einen frischen Server-Client (nutzt Cookie-Session des Aufrufers).
+ */
+export async function verifyTotpForReauth(rawCode: string): Promise<boolean> {
+  const code = rawCode.replace(/\s/g, '');
+  if (!/^\d{6}$/.test(code)) return false;
+
+  const { createSupabaseServerClient } = await import('@/lib/supabase/server');
+  const supabase = await createSupabaseServerClient();
+
+  const status = await getMfaStatus(supabase);
+  if (!status.verifiedFactorId) return false;
+
+  const result = await challengeAndVerify(supabase, status.verifiedFactorId, code);
+  return result.ok;
+}
+
 /** Zahl der noch nutzbaren Backup-Codes für einen User. */
 export async function countUnusedBackupCodes(userId: string): Promise<number> {
   const service = createSupabaseServiceClient();

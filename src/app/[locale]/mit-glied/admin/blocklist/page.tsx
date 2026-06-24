@@ -45,8 +45,14 @@ function shortHash(h: string | null): string {
   return `${h.slice(0, 8)}…${h.slice(-4)}`;
 }
 
-export default async function AdminBlocklistPage() {
+interface PageProps {
+  searchParams: Promise<{ reauth?: string }>;
+}
+
+export default async function AdminBlocklistPage({ searchParams }: PageProps) {
   await requireAdminWithMfa();
+  const { reauth } = await searchParams;
+  const reauthFailed = reauth === 'failed';
   const service = createSupabaseServiceClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,6 +112,19 @@ export default async function AdminBlocklistPage() {
                     </span>
                     <form action={unbanAction} className={styles.unbanForm}>
                       <input type="hidden" name="blocklist_id" value={row.id} />
+                      <input
+                        type="text"
+                        name="totp_code"
+                        required
+                        inputMode="numeric"
+                        autoComplete="one-time-code"
+                        pattern="[0-9]{6}"
+                        maxLength={6}
+                        spellCheck={false}
+                        placeholder="2fa-code"
+                        aria-label="2fa-code für entsperren"
+                        className={styles.unbanTotp}
+                      />
                       <SubmitButton variant="ghost" loadingLabel="entsperre …">
                         entsperren
                       </SubmitButton>
@@ -127,8 +146,15 @@ export default async function AdminBlocklistPage() {
             </Heading>
             <Body tone="muted">
               email-adresse pflicht, ip optional. hashes werden serverseitig
-              gebildet — klartext landet niemals in der db.
+              gebildet, klartext landet niemals in der db.
             </Body>
+            {reauthFailed && (
+              <p className={styles.reauthError} role="alert">
+                der 2fa-code war nicht aktuell. die aktion wurde nicht
+                ausgeführt. nimm den code, der gerade in deiner app steht,
+                und probier nochmal.
+              </p>
+            )}
             <form action={banAction} className={styles.banForm}>
               <FormField
                 label="email-adresse"
@@ -148,6 +174,22 @@ export default async function AdminBlocklistPage() {
               >
                 <Textarea name="reason" rows={3} maxLength={500} />
               </FormField>
+              <FormField
+                label="bestätigung mit 2fa-code"
+                helperText="sechs ziffern aus deiner authenticator-app als bewusste bestätigung."
+              >
+                <Input
+                  type="text"
+                  name="totp_code"
+                  required
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  spellCheck={false}
+                  placeholder="123456"
+                />
+              </FormField>
               <SubmitButton variant="destructive" loadingLabel="sperre …">
                 sperren
               </SubmitButton>
@@ -159,7 +201,8 @@ export default async function AdminBlocklistPage() {
       <Section tone="light" rhythm="tight" aria-label="zurück">
         <Container width="prose">
           <Caption tone="muted" as="p" className={styles.captionStack}>
-            re-auth via totp kommt mit dem security-block.
+            jede aktion hier verlangt einen frischen 2fa-code als
+            re-auth. session-aal2 allein reicht nicht.
           </Caption>
           <LinkButton href="/mit-glied/admin" variant="ghost">
             ← zurück zum dashboard
