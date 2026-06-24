@@ -8,6 +8,7 @@ import {
   generateAndStoreBackupCodes,
   getMfaStatus,
 } from '@/lib/members/mfa';
+import { setAdminAal2Expiry } from '@/lib/members/admin-session';
 import type { TotpSetupFormState } from './setup-types';
 
 /**
@@ -90,6 +91,9 @@ export async function verifyTotpSetupAction(
     target_id: session.user.id,
     metadata: { factor_id: factorId, codes_generated: codes.length },
   });
+
+  // 2h Idle-Cookie aktivieren — Setup-Verify zählt wie Challenge-Verify.
+  await setAdminAal2Expiry();
 
   return { status: 'verified', backupCodes: codes };
 }

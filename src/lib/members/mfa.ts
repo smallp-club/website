@@ -221,7 +221,12 @@ export async function verifyTotpForReauth(rawCode: string): Promise<boolean> {
   if (!status.verifiedFactorId) return false;
 
   const result = await challengeAndVerify(supabase, status.verifiedFactorId, code);
-  return result.ok;
+  if (!result.ok) return false;
+
+  // Aktive Re-Auth → Idle-Cookie verlängern. Wer aktiv arbeitet, bleibt drin.
+  const { setAdminAal2Expiry } = await import('@/lib/members/admin-session');
+  await setAdminAal2Expiry();
+  return true;
 }
 
 /** Zahl der noch nutzbaren Backup-Codes für einen User. */

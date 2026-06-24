@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { requireAdminBasic } from '@/lib/members/auth';
 import { challengeAndVerify, consumeBackupCode, getMfaStatus } from '@/lib/members/mfa';
+import { setAdminAal2Expiry } from '@/lib/members/admin-session';
 import type { TotpChallengeFormState } from './challenge-types';
 
 /**
@@ -61,6 +62,9 @@ export async function verifyTotpChallengeAction(
     target_id: session.user.id,
     metadata: { method: 'totp' },
   });
+
+  // 2h Idle-Cookie aktivieren (oder verlängern).
+  await setAdminAal2Expiry();
 
   redirect(next);
 }

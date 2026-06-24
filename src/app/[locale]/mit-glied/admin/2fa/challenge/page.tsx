@@ -26,7 +26,7 @@ export const metadata = {
 };
 
 interface PageProps {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; idle?: string }>;
 }
 
 export default async function TotpChallengePage({ searchParams }: PageProps) {
@@ -34,17 +34,20 @@ export default async function TotpChallengePage({ searchParams }: PageProps) {
   const supabase = await createSupabaseServerClient();
   const status = await getMfaStatus(supabase);
 
+  const { next, idle } = await searchParams;
+  const cameFromIdleTimeout = idle === '1';
+
   // Noch kein verifizierter Factor → erst setup, kein challenge möglich.
   if (!status.enrolled) {
     redirect('/mit-glied/admin/2fa/setup');
   }
 
-  // Schon aal2 in dieser Session → direkt rein.
-  if (status.currentLevel === 'aal2') {
+  // Schon aal2 in dieser Session UND nicht durch idle-cookie-ablauf hier → direkt rein.
+  // Bei idle=1 muss neu challenged werden, auch wenn supabase noch aal2 zeigt.
+  if (status.currentLevel === 'aal2' && !cameFromIdleTimeout) {
     redirect('/mit-glied/admin');
   }
 
-  const { next } = await searchParams;
   const nextPath = sanitizeNext(next);
 
   return (
@@ -57,7 +60,9 @@ export default async function TotpChallengePage({ searchParams }: PageProps) {
               sechs ziffern.
             </Heading>
             <Body>
-              aus deiner authenticator-app. ohne die ziffern kein admin.
+              {cameFromIdleTimeout
+                ? 'zwei stunden ohne aktion. zur sicherheit nochmal bestätigen.'
+                : 'aus deiner authenticator-app. ohne die ziffern kein admin.'}
             </Body>
           </Stack>
         </Container>

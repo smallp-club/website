@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { getCurrentMember } from '@/lib/members/auth';
+import { clearAdminAal2Expiry } from '@/lib/members/admin-session';
 import { makeExPseudonym } from '@/lib/members/pseudonym';
 import { addContactToList, removeContactFromList } from '@/lib/brevo';
 
@@ -20,6 +21,9 @@ export async function logoutAction(formData: FormData) {
   const allDevices = formData.get('scope') === 'global';
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut({ scope: allDevices ? 'global' : 'local' });
+  // Admin-Idle-Cookie immer mitlöschen, damit nach Re-Login der nächste
+  // Admin-Zugriff einen frischen TOTP-Challenge erzwingt.
+  await clearAdminAal2Expiry();
   redirect('/');
 }
 
