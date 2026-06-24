@@ -312,3 +312,14 @@
   font-size: var(--text-body-sm);
   color: var(--text-muted);
 }
+
+.brevoHint {
+  margin: var(--space-3) 0 0;
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
+  border-left: 2px solid var(--signal);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-strong);
+  line-height: var(--leading-relaxed);
+}

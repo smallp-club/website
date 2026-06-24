@@ -10,6 +10,7 @@
 import Link from 'next/link';
 import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { getListStats } from '@/lib/brevo';
 import { ShellWrap } from '../_components/MemberShell';
 import styles from './admin.module.css';
 
@@ -54,6 +55,8 @@ export default async function AdminDashboardPage() {
     blocklistCount,
     auditLast24h,
     recentAudit,
+    profileOptIns,
+    brevoStats,
   ] = await Promise.all([
     countStories(service, { status: 'pending' }),
     countStoriesFlaggedHigh(service),
@@ -62,6 +65,8 @@ export default async function AdminDashboardPage() {
     countTable(service, 'blocklist'),
     countAuditLogSince(service, TWENTY_FOUR_HOURS_AGO()),
     loadRecentAudit(service, 6),
+    countProfileOptIns(service),
+    getListStats(),
   ]);
 
   const needsAttention = pending > 0 || flagHighPending > 0;
@@ -103,6 +108,35 @@ export default async function AdminDashboardPage() {
           <Stat label="blocklist-einträge" value={blocklistCount} />
           <Stat label="admin-aktionen (24 h)" value={auditLast24h} />
         </dl>
+      </section>
+
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrow}>newsletter</span>
+        </header>
+        <dl className={styles.statGrid}>
+          <Stat
+            label="brevo-abonnenten (aktiv)"
+            value={brevoStats.ok ? brevoStats.totalSubscribers : 0}
+          />
+          <Stat
+            label="abgemeldet (blacklisted)"
+            value={brevoStats.ok ? brevoStats.totalBlacklisted : 0}
+          />
+          <Stat
+            label="opt-in im profil"
+            value={profileOptIns}
+          />
+        </dl>
+        {!brevoStats.ok && (
+          <p className={styles.brevoHint}>
+            {brevoStats.reason === 'config_missing'
+              ? 'brevo-keys fehlen in den env vars. ohne keys läuft die liste nicht.'
+              : brevoStats.reason === 'not_found'
+                ? 'die brevo-liste wurde nicht gefunden. list-id prüfen.'
+                : 'brevo-api hat nicht geantwortet. checken im brevo-dashboard.'}
+          </p>
+        )}
       </section>
 
       <section className={styles.section}>
@@ -258,6 +292,16 @@ async function countAuditLogSince(service: any, isoTs: string): Promise<number> 
     .select('id', { count: 'exact', head: true })
     .gte('created_at', isoTs);
   if (error) console.error('[admin-count-audit]', error);
+  return count ?? 0;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function countProfileOptIns(service: any): Promise<number> {
+  const { count, error } = await service
+    .from('profiles')
+    .select('user_id', { count: 'exact', head: true })
+    .eq('newsletter_opt_in', true);
+  if (error) console.error('[admin-count-optin]', error);
   return count ?? 0;
 }
 
