@@ -120,7 +120,7 @@ Deutschland`}
             </p>
           </section>
 
-          <p className={styles.eyebrow}>stand: 17. juni 2026</p>
+          <p className={styles.eyebrow}>stand: 24. juni 2026</p>
         </Container>
       </Section>
     </main>

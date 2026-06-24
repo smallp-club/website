@@ -22,7 +22,7 @@ export default function DatenschutzPage() {
             <Heading level={1} variant="lede">
               datenschutz
             </Heading>
-            <p className={styles.stand}>stand: 17. juni 2026</p>
+            <p className={styles.stand}>stand: 24. juni 2026</p>
           </header>
 
           <section className={styles.section}>
@@ -247,18 +247,44 @@ keine cookies, außer die nötig sind damit die seite läuft.`}
 
             <div className={styles.provider}>
               <p className={styles.providerName}>
-                Auth.js (Code in unserer App, läuft auf Vercel)
+                Supabase Auth (Teil von Supabase, EU-Region Frankfurt, DPF)
               </p>
               <p className={styles.providerDetail}>
-                Was: setzt Login-Sessions als Cookies. Speichert nichts auf
-                externen Servern.
+                Was: setzt Login-Sessions als httpOnly-Cookies. Verwaltet die
+                Magic-Link-Tokens und die Refresh-Logik. Die eigentliche
+                Mail-Zustellung läuft über all-inkl SMTP (siehe Mail-Block).
               </p>
               <p className={styles.providerDetail}>
-                Wie lange: Login-Cookie 30 Tage, dann auto-Logout.
+                Wie lange: Login-Cookie 30 Tage, dann auto-Logout. Magic-Link
+                selbst ist nach 1 Stunde abgelaufen und einmalig nutzbar.
               </p>
               <p className={styles.providerDetail}>
                 Rechtsgrundlage: § 25 Abs. 2 TTDSG + Art. 6 Abs. 1 lit. b
                 DSGVO.
+              </p>
+            </div>
+
+            <div className={styles.provider}>
+              <p className={styles.providerName}>
+                Cloudflare Turnstile (Cloudflare Inc., EU-Edge, DPF)
+              </p>
+              <p className={styles.providerDetail}>
+                Was: Bot-Schutz vor dem Login-Formular. Datenschutzfreundliche
+                Alternative zu reCAPTCHA — kein Verhaltens-Tracking, kein
+                Cookie zur Wiedererkennung über Sessions hinweg.
+              </p>
+              <p className={styles.providerDetail}>
+                Wie lange: Token-Validierung passiert in Sekunden, danach wird
+                nichts dauerhaft gespeichert.
+              </p>
+              <p className={styles.providerDetail}>
+                Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (Sicherheit der
+                Auth-Route gegen Bot-Spam).
+              </p>
+              <p className={styles.providerDetail}>
+                <a href="https://cloudflare.com/privacypolicy">
+                  cloudflare.com/privacypolicy
+                </a>
               </p>
             </div>
 
