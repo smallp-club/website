@@ -1,10 +1,12 @@
 'use server';
 
+import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { getCurrentMember } from '@/lib/members/auth';
 import { makeExPseudonym } from '@/lib/members/pseudonym';
+import { addContactToList, removeContactFromList } from '@/lib/brevo';
 
 /**
  * Logout — beendet die aktuelle Session.
@@ -79,4 +81,50 @@ export async function deleteAccountAction() {
   await supabase.auth.signOut({ scope: 'global' });
 
   redirect('/mit-glied?deleted=1');
+}
+
+/**
+ * Newsletter-Toggle — abonnieren oder abbestellen aus dem Member-Slot.
+ *
+ * Wenn `enable === true`: Email wird zur Brevo-Liste hinzugefügt + profile.newsletter_opt_in
+ * auf true gesetzt. Wenn `enable === false`: aus der Liste entfernt + Flag auf false.
+ *
+ * Brevo-Fehler werden NICHT geblockt — wir setzen das DB-Flag trotzdem, damit
+ * der UI-State konsistent bleibt. Bei Fehler wird geloggt und in den nächsten
+ * Login/Sync versucht. User soll nicht in einem Inkonsistenz-Zustand hängen.
+ *
+ * Re-Subscribe nutzt addContactToList mit updateEnabled, also DSGVO-OK auch
+ * wenn User vorher schon mal subscribed war.
+ */
+export async function toggleNewsletterAction(formData: FormData) {
+  const session = await getCurrentMember();
+  if (!session) redirect('/mit-glied?error=not_signed_in');
+
+  const enable = formData.get('enable') === 'on';
+  const email = session.user.email;
+  if (!email) {
+    console.error('[toggleNewsletter] no email on user');
+    return;
+  }
+
+  const brevoResult = enable
+    ? await addContactToList(email)
+    : await removeContactFromList(email);
+
+  if (!brevoResult.ok) {
+    console.error('[toggleNewsletter] brevo call failed:', brevoResult.reason);
+  }
+
+  const service = createSupabaseServiceClient();
+  const { error } = await service
+    .from('profiles')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .update({ newsletter_opt_in: enable } as any)
+    .eq('user_id', session.user.id);
+
+  if (error) {
+    console.error('[toggleNewsletter] profile update failed:', error);
+  }
+
+  revalidatePath('/mit-glied/eingang');
 }
