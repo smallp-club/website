@@ -49,8 +49,9 @@ const sections: NavSection[] = [
   {
     title: 'Sections',
     items: [
-      { name: 'Site Nav',    href: '/components-library/sections/site-nav',    status: 'available' },
-      { name: 'Site Footer', href: '/components-library/sections/site-footer', status: 'available' },
+      { name: 'Site Nav',        href: '/components-library/sections/site-nav',         status: 'available' },
+      { name: 'Site Footer',     href: '/components-library/sections/site-footer',      status: 'available' },
+      { name: 'Four Cm Reveal',  href: '/components-library/sections/four-cm-reveal',   status: 'available' },
     ],
   },
 ];
