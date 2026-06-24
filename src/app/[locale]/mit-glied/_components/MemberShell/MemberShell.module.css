@@ -76,7 +76,9 @@
 
 .burger:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-focus);
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
 }
 
 .burger span {
@@ -85,6 +87,28 @@
   height: 1.5px;
   background-color: var(--text-strong);
   border-radius: 1px;
+  transition:
+    transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 160ms ease;
+}
+
+.burger[aria-expanded="true"] span:nth-child(1) {
+  transform: translateY(5.5px) rotate(45deg);
+}
+
+.burger[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+
+.burger[aria-expanded="true"] span:nth-child(3) {
+  transform: translateY(-5.5px) rotate(-45deg);
+}
+
+.mobileMark {
+  width: 20px;
+  height: 20px;
+  opacity: 0.85;
+  flex-shrink: 0;
 }
 
 .mobileLabel {
@@ -107,5 +131,21 @@
     grid-column: 2;
     grid-row: 1;
     padding: var(--space-7) var(--space-7) var(--space-11);
+  }
+}
+
+/* Print: Shell-Chrome ausblenden, Page-Content nimmt die volle Seite */
+@media print {
+  .shell {
+    display: block !important;
+    min-height: auto !important;
+  }
+  .mobileBar {
+    display: none !important;
+  }
+  .content {
+    padding: 0 !important;
+    grid-column: auto;
+    grid-row: auto;
   }
 }

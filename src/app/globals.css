@@ -100,3 +100,20 @@ a {
   color: inherit;
   text-decoration: none;
 }
+
+/* ===== Sidebar Active-Marker view-transition =====
+   Beim Page-Wechsel innerhalb des Mit-Glied-Bereichs gleitet der
+   2px Hairline-Marker am aktiven Sidebar-Item lateral statt zu springen.
+   `view-transition-name` ist im jeweiligen Component-CSS gesetzt. */
+::view-transition-old(sidebar-active-marker),
+::view-transition-new(sidebar-active-marker) {
+  animation-duration: 240ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(sidebar-active-marker),
+  ::view-transition-new(sidebar-active-marker) {
+    animation-duration: 0ms;
+  }
+}

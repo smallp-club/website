@@ -1,0 +1,75 @@
+/**
+ * MitGliedKarte — A6 quer (148×105mm), Off-White, Chillax-Display.
+ *
+ * Print-Behandlung lebt in der Page-CSS (karte.module.css), nicht
+ * hier — die Komponente selbst weiß nicht ob sie embedded oder
+ * gedruckt ist.
+ */
+
+.card {
+  width: 148mm;
+  height: 105mm;
+  background-color: var(--surface-bg);
+  color: var(--text-strong);
+  padding: 14mm 14mm 12mm;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: var(--font-display);
+  border: 1px solid var(--border-faint);
+}
+
+.statement {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: 56pt;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.statementSecond {
+  color: var(--text-muted);
+}
+
+.meta {
+  position: absolute;
+  bottom: 12mm;
+  left: 14mm;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 11pt;
+  line-height: 1.4;
+  color: var(--text-strong);
+  margin: 0;
+}
+
+.metaPseudonym {
+  display: block;
+  color: var(--text-muted);
+  margin-top: 2mm;
+}
+
+.mark {
+  position: absolute;
+  bottom: 12mm;
+  right: 14mm;
+  width: 18mm;
+  height: 18mm;
+}
+
+/* Mobile: Karte verkleinert sich proportional und bleibt am Stück.
+   Wir skalieren via transform damit die mm-Maße intakt bleiben für Print. */
+@media (max-width: 720px) {
+  .card {
+    transform: scale(0.78);
+    transform-origin: center top;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    transform: scale(0.58);
+  }
+}
