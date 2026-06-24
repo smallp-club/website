@@ -99,6 +99,7 @@ export default async function EingangPage() {
             pseudonym={profile.pseudonym}
             joinedDate={joinedDate}
             role={profile.role}
+            newsletterOptIn={profile.newsletter_opt_in ?? false}
           />
         </Container>
       </Section>

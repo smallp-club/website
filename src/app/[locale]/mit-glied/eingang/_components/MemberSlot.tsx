@@ -12,19 +12,26 @@
 import { Stack } from '@/components/primitives/Stack';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
+import { Body } from '@/components/primitives/Body';
 import { Button } from '@/components/primitives/Button';
 import { LinkButton } from '@/components/primitives/LinkButton';
 import type { ProfileRole } from '@/lib/supabase/types';
-import { logoutAction } from '../actions';
+import { logoutAction, toggleNewsletterAction } from '../actions';
 import styles from './MemberSlot.module.css';
 
 interface MemberSlotProps {
   pseudonym: string;
   joinedDate: string;
   role: ProfileRole;
+  newsletterOptIn: boolean;
 }
 
-export function MemberSlot({ pseudonym, joinedDate, role }: MemberSlotProps) {
+export function MemberSlot({
+  pseudonym,
+  joinedDate,
+  role,
+  newsletterOptIn,
+}: MemberSlotProps) {
   return (
     <Stack gap={5}>
       <Stack gap={3}>
@@ -50,6 +57,21 @@ export function MemberSlot({ pseudonym, joinedDate, role }: MemberSlotProps) {
           </div>
         )}
       </dl>
+
+      <Stack gap={3}>
+        <Eyebrow>newsletter</Eyebrow>
+        <Body>
+          {newsletterOptIn
+            ? 'du bekommst den newsletter. viermal im jahr, plus wenn was wichtig ist.'
+            : 'du bekommst den newsletter nicht. kannst du jederzeit ändern.'}
+        </Body>
+        <form action={toggleNewsletterAction} className={styles.actionRow}>
+          {!newsletterOptIn && <input type="hidden" name="enable" value="on" />}
+          <Button type="submit" variant={newsletterOptIn ? 'ghost' : 'accent'}>
+            {newsletterOptIn ? 'newsletter abbestellen' : 'newsletter abonnieren'}
+          </Button>
+        </form>
+      </Stack>
 
       <Stack gap={3}>
         <LinkButton href="/mit-glied/karte" variant="accent">

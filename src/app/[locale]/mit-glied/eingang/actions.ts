@@ -116,10 +116,9 @@ export async function toggleNewsletterAction(formData: FormData) {
   }
 
   const service = createSupabaseServiceClient();
-  const { error } = await service
-    .from('profiles')
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    .update({ newsletter_opt_in: enable } as any)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (service.from('profiles') as any)
+    .update({ newsletter_opt_in: enable })
     .eq('user_id', session.user.id);
 
   if (error) {
