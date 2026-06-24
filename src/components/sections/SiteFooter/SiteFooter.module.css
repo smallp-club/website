@@ -3,15 +3,12 @@
    Eine Bewegungsfamilie, gleichzeitiger Entry-Fade. */
 
 .footer {
-  /* Reveal-from-below: footer klebt am unteren viewport-rand und wird
-     vom main-Layer (z-index 1, opaque off-white) verdeckt. Beim scrollen
-     past dem main-content (margin-bottom 100dvh in globals.css) wird der
-     footer „aufgedeckt". */
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 0;
+  /* Normal-flow am Ende der Page. Reveal-from-below-Pattern aufgegeben —
+     es zwang body-bg auf Dark-Turquoise, was auf Member-Routes (ohne
+     Footer) + in der Sticky-Nav-Top-Lücke durchblitzte und kaputt aussah.
+     Footer ist jetzt einfach unter dem Main-Content, scrollt mit.
+     min-height 100dvh sorgt für seinen vollen Brand-Auftritt. */
+  position: relative;
   min-height: 100dvh;
   /* overflow: clip statt hidden — kappt Focus-Ringe nicht visuell.
      hidden als Fallback für Browser ohne clip-Support (vor 2022). */
