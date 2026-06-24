@@ -109,7 +109,10 @@ export default async function StimmenPage() {
                         </span>
                       )}
                     </div>
-                    <ReportForm storyId={row.id} />
+                    <ReportForm
+                      storyId={row.id}
+                      turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                    />
                   </footer>
                 </li>
               ))}

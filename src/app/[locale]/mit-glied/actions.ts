@@ -1,8 +1,8 @@
 'use server';
 
-import { headers } from 'next/headers';
 import { isValidEmail, isDisposableEmail } from '@/lib/email-validation';
 import { hashEmail, hashIp } from '@/lib/hash';
+import { getClientIp } from '@/lib/client-ip';
 import { consumeRateLimit } from '@/lib/rate-limit';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
@@ -25,12 +25,8 @@ import type { AuthFormState } from './auth-types';
  * Next.js 16 'use server' erlaubt nur async function exports.
  */
 
-async function getClientIp(): Promise<string | null> {
-  const hdrs = await headers();
-  const forwarded = hdrs.get('x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0]?.trim() ?? null;
-  return hdrs.get('cf-connecting-ip') ?? hdrs.get('x-real-ip');
-}
+// IP-Resolver lebt in src/lib/client-ip.ts — cf-connecting-ip zuerst,
+// damit Client-Spoofs auf x-forwarded-for nicht durchgehen (Security H3).
 
 async function isBanned(emailHash: string, ipHash: string | null): Promise<boolean> {
   try {

@@ -1,0 +1,37 @@
+import { headers } from 'next/headers';
+
+/**
+ * Client-IP-Resolver für Rate-Limits und Blocklist-Checks.
+ *
+ * Reihenfolge: cf-connecting-ip → x-forwarded-for (letzter Eintrag) → x-real-ip.
+ *
+ * Warum cf-connecting-ip ZUERST: Cloudflare setzt diesen Header IMMER selbst
+ * und überschreibt jeden Client-Spoof. Hinter Cloudflare ist das der einzige
+ * vertrauenswürdige Wert. x-forwarded-for kann vom Client gefälscht werden
+ * (`X-Forwarded-For: 1.2.3.4` einfach mitsenden) — der erste Eintrag in der
+ * Chain ist die behauptete Client-IP, nicht die tatsächliche.
+ *
+ * Fallback x-forwarded-for: wenn nicht hinter Cloudflare (lokale Dev,
+ * direkter Vercel-Endpoint), dann nutzen wir den letzten Eintrag — das ist
+ * der vertrauenswürdige Edge-Proxy-Wert. Die client-behauptete IP steht in
+ * der Chain VOR den Proxy-IPs, würde aber ohne Cloudflare-Filter ankommen.
+ *
+ * @see Security-Audit 2026-06-24 Finding H3
+ */
+export async function getClientIp(): Promise<string | null> {
+  const hdrs = await headers();
+
+  const cf = hdrs.get('cf-connecting-ip');
+  if (cf) return cf.trim();
+
+  const forwarded = hdrs.get('x-forwarded-for');
+  if (forwarded) {
+    const parts = forwarded
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    return parts[parts.length - 1] ?? null;
+  }
+
+  return hdrs.get('x-real-ip')?.trim() ?? null;
+}

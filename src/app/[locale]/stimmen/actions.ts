@@ -1,9 +1,11 @@
 'use server';
 
-import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { hashIp } from '@/lib/hash';
+import { getClientIp } from '@/lib/client-ip';
+import { consumeRateLimit } from '@/lib/rate-limit';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 import type { ReportFormState } from './report-types';
 
 /**
@@ -23,21 +25,46 @@ export async function reportStoryAction(
 ): Promise<ReportFormState> {
   const storyId = String(formData.get('story_id') ?? '');
   const reason = String(formData.get('reason') ?? '').trim().slice(0, 500);
+  const turnstileToken = String(formData.get('cf-turnstile-response') ?? '');
 
   if (!storyId) {
     return { status: 'error', message: 'fehlende referenz.' };
   }
 
-  const hdrs = await headers();
-  const ip =
-    hdrs.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    hdrs.get('cf-connecting-ip') ??
-    hdrs.get('x-real-ip');
+  // 1) Turnstile gegen Bots (Security H4)
+  const ip = await getClientIp();
+  const turnstileOk = await verifyTurnstileToken({
+    token: turnstileToken,
+    ip: ip ?? undefined,
+  });
+  if (!turnstileOk) {
+    return { status: 'error', message: 'bot-check fehlgeschlagen. lad die seite neu.' };
+  }
+
+  // 2) Rate-Limit pro IP (Security H4): 10 Reports/Tag — verhindert
+  //    Admin-Inbox-Flooding. Wenn IP nicht ermittelbar: hart abbrechen
+  //    in prod, weil Bypass-Risiko zu groß.
   const ipHash = ip ? hashIp(ip) : null;
+  if (!ipHash) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[report] no client ip in prod — abort');
+      return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
+    }
+  } else {
+    const limit = await consumeRateLimit('report_per_ip', ipHash);
+    if (!limit.success) {
+      return {
+        status: 'error',
+        message: 'zu viele meldungen von dir. morgen wieder.',
+      };
+    }
+  }
 
   const service = createSupabaseServiceClient();
 
-  // 1) Report-Eintrag schreiben
+  // 3) Report-Eintrag schreiben. Unique-Index (story_id, reporter_ip_hash)
+  //    in Migration 0006 verhindert Doppel-Reports vom gleichen Browser —
+  //    Conflict-Code 23505 = stillschweigend als „bereits gemeldet" behandeln.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reportsTable = service.from('story_reports') as any;
   const { error: insertError } = await reportsTable.insert({
@@ -45,12 +72,17 @@ export async function reportStoryAction(
     reporter_ip_hash: ipHash,
     reason: reason || null,
   });
+
   if (insertError) {
+    if (insertError.code === '23505') {
+      // Doppel-Report idempotent — kein Inkrement, success für User-UX.
+      return { status: 'success' };
+    }
     console.error('[report-insert]', insertError);
     return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
   }
 
-  // 2) reports_count++ (Best-Effort, separater Roundtrip)
+  // 4) reports_count++ NUR wenn Insert erfolgreich war (kein Unique-Conflict).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const storiesTable = service.from('stories') as any;
   const { data: row } = await storiesTable

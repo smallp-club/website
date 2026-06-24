@@ -34,15 +34,9 @@ export const metadata: Metadata = {
     title: siteTitle,
     description: siteDescription,
   },
-  // Verification-Slots — Tokens beim Anlegen der Properties in Search Console
-  // und Bing Webmaster eintragen. Tokens sind public, dürfen ins Repo.
-  // Aktivieren via Env-Var, sonst leer für lokales Dev/Preview.
-  verification: {
-    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
-    other: {
-      'msvalidate.01': process.env.NEXT_PUBLIC_BING_VERIFICATION ?? '',
-    },
-  },
+  // Bewusst KEINE Meta-Tag-Verification für Search Console / Bing Webmaster.
+  // Brand-Doktrin: keine Drittanbieter-Snippets im HTML. Property-Ownership
+  // wird per DNS-TXT-Record bei Cloudflare bewiesen (für User unsichtbar).
 };
 
 // Root layout ist Pass-Through — der Locale-Layout owned <html>, <body>,

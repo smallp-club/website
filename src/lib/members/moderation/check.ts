@@ -15,7 +15,7 @@
  * Doktrin: docs/project/MEMBER_SECURITY.md §3 Linie 3.
  */
 
-import { normalize, tokenize } from './normalize';
+import { normalize, normalizeForDoxx, tokenize } from './normalize';
 import {
   HARD_REJECT_SET,
   HARD_REJECT_PHRASE_LIST,
@@ -84,11 +84,12 @@ export function moderateStory(body: string): ModerationResult {
   }
 
   // ───── Doxxing-Pattern-Check (Self-Doxx-Warnings → flag_high) ─────
-  // WICHTIG: Doxxing-Check läuft auf raw body.toLowerCase(), NICHT auf der
-  // normalisierten Form. Leetspeak-Substitution (@ → a) würde sonst alle
-  // Email-Patterns zerstören. Doxxing-Daten sind ASCII-strikt, brauchen
-  // keine Bypass-Detection auf char-Ebene.
-  const doxx = checkDoxxing(body.toLowerCase());
+  // Doxxing-Check läuft auf `normalizeForDoxx` — das ist die Light-Variante:
+  // NFKC + lowercase + Diakritik + Zero-Width-Strip, OHNE Leetspeak.
+  // Schützt vor Bypass-Tricks wie „５0259 berlin" (fullwidth) oder „1234​5678"
+  // (ZWSP zwischen Ziffern). „@" und „+" bleiben erhalten für Email/Phone-Regex.
+  // Security-Audit H7.
+  const doxx = checkDoxxing(normalizeForDoxx(body));
   if (doxx.hasEmail) flags.add('flag_high:doxx_email');
   if (doxx.hasPhone) flags.add('flag_high:doxx_phone');
   if (doxx.hasIban) flags.add('flag_high:doxx_iban');

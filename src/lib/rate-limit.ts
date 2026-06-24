@@ -27,7 +27,8 @@ function getRedis(): Redis | null {
 export type RateLimitName =
   | 'magic_link_per_ip'
   | 'magic_link_per_email'
-  | 'account_create_per_ip';
+  | 'account_create_per_ip'
+  | 'report_per_ip';
 
 interface LimitConfig {
   prefix: string;
@@ -39,6 +40,10 @@ const LIMITS: Record<RateLimitName, LimitConfig> = {
   magic_link_per_ip: { prefix: 'spc:ml:ip', limit: 5, window: '24 h' },
   magic_link_per_email: { prefix: 'spc:ml:em', limit: 3, window: '1 h' },
   account_create_per_ip: { prefix: 'spc:ac:ip', limit: 1, window: '24 h' },
+  // Report-Action gegen Inbox-Flooding (Security H4). 10 Reports pro
+  // Browser-IP pro 24h — verhindert dass ein Angreifer reports_count
+  // einer Story endlos hochfährt.
+  report_per_ip: { prefix: 'spc:rp:ip', limit: 10, window: '24 h' },
 };
 
 const limiterCache = new Map<RateLimitName, Ratelimit>();

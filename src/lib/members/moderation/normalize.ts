@@ -57,6 +57,30 @@ export function normalize(input: string): string {
 }
 
 /**
+ * Normalisierung speziell für Doxxing-Pattern (Security H7).
+ *
+ * NFKC + lowercase + Diakritik-Strip + Zero-Width-Strip — KEINE Leetspeak-
+ * Substitution, weil sonst Zahlen (PLZ, Telefon, Geburtsdatum) und @-Zeichen
+ * (Email) zerstört würden. Erkennt aber:
+ *  - „５0259 berlin" (fullwidth-Ziffer per NFKC → ASCII)
+ *  - „1234​5678" (mit Zero-Width-Space getrennte Zahlen)
+ *  - „BERLIN" / „Berlin" / „berlin" einheitlich
+ *
+ * Behält:
+ *  - Ziffern als Ziffern (für PLZ/Phone/Birthdate-Regex)
+ *  - „@" als „@" (für Email-Regex)
+ *  - „+" als „+" (für Phone-Regex)
+ */
+export function normalizeForDoxx(input: string): string {
+  return input
+    .normalize('NFKC')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(COMBINING_MARKS, '')
+    .replace(ZERO_WIDTH_CHARS, '');
+}
+
+/**
  * Tokenizer für Wort-Boundary-Matches. Trennt an Whitespace + Satzzeichen.
  * Behält nur alphanumerische Cluster, sodass Keyword-Match per Set-Lookup
  * funktioniert (statt teurer Regex-Iteration über lange Texte).
