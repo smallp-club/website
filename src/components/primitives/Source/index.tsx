@@ -53,7 +53,13 @@ export const Source = forwardRef<HTMLParagraphElement, SourceProps>(
     if (url) {
       return (
         <p ref={ref} className={[styles.source, className].filter(Boolean).join(' ')} {...rest}>
-          <a className={styles.link} href={url} rel="noopener" target="_blank">
+          <a
+            className={styles.link}
+            href={url}
+            rel="noopener noreferrer"
+            referrerPolicy="no-referrer"
+            target="_blank"
+          >
             {content}
           </a>
         </p>

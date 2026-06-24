@@ -33,14 +33,20 @@ async function isBanned(emailHash: string, ipHash: string | null): Promise<boole
     const service = createSupabaseServiceClient();
     const { data } = await service
       .from('blocklist')
-      .select('email_hash, ip_hash')
-      .or(
-        ipHash
-          ? `email_hash.eq.${emailHash},ip_hash.eq.${ipHash}`
-          : `email_hash.eq.${emailHash}`
-      )
+      .select('email_hash')
+      .eq('email_hash', emailHash)
       .limit(1);
-    return Array.isArray(data) && data.length > 0;
+    if (Array.isArray(data) && data.length > 0) return true;
+
+    if (ipHash) {
+      const ipResult = await service
+        .from('blocklist')
+        .select('ip_hash')
+        .eq('ip_hash', ipHash)
+        .limit(1);
+      return Array.isArray(ipResult.data) && ipResult.data.length > 0;
+    }
+    return false;
   } catch {
     // Falls Supabase-Env-Vars noch nicht gesetzt sind, lassen wir die Action
     // nicht stillschweigend durch — Magic-Link würde sowieso scheitern.

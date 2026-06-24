@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { getCurrentMember } from '@/lib/members/auth';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { moderateStory, hasSuicideFlag } from '@/lib/members/moderation/check';
 import { extractShingles } from '@/lib/members/moderation/shingles';
@@ -103,10 +104,14 @@ export async function submitStoryAction(
     };
   }
 
-  // 6) Insert mit Flags
-  const service = createSupabaseServiceClient();
+  // 6) Insert mit Flags — Server-Client (anon-key) statt Service-Role.
+  // Defense-in-Depth: RLS-Policy `stories_own_insert` validiert dann
+  // user_id = auth.uid(). Falls künftig session falsch wäre, würde RLS
+  // den Insert ablehnen. Service-Role bleibt für Shingles + Brigading-RPC
+  // (System-Operationen ohne User-Kontext). Security-Audit M8.
+  const supabase = await createSupabaseServerClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storiesTable = service.from('stories') as any;
+  const storiesTable = supabase.from('stories') as any;
   const { data: inserted, error } = await storiesTable
     .insert({
       user_id: session.user.id,
@@ -130,6 +135,10 @@ export async function submitStoryAction(
   //    3+ verschiedenen Accounts auftaucht (RPC `detect_brigading_wave`),
   //    werden alle betroffenen Stories — inkl. dieser neuen — als
   //    Brigading-Welle markiert.
+  //    Service-Role hier nötig: Shingles-Insert + Brigading-RPC sind
+  //    System-Operationen ohne User-Kontext (RPC ist seit Migration 0007
+  //    nur für service_role aufrufbar, security-audit H2).
+  const service = createSupabaseServiceClient();
   const shingles = extractShingles(body);
   const storyId = (inserted as { id: string }).id;
   if (shingles.length > 0) {
@@ -198,14 +207,21 @@ async function applyBrigadingQuarantine(
     );
     if (toUpdate.length === 0) return;
 
-    await Promise.all(
-      toUpdate.map((r) =>
-        service
-          .from('stories')
-          .update({ flags: [...(r.flags ?? []), BRIGADING_FLAG] })
-          .eq('id', r.id)
-      )
-    );
+    // Security-Audit L4: batching auf 10 parallele Updates begrenzen.
+    // Bei großer Welle (100+ stories) sind sonst alle Roundtrips
+    // gleichzeitig im Flug — kein DoS-Risiko aber Connection-Pool-Druck.
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < toUpdate.length; i += BATCH_SIZE) {
+      const batch = toUpdate.slice(i, i + BATCH_SIZE);
+      await Promise.all(
+        batch.map((r) =>
+          service
+            .from('stories')
+            .update({ flags: [...(r.flags ?? []), BRIGADING_FLAG] })
+            .eq('id', r.id)
+        )
+      );
+    }
 
     console.warn(
       `[brigading-quarantine] welle erkannt — ${toUpdate.length} stories markiert (shingle-hits: ${hits.length})`

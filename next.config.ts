@@ -25,6 +25,13 @@ const nextConfig: NextConfig = {
           { key: 'Content-Security-Policy', value: staticCsp },
         ],
       },
+      {
+        // Security-Audit L6: API-Routen sind vom Proxy-Matcher excludiert
+        // (siehe src/proxy.ts), bekommen also kein X-Robots-Tag via Edge.
+        // Hier statisch noindex erzwingen — egal welche /api/* je dazukommt.
+        source: '/api/(.*)',
+        headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      },
     ];
   },
 };
