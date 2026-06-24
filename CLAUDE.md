@@ -47,6 +47,111 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 8. **Library-Doktrin:** Reuse-First. Vor jedem Build → erst Library prüfen, ob schon vorhanden. Neue Library-Komponenten sind props-getrieben, mobile-first, a11y-baseline (kein Audit am Ende), token-getrieben, korrekt benannt + dokumentiert. Standard: @docs/tech/COMPONENT_LIBRARY_STANDARD.md
 
+## Stand (2026-06-24, Session 16 — Phase 5b voll durchgezogen, Admin-UI Block 1 live)
+
+**Dichteste Session bisher. ~10 Commits + viele uncommittete Admin-UI-Files. Zwei Agents arbeiteten parallel im selben Repo — Commits regelmäßig prüfen.**
+
+### Was heute durch ist (Phase 5b komplett bis Security-Hardening)
+
+**Member-Foundation Erweiterungen**
+- **Onboarding-Sequenz `/willkommen`** mit Schwelle-Toggle (Brand-Statement-Selektion) + 3 Client-State-Steps (du-bist-drin / pseudonym-würfel / produktkacheln-vorschau) + Auto-Mark-on-First-Render (User sieht Sequenz nie zweimal)
+- **Pseudonym-Pool aus Penis-Synonymen** — `src/lib/members/pseudonym-pool.ts` mit ~230 Begriffen aus 18 Sprachen (DE/EN/FR/IT/ES/PT/NL/Skandi/FI/PL/CS/JP/TR/EL/HU/YI + DE-Regional bayrisch/wienerisch/sächsisch). Genus pro Wort annotiert. Plus 19 Brand-Adjektive in drei Deklinationsformen für Stage 2. 3-Stufen-Generator mit Crypto-RNG + Stage-Eskalation (Stage 1 single, Stage 2 adj+synonym genus-gerecht, Stage 3 zwei synonyme).
+- **Würfel-UI statt Freitext** (Kevin's Doktrin: kein Slur-Eingabe-Vektor) — 3 Vorschläge per Roll, „neu würfeln", „behalten". Kein Inputfeld.
+- **Einmaligkeits-Lock** — Pseudonym wird genau einmal vergeben beim Onboarding, kein späterer Wechsel. Defense-in-Depth via `pseudonym_changed_at`-Check.
+- **Soft-Delete mit Ex-Marker** — `alter-/alte-/altes-` Genus-gerecht (`alter-schwengel` / `alte-banane` / `altes-glied`). Stage 2 ersetzt Adjektiv, Stage 3 prependet. Migration 0004 macht `stories.user_id` FK auf `ON DELETE SET NULL`, approved-Stories behalten ihren Wert, alle anderen werden hard-deleted. „dein bekenntnis bleibt, du gehst."
+- **Account-Löschung** `/mit-glied/loeschen` mit Confirmation-Page + Brand-Voice-Bestätigung auf `/mit-glied?deleted=1`. Login-aware Redirect auf `/mit-glied` (eingeloggte User → `/eingang`).
+
+**Member-UX-Polish**
+- **SiteNav Member-Aware** — Pille zeigt eingeloggtes Pseudonym statt „mit-glied", linkt zu `/eingang`. `SiteNavContainer` async mit `getCurrentMember()`.
+- **Bildmarken-Ring** als subtiler Member-Indikator (34×34 Dark-Turquoise-Hairline um den 28×28 Bildmarken-Bereich, nur sichtbar im Pinned-State, 45% Opacity). „Wer's bemerkt, lächelt. Wer's nicht bemerkt, verliert nichts."
+- **Mit-Glied-Karte** (parallel-Agent, Commit `3588640`) — `/mit-glied/karte` A6 quer (148×105 mm) als Print-Artefakt. Chillax Extralight + Pseudonym + Beitritts-Datum + Bildmarke. PrintTrigger client-side, eigene Print-CSS hidet Nav/Footer. Link „deine mit-glied-karte" als Accent-CTA im MemberSlot. Erfüllt MEMBER_CONCEPT §4 Säule 6.
+
+**Erfahrungsberichte + Moderation (Phase 5b Kernstück)**
+- **`/mit-glied/erfahrungen/neu`** Form mit 5 Schreib-Prompts (Radio-Cards), Textarea 80–1500 Chars mit Live-Counter + Tone-aware, optional Alter-Chips. Submit-Confirm-Voice prompt-sensitiv aus MEMBER_SECURITY §8a (drei Register: kennen wir / gut(es) / notiert).
+- **24h Cooldown** nach Account-Erstellung (Schema-Spalte `first_submission_allowed_at` wird in `ensureProfile` gesetzt). Legacy-Accounts mit NULL bypass.
+- **3-Stufen-Moderation-Pipeline** in `src/lib/members/moderation/`:
+  - `normalize.ts` — NFKC + lowercase + Diakritik-Strip + ZWJ-Strip + Leetspeak (0→o, 1/!→i, 3→e, 4→a, 5/$→s, 7→t, @→a) + Repetition-Kollaps + Whitespace-Norm
+  - `keywords.ts` — drei Listen aus MEMBER_SECURITY §3 Linie 3, plus `assertWhitelistInvariant()` als Sanity-Check
+  - `patterns.ts` — Doxxing-Detection (Email/Telefon/IBAN/PLZ-Stadt/Geburtsdatum/Social-URLs)
+  - `check.ts` — `moderateStory(body)` returns `{ hardReject, hardRejectMatch?, flags[] }`
+  - `shingles.ts` — 5-Wort-Fingerprints als SHA-256
+- **Brigading-Quarantäne** — Migration 0005 mit Postgres-RPC `detect_brigading_wave(p_shingles)` (CTE mit `HAVING COUNT(DISTINCT user_id) >= 3` in 24h-Fenster). `submitStoryAction` ruft RPC nach Shingle-Insert auf, betroffene Stories werden mit `flag_high:brigading_wave` markiert. Best-Effort, blockiert Submit nicht.
+- **Telefonseelsorge-Strip** auf Confirm-View bei `flag_high:suizid` (content-getriggert, nicht prompt-getriggert, dezente surface-sunken-Box mit Turquoise-Deep-Hairline).
+- **Hard-Reject Brand-Voice** aus §8: *„dein bericht passt nicht zu dem was wir hier machen. wir sagen nicht warum, schreib uns gerne wenn du das verstehen willst: hello@smallp.club"*
+
+**/stimmen Public-Wall (Commit `8a4deb8`)**
+- Public-accessible Wall mit approved Stories, sortiert nach `approved_at desc`, Limit 100
+- Editorial-Layout: Prompt italic darüber, Body als Blockquote, Pseudonym + Datum, dezenter Report-Trigger
+- `ReportForm` Client mit useActionState — Inline-Textarea + „danke, wir schauen es uns an."-Confirmation
+- `reportStoryAction` anon-möglich, schreibt `story_reports` mit IP-Hash + inkrementiert `reports_count`
+- Empty-State mit Brand-Voice + Hinweis zu Soft-Delete-Markern
+
+**Memberzahl-Wiring (Commit `d52eedd` + heute)**
+- `getMemberCount()` an echte Supabase-Query (`count exact head true` auf `profiles`)
+- `BewegungsSignalContainer` analog SiteFooter-Pattern (async, `unstable_cache` 1h + `members`-Tag)
+- `memberCountVoice()` Helper mit drei Schwellen-Stufen aus MEMBER_CONCEPT §4 Säule 1 (<100 / <1000 / ≥1000)
+- BewegungsSignal nutzt die Voice statt generisches „stand jetzt."
+- Live verifiziert: 3 mit-glieder werden aus DB gelesen
+
+**Brand-Voice Mail-Templates (parallel-Agent, Commit `3c79f62` + `8a4deb8`)**
+- `emails/magic-link.tsx` für Supabase Auth (Magic-Link + Confirm-Signup)
+- `emails/double-opt-in.tsx` für Brevo Newsletter
+- Logo als base64-inline (löst Apple-Mail-Privacy-Proxy-Cache-Issue)
+- Subject: *„ohne passwort. ein klick."*
+- Light-Mode-Forcing + Outlook-Overrides für Brand-Konsistenz
+- npm scripts: `email` (preview) + `email:export` (html-render)
+
+**Brevo-Subscribe-Integration (Commit `d52eedd`)**
+- `auth/verify/route.ts` triggert `addContactToList()` nach erfolgreichem Profile-Create, wenn `newsletter_opt_in` im user_metadata true
+- Magic-Link-Klick zählt als DOI-Beleg (separater Consent vor)
+- Brevo-Fehler werden nur geloggt, blocken Login-Flow nicht
+
+**Admin-UI Block 1 (heute, uncommitted)**
+- **`/admin`** Dashboard mit 6 Counts (pending, flag-high ungesichtet, neue 24h, approved gesamt, blocklist-einträge, audit-aktionen 24h) + 4-Karten-Nav-Grid
+- **`/admin/audit`** chronologischer Audit-Log (letzte 200), Action-Tag farbkodiert, Admin-Pseudonym via Profile-JOIN
+- **`/admin/brigading`** aktive Quarantäne-Wellen, gruppiert in 1h-Buckets
+- **`/admin/blocklist`** Liste + Unban-Button pro Eintrag + manueller Ban-Form
+- **`banAction` / `unbanAction` / `banUserFromStoryAction`** alle mit Audit-Log-Insert
+- **Ban-Panel auf Inbox-Detail** als `<details>`-Element mit Brand-Voice-Erklärung + Reason-Textarea. Macht in einem: Story rejecten + Email-Hash auf Blocklist + Account löschen via Admin-API + Audit-Log
+
+**Bug-Fixes/Polish**
+- Magic-Link expired/invalid Voice klargestellt
+- Rate-Limit Localhost-Bypass für IP UND Email (Dev-Friction weg)
+- Email-Rate-Limit Voice neu formuliert (war irreführend)
+- Error-Anzeige auf `/mit-glied` bei `?error=...` Query-Param
+- StickyCrossfade `.label` + `.scrollHint` von uppercase-tracked auf lowercase-chillax-light (Brand-Eyebrow-Doktrin)
+
+### Migrations-Stand
+0001 foundation · 0002 onboarding · 0003 pseudonym-pool · 0004 soft-delete-stories · 0005 brigading-detection — **alle live in Production-Supabase.**
+
+### Externe Setups (Kevin durchgeführt)
+- **Supabase Auth → Rate Limits**: Email-Send 30/h (war Default 2/h, Kevin auf 30 hochgesetzt)
+- **Admin-Account-Promotion** via SQL: `UPDATE profiles SET role='admin' WHERE user_id=…`
+- **Custom SMTP**: all-inkl bleibt aktiv für Magic-Link-Versand
+
+### Doktrin-Updates
+- **Pseudonym-Doktrin** (MEMBER_CONCEPT §6): aus `leser-7f3a` wurde brand-konsistenter Penis-Synonym-Pool. Brand-Risk #10 umformuliert: clever ist erlaubt wenn's Bekenntnis ist, nicht Personality
+- **Soft-Delete-Doktrin** (MEMBER_CONCEPT §6, neu): „dein bekenntnis bleibt, du gehst." `alter/alte/altes` ist reserviert für Ex-Marker, nie aktiver Adjektiv-Pool
+- **Einmaligkeits-Doktrin** Pseudonym: nur einmal beim Onboarding, kein späterer Wechsel
+- **Doktrin-Wechsel verworfener Ansatz**: ex-Marker („ex-schwengel") wurde initial vorgeschlagen, dann auf alter-Marker umgestellt — Genus-Korrektheit + brand-konsistente Adjektiv-Sprache war Kevin wichtiger als Marker-Kürze
+
+### Was noch offen (Phase 5b Security-Hardening — Block 2)
+- **TOTP-2FA** Setup-Flow mit QR-Code + Backup-Codes + Pflicht-Verifikation beim Admin-Login (Supabase Auth MFA-API)
+- **2h Idle-Session-Timeout** für Admin-Routen (Middleware-Check oder Supabase Session-Setting)
+- **Re-Auth-Modal** für Ban/Role-Change (TOTP-Code-Reverification)
+- **Vercel Env Vars** für Production (Supabase URL/Keys, Upstash, Turnstile, Brevo aktuell nur lokal)
+- **Bootstrap-Seed-Stories** — Kevin's 3 eigene Berichte unter Pseudonym für `/stimmen`
+
+### Was als nächstes besprochen werden muss
+- Reihenfolge Block 2 (TOTP zuerst oder Re-Auth-Modal zuerst?)
+- Brevo Sending-Domain DKIM-Propagation prüfen
+- Production-Deploy-Strategie: Vercel Env Vars + erste Live-Tests mit echter Mail
+
+### Workflow-Erkenntnis dieser Session
+**Zwei Agents parallel im selben Repo** ist real und passiert — beim Session-Start IMMER `git log` + `git status` checken bevor Arbeit beginnt. Parallel-Agent baute heute Mail-Templates, Brevo-Trigger, Mit-Glied-Karte während ich an Onboarding + Moderation + Admin-UI saß. Beide Arbeiten konfliktfrei dank disjunkter File-Sets, aber das ist Glück, nicht Architektur.
+
+---
+
 ## Stand (2026-06-23, Session 15 — A+B+C: /club voll, 6 Mythen voll, Member-Foundation end-to-end live)
 
 **10 Commits dieser Session, drei Module abgeschlossen.**

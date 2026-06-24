@@ -1,0 +1,123 @@
+/* Admin-Brigading — Wellen-Buckets. */
+
+.bucketList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.bucket {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.bucketHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--signal);
+}
+
+.bucketLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-sm);
+  color: var(--text-strong);
+}
+
+.bucketCount {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+}
+
+.storyList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.storyRow {
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.storyLink {
+  display: block;
+  padding: var(--space-3) var(--space-4);
+  text-decoration: none;
+  color: inherit;
+  transition: background-color var(--duration-base, 200ms) ease;
+}
+
+.storyLink:hover {
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.03));
+}
+
+.storyLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.storyMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+  margin-bottom: var(--space-1);
+}
+
+.pseudonym {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+}
+
+.status {
+  display: inline-block;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.06));
+  color: var(--text-strong);
+}
+
+.status[data-status='approved'] {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.status[data-status='rejected'] {
+  background-color: var(--text-muted);
+  color: var(--surface-bg);
+}
+
+.time {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+}
+
+.preview {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+}
+
+.captionStack {
+  margin-bottom: var(--space-3);
+}

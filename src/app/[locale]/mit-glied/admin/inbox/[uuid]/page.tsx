@@ -23,6 +23,7 @@ import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../../../erfahrungen/neu/story-types';
 import { approveStoryAction, rejectStoryAction } from '../actions';
+import { banUserFromStoryAction } from '../../blocklist/actions';
 import styles from './detail.module.css';
 
 export const metadata = {
@@ -145,8 +146,38 @@ export default async function AdminInboxDetailPage({ params }: PageProps) {
               </div>
               <Caption tone="muted" as="p">
                 approve → erscheint auf /stimmen mit pseudonym. reject →
-                unsichtbar bleibt. ban-user kommt mit der admin-foundation.
+                unsichtbar bleibt.
               </Caption>
+
+              <details className={styles.banDetails}>
+                <summary className={styles.banSummary}>
+                  user sperren (ban)
+                </summary>
+                <div className={styles.banPanel}>
+                  <Body tone="muted">
+                    löscht den account komplett, setzt email-hash auf
+                    blocklist. unwiderruflich. nur bei brigading, hass, oder
+                    wiederholten verstößen.
+                  </Body>
+                  <form action={banUserFromStoryAction} className={styles.banForm}>
+                    <input type="hidden" name="story_id" value={story.id} />
+                    <label className={styles.banLabel} htmlFor="ban-reason">
+                      grund (interner vermerk)
+                    </label>
+                    <textarea
+                      id="ban-reason"
+                      name="reason"
+                      rows={2}
+                      maxLength={500}
+                      className={styles.banTextarea}
+                      placeholder="z.b. brigading welle 2026-06-24"
+                    />
+                    <SubmitButton variant="destructive" loadingLabel="sperre …">
+                      account löschen + sperren
+                    </SubmitButton>
+                  </form>
+                </div>
+              </details>
             </Stack>
           </Container>
         </Section>

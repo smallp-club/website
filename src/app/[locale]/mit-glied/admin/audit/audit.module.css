@@ -1,0 +1,90 @@
+/* Admin-Audit-Log — chronologische Liste. */
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.entry {
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.entry:last-child {
+  border-bottom: none;
+}
+
+.entryHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: baseline;
+}
+
+.action {
+  display: inline-block;
+  padding: 1px var(--space-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.06));
+  color: var(--text-strong);
+}
+
+.action[data-action='approve'] {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+}
+
+.action[data-action='reject'] {
+  background-color: var(--text-muted);
+  color: var(--surface-bg);
+}
+
+.action[data-action='ban'] {
+  background-color: var(--signal);
+  color: var(--text-on-inverse);
+}
+
+.target {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+}
+
+.timestamp {
+  margin-left: auto;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+}
+
+.entryMeta {
+  display: flex;
+  gap: var(--space-3);
+  align-items: baseline;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+}
+
+.admin {
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+}
+
+.targetId {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.captionStack {
+  margin-bottom: var(--space-3);
+}

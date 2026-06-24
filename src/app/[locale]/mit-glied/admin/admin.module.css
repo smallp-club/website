@@ -1,0 +1,93 @@
+/* Admin-Dashboard — ruhige Counts + Nav-Grid. */
+
+.counts {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.countRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.countRow:last-child {
+  border-bottom: none;
+}
+
+.countRow[data-accent] .countValue {
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.countLabel {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-muted);
+}
+
+.countValue {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-md);
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ----- Nav-Grid ----- */
+
+.navGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 600px) {
+  .navGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.navLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-bg);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    border-color var(--duration-base, 200ms) ease,
+    background-color var(--duration-base, 200ms) ease;
+}
+
+.navLink:hover {
+  border-color: var(--text-strong);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.03));
+}
+
+.navLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.navLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-sm);
+  color: var(--text-strong);
+}
+
+.navSubtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+}
