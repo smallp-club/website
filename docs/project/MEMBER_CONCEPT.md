@@ -43,7 +43,7 @@ Aus Brand-Guardian-Audit. Diese zehn Bereiche kippen die Brand wenn falsch gebau
 7. **Sticker/Merch-Korrumption** — Vorkaufsrecht ja, aber als stille Mail-Mechanik, nicht UI-Hype
 8. **Anhänger-Ausschluss** — Mehrwert für Anhänger ohne persönliche Betroffenheit muss funktionieren
 9. **Daten-Bequemlichkeit** — kein implizites Tracking. Was Member gibt, sieht Member. Sonst nichts.
-10. **Pseudonym-Spielerei** — Auto-generierte Pseudonyme schlicht (`leser-7f3a`), keine clever Namen
+10. **Pseudonym-Spielerei (Update 2026-06-23):** Auto-generierte Pseudonyme dürfen *clever* sein **nur unter einer Bedingung**: das clever Pattern muss selbst Brand-Bekenntnis sein, nicht Personality-Generator. Konkrete Umsetzung: Pool aus Penis-Synonymen (~230 Begriffe, 18 Sprachen) → `schwengel`, `stolzer-pillermann`, `riemen-pisello`. Verboten bleiben Tiernamen-Generatoren, Personality-Adjektive (wild-eagle-42, brave-tiger), Hash-Klang (`leser-7f3a`) und Selbstbeschämungs-Begriffe (`dicklet`, `mini-`). Brand-Voice trägt das Pattern: alle Members heißen anders, aber alle in dieselbe Brand-Sprache. Detail: `src/lib/members/pseudonym-pool.ts`.
 
 ---
 
@@ -214,11 +214,26 @@ Was durchkommt, sieht Kevin manuell durch.
 
 ## 6. UX-Patterns
 
-### Pseudonym-System
+### Pseudonym-System (Update 2026-06-23)
 
-- **Auto-generiert beim ersten Login:** Format `leser-XXXX` (4 Stellen alphanumeric, lowercase). Beispiele: `leser-7f3a`, `leser-91kc`, `leser-2m4r`. Keine Tiernamen, keine Personality-Generatoren.
-- **Selber wechseln:** max 1× pro 30 Tage. Regel: lowercase, keine Klarnamen-Erkennung (Filter), max 16 Zeichen.
+**Brand-Konzept:** Pseudonyme sind Penis-Synonyme aus einem kuratierten Pool von ~230 Begriffen aus 18 Sprachen und Dialekten. Der Wortwitz IST die Identität. Doktrin: „mit-glied. auch ohne-glied. dein name ist riemen."
+
+- **Auto-generiert beim ersten Login** aus drei eskalierenden Stufen:
+  - Stufe 1: Ein Synonym → `schwengel`, `pisello`, `riemen`
+  - Stufe 2: Adjektiv + Synonym (genus-gerecht) → `stolzer-schwengel`, `alte-banane`, `schiefer-kolben`
+  - Stufe 3: Zwei Synonyme aus zwei Sprachen → `schwengel-pisello`, `banane-zizi`
+- **Kuratierungs-Regeln** (Code: `src/lib/members/pseudonym-pool.ts`):
+  - Keine Vornamen oder als Vornamen lesbar (johannes, peter, willy, todger)
+  - Keine Slurs oder Aggressions-Wörter (chuj, fasz, schmuck als „Idiot")
+  - Keine Selbstbeschämungs-Begriffe (dicklet, microdick, baby-, mini-)
+  - Keine religiös/kulturell sensiblen Begriffe (lingam)
+  - Keine Maß-/Form-/Funktions-Adjektive (`stiller`, `kleiner`, `weicher`)
+- **Adjektiv-Regel** (Stufe 2): Adjektive müssen mit dem Synonym als Bekenntnis funktionieren, nicht als Maß-/Form-/Funktions-Aussage. Erlaubt: `stolzer`, `treuer`, `lauter`, `frecher`, `wilder`, `schiefer`, `krummer`. Verboten: alles was nach Funktionsverlust, Größe oder Performance klingt.
+- **Einmaligkeit:** Pseudonym wird nur einmal vergeben — beim Onboarding (Schritt 2 auf `/willkommen`). User darf so oft würfeln wie er will, bis er sich entscheidet. Der gewählte Name steht dann endgültig. **Kein späterer Wechsel** im Member-Slot, keine Wechsel-UI. Brand-Doktrin: „dein name hier. fertig." Wer mit dem Namen partout nicht leben kann, hat die Account-Löschung als Notfall-Option (siehe Soft-Delete unten).
+- **Soft-Delete via Ex-Marker (Update 2026-06-24):** Bei Account-Löschung wird der User hart gelöscht (Mail, Session, Profile), aber **approved Stories bleiben erhalten** mit anonymisiertem Author. Das Pseudonym wird Genus-gerecht mit `alter-` / `alte-` / `altes-` prefixed: `schwengel` → `alter-schwengel`, `banane` → `alte-banane`, `glied` → `altes-glied`. Stage-2-Pseudonyme (z.B. `stolzer-pillermann`) bekommen ihr Adjektiv ersetzt → `alter-pillermann`. Brand-Statement: „dein bekenntnis bleibt, du gehst." `alter/alte/altes` ist deshalb **exklusiv für Ex-Marker reserviert** und nicht im aktiven Adjektiv-Pool, damit Ex-Pseudonyme unverwechselbar bleiben.
+- **Kein Freitext** — User wählt ausschließlich aus generierten Würfel-Vorschlägen (verhindert Slur-Eingaben und Brand-Drift).
 - **Sichtbarkeit:** Pseudonym erscheint nur in kuratierten Zitaten (Erfahrungsberichte) und auf der eigenen Mit-Glied-Karte. **Nirgends sonst.** Kein Member-Verzeichnis, keine Suche, kein Klick-auf-Pseudonym.
+- **DB-Constraint:** `^[a-z + diakritika]{3,18}(-...){0,2}$`, 1–3 Wort-Teile. Pool-Konformität wird zusätzlich server-side in `isValidPseudonym()` geprüft.
 
 ### Member-Slot (statt Profil-Page)
 

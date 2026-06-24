@@ -34,10 +34,11 @@ export default function DoubleOptInEmail() {
 
           <Section style={heroSection}>
             <Heading as="h1" style={lede}>
-              fast dabei.
+              eine sache noch.
             </Heading>
             <Text style={paragraph}>
-              einen klick noch. nicht messen, einfach drücken.
+              kurz drücken. wir melden uns viermal im jahr.
+              und wenn was wichtig ist.
             </Text>
 
             <Section style={buttonWrapper}>

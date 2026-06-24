@@ -1,0 +1,209 @@
+/* StoryForm — Erfahrungsbericht-Eingabe. */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ----- Fieldset (Prompt + Alter) ----- */
+
+.fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: 0;
+  margin-bottom: var(--space-2);
+}
+
+.legendHeading {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-md);
+  color: var(--text-strong);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* ----- Prompt Radios (große Auswahl, vertikal) ----- */
+
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  min-height: var(--touch-min);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-md);
+  background-color: var(--surface-bg);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-base, 200ms) var(--ease-standard, ease-out),
+    background-color var(--duration-base, 200ms) var(--ease-standard, ease-out);
+}
+
+.radioLabel:hover {
+  border-color: var(--text-strong);
+}
+
+.radioLabel:has(.radioInput:checked) {
+  border-color: var(--accent-contrast, var(--spc-turquoise-deep));
+  background-color: rgba(123, 220, 181, 0.08);
+}
+
+.radioLabel:has(.radioInput:focus-visible) {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.radioInput {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--border-hairline);
+  border-radius: 50%;
+  margin: 0;
+  flex-shrink: 0;
+  position: relative;
+  transition: border-color var(--duration-base, 200ms) ease;
+}
+
+.radioInput:checked {
+  border-color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.radioInput:checked::after {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  border-radius: 50%;
+  background-color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.radioText {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+}
+
+/* ----- Alter-Chips (horizontal) ----- */
+
+.chipRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chipLabel {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  min-height: 36px;
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-bg);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-base, 200ms) ease,
+    background-color var(--duration-base, 200ms) ease;
+}
+
+.chipLabel:hover {
+  border-color: var(--text-strong);
+}
+
+.chipLabel:has(.chipInput:checked) {
+  border-color: var(--accent-contrast, var(--spc-turquoise-deep));
+  background-color: rgba(123, 220, 181, 0.12);
+  color: var(--text-strong);
+}
+
+.chipLabel:has(.chipInput:focus-visible) {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.chipInput {
+  appearance: none;
+  width: 0;
+  height: 0;
+  position: absolute;
+  opacity: 0;
+}
+
+.chipText {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-strong);
+}
+
+/* ----- Zeichen-Counter ----- */
+
+.form [data-counter-tone='low'] {
+  color: var(--text-muted);
+}
+
+.form [data-counter-tone='ok'] {
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.form [data-counter-tone='high'] {
+  color: var(--signal);
+}
+
+/* ----- Submit-Row ----- */
+
+.submitRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* ----- Confirm-View Actions ----- */
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* ----- Telefonseelsorge-Help-Strip (Suizid-Marker-Trigger) ----- */
+
+.helpStrip {
+  padding: var(--space-4) var(--space-5);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
+  border-left: 2px solid var(--accent-contrast, var(--spc-turquoise-deep));
+  border-radius: var(--radius-md);
+}
+
+.helpHeading {
+  margin: 0 0 var(--space-2) 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-sm);
+  color: var(--text-strong);
+}
+
+.helpBody {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  line-height: var(--leading-relaxed);
+  color: var(--text-strong);
+}
+
+.helpBody a {
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+

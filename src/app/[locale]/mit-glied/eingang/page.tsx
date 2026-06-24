@@ -1,8 +1,9 @@
 /**
- * /mit-glied/eingang — erste Page nach Magic-Link-Verifikation.
+ * /mit-glied/eingang — dauerhaftes Member-Dashboard.
  *
- * Auth-gated per requireMember(). Zeigt Pseudonym, Onboarding-Schritte und
- * den Member-Slot (Logout + Account-Löschung). Keine Confetti, kein Progress.
+ * Auth-gated per requireMember(). Zeigt Pseudonym + Beitritts-Datum +
+ * Member-Slot (Logout lokal/global, Account-Löschung). Onboarding-Sequenz
+ * lebt auf /mit-glied/willkommen und wird nach Verify einmalig durchlaufen.
  */
 
 import { Section } from '@/components/primitives/Section';
@@ -11,13 +12,13 @@ import { Stack } from '@/components/primitives/Stack';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
+import { LinkButton } from '@/components/primitives/LinkButton';
 import { requireMember } from '@/lib/members/auth';
 import { MemberSlot } from './_components/MemberSlot';
 
 export const metadata = {
   title: 'eingang. — small p club',
-  description: 'erster moment nach magic-link-verifikation.',
+  description: 'dein dauerhafter eingang in den club.',
   robots: { index: false, follow: false },
 };
 
@@ -39,50 +40,55 @@ export default async function EingangPage() {
           <Stack gap={4}>
             <Eyebrow>eingang</Eyebrow>
             <Heading level={1} variant="display">
-              du bist drin.
+              moin, {profile.pseudonym}.
             </Heading>
             <Body>
-              dein name hier ist <strong>{profile.pseudonym}</strong>. den
-              kannst du gleich ändern. oder lassen. beides okay.
+              dein dauerhafter zugang. werkstatt, quellen-keller und post-archiv
+              kommen in den nächsten sub-bauten dazu.
             </Body>
           </Stack>
         </Container>
       </Section>
 
-      <Section tone="light" rhythm="standard" aria-label="pseudonym">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>pseudonym</Eyebrow>
-            <Heading level={2} variant="lede">
-              {profile.pseudonym}.
-            </Heading>
-            <Body>
-              vier zeichen, lowercase, automatisch vergeben. wenn du anders
-              heißen willst, kommt das wechsel-feld mit dem nächsten schritt.
-              einmal pro 30 tage änderbar.
-            </Body>
-            <Caption tone="muted" as="p">
-              wechsel-feld kommt mit dem nächsten sub-bau.
-            </Caption>
-          </Stack>
-        </Container>
-      </Section>
+      {profile.role === 'admin' && (
+        <Section tone="light" rhythm="standard" aria-label="admin-bereich">
+          <Container width="prose">
+            <Stack gap={3}>
+              <Eyebrow>admin</Eyebrow>
+              <Heading level={2} variant="lede">
+                inbox + audit.
+              </Heading>
+              <Body>
+                kuratierungs-inbox für eingereichte berichte. totp-2fa und
+                volle admin-foundation kommen separat.
+              </Body>
+              <div>
+                <LinkButton href="/mit-glied/admin/inbox" variant="primary">
+                  zur inbox
+                </LinkButton>
+              </div>
+            </Stack>
+          </Container>
+        </Section>
+      )}
 
-      <Section tone="light" rhythm="standard" aria-label="sticker hinweis">
+      <Section tone="light" rhythm="standard" aria-label="erfahrungsbericht schreiben">
         <Container width="prose">
           <Stack gap={4}>
-            <Eyebrow>sticker</Eyebrow>
+            <Eyebrow>erfahrungsbericht</Eyebrow>
             <Heading level={2} variant="lede">
-              kommt mit dem shop.
+              dein bericht, wenn du magst.
             </Heading>
             <Body>
-              sticker-voucher per mail, einmal-code, 6 monate gültig. bis der
-              shop läuft, gibt es die mit-glied-karte als pdf zum runterladen.
+              fünf prompts, einer wählt den ton. 80 bis 1500 zeichen. kein
+              realname, keine mail, nur dein pseudonym wandert mit. kevin
+              schaut alles an, was nicht hart abgelehnt wird.
             </Body>
-            <Caption tone="muted" as="p">
-              voucher-mechanik kommt mit phase 8, karten-generator mit dem
-              nächsten sub-bau.
-            </Caption>
+            <div>
+              <LinkButton href="/mit-glied/erfahrungen/neu" variant="primary">
+                bericht schreiben
+              </LinkButton>
+            </div>
           </Stack>
         </Container>
       </Section>

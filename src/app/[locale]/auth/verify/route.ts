@@ -17,25 +17,53 @@ import { generatePseudonym } from '@/lib/members/pseudonym';
 
 const MAX_PSEUDONYM_RETRIES = 8;
 
-async function ensureProfile(userId: string, newsletterOptIn: boolean): Promise<void> {
+interface EnsureProfileResult {
+  /** true wenn das Profil gerade neu angelegt wurde (Onboarding noch nicht gesehen). */
+  isFresh: boolean;
+  /** Timestamp wann Onboarding abgehakt wurde — null wenn noch ausstehend. */
+  onboardingCompletedAt: string | null;
+}
+
+async function ensureProfile(
+  userId: string,
+  newsletterOptIn: boolean
+): Promise<EnsureProfileResult> {
   const service = createSupabaseServiceClient();
 
   const { data: existing } = await service
     .from('profiles')
-    .select('user_id')
+    .select('user_id, onboarding_completed_at')
     .eq('user_id', userId)
     .maybeSingle();
-  if (existing) return;
+  if (existing) {
+    return {
+      isFresh: false,
+      onboardingCompletedAt:
+        (existing as { onboarding_completed_at: string | null }).onboarding_completed_at ?? null,
+    };
+  }
 
   // TODO Phase 5b: `supabase gen types` ersetzt die handgeschriebenen Types
   // in lib/supabase/types.ts, danach kann der `as any`-Cast hier weg.
+  // 24h Cooldown bis zur ersten Story-Submission. Doktrin: MEMBER_SECURITY.md
+  // §3 Linie 1 — gibt User Zeit, anzukommen, statt sofort etwas einreichen zu
+  // wollen, was später bereut wird.
+  const firstSubmissionAllowedAt = new Date(
+    Date.now() + 24 * 60 * 60 * 1000
+  ).toISOString();
+
   for (let attempt = 0; attempt < MAX_PSEUDONYM_RETRIES; attempt++) {
-    const pseudonym = generatePseudonym();
+    const pseudonym = await generatePseudonym();
     const { error } = await service
       .from('profiles')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .insert({ user_id: userId, pseudonym, newsletter_opt_in: newsletterOptIn } as any);
-    if (!error) return;
+      .insert({
+        user_id: userId,
+        pseudonym,
+        newsletter_opt_in: newsletterOptIn,
+        first_submission_allowed_at: firstSubmissionAllowedAt,
+      } as any);
+    if (!error) return { isFresh: true, onboardingCompletedAt: null };
     if (error.code !== '23505') throw error;
   }
   throw new Error('pseudonym-generation hat zu oft kollidiert');
@@ -59,11 +87,16 @@ export async function GET(request: NextRequest) {
   const newsletterOptIn =
     (data.user.user_metadata?.['newsletter_opt_in'] as boolean | undefined) ?? false;
 
+  let profile: EnsureProfileResult;
   try {
-    await ensureProfile(data.user.id, newsletterOptIn);
-  } catch {
+    profile = await ensureProfile(data.user.id, newsletterOptIn);
+  } catch (err) {
+    console.error('[auth/verify] ensureProfile failed:', err);
     return NextResponse.redirect(`${origin}/mit-glied?error=profile_create`);
   }
 
-  return NextResponse.redirect(`${origin}/mit-glied/eingang`);
+  const target = profile.onboardingCompletedAt
+    ? '/mit-glied/eingang'
+    : '/mit-glied/willkommen';
+  return NextResponse.redirect(`${origin}${target}`);
 }

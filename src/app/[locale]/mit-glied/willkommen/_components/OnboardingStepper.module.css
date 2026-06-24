@@ -1,0 +1,185 @@
+/* OnboardingStepper — drei stille Schritte. */
+
+.stepper {
+  min-height: 60vh;
+}
+
+/* ----- Step 1: Arrival ----- */
+
+.arrival {
+  display: flex;
+  justify-content: flex-start;
+  min-height: var(--space-9);
+}
+
+.arrival > * {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--duration-slow, 360ms) var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform var(--duration-slow, 360ms) var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.arrival[data-arrow-visible] > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrival > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ----- Step 2: Pseudonym-Würfel ----- */
+
+.suggestionList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.suggestionPill {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-5);
+  min-height: var(--touch-min);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-pill);
+  background-color: var(--surface-bg);
+  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-sm);
+  letter-spacing: var(--tracking-tight);
+  cursor: pointer;
+  transition:
+    background-color var(--duration-base, 200ms) var(--ease-standard, ease-out),
+    border-color var(--duration-base, 200ms) var(--ease-standard, ease-out),
+    transform var(--duration-base, 200ms) var(--ease-standard, ease-out);
+}
+
+.suggestionPill:hover:not(:disabled),
+.suggestionPill:focus-visible:not(:disabled) {
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.suggestionPill:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.suggestionPill:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.suggestionPill[data-loading] {
+  opacity: 1;
+  background-color: var(--accent);
+  color: var(--text-on-accent);
+  border-color: var(--accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggestionPill {
+    transition: none;
+  }
+  .suggestionPill:hover:not(:disabled),
+  .suggestionPill:focus-visible:not(:disabled) {
+    transform: none;
+  }
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--signal);
+}
+
+.errorPrefix {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+/* ----- Step 3: Shop preview ----- */
+
+.tileGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 600px) {
+  .tileGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tile {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--surface-bg);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.tileMedia {
+  aspect-ratio: 4 / 3;
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      rgba(10, 10, 10, 0.02) 0,
+      rgba(10, 10, 10, 0.02) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+}
+
+.tileMeta {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+}
+
+.tileCategory {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-sm);
+  color: var(--text-strong);
+}
+
+.tileSubtitle {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+}
+
+.finishRow {
+  display: flex;
+  justify-content: flex-start;
+}

@@ -1,3 +1,16 @@
+/**
+ * /mit-glied/erfahrungen/neu — Erfahrungsbericht einreichen.
+ *
+ * Auth-gated. Zeigt Cooldown-Hinweis wenn 24h-Frist noch läuft, sonst
+ * die volle Form mit 5 Prompts + Textarea + optional Alter.
+ *
+ * Drei-Stufen-Moderation läuft nach Submit (Sub-Bau 2 von C). Aktuell
+ * werden alle Berichte direkt als `pending` für Kevin's manuelle Kuration
+ * eingereiht.
+ *
+ * Doktrin: MEMBER_CONCEPT.md §5 + MEMBER_SECURITY.md §8a.
+ */
+
 import { Section } from '@/components/primitives/Section';
 import { Container } from '@/components/primitives/Container';
 import { Stack } from '@/components/primitives/Stack';
@@ -5,6 +18,9 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
+import { LinkButton } from '@/components/primitives/LinkButton';
+import { requireMember } from '@/lib/members/auth';
+import { StoryForm } from './_components/StoryForm';
 
 export const metadata = {
   title: 'erfahrungsbericht schreiben. — small p club',
@@ -12,58 +28,67 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ErfahrungNeuPage() {
+const HOUR_FORMAT = new Intl.DateTimeFormat('de-DE', {
+  hour: '2-digit',
+  minute: '2-digit',
+  timeZone: 'Europe/Berlin',
+});
+const DATE_FORMAT = new Intl.DateTimeFormat('de-DE', {
+  day: 'numeric',
+  month: 'long',
+  timeZone: 'Europe/Berlin',
+});
+
+export default async function ErfahrungNeuPage() {
+  const { profile } = await requireMember();
+
+  // Cooldown-Pre-Check: zeigt eine ruhige Hinweis-Section statt der Form,
+  // wenn die 24h-Frist nach Anmeldung noch läuft. NULL = legacy → erlaubt.
+  if (profile.first_submission_allowed_at) {
+    const allowedAt = new Date(profile.first_submission_allowed_at);
+    if (allowedAt.getTime() > Date.now()) {
+      return <CooldownNotice allowedAt={allowedAt} />;
+    }
+  }
+
   return (
     <main id="main-content">
-      <Section tone="light" rhythm="standard" aria-label="form hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>mit-glied · erfahrung schreiben</Eyebrow>
-            <Heading level={1} variant="display">dein bericht. ein prompt, dein text.</Heading>
-            <Body>fünf prompts zur auswahl. einer wählt den ton, der text macht den rest. 80 bis 1500 zeichen.</Body>
-          </Stack>
-        </Container>
-      </Section>
+      <StoryForm pseudonym={profile.pseudonym} />
+    </main>
+  );
+}
 
-      <Section tone="light" rhythm="standard" aria-label="prompt-auswahl">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>prompt</Eyebrow>
-            <Heading level={2} variant="lede">welcher passt heute?</Heading>
-            <Body>das hab ich mal geglaubt. das hat mich entlastet. das hat mich begleitet. das hab ich anderen gesagt. das wünsche ich mir.</Body>
-            <Caption tone="muted" as="p">radio-group, single-select. prompt-key wandert mit in die supabase-row.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+function CooldownNotice({ allowedAt }: { allowedAt: Date }) {
+  const dateLabel = DATE_FORMAT.format(allowedAt);
+  const timeLabel = HOUR_FORMAT.format(allowedAt);
 
-      <Section tone="light" rhythm="standard" aria-label="text-eingabe">
+  return (
+    <main id="main-content">
+      <Section tone="light" rhythm="loose" aria-label="cooldown-hinweis">
         <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>text</Eyebrow>
-            <Heading level={2} variant="lede">fließtext, 80 bis 1500 zeichen.</Heading>
-            <Body>textarea mit zeichenzähler. drei-stufen-moderation (hard-reject, flag-high, flag-low, pass) läuft im hintergrund nach submit. kevin sieht alles, was nicht hard-reject ist.</Body>
-            <Caption tone="muted" as="p">submit-button mit cooldown-check (24h nach account-erstellung).</Caption>
-          </Stack>
-        </Container>
-      </Section>
-
-      <Section tone="light" rhythm="standard" aria-label="pseudonym + alter">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>meta</Eyebrow>
-            <Heading level={2} variant="lede">pseudonym sichtbar, name nie.</Heading>
-            <Body>dein pseudonym (leser-xxxx) wird mit-gespeichert. alter-range optional (unter 20, 20–29, 30–39, 40–49, 50+). keine email, kein realname, keine geo-daten.</Body>
-          </Stack>
-        </Container>
-      </Section>
-
-      <Section tone="light" rhythm="standard" aria-label="submit-bestätigung">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>nach dem submit</Eyebrow>
-            <Heading level={2} variant="lede">prompt-sensitiv, ruhig.</Heading>
-            <Body>je nach prompt: „kennen wir. genau dafür sind wir hier." / „gut. wenn's passt, lesen es andere." / „notiert. wünsche bleiben hier liegen, nicht im wind." bei suizid-markern erscheint zusätzlich der telefonseelsorge-strip.</Body>
-            <Caption tone="muted" as="p">submit-confirm-voice aus MEMBER_SECURITY sektion 8a.</Caption>
+          <Stack gap={5}>
+            <Stack gap={4}>
+              <Eyebrow>noch nicht</Eyebrow>
+              <Heading level={1} variant="display">
+                kurz raum, anzukommen.
+              </Heading>
+              <Body>
+                dein erster bericht klappt 24 stunden nach anmeldung. das ist
+                kein misstrauen, das ist eine kleine pause. komm wieder ab{' '}
+                <strong>
+                  {dateLabel}, {timeLabel}
+                </strong>
+                .
+              </Body>
+            </Stack>
+            <div>
+              <LinkButton href="/mit-glied/eingang" variant="primary">
+                zum eingang
+              </LinkButton>
+            </div>
+            <Caption tone="muted" as="p">
+              doktrin: MEMBER_SECURITY.md §3 linie 1.
+            </Caption>
           </Stack>
         </Container>
       </Section>

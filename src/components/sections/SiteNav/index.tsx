@@ -52,7 +52,8 @@ const NAV_ITEMS = [
   { href: '/partner', label: 'partner' },
 ] as const satisfies ReadonlyArray<{ href: string; label: string }>;
 
-const MEMBER_ITEM = { href: '/mit-glied', label: 'mit-glied' } as const;
+const MEMBER_GUEST = { href: '/mit-glied', label: 'mit-glied' } as const;
+const MEMBER_LOGGED_IN_HREF = '/mit-glied/eingang';
 
 function BurgerIcon() {
   return (
@@ -102,9 +103,18 @@ export interface SiteNavProps {
    * Default false (Inhalts-Pages: direkt gepinnt).
    */
   heroMode?: boolean;
+  /**
+   * Wenn gesetzt: User ist eingeloggt, Pille zeigt das Pseudonym und linkt
+   * direkt zum Eingang. Default undefined = Guest-Modus mit „mit-glied"-Label.
+   * Wird vom SiteNavContainer aus dem Member-Auth-Helper befüllt.
+   */
+  memberPseudonym?: string;
 }
 
-export function SiteNav({ heroMode = false }: SiteNavProps = {}) {
+export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}) {
+  const memberItem = memberPseudonym
+    ? { href: MEMBER_LOGGED_IN_HREF, label: memberPseudonym }
+    : MEMBER_GUEST;
   const pathname = usePathname();
   const [pinned, setPinned] = useState(!heroMode);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -249,11 +259,11 @@ export function SiteNav({ heroMode = false }: SiteNavProps = {}) {
         </nav>
 
         <Link
-          href={MEMBER_ITEM.href}
+          href={memberItem.href}
           className={styles.memberPill}
-          aria-current={isCurrent(MEMBER_ITEM.href) ? 'page' : undefined}
+          aria-current={isCurrent(memberItem.href) ? 'page' : undefined}
         >
-          {MEMBER_ITEM.label}
+          {memberItem.label}
         </Link>
       </div>
 
@@ -300,12 +310,12 @@ export function SiteNav({ heroMode = false }: SiteNavProps = {}) {
           </ul>
 
           <Link
-            href={MEMBER_ITEM.href}
+            href={memberItem.href}
             className={styles.sheetMemberPill}
-            aria-current={isCurrent(MEMBER_ITEM.href) ? 'page' : undefined}
+            aria-current={isCurrent(memberItem.href) ? 'page' : undefined}
             onClick={() => setMenuOpen(false)}
           >
-            {MEMBER_ITEM.label}
+            {memberItem.label}
           </Link>
         </div>
       </div>

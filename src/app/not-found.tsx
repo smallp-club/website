@@ -19,7 +19,7 @@ const inter = Inter({
  * gültigen Locale-Slug). Damit die 404 trotzdem Nav + Footer hat, wird der
  * default-locale `de` mit NextIntlClientProvider hart gesetzt.
  */
-export default function RootNotFound() {
+export default async function RootNotFound() {
   return (
     <html lang="de" className={inter.variable}>
       <body>

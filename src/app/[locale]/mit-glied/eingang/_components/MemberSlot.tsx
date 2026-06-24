@@ -12,9 +12,8 @@
 import { Stack } from '@/components/primitives/Stack';
 import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
 import { Button } from '@/components/primitives/Button';
+import { LinkButton } from '@/components/primitives/LinkButton';
 import type { ProfileRole } from '@/lib/supabase/types';
 import { logoutAction } from '../actions';
 import styles from './MemberSlot.module.css';
@@ -64,12 +63,10 @@ export function MemberSlot({ pseudonym, joinedDate, role }: MemberSlotProps) {
             auf allen geräten ausloggen
           </Button>
         </form>
+        <LinkButton href="/mit-glied/loeschen" variant="ghost">
+          diesen account löschen
+        </LinkButton>
       </Stack>
-
-      <Caption tone="muted" as="p">
-        account ganz löschen kommt mit dem nächsten sub-bau, dann ein klick
-        ohne nachfrage. (dsgvo-pflicht.)
-      </Caption>
     </Stack>
   );
 }

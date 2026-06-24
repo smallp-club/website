@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { useActionState } from 'react';
+import { useActionState, useEffect } from 'react';
 import { FormField } from '@/components/primitives/FormField';
 import { Input } from '@/components/primitives/Input';
 import { SubmitButton } from '@/components/primitives/SubmitButton';
@@ -9,6 +9,15 @@ import { Body } from '@/components/primitives/Body';
 import { requestMagicLink } from '../actions';
 import { initialAuthFormState, type AuthFormState } from '../auth-types';
 import styles from './MagicLinkForm.module.css';
+
+// Cloudflare Turnstile injectet eine globale `turnstile`-API ins window.
+declare global {
+  interface Window {
+    turnstile?: {
+      reset: (container?: string | HTMLElement) => void;
+    };
+  }
+}
 
 interface MagicLinkFormProps {
   turnstileSiteKey?: string;
@@ -19,6 +28,16 @@ export function MagicLinkForm({ turnstileSiteKey }: MagicLinkFormProps) {
     requestMagicLink,
     initialAuthFormState
   );
+
+  // Turnstile-Tokens sind single-use. Nach jedem Server-Error den Widget-Token
+  // resetten, damit der nächste Submit mit frischem Token läuft. Sonst sieht
+  // der User bei jedem Retry den Cloudflare-„Erfolg!"-Haken, schickt aber
+  // einen verbrauchten Token → endlos „bitte probier nochmal."
+  useEffect(() => {
+    if (state.status === 'error' && typeof window !== 'undefined' && window.turnstile) {
+      window.turnstile.reset();
+    }
+  }, [state]);
 
   if (state.status === 'success') {
     return (

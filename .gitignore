@@ -36,3 +36,4 @@ tsconfig.tsbuildinfo
 # Workspace screenshots (Playwright/Browser-Debug)
 /*.png
 .playwright-mcp/
+emails/.rendered/

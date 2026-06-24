@@ -33,6 +33,7 @@ export interface ProfileRow {
   role: ProfileRole;
   first_submission_allowed_at: string | null;
   newsletter_opt_in: boolean;
+  onboarding_completed_at: string | null;
   created_at: string;
 }
 
@@ -91,6 +92,7 @@ export interface ProfileInsert {
   role?: ProfileRole;
   first_submission_allowed_at?: string | null;
   newsletter_opt_in?: boolean;
+  onboarding_completed_at?: string | null;
   created_at?: string;
 }
 

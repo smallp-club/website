@@ -85,8 +85,11 @@ export async function requestMagicLink(
     return { status: 'error', message: 'hier kommst du nicht rein. mehr sagen wir nicht.' };
   }
 
-  // 4) Rate-Limits
-  if (ip) {
+  // 4) Rate-Limits — IP-Limit für localhost gebypasst, damit Dev-Testen
+  // nicht durch das 5/IP/24h-Cap blockiert wird.
+  const isLocalhost =
+    !ip || ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+  if (ip && !isLocalhost) {
     const ipResult = await consumeRateLimit('magic_link_per_ip', ip);
     if (!ipResult.success) {
       return { status: 'error', message: 'zu viele anfragen. probier es später nochmal.' };
