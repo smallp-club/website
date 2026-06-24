@@ -1,0 +1,115 @@
+/* ReportForm — dezenter Trigger + Inline-Form. */
+
+.trigger {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--border-hairline);
+  text-underline-offset: 3px;
+  transition: color var(--duration-base, 200ms) ease;
+}
+
+.trigger:hover {
+  color: var(--text-strong);
+}
+
+.trigger:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-radius: var(--radius-sm);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.03));
+  border-radius: var(--radius-sm);
+}
+
+.label {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+}
+
+.textarea {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  padding: var(--space-2);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-sm);
+  background-color: var(--surface-bg);
+  color: var(--text-strong);
+  resize: vertical;
+}
+
+.textarea:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+  border-color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.submit,
+.cancel {
+  appearance: none;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  min-height: 36px;
+}
+
+.submit {
+  background-color: var(--text-strong);
+  color: var(--text-on-inverse);
+  border: none;
+}
+
+.submit:hover {
+  background-color: var(--spc-ink, #000);
+}
+
+.cancel {
+  background: transparent;
+  border: 1px solid var(--border-hairline);
+  color: var(--text-strong);
+}
+
+.cancel:hover {
+  border-color: var(--text-strong);
+}
+
+.submit:focus-visible,
+.cancel:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.confirm {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--signal);
+}

@@ -2,7 +2,7 @@ import { HeroLanding } from '@/components/sections/HeroLanding';
 import { RecognitionBlock } from '@/components/sections/RecognitionBlock';
 import { MythosReveal } from '@/components/sections/MythosReveal';
 import { StatsLanding } from '@/components/sections/StatsLanding';
-import { BewegungsSignal } from '@/components/sections/BewegungsSignal';
+import { BewegungsSignalContainer } from '@/components/sections/BewegungsSignal/BewegungsSignalContainer';
 import { ShopPlaceholder } from '@/components/sections/ShopPlaceholder';
 
 export default function HomePage() {
@@ -12,7 +12,7 @@ export default function HomePage() {
       <RecognitionBlock />
       <MythosReveal />
       <StatsLanding />
-      <BewegungsSignal />
+      <BewegungsSignalContainer />
       <ShopPlaceholder />
     </main>
   );

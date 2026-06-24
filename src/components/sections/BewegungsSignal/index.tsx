@@ -1,8 +1,18 @@
+import { useLocale } from 'next-intl';
 import { Section } from '@/components/primitives/Section';
 import { Container } from '@/components/primitives/Container';
 import { Input } from '@/components/primitives/Input';
 import { SubmitButton } from '@/components/primitives/SubmitButton';
 import styles from './BewegungsSignal.module.css';
+
+export interface BewegungsSignalProps {
+  /**
+   * Aktuelle Memberzahl. Wenn übergeben, wird der Brand-Statement-Satz
+   * „[N] mit-glieder. auch ohne-glied." als ruhiges Caption-Element unter
+   * dem Headline gerendert. Default undefined = Caption versteckt.
+   */
+  memberCount?: number;
+}
 
 /**
  * BewegungsSignal — leise Einladung zum Mit-Glied-Werden.
@@ -11,11 +21,12 @@ import styles from './BewegungsSignal.module.css';
  * Man muss nicht betroffen sein um dazuzugehören." Per IA: leise Einladung,
  * Accent-Pill als CTA, eine Zeile darunter muted.
  *
- * Form-Action zeigt auf `/api/mit-glied/start` — Endpoint kommt in Phase 5
- * (Auth.js v5 + Magic-Link). Vorher gibt es 404, was für die Landing-Komposition
- * akzeptabel ist (Stub-Phase). Brand-Voice und Struktur sind hier final.
+ * Form zeigt auf `/mit-glied` — User landet auf der Pre-Login-Page mit
+ * Schwelle + Magic-Link-Form. Eingabe geht NICHT direkt durch, weil wir
+ * Turnstile + Brand-Statement-Schwelle vorschalten (MEMBER_SECURITY §3).
  */
-export function BewegungsSignal() {
+export function BewegungsSignal({ memberCount }: BewegungsSignalProps = {}) {
+  const locale = useLocale();
   return (
     <Section as="section" id="bewegungs-signal" tone="light" rhythm="loose">
       <Container width="prose">
@@ -26,10 +37,16 @@ export function BewegungsSignal() {
           <h2 className={styles.headline}>
             mit-glied. auch ohne-glied.
           </h2>
+          {typeof memberCount === 'number' && memberCount > 0 && (
+            <p className={styles.memberCount}>
+              {memberCount.toLocaleString(locale)}{' '}
+              {memberCount === 1 ? 'mit-glied' : 'mit-glieder'}, stand jetzt.
+            </p>
+          )}
           <form
             className={styles.form}
-            method="post"
-            action="/api/mit-glied/start"
+            method="get"
+            action="/mit-glied"
             noValidate
           >
             <label htmlFor="mit-glied-email" className={styles.label}>

@@ -11,9 +11,11 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import { LOGO_WORDMARK_BLACK_BASE64 } from './_assets/logo';
 
 const CONFIRM_URL_PLACEHOLDER = '{{ .ConfirmationURL }}';
 const BASE_URL = 'https://smallp.club';
+const LOGO_DATA_URI = `data:image/png;base64,${LOGO_WORDMARK_BLACK_BASE64}`;
 
 export default function MagicLinkEmail() {
   return (
@@ -77,7 +79,7 @@ export default function MagicLinkEmail() {
         <Container style={container} className="spc-container">
           <Section style={headerSection}>
             <Img
-              src={`${BASE_URL}/brand/smallpclub-wordmark-black.png`}
+              src={LOGO_DATA_URI}
               alt="small p club"
               width={160}
               height={24}

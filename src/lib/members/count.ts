@@ -1,38 +1,34 @@
 /**
- * Memberzahl-Quelle für den Footer-Bewegungs-Anker.
+ * Memberzahl-Quelle für Footer + BewegungsSignal.
  *
- * Aktuell ein Stub mit hardcoded Wert für Library-Preview und Pre-Launch.
- * Die Live-Integration mit Supabase kommt in Phase 5 (Member-Bereich),
- * sobald Auth.js v5 + Supabase RLS aktiv sind. Bis dahin sind die
- * Architektur-Bruchstellen (Cache, Server-Wrapper) schon gebaut, damit
- * der Tausch nur diese Datei betrifft.
+ * Live-Integration mit Supabase: zählt alle Profile-Rows. Cache + Tag laufen
+ * in den jeweiligen Containern (SiteFooterContainer, BewegungsSignalContainer)
+ * — diese Datei macht nur den Raw-Call.
  *
- * @see docs/project/MEMBER_CONCEPT.md Sektion 4 (Memberzahl-Pflicht im Footer)
- * @see docs/project/ROADMAP.md Phase 5 (Auth.js v5 + Supabase)
+ * Fehler-Strategie: kein Throw, Fallback auf 0. Brand-Doktrin: lieber „0
+ * mit-glieder" als crash, der Footer rendert immer. In Production sollte
+ * das nie 0 sein (Kevin's Test-Account zählt mit), wenn doch ist ein
+ * Supabase-Outage wahrscheinlich.
+ *
+ * @see docs/project/MEMBER_CONCEPT.md §4 Säule 1 (Memberzahl-Anzeige)
  */
-const STUB_MEMBER_COUNT = 23;
 
-/**
- * Liefert die aktuelle Anzahl aktiver Member.
- *
- * Wenn Supabase live ist (Phase 5+), wird stattdessen:
- *
- * ```ts
- * import { createServerClient } from '@/lib/supabase/server';
- *
- * export async function getMemberCount(): Promise<number> {
- *   const supabase = createServerClient();
- *   const { count } = await supabase
- *     .from('users')
- *     .select('*', { count: 'exact', head: true });
- *   return count ?? 0;
- * }
- * ```
- *
- * Bei Errors (Network, RLS, etc.) wird auf einen sinnvollen Fallback
- * zurückgegriffen, kein Blocking — der Footer rendert lieber mit
- * altem Wert als gar nicht.
- */
+import { createSupabaseServiceClient } from '@/lib/supabase/service';
+
 export async function getMemberCount(): Promise<number> {
-  return STUB_MEMBER_COUNT;
+  try {
+    const service = createSupabaseServiceClient();
+    const { count, error } = await service
+      .from('profiles')
+      .select('*', { count: 'exact', head: true });
+
+    if (error) {
+      console.error('[getMemberCount]', error);
+      return 0;
+    }
+    return count ?? 0;
+  } catch (err) {
+    console.error('[getMemberCount] unexpected:', err);
+    return 0;
+  }
 }

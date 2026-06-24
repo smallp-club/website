@@ -194,6 +194,30 @@
   display: block;
 }
 
+/* Bildmarken-Ring — Member-Indikator (MEMBER_CONCEPT.md §6).
+   Subtiler Dark-Turquoise-Ring um den 28×28-Bildmarken-Bereich. Nur sichtbar
+   wenn data-member auf .logoStack UND die Bildmarke sichtbar ist (pinned
+   oder non-hero-mode). Im Wordmark-State unsichtbar — der Ring wäre zu weit
+   weg von der visuellen Brand-Identität, könnte als Border um „small p club"
+   missgelesen werden. */
+.memberRing {
+  display: none;
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-contrast, var(--spc-turquoise-deep));
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.navShell[data-pinned='true'] .logoStack[data-member='true'] .memberRing,
+.navShell[data-hero-mode='false'] .logoStack[data-member='true'] .memberRing {
+  display: block;
+}
+
 /* -------------------------------------------------------------------------
    Items — Brand-Link-Sprache (identisch SiteFooter VoiceLinks).
    ------------------------------------------------------------------------- */

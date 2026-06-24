@@ -85,19 +85,26 @@ export async function requestMagicLink(
     return { status: 'error', message: 'hier kommst du nicht rein. mehr sagen wir nicht.' };
   }
 
-  // 4) Rate-Limits — IP-Limit für localhost gebypasst, damit Dev-Testen
-  // nicht durch das 5/IP/24h-Cap blockiert wird.
+  // 4) Rate-Limits — beide für localhost gebypasst, damit Dev-Testen nicht
+  // durch das Cap blockiert wird (sonst hängen wir bei Iteration nach
+  // Link-Expiry oder Re-Login schnell im Limit).
   const isLocalhost =
     !ip || ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
-  if (ip && !isLocalhost) {
-    const ipResult = await consumeRateLimit('magic_link_per_ip', ip);
-    if (!ipResult.success) {
-      return { status: 'error', message: 'zu viele anfragen. probier es später nochmal.' };
+  if (!isLocalhost) {
+    if (ip) {
+      const ipResult = await consumeRateLimit('magic_link_per_ip', ip);
+      if (!ipResult.success) {
+        return { status: 'error', message: 'zu viele anfragen. probier es später nochmal.' };
+      }
     }
-  }
-  const emailResult = await consumeRateLimit('magic_link_per_email', emailHash);
-  if (!emailResult.success) {
-    return { status: 'error', message: 'für diese mail haben wir gerade einen link verschickt. schau in dein postfach.' };
+    const emailResult = await consumeRateLimit('magic_link_per_email', emailHash);
+    if (!emailResult.success) {
+      return {
+        status: 'error',
+        message:
+          'zu viele anfragen für diese mail. warte ein paar minuten, dann probier nochmal.',
+      };
+    }
   }
 
   // 5) Magic-Link senden
@@ -119,7 +126,8 @@ export async function requestMagicLink(
       if (error.status === 429 || error.code === 'over_email_send_rate_limit') {
         return {
           status: 'error',
-          message: 'für diese mail haben wir gerade einen link verschickt. schau in dein postfach.',
+          message:
+            'zu viele anfragen für diese mail. warte ein paar minuten, dann probier nochmal.',
         };
       }
       return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };

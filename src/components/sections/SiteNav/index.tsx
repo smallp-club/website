@@ -206,7 +206,7 @@ export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}
         >
           <div className={styles.navInner}>
             <Link className={styles.lockup} href="/" aria-label="small p club Startseite">
-              <span className={styles.logoStack}>
+              <span className={styles.logoStack} data-member={memberPseudonym ? 'true' : undefined}>
                 {/* eslint-disable-next-line @next/next/no-img-element --
                     SVG: next/image würde Optimizer-Routes triggern, was für
                     SVG keinen Benefit hat. SiteFooter-Pattern. */}
@@ -226,6 +226,12 @@ export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}
                   height={28}
                   className={`${styles.logoLayer} ${styles.layerMark}`}
                 />
+                {/* Bildmarken-Ring: subtiler Member-Indikator. Nur sichtbar
+                    wenn der User eingeloggt ist UND die Bildmarke gezeigt
+                    wird (pinned-state oder non-hero-mode). */}
+                {memberPseudonym && (
+                  <span className={styles.memberRing} aria-hidden="true" />
+                )}
               </span>
             </Link>
 
