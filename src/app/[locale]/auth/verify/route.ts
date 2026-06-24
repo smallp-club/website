@@ -66,6 +66,24 @@ async function ensureProfile(
       } as any);
     if (!error) return { isFresh: true, onboardingCompletedAt: null };
     if (error.code !== '23505') throw error;
+
+    // 23505 = unique-violation. Kann pseudonym-conflict ODER user_id-PK-conflict sein.
+    // Bei user_id-conflict existiert das Profile bereits — re-fetch und return.
+    // Race-Condition (Parallel-Request hat Profile gerade angelegt) wird ebenfalls
+    // hier abgefangen.
+    const { data: nowExisting } = await service
+      .from('profiles')
+      .select('user_id, onboarding_completed_at')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (nowExisting) {
+      return {
+        isFresh: false,
+        onboardingCompletedAt:
+          (nowExisting as { onboarding_completed_at: string | null }).onboarding_completed_at ?? null,
+      };
+    }
+    // Kein Profile da → war wirklich pseudonym-conflict, retry mit neuem pseudonym.
   }
   throw new Error('pseudonym-generation hat zu oft kollidiert');
 }
