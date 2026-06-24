@@ -1,0 +1,9 @@
+Contact: mailto:secure@smallp.club
+Expires: 2027-06-24T00:00:00.000Z
+Preferred-Languages: de, en
+Canonical: https://smallp.club/.well-known/security.txt
+Policy: https://smallp.club/datenschutz
+
+# Wir freuen uns über jeden ehrlichen Hinweis auf Sicherheits-Themen.
+# Bitte keine Disclosure ohne vorherige Mail an secure@smallp.club.
+# Wir antworten in der Regel innerhalb weniger Tage.

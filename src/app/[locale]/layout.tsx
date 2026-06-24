@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import { Inter } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { SkipToContent } from '@/components/primitives/SkipToContent';
@@ -41,14 +42,43 @@ const inter = Inter({
   display: 'swap',
 });
 
+const SITE_URL = 'https://smallp.club';
+
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'small p club',
-  url: 'https://smallp.club',
-  description: 'Awareness-Bewegung gegen Scham und Vergleichsdruck rund um Männlichkeit und Körperbild.',
+  url: SITE_URL,
+  logo: `${SITE_URL}/brand/smallpclub-mark-black.svg`,
+  description:
+    'Awareness-Bewegung gegen Scham und Vergleichsdruck rund um Männlichkeit und Körperbild.',
   slogan: 'no measure, no pressure',
-  knowsAbout: ['Männlichkeit', 'Körperbild', 'Körpergröße', 'Mental Health', 'Body Image'],
+  knowsAbout: [
+    'Männlichkeit',
+    'Körperbild',
+    'Körpergröße',
+    'Penisgröße',
+    'Mental Health',
+    'Body Image',
+    'Body Dysmorphic Disorder',
+    'Spectatoring',
+  ],
+  sameAs: ['https://www.instagram.com/smallpclub'],
+  contactPoint: {
+    '@type': 'ContactPoint',
+    email: 'hello@smallp.club',
+    contactType: 'general',
+    availableLanguage: ['de', 'en'],
+  },
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  url: SITE_URL,
+  name: 'small p club',
+  inLanguage: ['de', 'en'],
+  publisher: { '@type': 'Organization', name: 'small p club' },
 };
 
 type Props = {
@@ -64,13 +94,23 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   const messages = await getMessages();
+  // CSP-Nonce vom proxy.ts holen — Pflicht für inline JSON-LD damit es in
+  // Production nicht von der strikten CSP geblockt wird (Crawler sehen es
+  // sonst nicht, Schema.org-Signale gehen verloren).
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
 
   return (
     <html lang={locale} className={inter.variable}>
       <head>
         <script
           type="application/ld+json"
+          nonce={nonce}
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
         />
       </head>
       <body>

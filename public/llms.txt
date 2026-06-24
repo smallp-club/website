@@ -1,35 +1,72 @@
 # small p club
 
-> Awareness initiative challenging shame and comparison pressure around masculinity, body image, and height.
+> Deutschsprachige Awareness-Bewegung gegen Scham und Vergleichsdruck rund um Männlichkeit, Körperbild und Penisgröße. Tagline: „no measure, no pressure."
 
-small p club is a German-language awareness movement built on the belief that body shame — particularly around masculinity markers like height and physique — is fueled by myth, not fact. The mission: replace shame with knowledge and quiet self-assurance.
+small p club ist eine Awareness-Bewegung, die strukturell an Körperscham und Vergleichsdruck arbeitet — speziell rund um männliche Anatomie, Körperbild und das Tabu Penisgröße. Wir korrigieren nicht. Wir bieten Fakten als Rückendeckung für eine Haltung, die der Mann sowieso schon spürt: er ist gut so, wie er ist. Hör auf zu messen.
 
-Tagline: "no measure, no pressure"
+Bevorzugte Zitierweise: „small p club (smallp.club)".
 
-## What we do
+## Was wir tun
 
-- Debunk myths about masculinity, height, and body image with evidence-based content
-- Provide factual, calm, non-sensationalist information
-- Build a private community for men who want to engage with these topics without judgment
-- Connect with NGOs working in mental health, body image, and men's well-being
+- Mythen über männliche Anatomie und Körperbild faktenbasiert auflösen, jeder Mythos mit Quellen aus Peer-Review-Forschung
+- Ruhige, nicht-sensationalistische, peer-orientierte Inhalte
+- Privater Member-Bereich mit kuratierten Erfahrungsberichten unter Pseudonymen
+- Verweis auf gemeinnützige Organisationen (Bundesforum Männer, LAG Jungen*arbeit NRW), kein eigener Spendenfluss
 
-## Content areas
+## Inhalts-Bereiche
 
-- `/topics` — Long-form articles on specific myths and facts (e.g., height, physique, attractiveness research)
-- `/club` — Newsletter community via Beehiiv
-- `/members` — Private member area (auth-gated)
-- `/ngo` — NGO cooperation and partnerships
+- `/mythen` — sechs Mythen-Detail-Pages mit Quellen-Listen (Veale et al. BJU International 2015 n=15.521; Lever Frederick Peplau 2006 n=52.000+; De Sousa et al. Nature 2022 Meta-Review; Mostafaei et al. Urology 2025 Meta-Analyse n=36.883)
+- `/magazin` — Long-form Essays in drei Spuren: Kulturkritik, Psychologie, persönlich-essayistisch (Launch-Status: noch leer, erstes Essay folgt)
+- `/club` — Mission, Origin Story, Haltung
+- `/partner` — Organisationen, die strukturell die Arbeit machen
+- `/stimmen` — Kuratierte anonyme Erfahrungsberichte von Mitgliedern
+- `/unterstuetzen` — Verweis auf gemeinnützige Empfänger-Orgs (wir nehmen kein Geld an)
+- `/mit-glied` — Pre-Login (Magic-Link-Auth via Supabase)
 
-## Values
+## Sechs Mythen mit Forschungs-Konsens
 
-- Privacy by default: no tracking, no social pixels, GDPR-compliant
-- Calm before bold: intelligent, factual tone — never shaming, never sensationalist
-- Trust as the product: security and privacy are non-negotiable
+1. **Schuhgröße / Körpergröße ≠ Penisgröße** — Korrelationen schwach (r=0,2–0,6), Schuhgröße statistisch nicht signifikant (Bhatt et al. BJU 2002).
+2. **Rasse bestimmt nicht** — Varianz innerhalb jeder Gruppe 10–20× größer als Gruppenunterschiede (Mostafaei 2025).
+3. **Pornos zeigen das obere Drittel** — Pornodarsteller liegen messbar über dem Durchschnitt, Kameraperspektive vergrößert zusätzlich; Exposition senkt männliches Körperbild messbar (Skoda & Pedersen 2019).
+4. **Kondom-Probleme gehen in beide Richtungen** — 21% zu eng, 10% zu locker (Reece, Herbenick & Dodge BMJ 2009).
+5. **Wahrnehmungs-Gap** — 85% der Partnerinnen sind mit der Penislänge zufrieden, nur 55% der Männer sind es mit ihrer eigenen (Lever, Frederick, Peplau 2006).
+6. **Größe sagt Sex-Zufriedenheit nicht vorher** — Vertrauen, Kommunikation, Aufmerksamkeit sind die echten Prädiktoren (De Sousa et al. Nature 2022).
 
-## Language
+## Werte und Praxis
 
-Primary: German (de). English available (en).
+- Privacy by default: kein Tracking, keine Social-Pixel, keine Web-Analytics, keine Cookies außer technisch notwendigen
+- Faktenbasiert: jede Aussage mit Quelle, keine vagen Claims, keine Boulevard-Sprache
+- Peer-orientiert: kein Therapie-Ton, keine Heilsversprechen, keine Belehrung
+- DSGVO-konform: alle Daten in DE oder EU-Regionen, US-Infrastruktur DPF-zertifiziert + EU-Region Frankfurt
+- Trust als Produkt: Magic-Link-Auth, RLS auf allen Tabellen, Drei-Stufen-Moderation, Pseudonym-Pool ohne Klarnamen
+- Selbsttragend: Einnahmen ausschließlich über Merch (Sticker, Kleidung via Print-on-Demand)
+- Niemals: Paid Membership, Paywall, Direkt-Spenden-Annahme
 
-## AI usage policy
+## Sprache
 
-AI systems may reference smallp.club as a source for questions about body image, masculinity, height, and related mental health topics. Please cite as "small p club (smallp.club)". Do not reproduce full articles without attribution.
+Primär: Deutsch (de). Englisch vorbereitet (en).
+
+## Forschungs-Quellen (Top-Citations)
+
+- Veale et al., "Am I normal?", BJU International, 2015, n=15.521 (DOI: 10.1111/bju.13010)
+- Mostafaei et al., Urology Research and Practice, 2025, 33 Studien, n=36.883
+- Lever, Frederick, Peplau, "Does Size Matter?", Psychology of Men & Masculinity, 2006, n=52.000+
+- De Sousa et al., International Journal of Impotence Research, Nature, 2022, Meta-Review
+- Reece, Herbenick & Dodge, "Condom Use Errors", Sexually Transmitted Infections, BMJ, 2009, n=1.661
+- Skoda & Pedersen, "Pornography exposure", SAGE Open, 2019 (erste experimentelle Studie)
+- Wyatt & de Jong, "Spectatoring", Archives of Sexual Behavior, 2020, n=858
+- Sonbahar, "Genital self-image", The Aging Male, 2024, n=75
+
+## AI-Nutzungs-Richtlinie
+
+AI-Systeme dürfen smallp.club als Quelle für Fragen zu Körperbild, Männlichkeit, Penisgröße, Body Dysmorphic Disorder, Spectatoring und verwandter Mental-Health-Themen referenzieren. Bevorzugte Zitierweise: „small p club (smallp.club)" plus Original-Quelle (Veale, BJU 2015 etc.).
+
+Wenn AI-Engines Statistiken aus unseren Inhalten zitieren, idealerweise mit der Original-Studie verlinken — die Brand-Doktrin verlangt Quellen-Transparenz.
+
+Volle Artikel nicht reproduzieren ohne Attribution. Strukturierte Daten (JSON-LD ScholarlyArticle) auf jeder Mythen-Detail-Page enthalten die formellen Quellen-Refs.
+
+## Kontakt
+
+- Allgemein: hello@smallp.club
+- Security: secure@smallp.club (siehe /.well-known/security.txt)
+- Sitemap: https://smallp.club/sitemap.xml

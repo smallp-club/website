@@ -26,25 +26,47 @@ export default function robots(): MetadataRoute.Robots {
   };
 
   // LAUNCH-VARIANTE — beim noindex-Switch oben austauschen gegen:
+  // AI-Bots (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot) sind
+  // EXPLIZIT erlaubt — Brand-Entscheidung (CLAUDE.md / Cloudflare-Setup):
+  // unsere Mission profitiert von AI-Sichtbarkeit. Trade-off Trainings-Daten
+  // akzeptiert.
   /*
+  const memberAuthDisallow = [
+    '/mit-glied/eingang',
+    '/mit-glied/willkommen',
+    '/mit-glied/erfahrungen',
+    '/mit-glied/admin',
+    '/mit-glied/loeschen',
+    '/mit-glied/karte',
+    '/auth/',
+    '/api/',
+    '/preview/',
+    '/components-library/',
+  ];
+  const aiBots = [
+    'GPTBot',           // OpenAI / ChatGPT
+    'ChatGPT-User',     // OpenAI ChatGPT browsing
+    'OAI-SearchBot',    // OpenAI Search-Index
+    'ClaudeBot',        // Anthropic Claude
+    'Claude-Web',       // Anthropic Claude browsing
+    'PerplexityBot',    // Perplexity
+    'Perplexity-User',  // Perplexity browsing
+    'Google-Extended',  // Google AI training opt-in
+    'Bingbot',          // Bing (auch Copilot)
+    'CCBot',            // Common Crawl (Trainings-Corpus)
+    'Applebot',         // Apple/Siri
+    'YouBot',           // You.com
+  ];
   return {
     rules: [
-      {
-        userAgent: '*',
+      { userAgent: '*', allow: '/', disallow: memberAuthDisallow },
+      // Explizite Allow-Regeln für AI-Bots — Cloudflare-Bot-Fight blockiert
+      // sonst möglicherweise. Selbe Disallow-Liste wie *.
+      ...aiBots.map((bot) => ({
+        userAgent: bot,
         allow: '/',
-        disallow: [
-          '/mit-glied/eingang',
-          '/mit-glied/willkommen',
-          '/mit-glied/erfahrungen',
-          '/mit-glied/admin',
-          '/mit-glied/loeschen',
-          '/mit-glied/karte',
-          '/auth/',
-          '/api/',
-          '/preview/',
-          '/components-library/',
-        ],
-      },
+        disallow: memberAuthDisallow,
+      })),
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
     host: baseUrl,

@@ -12,6 +12,14 @@ export const metadata: Metadata = {
   },
   description: siteDescription,
   robots: { index: false, follow: false },
+  alternates: {
+    canonical: siteUrl,
+    languages: {
+      'de-DE': siteUrl,
+      'en-US': `${siteUrl}/en`,
+      'x-default': siteUrl,
+    },
+  },
   openGraph: {
     type: 'website',
     locale: 'de_DE',
@@ -25,6 +33,15 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: siteTitle,
     description: siteDescription,
+  },
+  // Verification-Slots — Tokens beim Anlegen der Properties in Search Console
+  // und Bing Webmaster eintragen. Tokens sind public, dürfen ins Repo.
+  // Aktivieren via Env-Var, sonst leer für lokales Dev/Preview.
+  verification: {
+    google: process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION,
+    other: {
+      'msvalidate.01': process.env.NEXT_PUBLIC_BING_VERIFICATION ?? '',
+    },
   },
 };
 

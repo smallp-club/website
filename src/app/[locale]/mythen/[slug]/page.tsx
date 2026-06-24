@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import { headers } from 'next/headers';
 import { Section } from '@/components/primitives/Section';
 import { Container } from '@/components/primitives/Container';
 import { Stack } from '@/components/primitives/Stack';
@@ -12,7 +13,65 @@ import {
   getAllMythSlugs,
   getMythBySlug,
   getRelatedMyths,
+  type MythDetail,
 } from '@/content/data/myths';
+
+const SITE_URL = 'https://smallp.club';
+
+/**
+ * JSON-LD pro Mythen-Detail-Page — Article + ScholarlyArticle-Citations.
+ * GEO-Hauptmaßnahme: AI-Engines erhalten formelle Quellen-Refs für jede
+ * Aussage, plus BreadcrumbList für Google's Site-Struktur-Anzeige.
+ */
+function buildMythSchemas(myth: MythDetail, slug: string) {
+  const url = `${SITE_URL}/mythen/${slug}`;
+  return {
+    article: {
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: myth.fact,
+      description: myth.teaser,
+      inLanguage: 'de',
+      url,
+      author: { '@type': 'Organization', name: 'small p club' },
+      publisher: {
+        '@type': 'Organization',
+        name: 'small p club',
+        logo: {
+          '@type': 'ImageObject',
+          url: `${SITE_URL}/brand/smallpclub-mark-black.svg`,
+        },
+      },
+      about: myth.category,
+      citation: myth.sources.map((s) => ({
+        '@type': 'ScholarlyArticle',
+        author: s.author,
+        publisher: s.publication,
+        datePublished: String(s.year),
+        ...(s.n ? { numberOfParticipants: s.n } : {}),
+        ...(s.doi ? { identifier: `doi:${s.doi}` } : {}),
+      })),
+    },
+    breadcrumb: {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'mythen',
+          item: `${SITE_URL}/mythen`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: myth.myth,
+          item: url,
+        },
+      ],
+    },
+  };
+}
 
 interface PageProps {
   params: Promise<{ slug: string; locale: string }>;
@@ -53,8 +112,23 @@ export default async function MythosDetailPage({ params }: PageProps) {
     href: `/mythen/${m.slug}`,
   }));
 
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+  const schemas = buildMythSchemas(myth, slug);
+
   return (
     <main id="main-content">
+      {/* JSON-LD: Article + ScholarlyArticle-Citations für GEO + BreadcrumbList
+          für Google SERP. Inline-Scripts brauchen CSP-Nonce (sonst geblockt). */}
+      <script
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.article) }}
+      />
+      <script
+        type="application/ld+json"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.breadcrumb) }}
+      />
       {/* Page-Titel als sr-only h1 — StickyCrossfade ist visuell der Hero,
           rendert aber semantisch als <p>. WCAG verlangt genau eine h1
           pro Page; der Mythen-Statement ist hier die natürliche Wahl. */}
