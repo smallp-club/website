@@ -1,8 +1,8 @@
-import { useLocale } from 'next-intl';
 import { Section } from '@/components/primitives/Section';
 import { Container } from '@/components/primitives/Container';
 import { Input } from '@/components/primitives/Input';
 import { SubmitButton } from '@/components/primitives/SubmitButton';
+import { memberCountVoice } from '@/lib/members/count';
 import styles from './BewegungsSignal.module.css';
 
 export interface BewegungsSignalProps {
@@ -26,7 +26,7 @@ export interface BewegungsSignalProps {
  * Turnstile + Brand-Statement-Schwelle vorschalten (MEMBER_SECURITY §3).
  */
 export function BewegungsSignal({ memberCount }: BewegungsSignalProps = {}) {
-  const locale = useLocale();
+  const voice = typeof memberCount === 'number' ? memberCountVoice(memberCount) : null;
   return (
     <Section as="section" id="bewegungs-signal" tone="light" rhythm="loose">
       <Container width="prose">
@@ -37,12 +37,7 @@ export function BewegungsSignal({ memberCount }: BewegungsSignalProps = {}) {
           <h2 className={styles.headline}>
             mit-glied. auch ohne-glied.
           </h2>
-          {typeof memberCount === 'number' && memberCount > 0 && (
-            <p className={styles.memberCount}>
-              {memberCount.toLocaleString(locale)}{' '}
-              {memberCount === 1 ? 'mit-glied' : 'mit-glieder'}, stand jetzt.
-            </p>
-          )}
+          {voice && <p className={styles.memberCount}>{voice}</p>}
           <form
             className={styles.form}
             method="get"

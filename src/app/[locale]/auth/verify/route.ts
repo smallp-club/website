@@ -14,6 +14,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { generatePseudonym } from '@/lib/members/pseudonym';
+import { addContactToList } from '@/lib/brevo';
 
 const MAX_PSEUDONYM_RETRIES = 8;
 
@@ -93,6 +94,18 @@ export async function GET(request: NextRequest) {
   } catch (err) {
     console.error('[auth/verify] ensureProfile failed:', err);
     return NextResponse.redirect(`${origin}/mit-glied?error=profile_create`);
+  }
+
+  // Newsletter-Subscription nach erfolgreicher Email-Verifikation. Der Klick
+  // auf den Magic-Link IST der DOI-Beleg — User hat Email + Opt-In separat
+  // bestätigt, das deckt DSGVO-Pflicht zur Spezifität. Fehler bei Brevo
+  // werden nur geloggt: kein Block des Login-Flows, weil Newsletter
+  // sekundär ist und User hier bereits Mit-Glied geworden ist.
+  if (profile.isFresh && newsletterOptIn && data.user.email) {
+    const brevoResult = await addContactToList(data.user.email);
+    if (!brevoResult.ok) {
+      console.error('[auth/verify] brevo subscribe failed:', brevoResult.reason);
+    }
   }
 
   const target = profile.onboardingCompletedAt
