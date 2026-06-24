@@ -84,8 +84,11 @@ export async function requestMagicLink(
   // 4) Rate-Limits — beide für localhost gebypasst, damit Dev-Testen nicht
   // durch das Cap blockiert wird (sonst hängen wir bei Iteration nach
   // Link-Expiry oder Re-Login schnell im Limit).
+  // Security-Audit M4: bypass NUR in non-production aktiv — wenn Vercel
+  // mal eine IP-loose-Region hat, bleibt der Limit in prod scharf.
   const isLocalhost =
-    !ip || ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1';
+    process.env.NODE_ENV !== 'production' &&
+    (!ip || ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1');
   if (!isLocalhost) {
     if (ip) {
       const ipResult = await consumeRateLimit('magic_link_per_ip', ip);

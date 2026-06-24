@@ -5,6 +5,7 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
+import { requireMember } from '@/lib/members/auth';
 
 export const metadata = {
   title: 'werkstatt. — small p club',
@@ -12,7 +13,10 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function WerkstattPage() {
+export default async function WerkstattPage() {
+  // Auth-Gate auch wenn Page noch Stub — verhindert dass beim späteren
+  // Content-Einbau das requireMember vergessen wird. Security-Audit M3.
+  await requireMember();
   return (
     <main id="main-content">
       <Section tone="light" rhythm="standard" aria-label="werkstatt hero">

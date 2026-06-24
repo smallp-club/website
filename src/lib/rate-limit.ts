@@ -83,6 +83,16 @@ export async function consumeRateLimit(
 ): Promise<RateLimitResult> {
   const limiter = getLimiter(name);
   if (!limiter) {
+    // Security-Audit M5: in production hart fehlschlagen — silent-pass
+    // würde Rate-Limit komplett deaktivieren wenn Upstash-Env fehlt.
+    if (process.env.NODE_ENV === 'production') {
+      console.error(
+        '[rate-limit] Upstash nicht konfiguriert in production — limit für',
+        name,
+        'wird als „erschöpft" behandelt'
+      );
+      return { success: false, remaining: 0, reset: 0 };
+    }
     return { success: true, remaining: Number.POSITIVE_INFINITY, reset: 0 };
   }
   const result = await limiter.limit(identifier);

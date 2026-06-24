@@ -5,6 +5,7 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
+import { requireMember } from '@/lib/members/auth';
 
 export const metadata = {
   title: 'quellen-keller. — small p club',
@@ -12,7 +13,9 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function KellerPage() {
+export default async function KellerPage() {
+  // Auth-Gate auch wenn Stub — Security-Audit M3.
+  await requireMember();
   return (
     <main id="main-content">
       <Section tone="light" rhythm="standard" aria-label="keller hero">

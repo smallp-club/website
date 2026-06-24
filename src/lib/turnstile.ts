@@ -20,6 +20,12 @@ export async function verifyTurnstileToken(
 ): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
   if (!secret) {
+    // Security-Audit M5: in production hart fehlschlagen — silent-pass
+    // würde die ganze Bot-Schutz-Schicht killen wenn Env-Var fehlt.
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[turnstile] TURNSTILE_SECRET_KEY fehlt in production');
+      return false;
+    }
     return true;
   }
   if (!options.token) return false;

@@ -19,7 +19,7 @@ import { Eyebrow } from '@/components/primitives/Eyebrow';
 import { Heading } from '@/components/primitives/Heading';
 import { Body } from '@/components/primitives/Body';
 import { Caption } from '@/components/primitives/Caption';
-import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../mit-glied/erfahrungen/neu/story-types';
 import { ReportForm } from './_components/ReportForm';
@@ -42,9 +42,14 @@ const DATE_LONG = new Intl.DateTimeFormat('de-DE', {
 });
 
 export default async function StimmenPage() {
-  const service = createSupabaseServiceClient();
+  // Server-Client (anon-key) statt Service-Role — defense-in-depth.
+  // RLS-Policy `stories_own_read` erlaubt jedem `select` auf status='approved',
+  // also reicht der anon-key. Service-Role hier wäre overkill und würde
+  // jede künftige RLS-Verfeinerung für diese Page wirkungslos machen.
+  // Security-Audit M2.
+  const supabase = await createSupabaseServerClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storiesTable = service.from('stories') as any;
+  const storiesTable = supabase.from('stories') as any;
   const { data, error } = await storiesTable
     .select('id, pseudonym, prompt_key, body, approved_at')
     .eq('status', 'approved')
