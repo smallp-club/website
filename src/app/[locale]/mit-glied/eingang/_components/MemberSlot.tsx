@@ -52,6 +52,9 @@ export function MemberSlot({ pseudonym, joinedDate, role }: MemberSlotProps) {
       </dl>
 
       <Stack gap={3}>
+        <LinkButton href="/mit-glied/karte" variant="accent">
+          deine mit-glied-karte
+        </LinkButton>
         <form action={logoutAction} className={styles.actionRow}>
           <Button type="submit" variant="primary">
             ausloggen

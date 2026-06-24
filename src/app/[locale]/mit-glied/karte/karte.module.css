@@ -1,0 +1,132 @@
+/**
+ * Mit-Glied-Karte — A6 quer (148×105mm), Off-White, Chillax-Display.
+ *
+ * Doktrin (MEMBER_CONCEPT.md §4 Säule 6): kein QR, keine Nummer, keine Klasse.
+ * Brand-Statement + Pseudonym + Datum + Bildmarke unten rechts. Karten-Voice:
+ * „mit-glied. auch ohne-glied. seit [datum]."
+ *
+ * Print: nur die Karte (`.card`) wird gedruckt, alles andere (Nav, Footer,
+ * Page-Header, Button, Hint) wird via :global-Print-Rules versteckt.
+ */
+
+.viewport {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+  padding-block: var(--space-6) var(--space-9);
+}
+
+.intro {
+  max-width: 32rem;
+  text-align: center;
+}
+
+.cardWrapper {
+  filter: drop-shadow(0 12px 32px rgba(10, 10, 10, 0.08));
+}
+
+.card {
+  width: 148mm;
+  height: 105mm;
+  background-color: var(--surface-bg);
+  color: var(--text-strong);
+  padding: 14mm 14mm 12mm;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: var(--font-display);
+  border: 1px solid rgba(10, 10, 10, 0.06);
+}
+
+.statement {
+  font-family: var(--font-display);
+  font-weight: 200;
+  font-size: 56pt;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--text-strong);
+}
+
+.statementSecond {
+  color: var(--text-muted);
+}
+
+.meta {
+  position: absolute;
+  bottom: 12mm;
+  left: 14mm;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 11pt;
+  line-height: 1.4;
+  color: var(--text-strong);
+  margin: 0;
+}
+
+.metaPseudonym {
+  display: block;
+  color: var(--text-muted);
+  margin-top: 2mm;
+}
+
+.mark {
+  position: absolute;
+  bottom: 12mm;
+  right: 14mm;
+  width: 18mm;
+  height: 18mm;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: center;
+}
+
+.hint {
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 28rem;
+}
+
+@media print {
+  :global(body) {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  /* Nav und Footer vom Locale-Layout ausblenden. */
+  :global(body > header),
+  :global(body > nav),
+  :global(body > footer),
+  :global(body > .skip-link) {
+    display: none !important;
+  }
+  /* On-screen-Controls ausblenden. */
+  .intro,
+  .actionRow,
+  .hint {
+    display: none !important;
+  }
+  .viewport {
+    padding: 0;
+    gap: 0;
+  }
+  .cardWrapper {
+    filter: none;
+  }
+  .card {
+    border: none;
+    page-break-inside: avoid;
+  }
+}
+
+@page {
+  size: A6 landscape;
+  margin: 0;
+}
