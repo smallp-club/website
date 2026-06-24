@@ -37,3 +37,6 @@ tsconfig.tsbuildinfo
 /*.png
 .playwright-mcp/
 emails/.rendered/
+
+# AVV-Sammelmappe (DSGVO Audit-Spur, nicht öffentlich)
+legal/avv/**/*.pdf
