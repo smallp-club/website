@@ -98,7 +98,7 @@
   font-size: var(--text-body-md);
   cursor: pointer;
   min-height: 44px;
-  transition: background-color var(--duration-base, 200ms) ease;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .printButton:hover {
@@ -107,7 +107,9 @@
 
 .printButton:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-focus);
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
 }
 
 .continueLink {
@@ -121,7 +123,7 @@
   font-family: var(--font-body);
   font-size: var(--text-body-md);
   min-height: 44px;
-  transition: background-color var(--duration-base, 200ms) ease;
+  transition: background-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .continueLink:hover {
@@ -130,7 +132,9 @@
 
 .continueLink:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-focus);
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
 }
 
 @media print {

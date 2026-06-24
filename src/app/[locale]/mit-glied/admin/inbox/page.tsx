@@ -1,26 +1,16 @@
 /**
- * /mit-glied/admin/inbox — Kuratierungs-Inbox für eingereichte Berichte.
+ * /mit-glied/admin/inbox — Kuratierungs-Inbox im Atelier-Stil.
  *
- * Admin-only via requireAdmin(). Liste aller Stories, default sortiert:
- * FLAG-HIGH zuerst (auch wenn approved/rejected), dann nach Datum desc.
- * Klick auf Eintrag öffnet `/admin/inbox/[uuid]` mit voller Detail-Ansicht.
- *
- * Sub-Bau-Stand: kein Filter-UI, keine Bulk-Aktionen. Voller Admin-Bereich
- * mit TOTP-2FA + Audit-Log-UI + Filter-Chips kommt mit der Admin-Foundation.
+ * FLAG-HIGH zuerst, sonst Datum desc. Klick öffnet `/admin/inbox/[uuid]`.
  */
 
 import Link from 'next/link';
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
 import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../../erfahrungen/neu/story-types';
+import { ShellWrap } from '../../_components/MemberShell';
+import atelier from '../../_components/MemberShell/atelier.module.css';
 import styles from './inbox.module.css';
 
 export const metadata = {
@@ -41,8 +31,14 @@ const DATE_TIME = new Intl.DateTimeFormat('de-DE', {
   timeZone: 'Europe/Berlin',
 });
 
+const STATUS_LABEL: Record<string, string> = {
+  pending: 'in prüfung',
+  approved: 'veröffentlicht',
+  rejected: 'nicht durch',
+};
+
 export default async function AdminInboxPage() {
-  await requireAdminWithMfa();
+  const session = await requireAdminWithMfa();
 
   const service = createSupabaseServiceClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,17 +48,13 @@ export default async function AdminInboxPage() {
     .order('created_at', { ascending: false })
     .limit(100);
 
-  if (error) {
-    console.error('[admin-inbox]', error);
-  }
+  if (error) console.error('[admin-inbox]', error);
 
   const rows: StoryRow[] = (data as StoryRow[]) ?? [];
-  // FLAG-HIGH zuerst, sonst Datum desc (DB-Sortierung)
   rows.sort((a, b) => {
     const aHigh = a.flags.some((f) => f.startsWith('flag_high:')) ? 0 : 1;
     const bHigh = b.flags.some((f) => f.startsWith('flag_high:')) ? 0 : 1;
-    if (aHigh !== bHigh) return aHigh - bHigh;
-    return 0;
+    return aHigh - bHigh;
   });
 
   const counts = {
@@ -72,49 +64,42 @@ export default async function AdminInboxPage() {
   };
 
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="loose" aria-label="inbox hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>admin · inbox</Eyebrow>
-            <Heading level={1} variant="display">
-              inbox.
-            </Heading>
-            <Body>
-              {counts.pending} pending, {counts.flagHigh} flag-high, {counts.total}{' '}
-              insgesamt sichtbar. flag-high steht oben, sonst nach datum.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+    <ShellWrap session={session} pageLabel="inbox">
+      <section className={atelier.arrival}>
+        <span className={atelier.eyebrow}>inbox</span>
+        <h1 className={atelier.title}>kuratieren.</h1>
+        <p className={atelier.body}>
+          {counts.pending} in prüfung, {counts.flagHigh} flag-high, {counts.total} insgesamt sichtbar.
+          flag-high steht oben, sonst nach datum.
+        </p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="liste">
-        <Container width="prose">
-          {rows.length === 0 ? (
-            <Stack gap={3}>
-              <Eyebrow>leer</Eyebrow>
-              <Heading level={2} variant="lede">
-                nichts zu tun.
-              </Heading>
-              <Body tone="muted">noch keine berichte eingereicht.</Body>
-            </Stack>
-          ) : (
-            <ul className={styles.list} role="list">
-              {rows.map((row) => (
-                <li key={row.id} className={styles.row} data-status={row.status}>
-                  <Link href={`/mit-glied/admin/inbox/${row.id}`} className={styles.rowLink}>
-                    <div className={styles.rowHeader}>
+      <section className={atelier.section}>
+        <header className={atelier.sectionHead}>
+          <span className={atelier.eyebrowMuted}>berichte</span>
+        </header>
+
+        {rows.length === 0 ? (
+          <p className={atelier.empty}>nichts zu tun. noch keine berichte eingereicht.</p>
+        ) : (
+          <ul className={styles.list} role="list">
+            {rows.map((row) => {
+              const hasHigh = row.flags.some((f) => f.startsWith('flag_high:'));
+              return (
+                <li key={row.id} className={styles.item} data-flag={hasHigh ? 'high' : undefined}>
+                  <Link href={`/mit-glied/admin/inbox/${row.id}`} className={styles.link}>
+                    <div className={styles.head}>
                       <span className={styles.pseudonym}>{row.pseudonym}</span>
                       <span className={styles.timestamp}>
                         {DATE_TIME.format(new Date(row.created_at))}
                       </span>
                     </div>
-                    <div className={styles.rowMeta}>
+                    <div className={styles.meta}>
                       <span className={styles.promptKey}>
                         {PROMPT_LABEL[row.prompt_key] ?? row.prompt_key}
                       </span>
-                      <span className={styles.statusTag} data-status={row.status}>
-                        {row.status}
+                      <span className={styles.status} data-status={row.status}>
+                        {STATUS_LABEL[row.status] ?? row.status}
                       </span>
                     </div>
                     {row.flags.length > 0 && (
@@ -131,26 +116,15 @@ export default async function AdminInboxPage() {
                       </div>
                     )}
                     <p className={styles.preview}>
-                      {row.body.length > 200
-                        ? row.body.slice(0, 200) + '…'
-                        : row.body}
+                      {row.body.length > 200 ? row.body.slice(0, 200) + '…' : row.body}
                     </p>
                   </Link>
                 </li>
-              ))}
-            </ul>
-          )}
-        </Container>
-      </Section>
-
-      <Section tone="light" rhythm="tight" aria-label="hinweis">
-        <Container width="prose">
-          <Caption tone="muted" as="p">
-            sub-bau-stand. filter-chips, bulk-aktionen, totp-2fa und audit-log-ui
-            kommen mit der admin-foundation.
-          </Caption>
-        </Container>
-      </Section>
-    </main>
+              );
+            })}
+          </ul>
+        )}
+      </section>
+    </ShellWrap>
   );
 }

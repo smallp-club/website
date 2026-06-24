@@ -1,40 +1,51 @@
 /**
- * /mit-glied/admin — Dashboard mit Counts und Quick-Links.
+ * /mit-glied/admin — Dashboard im Atelier-Stil.
  *
- * Admin-only. Zeigt Bucket-Counts (pending, flag-high, last-24h, total
- * approved) und führt zu den vier Sub-Routen (inbox, audit, blocklist,
- * brigading). Brand-konsistent ruhig — Zahl plus Wort, kein Bling.
- *
- * Sub-Bau-Stand: TOTP-2FA, 2h Idle-Timeout, Re-Auth-Modal kommen mit
- * dem Security-Block (Phase 5b Block 2).
+ * Editorial-Sections mit Hairlines, typographisches Stat-Grid statt
+ * Card-Container. Attention-Strip mit Sienna-Hairline links (kein
+ * Pastel-Vollfüllung). Recent-Aktionen als Hairline-Liste analog
+ * zu Berichten auf Eingang.
  */
 
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
-import { LinkButton } from '@/components/primitives/LinkButton';
+import Link from 'next/link';
 import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { ShellWrap } from '../_components/MemberShell';
 import styles from './admin.module.css';
 
 export const metadata = {
   title: 'admin. — small p club',
-  description: 'admin-dashboard. role-check pflicht.',
+  description: 'admin-übersicht.',
   robots: { index: false, follow: false },
 };
 
 const TWENTY_FOUR_HOURS_AGO = () =>
   new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
+interface AuditRow {
+  id: string;
+  action: string;
+  target_type: string;
+  target_id: string;
+  created_at: string;
+}
+
+const ACTION_LABEL: Record<string, string> = {
+  approve: 'durchgelassen',
+  reject: 'abgelehnt',
+  ban: 'gesperrt',
+  unban: 'entsperrt',
+  role_change: 'rolle geändert',
+  mfa_enroll: '2fa eingerichtet',
+  mfa_unenroll: '2fa entfernt',
+  mfa_backup_regen: 'backup-codes neu',
+  mfa_verify: '2fa bestätigt',
+};
+
 export default async function AdminDashboardPage() {
-  await requireAdminWithMfa();
+  const session = await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
 
-  // Counts werden parallel geholt — kein Risiko, weil read-only.
   const [
     pending,
     flagHighPending,
@@ -42,6 +53,7 @@ export default async function AdminDashboardPage() {
     approvedTotal,
     blocklistCount,
     auditLast24h,
+    recentAudit,
   ] = await Promise.all([
     countStories(service, { status: 'pending' }),
     countStoriesFlaggedHigh(service),
@@ -49,93 +61,151 @@ export default async function AdminDashboardPage() {
     countStories(service, { status: 'approved' }),
     countTable(service, 'blocklist'),
     countAuditLogSince(service, TWENTY_FOUR_HOURS_AGO()),
+    loadRecentAudit(service, 6),
   ]);
 
+  const needsAttention = pending > 0 || flagHighPending > 0;
+
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="loose" aria-label="admin hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>admin</Eyebrow>
-            <Heading level={1} variant="display">
-              admin.
-            </Heading>
-            <Body>
-              kuratierungs-zentrale. zahl plus wort, sonst nichts. die
-              vier sub-routen rechts machen die arbeit.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+    <ShellWrap session={session} pageLabel="admin">
+      <section className={styles.arrival}>
+        <h1 className={styles.title}>admin.</h1>
+        <p className={styles.subtitle}>kuratieren, sperren, sichten.</p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="counts">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>counts</Eyebrow>
-            <dl className={styles.counts}>
-              <CountRow label="pending" value={pending} accent={pending > 0} />
-              <CountRow label="flag-high ungesichtet" value={flagHighPending} accent={flagHighPending > 0} />
-              <CountRow label="neue berichte (24 h)" value={last24h} />
-              <CountRow label="approved gesamt" value={approvedTotal} />
-              <CountRow label="blocklist-einträge" value={blocklistCount} />
-              <CountRow label="admin-aktionen (24 h)" value={auditLast24h} />
-            </dl>
-          </Stack>
-        </Container>
-      </Section>
+      {needsAttention && (
+        <Link href="/mit-glied/admin/inbox" className={styles.attention}>
+          <span className={styles.attentionEyebrow}>was wartet</span>
+          <span className={styles.attentionLine}>
+            {pending === 1 ? 'ein bericht in der inbox.' : `${pending} berichte in der inbox.`}
+          </span>
+          {flagHighPending > 0 && (
+            <span className={styles.attentionFlag}>
+              {flagHighPending} davon mit flag-high. zuerst sichten.
+            </span>
+          )}
+        </Link>
+      )}
 
-      <Section tone="light" rhythm="standard" aria-label="navigation">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>navigation</Eyebrow>
-            <Heading level={2} variant="lede">
-              inbox, audit, brigading, blocklist.
-            </Heading>
-            <div className={styles.navGrid}>
-              <NavLink href="/mit-glied/admin/inbox" label="inbox" subtitle="dauer-arbeitsplatz, alle berichte" />
-              <NavLink href="/mit-glied/admin/audit" label="audit-log" subtitle="alle admin-aktionen, chronologisch" />
-              <NavLink href="/mit-glied/admin/brigading" label="brigading" subtitle="aktive quarantäne-wellen" />
-              <NavLink href="/mit-glied/admin/blocklist" label="blocklist" subtitle="gesperrte mails + ips" />
-            </div>
-            <Caption tone="muted" as="p">
-              totp-2fa, 2h idle-timeout und re-auth-modal kommen mit dem
-              security-block.
-            </Caption>
-          </Stack>
-        </Container>
-      </Section>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrow}>zahlen</span>
+        </header>
+        <dl className={styles.statGrid}>
+          <Stat label="pending" value={pending} accent={pending > 0} />
+          <Stat
+            label="flag-high ungesichtet"
+            value={flagHighPending}
+            accent={flagHighPending > 0}
+          />
+          <Stat label="neue berichte (24 h)" value={last24h} />
+          <Stat label="approved gesamt" value={approvedTotal} />
+          <Stat label="blocklist-einträge" value={blocklistCount} />
+          <Stat label="admin-aktionen (24 h)" value={auditLast24h} />
+        </dl>
+      </section>
 
-      <Section tone="light" rhythm="tight" aria-label="zurück">
-        <Container width="prose">
-          <LinkButton href="/mit-glied/eingang" variant="ghost">
-            zurück zum eingang
-          </LinkButton>
-        </Container>
-      </Section>
-    </main>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrow}>arbeitsplätze</span>
+        </header>
+        <ul className={styles.workList} role="list">
+          <li className={styles.workItem}>
+            <Link href="/mit-glied/admin/inbox" className={styles.workLink}>
+              <span className={styles.workLabel}>inbox</span>
+              <span className={styles.workBody}>
+                berichte kuratieren, approve oder reject.
+              </span>
+            </Link>
+          </li>
+          <li className={styles.workItem}>
+            <Link href="/mit-glied/admin/audit" className={styles.workLink}>
+              <span className={styles.workLabel}>audit-log</span>
+              <span className={styles.workBody}>
+                letzte 200 admin-aktionen, chronologisch.
+              </span>
+            </Link>
+          </li>
+          <li className={styles.workItem}>
+            <Link href="/mit-glied/admin/brigading" className={styles.workLink}>
+              <span className={styles.workLabel}>brigading</span>
+              <span className={styles.workBody}>
+                aktive quarantäne-wellen.
+              </span>
+            </Link>
+          </li>
+          <li className={styles.workItem}>
+            <Link href="/mit-glied/admin/blocklist" className={styles.workLink}>
+              <span className={styles.workLabel}>blocklist</span>
+              <span className={styles.workBody}>
+                gesperrte mails und ips.
+              </span>
+            </Link>
+          </li>
+        </ul>
+      </section>
+
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrow}>letzte aktionen</span>
+        </header>
+        {recentAudit.length === 0 ? (
+          <p className={styles.recentEmpty}>noch nichts protokolliert.</p>
+        ) : (
+          <ul className={styles.recentList} role="list">
+            {recentAudit.map((row) => (
+              <li key={row.id} className={styles.recentItem}>
+                <span className={styles.recentAction} data-action={row.action}>
+                  {ACTION_LABEL[row.action] ?? row.action}
+                </span>
+                <span className={styles.recentTarget}>{row.target_type}</span>
+                <span className={styles.recentTime}>
+                  {formatRelativeTime(row.created_at)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </ShellWrap>
   );
 }
 
-function CountRow({ label, value, accent }: { label: string; value: number; accent?: boolean }) {
+function Stat({
+  label,
+  value,
+  accent,
+}: {
+  label: string;
+  value: number;
+  accent?: boolean;
+}) {
   return (
-    <div className={styles.countRow} data-accent={accent || undefined}>
-      <dt className={styles.countLabel}>{label}</dt>
-      <dd className={styles.countValue}>{value.toLocaleString('de-DE')}</dd>
+    <div className={styles.stat} data-accent={accent || undefined}>
+      <span className={styles.statValue}>{value.toLocaleString('de-DE')}</span>
+      <span className={styles.statLabel}>{label}</span>
     </div>
   );
 }
 
-function NavLink({ href, label, subtitle }: { href: string; label: string; subtitle: string }) {
-  return (
-    <a href={href} className={styles.navLink}>
-      <span className={styles.navLabel}>{label}</span>
-      <span className={styles.navSubtitle}>{subtitle}</span>
-    </a>
-  );
+function formatRelativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime();
+  const minutes = Math.floor(diff / 60_000);
+  if (minutes < 1) return 'gerade eben';
+  if (minutes < 60) return `vor ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `vor ${hours} h`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `vor ${days} t`;
+  return new Intl.DateTimeFormat('de-DE', {
+    day: 'numeric',
+    month: 'short',
+    timeZone: 'Europe/Berlin',
+  }).format(new Date(iso));
 }
 
 // ───────────────────────────────────────────────────────────────────────────
-// Count-Helper
+// Data-Loader
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function countStories(service: any, where: { status?: string }): Promise<number> {
@@ -148,10 +218,6 @@ async function countStories(service: any, where: { status?: string }): Promise<n
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function countStoriesFlaggedHigh(service: any): Promise<number> {
-  // Postgres-Array-Filter: flags && ARRAY[...] gibt overlap, hier brauchen
-  // wir „enthält mindestens einen flag_high:..."-Eintrag. Per pg-meta-API
-  // simulierbar mit `contains`-Operator + Pattern — pragmatisch: holen
-  // pending + filtern in JS.
   const { data, error } = await service
     .from('stories')
     .select('flags')
@@ -193,4 +259,18 @@ async function countAuditLogSince(service: any, isoTs: string): Promise<number> 
     .gte('created_at', isoTs);
   if (error) console.error('[admin-count-audit]', error);
   return count ?? 0;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function loadRecentAudit(service: any, limit: number): Promise<AuditRow[]> {
+  const { data, error } = await service
+    .from('admin_audit_log')
+    .select('id, action, target_type, target_id, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+  if (error) {
+    console.error('[admin-recent-audit]', error);
+    return [];
+  }
+  return (data as AuditRow[] | null) ?? [];
 }

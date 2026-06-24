@@ -1,51 +1,63 @@
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
+import Link from 'next/link';
+import { requireMember } from '@/lib/members/auth';
+import { ShellWrap } from '../_components/MemberShell';
+import styles from '../_components/MemberShell/atelier.module.css';
 
 export const metadata = {
-  title: 'erfahrungen. — small p club',
+  title: 'berichte. — small p club',
   description: 'eigene erfahrungsberichte im member-bereich.',
   robots: { index: false, follow: false },
 };
 
-export default function ErfahrungenListePage() {
+export default async function ErfahrungenListePage() {
+  const session = await requireMember();
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="standard" aria-label="erfahrungen hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>mit-glied · erfahrungen</Eyebrow>
-            <Heading level={1} variant="display">deine berichte.</Heading>
-            <Body>was du eingereicht hast, status pending, approved oder rejected. kein „nächster bericht"-button, kein engagement-loop. brand-stille.</Body>
-            <Caption tone="muted" as="p">supabase-rls liefert nur deine eigenen rows.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+    <ShellWrap session={session} pageLabel="berichte">
+      <section className={styles.arrival}>
+        <span className={styles.eyebrow}>deine berichte</span>
+        <h1 className={styles.title}>was du eingereicht hast.</h1>
+        <p className={styles.body}>
+          status pending, veröffentlicht, oder nicht durch. kein „nächster
+          bericht"-button, kein engagement-loop. brand-stille.
+        </p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="bericht einreichen">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>neu</Eyebrow>
-            <Heading level={2} variant="lede">bericht einreichen.</Heading>
-            <Body>fünf prompts zur auswahl, dann fließtext (80 bis 1500 zeichen). pseudonym wird mit-gespeichert, alter-range optional.</Body>
-            <Caption tone="muted" as="p">link zum form-flow unter /mit-glied/erfahrungen/neu.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>liste</span>
+        </header>
+        <p className={styles.sectionBody}>
+          die volle liste deiner berichte mit status, datum und prompt.
+          ein klick öffnet den vollen text.
+        </p>
+        <p className={styles.empty}>
+          full-list-rendering kommt sobald sie länger als die übersicht ist.
+        </p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="public-wall hinweis">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>was public ist</Eyebrow>
-            <Heading level={2} variant="lede">approved-berichte landen auf /stimmen.</Heading>
-            <Body>kuratiert durch kevin nach drei-stufen-moderation. dein pseudonym erscheint, dein name nicht.</Body>
-          </Stack>
-        </Container>
-      </Section>
-    </main>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>neuer bericht</span>
+        </header>
+        <p className={styles.sectionBody}>
+          fünf prompts zur auswahl, dann fließtext (80 bis 1500 zeichen).
+          pseudonym wandert mit, alter-range optional.
+        </p>
+        <Link href="/mit-glied/erfahrungen/neu" className={styles.linkAccent}>
+          bericht schreiben →
+        </Link>
+      </section>
+
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>was public ist</span>
+        </header>
+        <p className={styles.sectionBody}>
+          veröffentlichte berichte landen auf <Link href="/stimmen" className={styles.inlineLink}>/stimmen</Link>.
+          kuratiert nach drei-stufen-moderation. dein pseudonym erscheint,
+          dein name nicht.
+        </p>
+      </section>
+    </ShellWrap>
   );
 }

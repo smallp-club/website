@@ -1,97 +1,103 @@
 /**
- * Mit-Glied-Karte — A6 quer (148×105mm), Off-White, Chillax-Display.
- *
- * Doktrin (MEMBER_CONCEPT.md §4 Säule 6): kein QR, keine Nummer, keine Klasse.
- * Brand-Statement + Pseudonym + Datum + Bildmarke unten rechts. Karten-Voice:
- * „mit-glied. auch ohne-glied. seit [datum]."
- *
- * Print: nur die Karte (`.card`) wird gedruckt, alles andere (Nav, Footer,
- * Page-Header, Button, Hint) wird via :global-Print-Rules versteckt.
+ * Karte-Page — Atelier-Stil. Print-CSS hidet UI-Chrome + Sidebar.
  */
 
 .viewport {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: var(--space-6);
-  padding-block: var(--space-6) var(--space-9);
+  animation: revealUp 540ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewport { animation: none; }
 }
 
 .intro {
-  max-width: 32rem;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-width: 40rem;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-overline);
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+  letter-spacing: 0.01em;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-lg);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
 }
 
 .cardWrapper {
-  filter: drop-shadow(0 12px 32px rgba(10, 10, 10, 0.08));
-}
-
-.card {
-  width: 148mm;
-  height: 105mm;
-  background-color: var(--surface-bg);
-  color: var(--text-strong);
-  padding: 14mm 14mm 12mm;
-  position: relative;
-  overflow: hidden;
-  box-sizing: border-box;
-  font-family: var(--font-display);
-  border: 1px solid rgba(10, 10, 10, 0.06);
-}
-
-.statement {
-  font-family: var(--font-display);
-  font-weight: 200;
-  font-size: 56pt;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
-  margin: 0;
-  color: var(--text-strong);
-}
-
-.statementSecond {
-  color: var(--text-muted);
-}
-
-.meta {
-  position: absolute;
-  bottom: 12mm;
-  left: 14mm;
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: 11pt;
-  line-height: 1.4;
-  color: var(--text-strong);
-  margin: 0;
-}
-
-.metaPseudonym {
-  display: block;
-  color: var(--text-muted);
-  margin-top: 2mm;
-}
-
-.mark {
-  position: absolute;
-  bottom: 12mm;
-  right: 14mm;
-  width: 18mm;
-  height: 18mm;
+  display: flex;
+  justify-content: flex-start;
 }
 
 .actionRow {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: var(--space-4);
   align-items: center;
-  justify-content: center;
+}
+
+.back {
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  transition:
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    text-decoration-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.back:hover {
+  color: var(--text-strong);
+  text-decoration-color: var(--text-muted);
+}
+
+.back:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
+  border-radius: var(--radius-sm);
 }
 
 .hint {
+  margin: 0;
+  max-width: 32rem;
+  font-family: var(--font-body);
   font-size: var(--text-caption);
   color: var(--text-muted);
-  text-align: center;
-  max-width: 28rem;
 }
 
 @media print {
@@ -100,29 +106,19 @@
     margin: 0 !important;
     padding: 0 !important;
   }
-  /* Nav und Footer vom Locale-Layout ausblenden. */
-  :global(body > header),
-  :global(body > nav),
-  :global(body > footer),
+  /* Page-Chrome ausserhalb der Shell ausblenden */
   :global(body > .skip-link) {
     display: none !important;
   }
-  /* On-screen-Controls ausblenden. */
+  /* Page-spezifische UI-Elemente ausblenden */
   .intro,
   .actionRow,
   .hint {
     display: none !important;
   }
   .viewport {
-    padding: 0;
     gap: 0;
-  }
-  .cardWrapper {
-    filter: none;
-  }
-  .card {
-    border: none;
-    page-break-inside: avoid;
+    animation: none;
   }
 }
 

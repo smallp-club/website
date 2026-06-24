@@ -1,0 +1,379 @@
+/* ===== Member-Atelier Sections =====
+ *
+ * Inhalte fließen vertikal, getrennt durch dünne Hairlines (border-top
+ * auf jeder Section). Keine Cards, kein Bento. Typographie + Whitespace
+ * tragen die Hierarchie.
+ */
+
+/* ===== Mount-Stagger (CSS-only) ===== */
+
+.arrival,
+.section {
+  animation: revealUp 540ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.arrival { animation-delay: 0ms; }
+.section:nth-of-type(1) { animation-delay: 80ms; }
+.section:nth-of-type(2) { animation-delay: 140ms; }
+.section:nth-of-type(3) { animation-delay: 200ms; }
+.section:nth-of-type(4) { animation-delay: 260ms; }
+.section:nth-of-type(5) { animation-delay: 320ms; }
+
+@keyframes revealUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrival,
+  .section {
+    animation: none;
+  }
+}
+
+/* ===== 1. Ankunft ===== */
+
+.arrival {
+  margin-bottom: var(--space-7);
+}
+
+.greeting {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-lg);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.status {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Sections — Hairline-Trenner ===== */
+
+.section {
+  padding-block: var(--space-6) var(--space-7);
+  border-top: 1px solid var(--border-hairline);
+}
+
+.section:last-child {
+  padding-bottom: 0;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-overline);
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+  letter-spacing: 0.01em;
+}
+
+.sectionAction {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  transition:
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    text-decoration-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sectionAction:hover {
+  color: var(--text-strong);
+  text-decoration-color: var(--text-muted);
+}
+
+/* ===== Karte ===== */
+
+.karteWrap {
+  display: flex;
+  justify-content: flex-start;
+  padding-block: var(--space-3);
+}
+
+/* ===== Berichte ===== */
+
+.berichteList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.berichtItem {
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.berichtLink {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+  align-items: baseline;
+  padding: var(--space-4) 0;
+  text-decoration: none;
+  color: var(--text-strong);
+  min-height: 48px;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.berichtLink:active {
+  transform: translateY(0.5px);
+}
+
+.berichtPrompt {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-body-lg);
+  color: var(--text-strong);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.berichtLink:hover .berichtPrompt {
+  text-decoration-color: var(--text-muted);
+}
+
+.berichtMeta {
+  display: flex;
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+}
+
+.berichtStatus {
+  color: var(--text-muted);
+}
+
+.berichtStatus[data-status="approved"] {
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.berichtStatus[data-status="rejected"] {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.berichtDate {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.emptyText {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+.linkAccent {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  margin-top: var(--space-3);
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-contrast, var(--spc-turquoise-deep));
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  min-height: 32px;
+}
+
+.linkAccent:hover {
+  text-underline-offset: 2px;
+}
+
+.linkAccent:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
+  border-radius: var(--radius-sm);
+}
+
+/* ===== Lese-Räume ===== */
+
+.raeumeList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.raumItem {
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.raumLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+  text-decoration: none;
+  color: var(--text-strong);
+  min-height: 56px;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.raumLink:active {
+  transform: translateY(0.5px);
+}
+
+.raumLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-sm);
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.raumLink:hover .raumLabel {
+  text-decoration-color: var(--text-muted);
+}
+
+.raumBody {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+/* ===== Konto ===== */
+
+.kontoList {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.kontoRow {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.kontoRow dt {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+  min-width: 0;
+}
+
+.kontoRow dd {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+
+/* Pseudonym als Identifier-String in Mono — letter-spacing schmaler
+   damit der Hyphen visuell nicht „dehnt" (für `leser-yaj1` o.ä.) */
+.kontoRow:first-child dd {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  letter-spacing: 0;
+}
+
+.newsletterStatus {
+  color: var(--text-strong);
+}
+
+.inlineToggle {
+  margin: 0;
+  display: inline-flex;
+}
+
+.toggleLink {
+  appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-body-md);
+  color: var(--text-strong);
+  text-align: left;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-contrast, var(--spc-turquoise-deep));
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: text-decoration-thickness 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toggleLink:hover {
+  text-underline-offset: 2px;
+}
+
+.toggleLink:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
+  border-radius: var(--radius-sm);
+}

@@ -1,4 +1,4 @@
-/* Admin-Brigading — Wellen-Buckets. */
+/* Brigading-Wellen im Atelier-Stil. */
 
 .bucketList {
   list-style: none;
@@ -6,34 +6,37 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-6);
+  gap: var(--space-5);
 }
 
 .bucket {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  border-left: 2px solid var(--signal);
+  padding-left: var(--space-4);
 }
 
-.bucketHeader {
+.bucketHead {
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   align-items: baseline;
-  padding-bottom: var(--space-2);
-  border-bottom: 2px solid var(--signal);
 }
 
 .bucketLabel {
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-heading-sm);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-body-lg);
   color: var(--text-strong);
+  letter-spacing: -0.005em;
 }
 
 .bucketCount {
   font-family: var(--font-body);
-  font-size: var(--text-body-sm);
+  font-size: var(--text-caption);
   color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .storyList {
@@ -42,82 +45,75 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
 }
 
 .storyRow {
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-md);
-  overflow: hidden;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.storyRow:first-child {
+  border-top: none;
 }
 
 .storyLink {
-  display: block;
-  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) 0;
   text-decoration: none;
-  color: inherit;
-  transition: background-color var(--duration-base, 200ms) ease;
+  color: var(--text-strong);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.storyLink:hover {
-  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.03));
+.storyLink:active {
+  transform: translateY(0.5px);
 }
 
 .storyLink:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-focus);
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
+  border-radius: var(--radius-sm);
 }
 
 .storyMeta {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-2);
-  align-items: baseline;
-  margin-bottom: var(--space-1);
+  gap: var(--space-3);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
 }
 
 .pseudonym {
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-body-md);
+  font-weight: var(--weight-regular);
   color: var(--text-strong);
 }
 
 .status {
-  display: inline-block;
-  padding: 1px var(--space-2);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-body);
-  font-size: var(--text-caption);
-  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.06));
-  color: var(--text-strong);
+  color: var(--text-muted);
 }
 
-.status[data-status='approved'] {
-  background-color: var(--accent);
-  color: var(--text-on-accent);
+.status[data-status="approved"] {
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
 }
 
-.status[data-status='rejected'] {
-  background-color: var(--text-muted);
-  color: var(--surface-bg);
+.status[data-status="rejected"] {
+  color: var(--text-muted);
+  font-style: italic;
 }
 
 .time {
-  margin-left: auto;
-  font-family: var(--font-body);
-  font-size: var(--text-caption);
-  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .preview {
   margin: 0;
   font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-relaxed);
+  font-size: var(--text-body-md);
   color: var(--text-strong);
-}
-
-.captionStack {
-  margin-bottom: var(--space-3);
+  line-height: var(--leading-relaxed);
+  opacity: 0.75;
 }

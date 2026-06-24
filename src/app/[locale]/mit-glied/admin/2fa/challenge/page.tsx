@@ -1,23 +1,23 @@
 /**
  * /mit-glied/admin/2fa/challenge — Login-Step-2 für Admin.
  *
- * Erreicht von requireAdminWithMfa() wenn enrolled + aal1. Bietet
- * TOTP-Code-Eingabe und Backup-Code-Alternative (Tab-Toggle).
+ * Erreicht von requireAdminWithMfa() wenn enrolled + aal1, oder
+ * vom 2h-Idle-Cookie wenn abgelaufen. Bietet TOTP-Code-Eingabe und
+ * Backup-Code-Alternative (Tab-Toggle innerhalb der Card).
  *
- * Akzeptiert `?next=/...` als Rück-Pfad nach erfolgreichem Verify.
+ * Akzeptiert `?next=/...` als Rück-Pfad nach erfolgreichem Verify
+ * und `?idle=1` für andere Voice (Re-Challenge nach 2h).
+ *
+ * Layout: kompakte Card im Zentrum, kein Editorial-Section-Padding —
+ * Page ist Gate vor Admin-Bereich, kein Magazin-Spread.
  */
 
 import { redirect } from 'next/navigation';
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
 import { requireAdminBasic } from '@/lib/members/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getMfaStatus } from '@/lib/members/mfa';
 import { ChallengeForm } from './_components/ChallengeForm';
+import twoFaStyles from '../2fa.module.css';
 
 export const metadata = {
   title: '2fa bestätigen. — small p club',
@@ -37,13 +37,10 @@ export default async function TotpChallengePage({ searchParams }: PageProps) {
   const { next, idle } = await searchParams;
   const cameFromIdleTimeout = idle === '1';
 
-  // Noch kein verifizierter Factor → erst setup, kein challenge möglich.
   if (!status.enrolled) {
     redirect('/mit-glied/admin/2fa/setup');
   }
 
-  // Schon aal2 in dieser Session UND nicht durch idle-cookie-ablauf hier → direkt rein.
-  // Bei idle=1 muss neu challenged werden, auch wenn supabase noch aal2 zeigt.
   if (status.currentLevel === 'aal2' && !cameFromIdleTimeout) {
     redirect('/mit-glied/admin');
   }
@@ -51,28 +48,20 @@ export default async function TotpChallengePage({ searchParams }: PageProps) {
   const nextPath = sanitizeNext(next);
 
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="loose" aria-label="2fa challenge">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>admin · 2fa</Eyebrow>
-            <Heading level={1} variant="display">
-              sechs ziffern.
-            </Heading>
-            <Body>
-              {cameFromIdleTimeout
-                ? 'zwei stunden ohne aktion. zur sicherheit nochmal bestätigen.'
-                : 'aus deiner authenticator-app. ohne die ziffern kein admin.'}
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+    <main id="main-content" className={twoFaStyles.wrap}>
+      <div className={twoFaStyles.card}>
+        <header className={twoFaStyles.header}>
+          <span className={twoFaStyles.eyebrow}>admin · 2fa</span>
+          <h1 className={twoFaStyles.title}>sechs ziffern.</h1>
+          <p className={twoFaStyles.body}>
+            {cameFromIdleTimeout
+              ? 'zwei stunden ohne aktion. zur sicherheit nochmal bestätigen.'
+              : 'aus deiner authenticator-app. ohne die ziffern kein admin.'}
+          </p>
+        </header>
 
-      <Section tone="light" rhythm="standard" aria-label="code-eingabe">
-        <Container width="prose">
-          <ChallengeForm nextPath={nextPath} />
-        </Container>
-      </Section>
+        <ChallengeForm nextPath={nextPath} />
+      </div>
     </main>
   );
 }

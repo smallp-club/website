@@ -1,4 +1,4 @@
-/* Admin-Blocklist — Liste + manueller Ban-Form. */
+/* Blocklist im Atelier-Stil. */
 
 .list {
   list-style: none;
@@ -6,27 +6,25 @@
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  border-top: 1px solid var(--border-hairline);
 }
 
 .entry {
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-md);
-  padding: var(--space-4) var(--space-5);
-  background-color: var(--surface-bg);
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-hairline);
 }
 
-.entryHeader {
+.head {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-3);
 }
 
 .hash {
-  font-family: var(--font-mono, ui-monospace, monospace);
+  font-family: var(--font-mono);
   font-size: var(--text-body-sm);
   color: var(--text-strong);
 }
@@ -39,17 +37,19 @@
   font-style: italic;
 }
 
-.entryFooter {
+.foot {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
 }
 
 .timestamp {
   font-family: var(--font-body);
   font-size: var(--text-caption);
   color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
 }
 
 .unbanForm {
@@ -76,25 +76,24 @@
 
 .unbanTotp:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-focus);
-}
-
-.reauthError {
-  margin: 0;
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
-  border-left: 3px solid var(--signal);
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  color: var(--text-strong);
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
 }
 
 .banForm {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  max-width: 480px;
 }
 
-.captionStack {
-  margin-bottom: var(--space-3);
+.reauthError {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
+  border-left: 3px solid var(--signal);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-strong);
 }

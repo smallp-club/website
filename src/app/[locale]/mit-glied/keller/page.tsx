@@ -1,11 +1,6 @@
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
 import { requireMember } from '@/lib/members/auth';
+import { ShellWrap } from '../_components/MemberShell';
+import styles from '../_components/MemberShell/atelier.module.css';
 
 export const metadata = {
   title: 'quellen-keller. — small p club',
@@ -14,41 +9,39 @@ export const metadata = {
 };
 
 export default async function KellerPage() {
-  // Auth-Gate auch wenn Stub — Security-Audit M3.
-  await requireMember();
+  const session = await requireMember();
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="standard" aria-label="keller hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>mit-glied · quellen-keller</Eyebrow>
-            <Heading level={1} variant="display">alles was hinter den fakten steht.</Heading>
-            <Body>strukturierte mini-bibliothek aller research-quellen. kein geheimnis, nur sortiert. mit-glied-exklusiv weil tief, nicht weil versteckt.</Body>
-            <Caption tone="muted" as="p">daten-pull aus RESEARCH.md, in supabase-table gemirrored.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+    <ShellWrap session={session} pageLabel="keller">
+      <section className={styles.arrival}>
+        <span className={styles.eyebrow}>quellen-keller</span>
+        <h1 className={styles.title}>alles was hinter den fakten steht.</h1>
+        <p className={styles.body}>
+          strukturierte mini-bibliothek aller research-quellen. kein geheimnis,
+          nur sortiert. mit-glied-exklusiv weil tief, nicht weil versteckt.
+        </p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="filter">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>filter</Eyebrow>
-            <Heading level={2} variant="lede">kategorie, jahr, studientyp.</Heading>
-            <Body>vier kategorien (anatomie, psychologie, gesellschaft, DACH). filter-toggle als chip-row, kein dropdown-overlay.</Body>
-            <Caption tone="muted" as="p">filter-mechanik kommt mit phase 5.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>filter</span>
+        </header>
+        <p className={styles.sectionBody}>
+          vier kategorien: anatomie, psychologie, gesellschaft, DACH.
+          filter-toggle als chip-row, kein dropdown-overlay.
+        </p>
+        <p className={styles.empty}>filter-mechanik kommt.</p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="quellen-liste">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>einträge</Eyebrow>
-            <Heading level={2} variant="lede">jede quelle mit zwei-satz-einordnung.</Heading>
-            <Body>autor, journal, jahr, n-zahl, doi falls vorhanden, plus zwei sätze brand-voice was die quelle hergibt. keine wikipedia-doppelung.</Body>
-          </Stack>
-        </Container>
-      </Section>
-    </main>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>einträge</span>
+        </header>
+        <p className={styles.sectionBody}>
+          autor, journal, jahr, n-zahl, doi falls vorhanden, plus zwei sätze
+          einordnung was die quelle hergibt. keine wikipedia-doppelung.
+        </p>
+        <p className={styles.empty}>noch leer. quellen werden eingepflegt.</p>
+      </section>
+    </ShellWrap>
   );
 }

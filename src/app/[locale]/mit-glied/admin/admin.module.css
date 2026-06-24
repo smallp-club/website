@@ -1,92 +1,313 @@
-/* Admin-Dashboard — ruhige Counts + Nav-Grid. */
+/* ===== Admin im Atelier-Stil =====
+ * Editorial-Sections mit Hairlines, kein Card-Container,
+ * typographisches Stat-Grid, Attention als Sienna-Hairline.
+ */
 
-.counts {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+/* ===== Mount-Stagger ===== */
+
+.arrival,
+.attention,
+.section {
+  animation: revealUp 540ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
-.countRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--border-hairline);
+.arrival { animation-delay: 0ms; }
+.attention { animation-delay: 80ms; }
+.section:nth-of-type(1) { animation-delay: 140ms; }
+.section:nth-of-type(2) { animation-delay: 200ms; }
+.section:nth-of-type(3) { animation-delay: 260ms; }
+.section:nth-of-type(4) { animation-delay: 320ms; }
+
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.countRow:last-child {
-  border-bottom: none;
+@media (prefers-reduced-motion: reduce) {
+  .arrival, .attention, .section { animation: none; }
 }
 
-.countRow[data-accent] .countValue {
-  color: var(--accent-contrast, var(--spc-turquoise-deep));
+/* ===== Arrival ===== */
+
+.arrival {
+  margin-bottom: var(--space-6);
 }
 
-.countLabel {
+.title {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-lg);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
+}
+
+.subtitle {
   margin: 0;
   font-family: var(--font-body);
   font-size: var(--text-body-md);
   color: var(--text-muted);
 }
 
-.countValue {
-  margin: 0;
-  font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-heading-md);
-  color: var(--text-strong);
-  font-variant-numeric: tabular-nums;
-}
+/* ===== Attention-Strip (Sienna-Hairline, kein Vollfüllung) ===== */
 
-/* ----- Nav-Grid ----- */
-
-.navGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-3);
-}
-
-@media (min-width: 600px) {
-  .navGrid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-.navLink {
+.attention {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
   padding: var(--space-4) var(--space-5);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-md);
-  background-color: var(--surface-bg);
+  margin-bottom: var(--space-6);
   text-decoration: none;
   color: inherit;
+  border-left: 2px solid var(--signal);
+  background-color: var(--surface-bg);
   transition:
-    border-color var(--duration-base, 200ms) ease,
-    background-color var(--duration-base, 200ms) ease;
+    background-color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.navLink:hover {
-  border-color: var(--text-strong);
-  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.03));
+.attention:hover {
+  background-color: var(--surface-sunken, rgba(192, 90, 56, 0.04));
 }
 
-.navLink:focus-visible {
+.attention:active {
+  transform: translateY(0.5px);
+}
+
+.attention:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-focus);
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--signal);
 }
 
-.navLabel {
+.attentionEyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-overline);
+  color: var(--signal);
+  letter-spacing: 0.01em;
+}
+
+.attentionLine {
   font-family: var(--font-display);
   font-weight: var(--weight-light);
   font-size: var(--text-heading-sm);
   color: var(--text-strong);
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
 
-.navSubtitle {
+.attentionFlag {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+}
+
+/* ===== Sections — Hairline-Trenner ===== */
+
+.section {
+  padding-block: var(--space-6) var(--space-7);
+  border-top: 1px solid var(--border-hairline);
+}
+
+.section:last-child {
+  padding-bottom: 0;
+}
+
+.sectionHead {
+  margin-bottom: var(--space-5);
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-overline);
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+  letter-spacing: 0.01em;
+}
+
+/* ===== Stat-Grid (typographisch, kein Card-Container) ===== */
+
+.statGrid {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--border-hairline);
+}
+
+@media (min-width: 640px) {
+  .statGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .statGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+@media (min-width: 640px) {
+  .stat {
+    padding-inline: var(--space-4);
+  }
+  .stat:nth-child(2n) {
+    border-left: 1px solid var(--border-hairline);
+  }
+}
+
+@media (min-width: 960px) {
+  .stat:nth-child(2n) {
+    border-left: none;
+  }
+  .stat:not(:nth-child(3n + 1)) {
+    border-left: 1px solid var(--border-hairline);
+  }
+}
+
+.statValue {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-lg);
+  color: var(--text-strong);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.stat[data-accent] .statValue {
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.statLabel {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--text-muted);
+}
+
+/* ===== Arbeitsplätze (Editorial-Liste mit Hairlines) ===== */
+
+.workList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.workItem {
+  border-bottom: 1px solid var(--border-hairline);
+}
+
+.workLink {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4) 0;
+  text-decoration: none;
+  color: var(--text-strong);
+  min-height: 56px;
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.workLink:active {
+  transform: translateY(0.5px);
+}
+
+.workLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-light);
+  font-size: var(--text-heading-sm);
+  color: var(--text-strong);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: text-decoration-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.workLink:hover .workLabel {
+  text-decoration-color: var(--text-muted);
+}
+
+.workLink:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
+  border-radius: var(--radius-sm);
+}
+
+.workBody {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+  line-height: var(--leading-relaxed);
+}
+
+/* ===== Recent-Aktionen (kompakte Editorial-Liste) ===== */
+
+.recentList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-hairline);
+}
+
+.recentItem {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: var(--space-3);
+  align-items: baseline;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--border-hairline);
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+}
+
+.recentAction {
+  font-family: var(--font-display);
+  font-weight: var(--weight-regular);
+  color: var(--text-strong);
+}
+
+.recentAction[data-action="ban"],
+.recentAction[data-action="reject"] {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.recentAction[data-action="approve"] {
+  color: var(--accent-contrast, var(--spc-turquoise-deep));
+}
+
+.recentTarget {
+  color: var(--text-muted);
+}
+
+.recentTime {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.recentEmpty {
+  margin: 0;
   font-family: var(--font-body);
   font-size: var(--text-body-sm);
   color: var(--text-muted);

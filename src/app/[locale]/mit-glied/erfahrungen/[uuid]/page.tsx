@@ -1,10 +1,7 @@
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
+import Link from 'next/link';
+import { requireMember } from '@/lib/members/auth';
+import { ShellWrap } from '../../_components/MemberShell';
+import styles from '../../_components/MemberShell/atelier.module.css';
 
 export const metadata = {
   title: 'erfahrungsbericht. — small p club',
@@ -12,49 +9,45 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function ErfahrungDetailPage() {
+export default async function ErfahrungDetailPage() {
+  const session = await requireMember();
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="standard" aria-label="bericht hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>mit-glied · erfahrungen · detail</Eyebrow>
-            <Heading level={1} variant="display">ein bericht.</Heading>
-            <Body>einzelner bericht im member-bereich. uuid im pfad ist nicht enumerier-bar, nur per direkt-link erreichbar. brand-stille statt forums-listen-stil.</Body>
-            <Caption tone="muted" as="p">supabase-row, rls verteidigt zugriff auf eigene oder approved-berichte.</Caption>
-          </Stack>
-        </Container>
-      </Section>
+    <ShellWrap session={session} pageLabel="bericht">
+      <section className={styles.arrival}>
+        <span className={styles.eyebrow}>ein bericht</span>
+        <h1 className={styles.title}>einzelner text, pseudonym, prose-breite.</h1>
+        <p className={styles.body}>
+          uuid im pfad ist nicht enumerier-bar, nur per direkt-link erreichbar.
+          kein avatar, kein like-button, kein share. ende ist ende.
+        </p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="prompt">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>prompt</Eyebrow>
-            <Heading level={2} variant="lede">der gewählte prompt als kapitel-marker.</Heading>
-            <Body>z. b. „das hab ich mal geglaubt." chillax light, klein, ruhiger anker über dem text.</Body>
-          </Stack>
-        </Container>
-      </Section>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>prompt</span>
+        </header>
+        <p className={styles.sectionBody}>
+          der gewählte prompt als kapitel-marker. chillax light, klein, ruhig.
+        </p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="bericht-text">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>text</Eyebrow>
-            <Heading level={2} variant="lede">pseudonymer bericht, prose-breite.</Heading>
-            <Body>chillax-light fließtext, kein avatar, kein like-button, kein share-button. ende ist ende.</Body>
-          </Stack>
-        </Container>
-      </Section>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>text</span>
+        </header>
+        <p className={styles.sectionBody}>
+          chillax-light fließtext, prose-breite. kein meta-rauschen drumherum.
+        </p>
+      </section>
 
-      <Section tone="light" rhythm="standard" aria-label="rückkehr">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>weiter</Eyebrow>
-            <Heading level={2} variant="lede">zurück zu allen berichten.</Heading>
-            <Body>ein link zurück zur liste. kein „nächster bericht", kein „beliebt". sackgasse mit würde.</Body>
-          </Stack>
-        </Container>
-      </Section>
-    </main>
+      <section className={styles.section}>
+        <header className={styles.sectionHead}>
+          <span className={styles.eyebrowMuted}>weiter</span>
+        </header>
+        <Link href="/mit-glied/erfahrungen" className={styles.linkAccent}>
+          zurück zu allen berichten →
+        </Link>
+      </section>
+    </ShellWrap>
   );
 }

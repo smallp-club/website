@@ -1,26 +1,15 @@
 /**
  * /mit-glied/erfahrungen/neu — Erfahrungsbericht einreichen.
  *
- * Auth-gated. Zeigt Cooldown-Hinweis wenn 24h-Frist noch läuft, sonst
- * die volle Form mit 5 Prompts + Textarea + optional Alter.
- *
- * Drei-Stufen-Moderation läuft nach Submit (Sub-Bau 2 von C). Aktuell
- * werden alle Berichte direkt als `pending` für Kevin's manuelle Kuration
- * eingereiht.
- *
- * Doktrin: MEMBER_CONCEPT.md §5 + MEMBER_SECURITY.md §8a.
+ * Atelier-Stil: kompakter Header, Cooldown-Notice als Editorial-Strip
+ * mit Hairline statt Section-Padding-Wand.
  */
 
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
-import { LinkButton } from '@/components/primitives/LinkButton';
-import { requireMember } from '@/lib/members/auth';
+import Link from 'next/link';
+import { requireMember, type MemberSession } from '@/lib/members/auth';
+import { ShellWrap } from '../../_components/MemberShell';
 import { StoryForm } from './_components/StoryForm';
+import atelier from '../../_components/MemberShell/atelier.module.css';
 
 export const metadata = {
   title: 'erfahrungsbericht schreiben. — small p club',
@@ -40,58 +29,55 @@ const DATE_FORMAT = new Intl.DateTimeFormat('de-DE', {
 });
 
 export default async function ErfahrungNeuPage() {
-  const { profile } = await requireMember();
+  const session = await requireMember();
+  const { profile } = session;
 
-  // Cooldown-Pre-Check: zeigt eine ruhige Hinweis-Section statt der Form,
-  // wenn die 24h-Frist nach Anmeldung noch läuft. NULL = legacy → erlaubt.
   if (profile.first_submission_allowed_at) {
     const allowedAt = new Date(profile.first_submission_allowed_at);
     if (allowedAt.getTime() > Date.now()) {
-      return <CooldownNotice allowedAt={allowedAt} />;
+      return <CooldownNotice session={session} allowedAt={allowedAt} />;
     }
   }
 
   return (
-    <main id="main-content">
-      <StoryForm pseudonym={profile.pseudonym} />
-    </main>
+    <ShellWrap session={session} pageLabel="neuer bericht">
+      <section className={atelier.arrival}>
+        <span className={atelier.eyebrow}>neuer bericht</span>
+        <h1 className={atelier.title}>dein text, fünf prompts zur wahl.</h1>
+        <p className={atelier.body}>
+          pseudonym wandert mit, alter-range optional. zwischen 80 und 1500
+          zeichen. kevin schaut alles an, was nicht hart abgelehnt wird.
+        </p>
+      </section>
+
+      <section className={atelier.section}>
+        <StoryForm pseudonym={profile.pseudonym} />
+      </section>
+    </ShellWrap>
   );
 }
 
-function CooldownNotice({ allowedAt }: { allowedAt: Date }) {
+function CooldownNotice({ session, allowedAt }: { session: MemberSession; allowedAt: Date }) {
   const dateLabel = DATE_FORMAT.format(allowedAt);
   const timeLabel = HOUR_FORMAT.format(allowedAt);
 
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="loose" aria-label="cooldown-hinweis">
-        <Container width="prose">
-          <Stack gap={5}>
-            <Stack gap={4}>
-              <Eyebrow>noch nicht</Eyebrow>
-              <Heading level={1} variant="display">
-                kurz raum, anzukommen.
-              </Heading>
-              <Body>
-                dein erster bericht klappt 24 stunden nach anmeldung. das ist
-                kein misstrauen, das ist eine kleine pause. komm wieder ab{' '}
-                <strong>
-                  {dateLabel}, {timeLabel}
-                </strong>
-                .
-              </Body>
-            </Stack>
-            <div>
-              <LinkButton href="/mit-glied/eingang" variant="primary">
-                zum eingang
-              </LinkButton>
-            </div>
-            <Caption tone="muted" as="p">
-              doktrin: MEMBER_SECURITY.md §3 linie 1.
-            </Caption>
-          </Stack>
-        </Container>
-      </Section>
-    </main>
+    <ShellWrap session={session} pageLabel="neuer bericht">
+      <section className={atelier.arrival}>
+        <span className={atelier.eyebrow}>noch nicht</span>
+        <h1 className={atelier.title}>kurz raum, anzukommen.</h1>
+        <p className={atelier.body}>
+          dein erster bericht klappt 24 stunden nach anmeldung. das ist kein
+          misstrauen, das ist eine kleine pause. komm wieder ab{' '}
+          <strong>{dateLabel}, {timeLabel}</strong>.
+        </p>
+      </section>
+
+      <section className={atelier.section}>
+        <Link href="/mit-glied/eingang" className={atelier.linkAccent}>
+          zurück zum eingang →
+        </Link>
+      </section>
+    </ShellWrap>
   );
 }

@@ -21,20 +21,26 @@
   font-family: var(--font-body);
   font-size: var(--text-body-sm);
   text-decoration: underline;
-  text-decoration-color: var(--border-hairline);
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
   text-underline-offset: 4px;
   cursor: pointer;
   align-self: flex-start;
   min-height: 44px;
+  transition:
+    color 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    text-decoration-color 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modeToggle:hover {
   color: var(--text-strong);
-  text-decoration-color: var(--text-strong);
+  text-decoration-color: var(--text-muted);
 }
 
 .modeToggle:focus-visible {
   outline: none;
-  box-shadow: var(--shadow-focus);
+  box-shadow:
+    0 0 0 2px var(--surface-bg),
+    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
   border-radius: var(--radius-sm);
 }
