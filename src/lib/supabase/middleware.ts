@@ -21,24 +21,30 @@ export async function refreshSupabaseSession(
     return response;
   }
 
-  const supabase = createServerClient<Database>(url, anonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
+  try {
+    const supabase = createServerClient<Database>(url, anonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => {
+            request.cookies.set(name, value);
+          });
+          cookiesToSet.forEach(({ name, value, options }) => {
+            response.cookies.set(name, value, options);
+          });
+        },
       },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) => {
-          request.cookies.set(name, value);
-        });
-        cookiesToSet.forEach(({ name, value, options }) => {
-          response.cookies.set(name, value, options);
-        });
-      },
-    },
-  });
+    });
 
-  // Session-Refresh als Side-Effect via getUser.
-  await supabase.auth.getUser();
+    // Session-Refresh als Side-Effect via getUser.
+    await supabase.auth.getUser();
+  } catch (err) {
+    // Defensive: Supabase-Outage darf das Middleware nicht crashen, sonst 500
+    // für jede Page. Auth-Cookies bleiben dann unverändert, das ist OK.
+    console.error('[supabase-middleware] refresh failed:', err);
+  }
 
   return response;
 }

@@ -20,23 +20,35 @@ export interface MemberSession {
   profile: ProfileRow;
 }
 
-/** Holt User + Profile aus der aktuellen Session, oder null. */
+/**
+ * Holt User + Profile aus der aktuellen Session, oder null.
+ *
+ * Defensiv gegen fehlende Supabase-Konfiguration: ein fehlender Env Var
+ * darf nicht die ganze Site umkippen. Wir loggen den Fehler und liefern
+ * `null` — als wäre niemand eingeloggt. Public-Pages (Landing, /club,
+ * /mythen) rendern dann ohne Member-Pille, statt 500 zu werfen.
+ */
 export async function getCurrentMember(): Promise<MemberSession | null> {
-  const supabase = await createSupabaseServerClient();
+  try {
+    const supabase = await createSupabaseServerClient();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return null;
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
 
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle();
-  if (!profile) return null;
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (!profile) return null;
 
-  return { user, profile: profile as ProfileRow };
+    return { user, profile: profile as ProfileRow };
+  } catch (err) {
+    console.error('[getCurrentMember] auth lookup failed:', err);
+    return null;
+  }
 }
 
 /** Erzwingt eine eingeloggte Member-Session. Redirected zu /mit-glied wenn nicht. */

@@ -47,20 +47,25 @@ export default async function StimmenPage() {
   // also reicht der anon-key. Service-Role hier wäre overkill und würde
   // jede künftige RLS-Verfeinerung für diese Page wirkungslos machen.
   // Security-Audit M2.
-  const supabase = await createSupabaseServerClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storiesTable = supabase.from('stories') as any;
-  const { data, error } = await storiesTable
-    .select('id, pseudonym, prompt_key, body, approved_at')
-    .eq('status', 'approved')
-    .order('approved_at', { ascending: false })
-    .limit(100);
+  // Public-Page muss auch ohne Supabase-Config rendern (defensive: leere Liste).
+  let rows: StoryRow[] = [];
+  try {
+    const supabase = await createSupabaseServerClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const storiesTable = supabase.from('stories') as any;
+    const { data, error } = await storiesTable
+      .select('id, pseudonym, prompt_key, body, approved_at')
+      .eq('status', 'approved')
+      .order('approved_at', { ascending: false })
+      .limit(100);
 
-  if (error) {
-    console.error('[stimmen-list]', error);
+    if (error) {
+      console.error('[stimmen-list]', error);
+    }
+    rows = (data as StoryRow[]) ?? [];
+  } catch (err) {
+    console.error('[stimmen-list] supabase unavailable:', err);
   }
-
-  const rows: StoryRow[] = (data as StoryRow[]) ?? [];
 
   return (
     <main id="main-content">
