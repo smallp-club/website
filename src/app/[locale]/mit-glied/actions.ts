@@ -69,7 +69,10 @@ export async function requestMagicLink(
     ip: ip ?? undefined,
   });
   if (!captchaOk) {
-    return { status: 'error', message: 'bitte probier nochmal.' };
+    return {
+      status: 'error',
+      message: 'der bot-check klemmt. lad die seite neu, dann nochmal.',
+    };
   }
 
   // 2) Email-Form + Disposable

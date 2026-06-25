@@ -7,11 +7,10 @@
 }
 
 .label {
-  font-family: var(--font-body);
-  font-size: var(--text-overline);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-overline);
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: var(--weight-light);
+  letter-spacing: 0.01em;
   color: var(--spc-slate);
   margin: 0 0 var(--space-8);
 }
@@ -176,11 +175,10 @@
 }
 
 .eyebrow {
-  font-family: var(--font-body);
-  font-size: var(--text-overline);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-overline);
-  text-transform: uppercase;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: var(--weight-light);
+  letter-spacing: 0.01em;
   color: var(--spc-turquoise-deep);
 }
 
@@ -267,14 +265,14 @@
 .navBtn:focus-visible { outline: none; box-shadow: var(--shadow-focus); }
 
 .navCounter {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: var(--text-caption);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-overline);
-  text-transform: uppercase;
+  font-weight: var(--weight-light);
+  letter-spacing: 0.01em;
   color: var(--spc-slate);
   min-width: 4ch;
   text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 /* Reduced-Motion: flache Liste */

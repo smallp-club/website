@@ -19,9 +19,23 @@ export async function verifyTurnstileToken(
   options: TurnstileVerifyOptions
 ): Promise<boolean> {
   const secret = process.env.TURNSTILE_SECRET_KEY;
+  const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+  // Turnstile ist komplett un-konfiguriert (weder client- noch server-Key): der
+  // Form rendert dann gar kein Widget, also kann auch kein Token entstehen.
+  // Verify zu fail-fasten würde die Form in Production permanent kaputtmachen.
+  // Sobald EINER der Keys gesetzt ist, schalten wir wieder auf strikten Modus.
+  if (!secret && !sitekey) {
+    if (process.env.NODE_ENV === 'production') {
+      console.warn(
+        '[turnstile] beide turnstile-vars fehlen, bot-schutz disabled.'
+      );
+    }
+    return true;
+  }
   if (!secret) {
-    // Security-Audit M5: in production hart fehlschlagen — silent-pass
-    // würde die ganze Bot-Schutz-Schicht killen wenn Env-Var fehlt.
+    // Asymmetrische Konfiguration: client würde token schicken, server kann nicht
+    // verifizieren. Das ist ein Config-Bug, nicht User-Verhalten — fail-fast.
     if (process.env.NODE_ENV === 'production') {
       console.error('[turnstile] TURNSTILE_SECRET_KEY fehlt in production');
       return false;
