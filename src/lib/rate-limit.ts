@@ -83,15 +83,16 @@ export async function consumeRateLimit(
 ): Promise<RateLimitResult> {
   const limiter = getLimiter(name);
   if (!limiter) {
-    // Security-Audit M5: in production hart fehlschlagen — silent-pass
-    // würde Rate-Limit komplett deaktivieren wenn Upstash-Env fehlt.
+    // Wenn Upstash gar nicht konfiguriert ist (beide Env-Vars fehlen), schalten
+    // wir auf disabled-mode statt fail-fast. Sonst hängt jede production-Form
+    // im Limit fest obwohl gar kein Limit-Backend existiert. Sobald die Vars
+    // gesetzt sind, greift der echte Sliding-Window-Counter wieder.
     if (process.env.NODE_ENV === 'production') {
-      console.error(
-        '[rate-limit] Upstash nicht konfiguriert in production — limit für',
+      console.warn(
+        '[rate-limit] upstash nicht konfiguriert, limit',
         name,
-        'wird als „erschöpft" behandelt'
+        'wird übersprungen.'
       );
-      return { success: false, remaining: 0, reset: 0 };
     }
     return { success: true, remaining: Number.POSITIVE_INFINITY, reset: 0 };
   }
