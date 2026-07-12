@@ -6,6 +6,7 @@ import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { requireAdminBasic } from '@/lib/members/auth';
 import { challengeAndVerify, consumeBackupCode, getMfaStatus } from '@/lib/members/mfa';
 import { setAdminAal2Expiry } from '@/lib/members/admin-session';
+import { consumeRateLimit } from '@/lib/rate-limit';
 import type { TotpChallengeFormState } from './challenge-types';
 
 /**
@@ -20,6 +21,12 @@ export async function verifyTotpChallengeAction(
 ): Promise<TotpChallengeFormState> {
   const session = await requireAdminBasic();
   const supabase = await createSupabaseServerClient();
+
+  // Brute-Force-Bremse auf den zweiten Faktor (10 Versuche / 15 min).
+  const verifyLimit = await consumeRateLimit('mfa_verify_per_user', session.user.id);
+  if (!verifyLimit.success) {
+    return { status: 'error', message: 'zu viele versuche. warte kurz, dann nochmal.' };
+  }
 
   const rawCode = String(formData.get('code') ?? '').trim();
   const next = sanitizeNextPath(String(formData.get('next') ?? ''));
@@ -85,6 +92,14 @@ export async function verifyBackupCodeAction(
 ): Promise<TotpChallengeFormState> {
   const session = await requireAdminBasic();
   const supabase = await createSupabaseServerClient();
+
+  // Brute-Force-Bremse: Backup-Codes sind ein direkter DB-Lookup ohne
+  // Supabase-eigenes Limit. Ohne diese Bremse ließe sich der Code-Space
+  // offline/online durchprobieren (Security-Audit).
+  const verifyLimit = await consumeRateLimit('mfa_verify_per_user', session.user.id);
+  if (!verifyLimit.success) {
+    return { status: 'error', message: 'zu viele versuche. warte kurz, dann nochmal.' };
+  }
 
   const rawCode = String(formData.get('code') ?? '').trim();
 

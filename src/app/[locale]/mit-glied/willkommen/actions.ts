@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { getCurrentMember } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { consumeRateLimit } from '@/lib/rate-limit';
 import { generatePseudonyms, isValidPseudonym } from '@/lib/members/pseudonym';
 import { ROLL_BATCH_SIZE, type PseudonymFormState } from './onboarding-types';
 
@@ -14,8 +15,22 @@ import { ROLL_BATCH_SIZE, type PseudonymFormState } from './onboarding-types';
  * Vorschläge sieht, die bereits vergeben sind. Bei Kollisionen eskaliert
  * der Generator automatisch zu Stufe 2 (Adjektiv + Synonym) oder Stufe 3
  * (Synonym + Synonym).
+ *
+ * Auth-Pflicht (Security-Audit): Server Actions sind öffentliche HTTP-
+ * Endpoints. Ohne Session-Check könnte ein Anonymer die Action im Loop
+ * aufrufen und über den Service-Role-Client unbegrenzt DB-Queries gegen
+ * `profiles` feuern (Kosten-/DoS-Vektor auf den Free Tier). Zusätzlich
+ * Rate-Limit pro User und Early-Return, wenn das Pseudonym bereits fix ist.
  */
 export async function rollPseudonymsAction(): Promise<string[]> {
+  const session = await getCurrentMember();
+  if (!session) return [];
+  // Wer sein Pseudonym schon einmal festgelegt hat, braucht keine Würfel mehr.
+  if (session.profile.pseudonym_changed_at) return [];
+
+  const rollLimit = await consumeRateLimit('pseudonym_roll_per_user', session.user.id);
+  if (!rollLimit.success) return [];
+
   const service = createSupabaseServiceClient();
 
   const checkAvailable = async (candidate: string): Promise<boolean> => {

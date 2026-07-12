@@ -2,8 +2,8 @@
 
 import { revalidatePath } from 'next/cache';
 import { getCurrentMember } from '@/lib/members/auth';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { consumeRateLimit } from '@/lib/rate-limit';
 import { moderateStory, hasSuicideFlag } from '@/lib/members/moderation/check';
 import { extractShingles } from '@/lib/members/moderation/shingles';
 import type { PromptKey, AgeRange } from '@/lib/supabase/types';
@@ -57,6 +57,17 @@ export async function submitStoryAction(
     }
   }
 
+  // 1b) Rate-Limit pro User (5/24h). Der Cooldown gated nur die erste
+  // Einreichung; ohne dieses Limit könnte ein Account danach unbegrenzt
+  // die Inbox + content_shingles fluten.
+  const submitLimit = await consumeRateLimit('story_submit_per_user', session.user.id);
+  if (!submitLimit.success) {
+    return {
+      status: 'error',
+      message: 'du hast heute genug geschrieben. morgen wieder.',
+    };
+  }
+
   // 2) Prompt-Validation
   const promptRaw = String(formData.get('prompt_key') ?? '');
   if (!VALID_PROMPT_KEYS.has(promptRaw as PromptKey)) {
@@ -104,14 +115,16 @@ export async function submitStoryAction(
     };
   }
 
-  // 6) Insert mit Flags — Server-Client (anon-key) statt Service-Role.
-  // Defense-in-Depth: RLS-Policy `stories_own_insert` validiert dann
-  // user_id = auth.uid(). Falls künftig session falsch wäre, würde RLS
-  // den Insert ablehnen. Service-Role bleibt für Shingles + Brigading-RPC
-  // (System-Operationen ohne User-Kontext). Security-Audit M8.
-  const supabase = await createSupabaseServerClient();
+  // 6) Insert via Service-Role. Der direkte anon/authenticated-Insert auf
+  // stories ist seit Migration 0008 gesperrt (Security-Audit K1) — sonst
+  // könnte ein Member per REST-API status='approved' + beliebige flags/
+  // pseudonym selbst setzen und die Moderation komplett umgehen.
+  // user_id, pseudonym, status und flags werden hier ausschließlich
+  // server-seitig aus Session bzw. Moderations-Ergebnis gesetzt, nie aus
+  // Client-Input.
+  const service = createSupabaseServiceClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storiesTable = supabase.from('stories') as any;
+  const storiesTable = service.from('stories') as any;
   const { data: inserted, error } = await storiesTable
     .insert({
       user_id: session.user.id,
@@ -135,10 +148,9 @@ export async function submitStoryAction(
   //    3+ verschiedenen Accounts auftaucht (RPC `detect_brigading_wave`),
   //    werden alle betroffenen Stories — inkl. dieser neuen — als
   //    Brigading-Welle markiert.
-  //    Service-Role hier nötig: Shingles-Insert + Brigading-RPC sind
-  //    System-Operationen ohne User-Kontext (RPC ist seit Migration 0007
+  //    Service-Role (oben bereits erstellt): Shingles-Insert + Brigading-RPC
+  //    sind System-Operationen ohne User-Kontext (RPC ist seit Migration 0007
   //    nur für service_role aufrufbar, security-audit H2).
-  const service = createSupabaseServiceClient();
   const shingles = extractShingles(body);
   const storyId = (inserted as { id: string }).id;
   if (shingles.length > 0) {

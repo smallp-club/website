@@ -47,10 +47,14 @@ async function isBanned(emailHash: string, ipHash: string | null): Promise<boole
       return Array.isArray(ipResult.data) && ipResult.data.length > 0;
     }
     return false;
-  } catch {
-    // Falls Supabase-Env-Vars noch nicht gesetzt sind, lassen wir die Action
-    // nicht stillschweigend durch — Magic-Link würde sowieso scheitern.
-    return false;
+  } catch (err) {
+    // Blocklist-Check ist ein Sicherheits-Gate — bei Fehler nicht blind
+    // durchlassen. Production: fail-closed (als gebannt behandeln), sonst
+    // könnte ein gebannter User einen DB-Aussetzer als Wiedereintritt nutzen.
+    // Der Magic-Link-Flow hängt ohnehin an derselben Supabase-Instanz, ein
+    // echter Ausfall blockiert den Login also sowieso.
+    console.error('[isBanned] lookup failed:', err);
+    return process.env.NODE_ENV === 'production';
   }
 }
 
@@ -104,6 +108,12 @@ export async function requestMagicLink(
       if (!ipResult.success) {
         return { status: 'error', message: 'zu viele anfragen. probier es später nochmal.' };
       }
+    } else if (process.env.NODE_ENV === 'production') {
+      // Keine IP ermittelbar → die IP-Bremse würde entfallen und ein
+      // Angreifer könnte über rotierende Zieladressen unbegrenzt Mails
+      // auslösen. In Production hart abbrechen (Security-Audit M2).
+      console.error('[magic-link] no client ip in prod — abort');
+      return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
     }
     const emailResult = await consumeRateLimit('magic_link_per_email', emailHash);
     if (!emailResult.success) {

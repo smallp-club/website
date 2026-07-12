@@ -10,10 +10,13 @@
  * Re-Auth bei sensitiven Aktionen, Setup einmalig sichtbare Backup-Codes.
  */
 
-import { createHash, randomBytes } from 'node:crypto';
+import 'server-only';
+
+import { randomBytes } from 'node:crypto';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/lib/supabase/types';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { pepperedHash } from '@/lib/hash';
 
 const BACKUP_CODE_COUNT = 10;
 const FACTOR_FRIENDLY_NAME = 'admin-totp';
@@ -129,9 +132,14 @@ export async function challengeAndVerify(
 }
 
 /**
- * Generiert 10 frische 8-stellige Backup-Codes im Format `xxxx-xxxx`
- * (lowercase hex, gut lesbar). Codes werden im Klartext nur EINMAL
- * zurückgegeben (zur Anzeige); die Hashes landen in `mfa_backup_codes`.
+ * Generiert 10 frische Backup-Codes im Format `xxxx-xxxx-xxxx-xxxx`
+ * (16 lowercase hex = 64 Bit Entropie, gut lesbar). Codes werden im Klartext
+ * nur EINMAL zurückgegeben (zur Anzeige); die Hashes landen in
+ * `mfa_backup_codes`.
+ *
+ * 64 Bit statt vorher 32 Bit (Security-Audit): ein 32-Bit-Code ist bei
+ * einem Hash-Leak offline in Sekunden durchprobierbar. Der Hash ist
+ * zusätzlich gepeppert (HMAC via HASH_PEPPER), nicht nacktes SHA-256.
  *
  * Vorher: alle bestehenden Codes des Users werden gelöscht (Re-Generation
  * ersetzt komplett).
@@ -150,8 +158,8 @@ export async function generateAndStoreBackupCodes(
   const rows: Array<{ user_id: string; code_hash: string }> = [];
 
   for (let i = 0; i < BACKUP_CODE_COUNT; i++) {
-    const raw = randomBytes(4).toString('hex'); // 8 hex chars
-    const code = `${raw.slice(0, 4)}-${raw.slice(4, 8)}`;
+    const raw = randomBytes(8).toString('hex'); // 16 hex chars = 64 bit
+    const code = `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8, 12)}-${raw.slice(12, 16)}`;
     codes.push(code);
     rows.push({ user_id: userId, code_hash: hashBackupCode(code) });
   }
@@ -241,18 +249,18 @@ export async function countUnusedBackupCodes(userId: string): Promise<number> {
   return count ?? 0;
 }
 
-/** SHA-256 hex eines Backup-Codes. */
+/** Gepepperter Hash eines Backup-Codes (HMAC via HASH_PEPPER, sonst SHA-256). */
 function hashBackupCode(code: string): string {
-  return createHash('sha256').update(code).digest('hex');
+  return pepperedHash(code, 'backup');
 }
 
 /**
  * Normalisiert Backup-Code-Eingabe: trim, lowercase, alles außer
- * `[a-f0-9]` weg, dann genau 8 Zeichen prüfen und mit Bindestrich
+ * `[a-f0-9]` weg, dann genau 16 Zeichen prüfen und mit Bindestrichen
  * formatieren. Gibt null zurück wenn Format nicht passt.
  */
 function normalizeBackupCode(raw: string): string | null {
   const cleaned = raw.toLowerCase().replace(/[^a-f0-9]/g, '');
-  if (cleaned.length !== 8) return null;
-  return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 8)}`;
+  if (cleaned.length !== 16) return null;
+  return `${cleaned.slice(0, 4)}-${cleaned.slice(4, 8)}-${cleaned.slice(8, 12)}-${cleaned.slice(12, 16)}`;
 }

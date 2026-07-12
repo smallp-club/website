@@ -27,7 +27,10 @@ export async function reportStoryAction(
   const reason = String(formData.get('reason') ?? '').trim().slice(0, 500);
   const turnstileToken = String(formData.get('cf-turnstile-response') ?? '');
 
-  if (!storyId) {
+  // UUID-Format validieren, bevor irgendetwas passiert — verhindert
+  // Fehler-basierte Existenz-Orakel auf beliebige Eingaben.
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(storyId)) {
     return { status: 'error', message: 'fehlende referenz.' };
   }
 
@@ -62,8 +65,22 @@ export async function reportStoryAction(
 
   const service = createSupabaseServiceClient();
 
-  // 3) Report-Eintrag schreiben. Unique-Index (story_id, reporter_ip_hash)
-  //    in Migration 0006 verhindert Doppel-Reports vom gleichen Browser —
+  // 3) Nur approved (öffentlich sichtbare) Stories sind meldbar. Verhindert
+  //    Manipulation von pending/rejected Berichten und gibt für alles andere
+  //    dieselbe stille „success"-Antwort (kein Existenz-Orakel).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const storiesTable = service.from('stories') as any;
+  const { data: story } = await storiesTable
+    .select('id')
+    .eq('id', storyId)
+    .eq('status', 'approved')
+    .maybeSingle();
+  if (!story) {
+    return { status: 'success' };
+  }
+
+  // 4) Report-Eintrag schreiben. Unique-Index (story_id, reporter_ip_hash)
+  //    aus Migration 0007 verhindert Doppel-Reports vom gleichen Browser —
   //    Conflict-Code 23505 = stillschweigend als „bereits gemeldet" behandeln.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const reportsTable = service.from('story_reports') as any;
@@ -82,16 +99,14 @@ export async function reportStoryAction(
     return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
   }
 
-  // 4) reports_count++ NUR wenn Insert erfolgreich war (kein Unique-Conflict).
+  // 5) reports_count atomar hochzählen (RPC, Migration 0008) — kein Lost-Update
+  //    bei parallelen Reports. Zählt nur für approved Stories.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const storiesTable = service.from('stories') as any;
-  const { data: row } = await storiesTable
-    .select('reports_count')
-    .eq('id', storyId)
-    .maybeSingle();
-  if (row) {
-    const next = (row.reports_count ?? 0) + 1;
-    await storiesTable.update({ reports_count: next }).eq('id', storyId);
+  const { error: rpcError } = await (service.rpc as any)('increment_report_count', {
+    p_story_id: storyId,
+  });
+  if (rpcError) {
+    console.error('[report-increment]', rpcError);
   }
 
   revalidatePath('/mit-glied/admin/inbox');

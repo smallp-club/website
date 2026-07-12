@@ -5,9 +5,11 @@ node_modules/
 .next/
 out/
 
-# Environment variables — NEVER commit these
-.env.local
-.env*.local
+# Environment variables — NEVER commit these.
+# Deckt .env, .env.local, .env.production, .env.local.backup-* etc. ab.
+# .env.example bleibt bewusst getrackt (nur Variablennamen, keine Werte).
+.env*
+!.env.example
 
 # Build output
 dist/

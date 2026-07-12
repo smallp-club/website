@@ -4,8 +4,13 @@
  * Doktrin: MEMBER_SECURITY.md §3 Linie 1 — Turnstile-Verifikation vor jedem
  * Magic-Link-Request. Datenschutz-freundlich, keine Cookies, kostenlos.
  *
- * Fallback ohne TURNSTILE_SECRET_KEY: Verifikation gibt true zurück
- * (Dev-Convenience). Production-Build erzwingt Env-Var via Check in Phase 5b.
+ * Fallback ohne TURNSTILE_*-Keys:
+ *  - Development: Verifikation gibt true zurück (Dev-Convenience, das Widget
+ *    rendert lokal ohnehin nicht).
+ *  - Production: fail-closed — Verifikation gibt false zurück. Ein fehlender
+ *    Bot-Schutz darf in Production nicht stillschweigend jeden Request
+ *    durchlassen. Die Env-Vars werden zusätzlich beim Boot geprüft
+ *    (src/lib/env-check.ts).
  */
 
 const VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
@@ -21,21 +26,22 @@ export async function verifyTurnstileToken(
   const secret = process.env.TURNSTILE_SECRET_KEY;
   const sitekey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
-  // Turnstile ist komplett un-konfiguriert (weder client- noch server-Key): der
-  // Form rendert dann gar kein Widget, also kann auch kein Token entstehen.
-  // Verify zu fail-fasten würde die Form in Production permanent kaputtmachen.
-  // Sobald EINER der Keys gesetzt ist, schalten wir wieder auf strikten Modus.
+  // Turnstile ist komplett un-konfiguriert (weder client- noch server-Key).
+  // Production: fail-closed. Ohne Bot-Schutz darf die geschützte Aktion nicht
+  // laufen — sonst wird der Magic-Link-/Report-Endpoint zum offenen Bot-Relay.
+  // Development: durchlassen, das Widget rendert lokal ohnehin nicht.
   if (!secret && !sitekey) {
     if (process.env.NODE_ENV === 'production') {
-      console.warn(
-        '[turnstile] beide turnstile-vars fehlen, bot-schutz disabled.'
+      console.error(
+        '[turnstile] beide turnstile-vars fehlen in production — fail-closed.'
       );
+      return false;
     }
     return true;
   }
   if (!secret) {
     // Asymmetrische Konfiguration: client würde token schicken, server kann nicht
-    // verifizieren. Das ist ein Config-Bug, nicht User-Verhalten — fail-fast.
+    // verifizieren. Config-Bug — in Production fail-closed.
     if (process.env.NODE_ENV === 'production') {
       console.error('[turnstile] TURNSTILE_SECRET_KEY fehlt in production');
       return false;

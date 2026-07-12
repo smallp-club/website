@@ -18,6 +18,8 @@
  * Wert ist der Ablauf-Timestamp als ms-since-epoch (number-string).
  */
 
+import 'server-only';
+
 import { cookies } from 'next/headers';
 
 const COOKIE_NAME = 'spc_admin_aal2_until';

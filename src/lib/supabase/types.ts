@@ -222,6 +222,14 @@ export interface Database {
         Args: Record<string, never>;
         Returns: boolean;
       };
+      detect_brigading_wave: {
+        Args: { p_shingles: string[] };
+        Returns: { story_id: string; shingle: string }[];
+      };
+      increment_report_count: {
+        Args: { p_story_id: string };
+        Returns: undefined;
+      };
     };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;

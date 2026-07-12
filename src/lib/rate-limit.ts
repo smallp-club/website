@@ -6,9 +6,12 @@
  * - 3 Magic-Link-Requests pro Email / 1h
  * - 1 Account-Erstellung pro IP / 24h
  *
- * Fallback ohne UPSTASH_* Env-Vars: alle Calls werden durchgelassen.
- * Das ist Absicht für lokale Dev-Setups; in Production werden die
- * Env-Vars Pflicht, das prüfen wir beim Build-Step in Phase 5b.
+ * Fallback ohne UPSTASH_* Env-Vars:
+ *  - Development: alle Calls werden durchgelassen (Dev-Convenience).
+ *  - Production: fail-closed — der Call wird abgelehnt (success:false).
+ *    Ein Rate-Limit, das nicht konfiguriert ist, darf in Production nicht
+ *    stillschweigend jeden Request durchlassen (Magic-Link-/Report-Flood).
+ *    Die Env-Vars werden zusätzlich beim Boot geprüft (src/lib/env-check.ts).
  */
 
 import { Ratelimit } from '@upstash/ratelimit';
@@ -28,7 +31,10 @@ export type RateLimitName =
   | 'magic_link_per_ip'
   | 'magic_link_per_email'
   | 'account_create_per_ip'
-  | 'report_per_ip';
+  | 'report_per_ip'
+  | 'story_submit_per_user'
+  | 'pseudonym_roll_per_user'
+  | 'mfa_verify_per_user';
 
 interface LimitConfig {
   prefix: string;
@@ -44,6 +50,13 @@ const LIMITS: Record<RateLimitName, LimitConfig> = {
   // Browser-IP pro 24h — verhindert dass ein Angreifer reports_count
   // einer Story endlos hochfährt.
   report_per_ip: { prefix: 'spc:rp:ip', limit: 10, window: '24 h' },
+  // Story-Submit gegen Inbox-/Shingle-Flooding. Der 24h-Cooldown gated nur
+  // die allererste Einreichung; danach begrenzt dieses Limit die Frequenz.
+  story_submit_per_user: { prefix: 'spc:st:u', limit: 5, window: '24 h' },
+  // Pseudonym-Würfeln gegen DB-Query-Flood auf profiles (Service-Role).
+  pseudonym_roll_per_user: { prefix: 'spc:ps:u', limit: 40, window: '1 h' },
+  // MFA-Verify (TOTP + Backup-Code) gegen Brute-Force des zweiten Faktors.
+  mfa_verify_per_user: { prefix: 'spc:mfa:u', limit: 10, window: '15 m' },
 };
 
 const limiterCache = new Map<RateLimitName, Ratelimit>();
@@ -83,17 +96,20 @@ export async function consumeRateLimit(
 ): Promise<RateLimitResult> {
   const limiter = getLimiter(name);
   if (!limiter) {
-    // Wenn Upstash gar nicht konfiguriert ist (beide Env-Vars fehlen), schalten
-    // wir auf disabled-mode statt fail-fast. Sonst hängt jede production-Form
-    // im Limit fest obwohl gar kein Limit-Backend existiert. Sobald die Vars
-    // gesetzt sind, greift der echte Sliding-Window-Counter wieder.
+    // Kein Upstash konfiguriert.
+    // Production: fail-closed. Ein fehlendes Limit-Backend darf nicht dazu
+    // führen, dass jeder Request unbegrenzt durchgeht (Magic-Link-/Report-
+    // Flood über den all-inkl-SMTP). Lieber die geschützte Aktion sperren,
+    // bis die UPSTASH_*-Vars gesetzt sind (siehe env-check.ts beim Boot).
     if (process.env.NODE_ENV === 'production') {
-      console.warn(
-        '[rate-limit] upstash nicht konfiguriert, limit',
+      console.error(
+        '[rate-limit] upstash nicht konfiguriert — limit',
         name,
-        'wird übersprungen.'
+        'greift NICHT, request wird fail-closed abgelehnt.'
       );
+      return { success: false, remaining: 0, reset: Date.now() + 60_000 };
     }
+    // Development: durchlassen, damit lokales Testen ohne Upstash läuft.
     return { success: true, remaining: Number.POSITIVE_INFINITY, reset: 0 };
   }
   const result = await limiter.limit(identifier);
