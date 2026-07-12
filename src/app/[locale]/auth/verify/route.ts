@@ -11,12 +11,23 @@
  */
 
 import { NextResponse, type NextRequest } from 'next/server';
+import type { EmailOtpType } from '@supabase/supabase-js';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { generatePseudonym } from '@/lib/members/pseudonym';
 import { addContactToList } from '@/lib/brevo';
 
 const MAX_PSEUDONYM_RETRIES = 8;
+
+// Gültige OTP-Typen für die Token-Hash-Verifikation (browser-/geräte-unabhängig).
+const VALID_OTP_TYPES = new Set<EmailOtpType>([
+  'email',
+  'magiclink',
+  'signup',
+  'recovery',
+  'invite',
+  'email_change',
+]);
 
 interface EnsureProfileResult {
   /** true wenn das Profil gerade neu angelegt wurde (Onboarding noch nicht gesehen). */
@@ -90,25 +101,50 @@ async function ensureProfile(
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
+  const tokenHash = searchParams.get('token_hash');
+  const typeParam = searchParams.get('type');
   const code = searchParams.get('code');
 
-  if (!code) {
+  const supabase = await createSupabaseServerClient();
+
+  // Primärer Pfad: Token-Hash-Verifikation (verifyOtp). Braucht KEINEN
+  // code_verifier-Cookie im anfordernden Browser — funktioniert damit
+  // browser- und geräte-übergreifend (anfordern am Laptop, öffnen am Handy).
+  // Der Fallback auf exchangeCodeForSession bleibt für Alt-Links (PKCE `?code=`)
+  // während der Umstellung des Supabase-Email-Templates erhalten.
+  let userId: string | null = null;
+  let userEmail: string | null = null;
+  let userMetadata: Record<string, unknown> = {};
+
+  if (tokenHash && typeParam && VALID_OTP_TYPES.has(typeParam as EmailOtpType)) {
+    const { data, error } = await supabase.auth.verifyOtp({
+      type: typeParam as EmailOtpType,
+      token_hash: tokenHash,
+    });
+    if (error || !data.user) {
+      return NextResponse.redirect(`${origin}/mit-glied?error=expired_link`);
+    }
+    userId = data.user.id;
+    userEmail = data.user.email ?? null;
+    userMetadata = data.user.user_metadata ?? {};
+  } else if (code) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error || !data.user) {
+      return NextResponse.redirect(`${origin}/mit-glied?error=expired_link`);
+    }
+    userId = data.user.id;
+    userEmail = data.user.email ?? null;
+    userMetadata = data.user.user_metadata ?? {};
+  } else {
     return NextResponse.redirect(`${origin}/mit-glied?error=invalid_link`);
   }
 
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-
-  if (error || !data.user) {
-    return NextResponse.redirect(`${origin}/mit-glied?error=expired_link`);
-  }
-
   const newsletterOptIn =
-    (data.user.user_metadata?.['newsletter_opt_in'] as boolean | undefined) ?? false;
+    (userMetadata['newsletter_opt_in'] as boolean | undefined) ?? false;
 
   let profile: EnsureProfileResult;
   try {
-    profile = await ensureProfile(data.user.id, newsletterOptIn);
+    profile = await ensureProfile(userId, newsletterOptIn);
   } catch (err) {
     console.error('[auth/verify] ensureProfile failed:', err);
     return NextResponse.redirect(`${origin}/mit-glied?error=profile_create`);
@@ -119,8 +155,8 @@ export async function GET(request: NextRequest) {
   // bestätigt, das deckt DSGVO-Pflicht zur Spezifität. Fehler bei Brevo
   // werden nur geloggt: kein Block des Login-Flows, weil Newsletter
   // sekundär ist und User hier bereits Mit-Glied geworden ist.
-  if (profile.isFresh && newsletterOptIn && data.user.email) {
-    const brevoResult = await addContactToList(data.user.email);
+  if (profile.isFresh && newsletterOptIn && userEmail) {
+    const brevoResult = await addContactToList(userEmail);
     if (!brevoResult.ok) {
       console.error('[auth/verify] brevo subscribe failed:', brevoResult.reason);
     }
