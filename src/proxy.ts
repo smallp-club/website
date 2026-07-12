@@ -38,6 +38,17 @@ function buildCsp(nonce: string): string {
 }
 
 export default async function proxy(request: NextRequest) {
+  // Interne Bühnen (Preview-Wireframes, Components-Library) sind in
+  // Production nicht erreichbar — sie leaken interne Design-/Planungsinfos.
+  // Der Guard läuft hier am Edge (zuverlässig bei jedem Request), weil das
+  // notFound() auf Layout-Ebene in Production nicht greift.
+  if (process.env.NODE_ENV === 'production') {
+    const p = request.nextUrl.pathname;
+    if (/^\/(?:de\/|en\/)?(?:preview|components-library)(?:\/|$)/.test(p)) {
+      return new NextResponse('Not Found', { status: 404 });
+    }
+  }
+
   const nonce = generateNonce();
   const csp = buildCsp(nonce);
 
