@@ -20,11 +20,32 @@
 
 import 'server-only';
 
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 
 const COOKIE_NAME = 'spc_admin_aal2_until';
 const TTL_HOURS = 2;
 const TTL_MS = TTL_HOURS * 60 * 60 * 1000;
+
+// HMAC-Signatur über den Ablauf-Timestamp (Security-Audit 2026-07-13):
+// Das Cookie war vorher ein reiner Klartext-Timestamp und damit fälschbar —
+// wer eine Admin-Session hatte, konnte den Wert in die Zukunft schieben und
+// den 2h-Idle-Re-Challenge dauerhaft überspringen. Jetzt wird der Wert
+// server-seitig signiert; ein manipulierter Wert fällt bei der Prüfung durch.
+function signExpiry(value: string): string {
+  const secret = process.env.HASH_PEPPER ?? '';
+  return createHmac('sha256', secret).update(`aal2:${value}`).digest('hex');
+}
+
+function verifyExpiry(value: string, sig: string): boolean {
+  const expected = signExpiry(value);
+  if (sig.length !== expected.length) return false;
+  try {
+    return timingSafeEqual(Buffer.from(sig), Buffer.from(expected));
+  } catch {
+    return false;
+  }
+}
 
 /**
  * Setzt Cookie auf NOW + 2h. Aufruf nur aus Server-Actions oder
@@ -32,8 +53,9 @@ const TTL_MS = TTL_HOURS * 60 * 60 * 1000;
  */
 export async function setAdminAal2Expiry(): Promise<void> {
   const expiresMs = Date.now() + TTL_MS;
+  const value = String(expiresMs);
   const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, String(expiresMs), {
+  cookieStore.set(COOKIE_NAME, `${value}.${signExpiry(value)}`, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
@@ -50,7 +72,13 @@ export async function getAdminAal2Expiry(): Promise<Date | null> {
   const cookieStore = await cookies();
   const raw = cookieStore.get(COOKIE_NAME)?.value;
   if (!raw) return null;
-  const ms = Number(raw);
+  // Format: "<ms>.<hmac>" — Signatur prüfen, sonst als fehlend behandeln.
+  const dot = raw.lastIndexOf('.');
+  if (dot <= 0) return null;
+  const value = raw.slice(0, dot);
+  const sig = raw.slice(dot + 1);
+  if (!verifyExpiry(value, sig)) return null;
+  const ms = Number(value);
   if (!Number.isFinite(ms) || ms <= 0) return null;
   return new Date(ms);
 }

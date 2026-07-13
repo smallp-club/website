@@ -225,6 +225,16 @@ export async function verifyTotpForReauth(rawCode: string): Promise<boolean> {
   const { createSupabaseServerClient } = await import('@/lib/supabase/server');
   const supabase = await createSupabaseServerClient();
 
+  // Brute-Force-Bremse auch hier (Security-Audit 2026-07-13): der Challenge-
+  // Page-Pfad ist gedrosselt, der Re-Auth-Pfad für Ban/Unban war es nicht.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return false;
+  const { consumeRateLimit } = await import('@/lib/rate-limit');
+  const limit = await consumeRateLimit('mfa_verify_per_user', user.id);
+  if (!limit.success) return false;
+
   const status = await getMfaStatus(supabase);
   if (!status.verifiedFactorId) return false;
 
