@@ -30,7 +30,6 @@ function getRedis(): Redis | null {
 export type RateLimitName =
   | 'magic_link_per_ip'
   | 'magic_link_per_email'
-  | 'account_create_per_ip'
   | 'report_per_ip'
   | 'story_submit_per_user'
   | 'pseudonym_roll_per_user'
@@ -43,9 +42,13 @@ interface LimitConfig {
 }
 
 const LIMITS: Record<RateLimitName, LimitConfig> = {
+  // Kontoerstellung ist über dieses Limit gedeckelt: ein Account entsteht nur
+  // über einen Magic-Link, und der ist auf 5/IP/24h begrenzt (seit dem
+  // Cloudflare-Echtheits-Stempel spoof-resistent, siehe client-ip.ts). Ein
+  // separates, strengeres „1 Account/IP/24h" wurde bewusst NICHT umgesetzt:
+  // es würde geteilte IPs (Haushalte, Büros, Mobilfunk-NAT) fälschlich sperren.
   magic_link_per_ip: { prefix: 'spc:ml:ip', limit: 5, window: '24 h' },
   magic_link_per_email: { prefix: 'spc:ml:em', limit: 3, window: '1 h' },
-  account_create_per_ip: { prefix: 'spc:ac:ip', limit: 1, window: '24 h' },
   // Report-Action gegen Inbox-Flooding (Security H4). 10 Reports pro
   // Browser-IP pro 24h — verhindert dass ein Angreifer reports_count
   // einer Story endlos hochfährt.
