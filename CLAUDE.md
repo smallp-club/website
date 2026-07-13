@@ -47,6 +47,44 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 8. **Library-Doktrin:** Reuse-First. Vor jedem Build → erst Library prüfen, ob schon vorhanden. Neue Library-Komponenten sind props-getrieben, mobile-first, a11y-baseline (kein Audit am Ende), token-getrieben, korrekt benannt + dokumentiert. Standard: @docs/tech/COMPONENT_LIBRARY_STANDARD.md
 
+## Stand (2026-07-13, Session 17 — Security-Audit end-to-end, Go-Live scharf, Member-Login zum ersten Mal live)
+
+**Marathon-Session quer durch Security, Deployment, Auth-Flow und zwei Prüfrunden. 9 Commits (bf03b3c → c8d980a), alle gepusht + live.**
+
+### Ausgangspunkt
+Kevin fragte nach Sicherheitslücken (externer Zugriff auf E-Mails o. ä.). 4 Security-Agents parallel → Kernbefund: die kritischen Lücken lagen nicht bei E-Mails (die liegen sicher in `auth.users`), sondern in RLS-Spalten-Exposition + Moderations-Bypass.
+
+### Was durch ist
+
+**Datenbank-Security (Migrationen 0008 + 0009, beide live in Prod-Supabase)**
+- **0008 `rls_column_grants.sql`** — schließt die 4 Hauptlöcher: `stories`-Insert nur noch Service-Role (Moderations-Bypass zu), Column-Grants auf `stories`/`profiles` (RLS filtert Zeilen, nicht Spalten! `flags`/`user_id` waren für anon lesbar), `story_reports` anon-Insert entfernt, `mfa_backup_codes`-Select-Policy weg, `search_path` auf SECURITY-DEFINER-Funktionen fixiert, atomarer `increment_report_count`.
+- **0009 `reconcile_migrations.sql`** — **Migrations-Diskrepanz gefunden**: der echte DB-Stand wich vom dokumentierten ab. `profiles.onboarding_completed_at` (0002) FEHLTE (brach den Login mit `profile_create`), und der `detect_brigading_wave`-revoke (0007) war nicht angewandt (anon konnte die RPC aufrufen = Shingle-Info-Leak). 0009 re-asserted die End-Zustände von 0002/0004/0005/0006/0007 idempotent. **Lehre: nie der Migrations-Doku vertrauen, echten DB-Stand behavioral prüfen** (Service-Key für Existenz, Anon-Key gegen PostgREST für die Sperren).
+
+**Code-Härtung (alle live)**
+- **Fail-closed statt fail-open**: `rate-limit.ts` + `turnstile.ts` lehnen bei fehlender Config in Prod ab statt durchzulassen. Plus `env-check.ts` + `instrumentation.ts` (Boot-Warnung bei fehlenden Vars).
+- **`server-only`-Guards** auf `service.ts`, `mfa.ts`, `admin-session.ts` (Paket installiert).
+- **`/preview` + `/components-library` in Prod 404** via Edge-Guard in `proxy.ts` (das `notFound()` auf Layout-Ebene greift in Prod NICHT — Middleware ist zuverlässig).
+- **Magic-Link geräte-/browser-unabhängig** via `verifyOtp(token_hash)` statt PKCE-`exchangeCodeForSession` (PKCE band den Link an den anfordernden Browser). Supabase-Templates (Magic Link + Confirm signup) nutzen jetzt `{{ .RedirectTo }}?token_hash={{ .TokenHash }}&type=...`; Site URL = `https://smallp.club`, beide Redirect-URLs (localhost + smallp.club) in der Allowlist. Läuft lokal UND live.
+- **2. Audit-Runde (adversarischer Agent + Live-Probes)** — alle 4 Rest-Funde behoben: (1) **IP-Spoofing über rohe Vercel-URL** → Cloudflare-Echtheits-Stempel `x-origin-verify` (Transform Rule ↔ Vercel `CF_VERIFY_SECRET`, `client-ip.ts` vertraut `cf-connecting-ip` nur mit Stempel); (2) totes `account_create_per_ip`-Limit entfernt (Kontoerstellung ist über `magic_link_per_ip` 5/IP/24h gedeckelt); (3) Admin-Idle-Cookie HMAC-signiert; (4) Re-Auth-TOTP rate-limitet.
+
+**Go-Live-Infrastruktur (Kevin ist LIVE auf smallp.club)**
+- **Vercel-Konto geklärt**: Live-Seite läuft unter dem **Firmen-Konto** `hello@smallp.club` (Team `smallpclub-s-projects`, Projekt `smallp.club`), NICHT unter dem privaten `bacon-6474`/`kethes-projects`. GitHub-Auto-Deploy von `main` ist HIER aktiv. Zwei verwaiste private Projekte gelöscht.
+- **Alle Env-Vars ins richtige (Firmen-)Projekt** übertragen — vorher fehlten dort ALLE Schlüssel (Supabase, Turnstile, Upstash, HASH_PEPPER, SITE_URL) → Member-Bereich hatte in Prod noch nie funktioniert. Jetzt: **Member-Login zum ersten Mal live erfolgreich getestet** (Kevin ist das erste echte Mit-Glied).
+- **Neue Env-Vars**: `HASH_PEPPER` (HMAC-Pepper für Blocklist-/Backup-Hashes + Admin-Cookie), `CF_VERIFY_SECRET` (Cloudflare-Stempel). Beide in Vercel-Prod.
+
+### Verifikations-Ergebnis (2 Runden)
+Kritisch/Hoch: alles zu. Live-Probes: TLS 1.3 + HTTPS-Zwang, alle Security-Header, interne Seiten 404, keine Secret-Exposition, Member/Admin ohne Login → Redirect ohne Datenleck. Kein Secret im Git/Bundle.
+
+### Doktrin/Erkenntnisse
+- **Kein Security-Zertifikat vorzeigen** — SOC2/ISO überdimensioniert, „DSGVO-zertifiziert"-Badge ist abmahnfähig, SSL-Siegel ist 2026 Anti-Signal. Und das eigene Konzept verbietet „Trust-Logo-Strip". Trust-Signal ist die ehrliche Datenschutz-Seite („wir messen euch nicht"), nicht ein Badge.
+- **CF-Stempel-Header darf nicht mit `x-cf-` beginnen** (Cloudflare-reserviert) → `x-origin-verify`.
+
+### Offen (nicht blockierend)
+- **TOTP-2FA Setup-Flow** für Admin final testen (Code existiert, aber nie end-to-end durchlaufen)
+- **Brevo Sending-Domain DKIM** + erster echter Newsletter (Tracking vorher deaktivieren)
+- Env-Vars auch für Preview/Development-Environment (aktuell nur Production)
+- Bootstrap-Seed-Stories für `/stimmen`
+
 ## Stand (2026-06-24, Session 16 — Phase 5b voll durchgezogen, Admin-UI Block 1 live)
 
 **Dichteste Session bisher. ~10 Commits + viele uncommittete Admin-UI-Files. Zwei Agents arbeiteten parallel im selben Repo — Commits regelmäßig prüfen.**
