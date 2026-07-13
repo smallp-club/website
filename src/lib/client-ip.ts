@@ -24,7 +24,7 @@ export async function getClientIp(): Promise<string | null> {
   const cf = hdrs.get('cf-connecting-ip');
   if (cf) {
     // cf-connecting-ip nur vertrauen, wenn der Request wirklich über Cloudflare
-    // kam. Cloudflare injiziert per Transform-Rule den Header `x-cf-verify` mit
+    // kam. Cloudflare injiziert per Transform-Rule den Header `x-origin-verify` mit
     // einem Secret (CF_VERIFY_SECRET), das nur Cloudflare kennt. Bei Direkt-
     // zugriff auf die rohe Vercel-URL fehlt der Stempel → cf-connecting-ip wird
     // NICHT vertraut (sonst könnte ein Angreifer die IP fälschen und alle
@@ -35,7 +35,7 @@ export async function getClientIp(): Promise<string | null> {
     // Einführung. Scharf wird es erst, wenn das Secret gesetzt UND die
     // Cloudflare-Regel aktiv ist.
     const secret = process.env.CF_VERIFY_SECRET;
-    const stamped = !secret || hdrs.get('x-cf-verify') === secret;
+    const stamped = !secret || hdrs.get('x-origin-verify') === secret;
     if (stamped) return cf.trim();
   }
 
