@@ -77,10 +77,7 @@ const RULER_TICKS = Array.from({ length: 21 }, (_, i) => {
   const avg = cm === 13;
   return {
     cm,
-    // cm 0 = der Anker VORNE (nahe Kamera), die Marken staffeln sich von dort
-    // gleichmäßig in die Tiefe zurück (cm 20 am weitesten hinten). Stabiles
-    // Instrument, kein Durchflug — es „wächst" per Opacity in die Tiefe raus.
-    z: 60 - cm * 140,
+    z: -150 - i * 150,
     inBand,
     avg,
     label: cm % 5 === 0 || avg ? String(cm) : null,
@@ -88,7 +85,7 @@ const RULER_TICKS = Array.from({ length: 21 }, (_, i) => {
     noteKey: avg ? ('average' as const) : cm === 16 ? ('band' as const) : null,
   };
 });
-// Wie tief das Band bei vollem Scroll „rausgewachsen" ist (in cm-Reveal).
+const RULER_FLIGHT = 4900;
 
 /**
  * Geklammerte, stückweise lineare Interpolation. WICHTIG als Funktion (nicht
@@ -121,23 +118,22 @@ function RulerTick({
   progress: MotionValue<number>;
 }) {
   const t = useTranslations('landing');
-  // 3D-Maßband als STABILES Instrument: jede cm-Marke steht in eigener Tiefe
-  // (tick.z, Perspektive = echte 3D), der ganze Strahl driftet nur sanft nach
-  // vorn. Der Anker (cm 0) bleibt vorne, das Band WÄCHST per Reveal in die
-  // Tiefe raus (tiefere Marken tauchen beim Weiterscrollen auf).
-  const z = useTransform(progress, (p) => tick.z + lerp(p, [0.1, 0.55], [-260, 0]));
+  // 3D-Maßband: jede cm-Marke sitzt in eigener Tiefe (tick.z) und fliegt von
+  // hinten nach vorne auf die Kamera zu (z = tick.z + p*RULER_FLIGHT). Der
+  // Hero-Strich ist der Anfang, aus dem das Band heranfliegt.
+  const z = useTransform(progress, (p) => tick.z + p * RULER_FLIGHT);
   const opacity = useTransform(progress, (p) => {
-    // erreichte cm-Tiefe des Bandes (wächst mit dem Scroll)
-    const grown = lerp(p, [0.1, 0.5], [0.4, 21.5]);
-    let vis = (grown - tick.cm + 1.6) / 2.2;
-    vis = vis < 0 ? 0 : vis > 1 ? 1 : vis;
+    const e = tick.z + p * RULER_FLIGHT;
     const peak = tick.avg ? 1 : tick.inBand ? 0.85 : 0.4;
-    // Hero-Gate: kein Maßband-Fleck auf dem off-white Hero (der Strich trägt
-    // dort, das helle Band erst wenn die Tiefe dunkel wird).
-    const gate = p < 0.1 ? 0 : p < 0.15 ? (p - 0.1) / 0.05 : 1;
-    // Footer-Anflug: aus.
-    const out = p > 0.82 ? Math.max(0, 1 - (p - 0.82) / 0.04) : 1;
-    return peak * vis * gate * out;
+    let o: number;
+    if (e < -2700) o = 0;
+    else if (e < -1900) o = (peak * (e + 2700)) / 800;
+    else if (e < 140) o = peak;
+    else if (e < 460) o = peak * (1 - (e - 140) / 320);
+    else o = 0;
+    // Hero-Gate: kein Maßband-Fleck auf dem off-white Hero.
+    const gate = p < 0.1 ? 0 : p > 0.17 ? 1 : (p - 0.1) / 0.07;
+    return o * gate;
   });
   const cls = tick.avg
     ? styles.tickAvg
