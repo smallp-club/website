@@ -176,18 +176,20 @@ function StationLayer({
 }) {
   const { focus, kind } = station;
 
-  // Halte-Plateau: die Station kommt an (z→0), BLEIBT kurz stehen (z=0 über ein
-  // Fenster), erst dann fliegt sie weiter. Gleiches Plateau für die Opacity.
+  // Choreografie: die Station kommt von hinten (z stark negativ), und WÄHREND
+  // sie sichtbar ist, driftet sie noch LANGSAM weiter nach vorn (z −30 → +45),
+  // statt flach still zu stehen. Erst danach fliegt sie weg (→ +170) und die
+  // nächste kommt. Genau das „langsam etwas weiter nach vorne, dann weg".
   const zRange = isFirst
     ? ([0, focus + 0.06, focus + 0.11] as const)
     : isLast
       ? ([focus - 0.12, focus] as const)
-      : ([focus - 0.1, focus - 0.03, focus + 0.03, focus + 0.08] as const);
+      : ([focus - 0.09, focus - 0.02, focus + 0.04, focus + 0.075] as const);
   const zOut = isFirst
     ? ([0, 0, 90] as const)
     : isLast
       ? ([-1300, 0] as const)
-      : ([-1300, 0, 0, 90] as const);
+      : ([-1300, -30, 45, 170] as const);
 
   const oRange = isFirst
     ? ([0, focus + 0.06, focus + 0.11] as const)
@@ -195,10 +197,9 @@ function StationLayer({
       ? // spät + knapp einblenden, damit die move-Station nicht in die noch
         // stehende Stats-Zahl hineinragt.
         ([focus - 0.03, focus] as const)
-      : // Straffes Sicht-Fenster: spät einblenden, FRÜH + knapp ausblenden, damit
-        // beim Weiterscrollen der alte Inhalt nicht in den neuen hineinsteht.
-        // (Der z-Flug läuft weiter, aber unsichtbar — nur die Opacity ist eng.)
-        ([focus - 0.07, focus - 0.02, focus + 0.01, focus + 0.045] as const);
+      : // Sicht-Fenster deckt den langsamen Vorwärts-Drift ab (voll sichtbar,
+        // während die Station nach vorn kommt), dann sauberes Ausblenden.
+        ([focus - 0.07, focus - 0.02, focus + 0.03, focus + 0.06] as const);
   const oOut = isFirst
     ? ([1, 1, 0] as const)
     : isLast
