@@ -365,7 +365,13 @@ function StatParticles({
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    // dpr auf Mobile auf 1.5 deckeln: die Canvas-Backing-Store-Fläche (und damit
+    // die drawImage-Kosten pro Frame) skaliert quadratisch mit dpr → auf Retina-
+    // Handys sonst der teuerste Einzelposten.
+    const dpr = Math.min(
+      window.devicePixelRatio || 1,
+      window.innerWidth < 720 ? 1.5 : 2
+    );
     let raf = 0;
     let alive = true;
     let running = false;
@@ -429,7 +435,9 @@ function StatParticles({
       const data = octx.getImageData(0, 0, W, H).data;
       // Größere Rasterweite: die Marken-Zeichen sind größer als Punkte, sollen
       // sich aber nicht überlappen.
-      const gap = W < 720 ? 10 : 9;
+      // Mobil gröberes Raster → deutlich weniger Sprites (jeder Sprite = ein
+      // drawImage pro Frame). Auf schmalem Schirm optisch nicht unterscheidbar.
+      const gap = W < 720 ? 13 : 9;
       const out: { x: number; y: number }[] = [];
       for (let y = 0; y < H; y += gap) {
         for (let x = 0; x < W; x += gap) {
@@ -473,7 +481,10 @@ function StatParticles({
       const dist = Math.abs(p - STAT_FOCUS);
       // Weit weg vom Stats-Moment: Loop STOPPEN (kein endloses rAF im
       // Leerlauf → kein Thermal-Throttling). Wird via progress.on neu geweckt.
-      if (dist > 0.32) {
+      // Eng um das sichtbare Stats-Fenster (Formation faded bei dist 0.25 aus):
+      // die rAF-Schleife läuft dadurch nur noch im Zahlen-Moment, nicht über
+      // den halben Scroll.
+      if (dist > 0.26) {
         ctx.clearRect(0, 0, W, H);
         running = false;
         return;
@@ -520,10 +531,13 @@ function StatParticles({
           }
           let gx = pt.sx + (tx - pt.sx) * ease;
           let gy = pt.sy + (ty - pt.sy) * ease;
+          // Cursor-Repel nur wenn es einen echten Cursor gibt (mx>0). Auf Touch
+          // bleibt mouse.current.x bei -9999 → der ganze Block ist reine
+          // Verschwendung pro Partikel pro Frame und wird übersprungen.
           const dx = gx - mx;
           const dy = gy - my;
           const d2 = dx * dx + dy * dy;
-          if (d2 < 13000) {
+          if (mx > 0 && d2 < 13000) {
             const f = (13000 - d2) / 13000;
             const d = Math.sqrt(d2) || 1;
             gx += (dx / d) * f * 42;
@@ -586,7 +600,7 @@ function StatParticles({
 
     // Loop nur anwerfen, wenn wir uns dem Stats-Moment nähern.
     const unsub = progress.on('change', (v) => {
-      if (Math.abs(v - STAT_FOCUS) < 0.32) ensureRunning();
+      if (Math.abs(v - STAT_FOCUS) < 0.26) ensureRunning();
     });
 
     return () => {
@@ -629,14 +643,30 @@ export function HeroTiefe() {
     offset: ['start start', 'end end'],
   });
 
+  // Mobile bekommt eine REDUZIERTE Bühne (State of the Art: nicht 1:1 portieren)
+  // — weniger gleichzeitige 3D-Layer entlastet das GPU-Layer-Budget auf iOS.
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 719px)');
+    const on = () => setIsMobile(mq.matches);
+    on();
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
+  }, []);
+
   // CTA nur fokussierbar, wenn die move-Station sichtbar ist (a11y H2).
   const [moveActive, setMoveActive] = useState(false);
+  // Guard, damit das DOM-Attribut nur beim tatsächlichen Schwellen-Übergang
+  // geschrieben wird, nicht in jedem Scroll-Frame-Callback.
+  const footerRisingRef = useRef(false);
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     setMoveActive(v > 0.8);
     // Nav früh wegfaden, sobald der Footer am Ende hochzukommen beginnt
     // (CSS in SiteNav.module.css reagiert auf html[data-footer-rising]).
-    if (!reduce) {
-      document.documentElement.toggleAttribute('data-footer-rising', v > 0.86);
+    const rising = v > 0.86;
+    if (!reduce && rising !== footerRisingRef.current) {
+      footerRisingRef.current = rising;
+      document.documentElement.toggleAttribute('data-footer-rising', rising);
     }
   });
   // Attribut beim Verlassen der Landing sicher entfernen (sonst bliebe die
@@ -687,8 +717,14 @@ export function HeroTiefe() {
     const clamp = (v: number, min: number, max: number) =>
       v < min ? min : v > max ? max : v;
     let base: { beta: number; gamma: number } | null = null;
+    // Auf ~30Hz drosseln: der Sensor feuert bis 60Hz, aber 30 reichen für die
+    // sanfte Kamera-Neigung und halbieren die Main-Thread-Last des Effekts.
+    let lastT = 0;
     const onOrient = (e: DeviceOrientationEvent) => {
       if (e.beta == null || e.gamma == null) return;
+      const now = performance.now();
+      if (now - lastT < 33) return;
+      lastT = now;
       if (!base) base = { beta: e.beta, gamma: e.gamma };
       // gamma = links/rechts-Neigung → ry; beta = vor/zurück → rx.
       ry.set(clamp((e.gamma - base.gamma) / 2.5, -10, 10));
@@ -718,6 +754,14 @@ export function HeroTiefe() {
 
   // Partikel-Parallax: langsamer Tiefen-Drift über den ganzen Scroll.
   const partDrift = useTransform(scrollYProgress, (p) => p * 900);
+
+  // Mobil weniger gleichzeitige 3D-Layer: nur beschriftete/markierte Maßband-
+  // Ticks (7 statt 21) und die vordersten Partikel (4 statt 10). Jeder Tick /
+  // Partikel ist ein eigener composited Layer + ein useTransform pro Frame.
+  const ticks = isMobile
+    ? RULER_TICKS.filter((tk) => tk.label || tk.avg || tk.noteKey)
+    : RULER_TICKS;
+  const particles = isMobile ? PARTICLES.slice(0, 4) : PARTICLES;
 
   if (reduce) {
     // Flacher, voll lesbarer Stack ohne Flug. Enthält den Stats-Moment als
@@ -779,12 +823,12 @@ export function HeroTiefe() {
             initial={false}
             style={{ rotateX: rx, rotateY: ry }}
           >
-            {PARTICLES.map((p, i) => (
+            {particles.map((p, i) => (
               <Particle key={i} p={p} drift={partDrift} />
             ))}
 
-            {RULER_TICKS.map((t, i) => (
-              <RulerTick key={i} tick={t} progress={scrollYProgress} />
+            {ticks.map((tk, i) => (
+              <RulerTick key={i} tick={tk} progress={scrollYProgress} />
             ))}
 
             {STATIONS.map((s, i) => (

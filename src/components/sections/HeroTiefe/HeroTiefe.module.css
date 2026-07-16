@@ -61,7 +61,10 @@
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Kurze Transition: glättet Maus-look UND Gyro, ohne dass der gedrosselte
+     Gyro (30Hz) rubber-bandy nachzieht. Länger (0.3s) ließ die Neigung auf dem
+     Handy sichtbar hinterherhängen. */
+  transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ---- Stationen ---- */
