@@ -426,27 +426,54 @@ function StatParticles({
         s.lineTo(x2, y2);
         s.stroke();
       };
-      const variants: Draw[] = [
-        (s) => body(s, 10, 38), // stehend
-        (s) => {
-          body(s, 12, 36);
-          arm(s, 16, 28, 9, 13);
-          arm(s, 32, 28, 39, 13);
+      // Jede Variante: Kopfgröße/-höhe (hr/hy) + Körper-Silhouette. Die Bauart
+      // variiert sanft (schmal … mittel … kräftig … stämmig) UND die Haltung —
+      // das liest unterschwellig als „viele verschiedene Menschen", nie als
+      // ausgestellte Körper-Parade. Kein Körper steht im Fokus, die Vielfalt
+      // DIENT der Zahl.
+      const variants: { hr: number; hy: number; draw: Draw }[] = [
+        { hr: 8, hy: 12, draw: (s) => body(s, 10, 38) }, // stehend, mittel
+        {
+          hr: 8,
+          hy: 12,
+          draw: (s) => {
+            body(s, 12, 36);
+            arm(s, 16, 28, 9, 13);
+            arm(s, 32, 28, 39, 13);
+          },
         }, // arme hoch (offen)
-        (s) => body(s, 7, 41), // breit / kräftig
-        (s) => {
-          body(s, 12, 36);
-          arm(s, 33, 30, 44, 23);
+        { hr: 8.6, hy: 13, draw: (s) => body(s, 7, 41) }, // kräftig / rund
+        {
+          hr: 8,
+          hy: 12,
+          draw: (s) => {
+            body(s, 12, 36);
+            arm(s, 33, 30, 44, 23);
+          },
         }, // ein arm zur seite (winkt)
-        (s) => {
-          body(s, 13, 35);
-          arm(s, 15, 31, 12, 41);
-          arm(s, 33, 31, 36, 41);
+        {
+          hr: 8,
+          hy: 12,
+          draw: (s) => {
+            body(s, 13, 35);
+            arm(s, 15, 31, 12, 41);
+            arm(s, 33, 31, 36, 41);
+          },
         }, // hände an der hüfte
-        (s) => body(s, 14, 34), // schmal
+        { hr: 7.4, hy: 11, draw: (s) => body(s, 15, 33) }, // schlank
+        { hr: 8.9, hy: 13, draw: (s) => body(s, 8, 40) }, // stämmig
+        { hr: 7.2, hy: 11, draw: (s) => body(s, 16, 32) }, // sehr schmal
+        {
+          hr: 8,
+          hy: 12,
+          draw: (s) => {
+            body(s, 11, 37);
+            arm(s, 34, 30, 41, 26);
+          },
+        }, // entspannt, arm leicht raus
       ];
       const out: HTMLCanvasElement[] = [];
-      for (const draw of variants) {
+      for (const v of variants) {
         const sc = document.createElement('canvas');
         sc.width = S;
         sc.height = S;
@@ -457,11 +484,11 @@ function StatParticles({
         s.lineWidth = 4.5;
         s.lineCap = 'round';
         s.lineJoin = 'round';
-        // Kopf (alle Varianten gleich)
+        // Kopf pro Variante (Größe/Höhe variiert → Statur-Gefühl)
         s.beginPath();
-        s.arc(24, 12, 8, 0, Math.PI * 2);
+        s.arc(24, v.hy, v.hr, 0, Math.PI * 2);
         s.fill();
-        draw(s);
+        v.draw(s);
         out.push(sc);
       }
       return out;
@@ -524,7 +551,7 @@ function StatParticles({
           kept,
           seed: Math.random(),
           variant: sprites.length ? (Math.random() * sprites.length) | 0 : 0,
-          scale: 0.85 + Math.random() * 0.32,
+          scale: 0.82 + Math.random() * 0.42,
           shade: 0.7 + Math.random() * 0.3,
         };
       });
