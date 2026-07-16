@@ -85,8 +85,7 @@ const RULER_TICKS = Array.from({ length: 21 }, (_, i) => {
     noteKey: avg ? ('average' as const) : cm === 16 ? ('band' as const) : null,
   };
 });
-// px pro cm — GLEICHER Abstand zwischen allen cm-Marken (nachvollziehbar).
-const RULER_GAP = 26;
+const RULER_FLIGHT = 4900;
 
 /**
  * Geklammerte, stückweise lineare Interpolation. WICHTIG als Funktion (nicht
@@ -119,22 +118,24 @@ function RulerTick({
   progress: MotionValue<number>;
 }) {
   const t = useTranslations('landing');
-  // GLEICHE Abstände (nachvollziehbar: 10, 11, 12, 13 … in exakt gleichem
-  // Y-Abstand), Tiefe über SCHRUMPFEN + Verblassen: jede Marke weiter „hinten"
-  // (höheres cm) wird kleiner und blasser. Der ganze Strahl driftet sanft vor.
-  const baseY = -tick.cm * RULER_GAP;
-  const scale = Math.max(0.34, 1 - tick.cm * 0.032);
-  const y = useTransform(progress, (p) => baseY + lerp(p, [0.1, 0.6], [90, -10]));
+  // 3D-Maßband: jede cm-Marke sitzt in eigener Tiefe (tick.z) und fliegt von
+  // hinten nach vorne (z = tick.z + p*RULER_FLIGHT). Bleibt in der unteren Zone
+  // (windowed), schneidet nicht durch den Inhalt.
+  const z = useTransform(progress, (p) => tick.z + p * RULER_FLIGHT);
   const opacity = useTransform(progress, (p) => {
-    const depthFade = Math.max(0.34, 1 - tick.cm * 0.028);
-    const peak = tick.avg ? 1 : tick.inBand ? 0.9 : 0.55;
+    const e = tick.z + p * RULER_FLIGHT;
+    const peak = tick.avg ? 1 : tick.inBand ? 0.85 : 0.4;
+    let o: number;
+    if (e < -2700) o = 0;
+    else if (e < -1900) o = (peak * (e + 2700)) / 800;
+    else if (e < 140) o = peak;
+    else if (e < 460) o = peak * (1 - (e - 140) / 320);
+    else o = 0;
     // Hero-Gate: kein Maßband-Fleck auf dem off-white Hero.
-    const gate = p < 0.1 ? 0 : p < 0.16 ? (p - 0.1) / 0.06 : 1;
-    // VOR dem Stats-Moment ausblenden: das Maßband (mittig) darf nicht durch die
-    // ebenfalls mittige 91/2-Männchen-Formation schneiden. Es begleitet die
-    // Mythos/Fakt-Ebene und verlässt die Bühne, bevor die Zahl kommt.
+    const gate = p < 0.1 ? 0 : p > 0.17 ? 1 : (p - 0.1) / 0.07;
+    // Vor dem Stats-Moment ganz aus (nicht durch die 91/2-Formation).
     const out = p > 0.47 ? Math.max(0, 1 - (p - 0.47) / 0.05) : 1;
-    return peak * depthFade * gate * out;
+    return o * gate * out;
   });
   const cls = tick.avg
     ? styles.tickAvg
@@ -146,7 +147,7 @@ function RulerTick({
       className={`${styles.tick} ${cls}`}
       initial={false}
       aria-hidden
-      style={{ y, scale, opacity }}
+      style={{ x: '-50%', z, opacity }}
     >
       <span className={styles.tickMark} />
       {tick.label && <span className={styles.tickLabel}>{tick.label}</span>}
@@ -891,10 +892,10 @@ export function HeroTiefe() {
     };
   }, [reduce, rx, ry]);
 
-  // Alle 21 cm-Marken (auch mobil): gleiche Abstände brauchen alle Marken,
-  // damit die Skala ablesbar bleibt. Kein 3D-Layer-Flug mehr (nur y/scale/
-  // opacity), daher mobil vertretbar.
-  const ticks = RULER_TICKS;
+  // Mobil weniger gleichzeitige 3D-Layer: nur beschriftete/markierte Ticks.
+  const ticks = isMobile
+    ? RULER_TICKS.filter((tk) => tk.label || tk.avg || tk.noteKey)
+    : RULER_TICKS;
 
   if (reduce) {
     // Flacher, voll lesbarer Stack ohne Flug. Enthält den Stats-Moment als
