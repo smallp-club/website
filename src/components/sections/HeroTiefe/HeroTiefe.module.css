@@ -340,18 +340,31 @@
 }
 
 /* ---- Tiefen-Partikel ---- */
-.particle {
+/* ---- Mess-Feld: feine Striche, verstreut in der Tiefe ---- */
+.measureMark {
   position: absolute;
   left: 50%;
   top: 50%;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transform-style: preserve-3d;
   pointer-events: none;
 }
-.ci {
-  border-radius: 50%;
+.measureTick {
+  display: block;
+  width: 2px;
+  height: var(--len, 20px);
+  background: rgba(247, 246, 242, 0.17);
+  border-radius: 1px;
 }
-.ob {
-  border-radius: 999px;
+.measureNum {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: rgba(169, 240, 210, 0.24);
 }
 
 /* ---- Maßband-Ticks ---- */
@@ -575,7 +588,11 @@
 /* ---- mobile ---- */
 @media (max-width: 719px) {
   .sticky {
-    perspective: 640px;
+    /* Flachere Perspektive auf Mobile → die nach vorn fliegenden Inhalte
+       skalieren beim Heranrasen weniger extrem. Weniger riesige gerasterte
+       Ebenen, die iOS pro Frame neu zusammensetzt = weniger Ruckeln beim
+       Tiefer-Eintauchen. Desktop bleibt bei 1000px (voller Tiefen-Effekt). */
+    perspective: 900px;
   }
   .heroBig {
     font-size: clamp(3rem, 18vw, 7rem);
