@@ -46,18 +46,24 @@ type Station = {
 
 const STATIONS: Station[] = [
   { focus: 0.05, kind: 'hero' },
-  { focus: 0.19, kind: 'line' },
-  { focus: 0.32, kind: 'image' }, // menschlicher moment nach der wiedererkennung
-  { focus: 0.45, kind: 'myth' },
-  { focus: 0.58, kind: 'fact' },
-  // move wird bis zum Ende gehalten, damit die Animation FERTIG ist bevor der
-  // Footer hochsteigt.
-  { focus: 0.92, kind: 'move' },
+  { focus: 0.15, kind: 'line' },
+  { focus: 0.25, kind: 'image' }, // menschlicher moment nach der wiedererkennung
+  { focus: 0.35, kind: 'myth' },
+  { focus: 0.45, kind: 'fact' },
+  // move steht als letzte Station und BLEIBT (isLast → fliegt nicht weg),
+  // fertig geformt bevor der Footer ab ~0.91 darüber gleitet. Blendet erst
+  // NACH der Stats-Formation ein (kein Überlappen mit der Zahl).
+  { focus: 0.86, kind: 'move' },
 ];
 
 // Der Stats-Moment ist KEIN fliegender Text, sondern eine Partikel-Formation
 // (Canvas): „91 %" (so viele glauben es) zerfällt zu „2 %" (so wenige sind es).
-const STAT_FOCUS = 0.72;
+const STAT_FOCUS = 0.62;
+// Morph 91 % → 2 %: beginnt spät (die „91 %" mit den Männchen steht lange),
+// läuft dann bewusst gedehnt ab. Beide Werte steuern BEIDE Morph-Rechnungen
+// (MotionValue für die Text-Zeilen + die Canvas-Schleife) — immer synchron.
+const MORPH_START = 0.63;
+const MORPH_LEN = 0.08;
 
 /* Deterministische Tiefen-Partikel (kein Math.random → kein Hydration-Mismatch). */
 const PARTICLES = [
@@ -226,7 +232,9 @@ function StationLayer({
   const oRange = isFirst
     ? ([0, focus + 0.06, focus + 0.11] as const)
     : isLast
-      ? ([focus - 0.09, focus - 0.02] as const)
+      ? // spät + knapp einblenden, damit die move-Station nicht in die noch
+        // stehende Stats-Zahl hineinragt.
+        ([focus - 0.03, focus] as const)
       : ([focus - 0.1, focus - 0.03, focus + 0.03, focus + 0.08] as const);
   const oOut = isFirst
     ? ([1, 1, 0] as const)
@@ -340,11 +348,11 @@ function StatParticles({
   const num2 = t('stat.number2');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapOpacity = useTransform(progress, (p) =>
-    lerp(p, [0.65, 0.7, 0.8, 0.86], [0, 1, 1, 0])
+    lerp(p, [0.48, 0.53, 0.79, 0.83], [0, 1, 1, 0])
   );
   // Morph 0 → 1: „91 %" (glauben) zerfällt zu „2 %" (sind es wirklich).
   const morph = useTransform(progress, (p) =>
-    Math.max(0, Math.min(1, (p - (STAT_FOCUS + 0.01)) / 0.06))
+    Math.max(0, Math.min(1, (p - MORPH_START) / MORPH_LEN))
   );
   // Sequenzieller Wechsel (nicht gleichzeitig) → kein überlagernder Text-Matsch.
   const op91 = useTransform(morph, (m) => Math.max(0, Math.min(1, 1 - m / 0.42)));
@@ -465,19 +473,20 @@ function StatParticles({
       const dist = Math.abs(p - STAT_FOCUS);
       // Weit weg vom Stats-Moment: Loop STOPPEN (kein endloses rAF im
       // Leerlauf → kein Thermal-Throttling). Wird via progress.on neu geweckt.
-      if (dist > 0.25) {
+      if (dist > 0.32) {
         ctx.clearRect(0, 0, W, H);
         running = false;
         return;
       }
-      // Plateau: die 91% bleibt in einem Fenster um den Fokus voll geformt.
-      const a = dist < 0.09 ? 1 : dist > 0.16 ? 0 : 1 - (dist - 0.09) / 0.07;
+      // Plateau: die Formation (91 % / 2 %) bleibt in einem BREITEN Fenster um
+      // den Fokus voll geformt — die Männchen stehen lange, bevor sie faden.
+      const a = dist < 0.19 ? 1 : dist > 0.25 ? 0 : 1 - (dist - 0.19) / 0.06;
       ctx.clearRect(0, 0, W, H);
       if (a > 0.002 && parts.length) {
         const mx = mouse.current.x;
         const my = mouse.current.y;
         const ease = a * a * (3 - 2 * a);
-        const m = Math.max(0, Math.min(1, (p - (STAT_FOCUS + 0.01)) / 0.06));
+        const m = Math.max(0, Math.min(1, (p - MORPH_START) / MORPH_LEN));
         const psz = W < 720 ? 12 : 10;
         const cx = W / 2;
         const cy = H * 0.42;
@@ -577,7 +586,7 @@ function StatParticles({
 
     // Loop nur anwerfen, wenn wir uns dem Stats-Moment nähern.
     const unsub = progress.on('change', (v) => {
-      if (Math.abs(v - STAT_FOCUS) < 0.25) ensureRunning();
+      if (Math.abs(v - STAT_FOCUS) < 0.32) ensureRunning();
     });
 
     return () => {
@@ -630,8 +639,10 @@ export function HeroTiefe() {
   // Teal ist voll gesetzt, BEVOR die erste helle Station-Zeile (line, 0.19)
   // aufblendet → kein transienter Kontrast-Verlust (a11y H4).
   const tealOp = useTransform(scrollYProgress, (p) => lerp(p, [0.09, 0.15], [0, 1]));
-  const blackOp = useTransform(scrollYProgress, (p) => lerp(p, [0.6, 0.68], [0, 1]));
-  const deepOp = useTransform(scrollYProgress, (p) => lerp(p, [0.8, 0.88], [0, 1]));
+  // Schwarz liegt VOR dem Stats-Fokus (0.62) voll → die Partikel-Formation
+  // steht auf schwarzem Grund (Stats-Doktrin), nicht auf halbem Teal.
+  const blackOp = useTransform(scrollYProgress, (p) => lerp(p, [0.52, 0.59], [0, 1]));
+  const deepOp = useTransform(scrollYProgress, (p) => lerp(p, [0.8, 0.86], [0, 1]));
 
   // Mouse-look: Kamera kippt leicht mit dem Cursor. Rohe MotionValues +
   // CSS-transition auf der world (kein framer-Spring → keine WAAPI-Keyframes).

@@ -11,15 +11,19 @@
      oben kein Off-White-Balken (der alte z-index:-1-Hack hatte den Body
      durchscheinen lassen). */
   z-index: 0;
-  height: 860vh; /* mehr Scroll-Strecke → jede Station hält spürbar inne */
+  height: 1200vh; /* mehr Scroll-Strecke → jede Station (v.a. die Zahlen)
+                     hält spürbar länger inne, und die Zahl-Formation trennt
+                     sich sauber von der nachfolgenden move-Station */
   background: #0a0a0a;
   /* Hero bündig unter die schwebende Nav-Pille ziehen → Hero-Inhalt sitzt
      zentriert. Verzeiht kleine Abweichungen: der Hero ist off-white und
      blendet nahtlos mit dem Body, ein Rest-Spalt wäre unsichtbar. */
   margin-top: -56px;
-  /* Überlappung: der Footer deckt am Ende den fertig stehenden letzten Frame
-     ab. Nahtlos, weil die letzte Farb-Ebene ebenfalls Deep-Turquoise ist. */
-  margin-bottom: -55vh;
+  /* Überlappung ≥ ein Viewport: der Footer deckt den letzten Frame VOLL ab,
+     SOLANGE die Sticky noch gepinnt ist (sie löst sich erst am Scroll-Ende).
+     Kleiner als 100vh → der Frame löst sich, bevor der Footer fertig deckt,
+     und wird sichtbar hochgeschoben. -105vh gibt Sicherheitsreserve. */
+  margin-bottom: -105vh;
 }
 
 .sticky {
