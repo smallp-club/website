@@ -435,9 +435,11 @@ function StatParticles({
       const data = octx.getImageData(0, 0, W, H).data;
       // Größere Rasterweite: die Marken-Zeichen sind größer als Punkte, sollen
       // sich aber nicht überlappen.
-      // Mobil gröberes Raster → deutlich weniger Sprites (jeder Sprite = ein
-      // drawImage pro Frame). Auf schmalem Schirm optisch nicht unterscheidbar.
-      const gap = W < 720 ? 13 : 9;
+      // Raster-Dichte der Männchen. Mobil gleich fein wie zuvor (10) — ein
+      // gröberes Raster dünnt die „91 %" sichtbar aus und die Zahl wird
+      // schlechter erkennbar. Die Mobile-Perf holen wir über dpr-Cap + engeres
+      // rAF-Fenster + weniger Layer, NICHT über die Männchen-Dichte.
+      const gap = W < 720 ? 10 : 9;
       const out: { x: number; y: number }[] = [];
       for (let y = 0; y < H; y += gap) {
         for (let x = 0; x < W; x += gap) {
