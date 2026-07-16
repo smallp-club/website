@@ -633,7 +633,18 @@ export function HeroTiefe() {
   const [moveActive, setMoveActive] = useState(false);
   useMotionValueEvent(scrollYProgress, 'change', (v) => {
     setMoveActive(v > 0.8);
+    // Nav früh wegfaden, sobald der Footer am Ende hochzukommen beginnt
+    // (CSS in SiteNav.module.css reagiert auf html[data-footer-rising]).
+    if (!reduce) {
+      document.documentElement.toggleAttribute('data-footer-rising', v > 0.86);
+    }
   });
+  // Attribut beim Verlassen der Landing sicher entfernen (sonst bliebe die
+  // Nav auf der nächsten Route versteckt).
+  useEffect(
+    () => () => document.documentElement.removeAttribute('data-footer-rising'),
+    []
+  );
 
   // Farb-Ebenen-Opacity (Crossfade, Funktions-form gegen ScrollTimeline-Remap).
   // Teal ist voll gesetzt, BEVOR die erste helle Station-Zeile (line, 0.19)
