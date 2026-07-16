@@ -19,11 +19,13 @@
      zentriert. Verzeiht kleine Abweichungen: der Hero ist off-white und
      blendet nahtlos mit dem Body, ein Rest-Spalt wäre unsichtbar. */
   margin-top: -56px;
-  /* Überlappung ≥ ein Viewport: der Footer deckt den letzten Frame VOLL ab,
-     SOLANGE die Sticky noch gepinnt ist (sie löst sich erst am Scroll-Ende).
-     Kleiner als 100vh → der Frame löst sich, bevor der Footer fertig deckt,
-     und wird sichtbar hochgeschoben. -105vh gibt Sicherheitsreserve. */
-  margin-bottom: -105vh;
+  /* Überlappung = Footer-Höhe (Footer ist min-height:100dvh): der Footer deckt
+     den letzten Frame VOLL ab, während die Sticky noch gepinnt ist, und sein
+     Unterrand schließt exakt mit dem Bühnen-Ende ab. GENAU -100dvh (nicht mehr):
+     größer → die Bühne (mit Glow) guckt unten unter dem Footer hervor
+     (heller Streifen); kleiner → der Frame löst sich, bevor der Footer deckt,
+     und wird hochgeschoben. dvh matcht die Footer-Einheit auf allen Viewports. */
+  margin-bottom: -100dvh;
 }
 
 .sticky {
