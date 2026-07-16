@@ -121,11 +121,17 @@ function RulerTick({
   const opacity = useTransform(progress, (p) => {
     const e = tick.z + p * RULER_FLIGHT;
     const peak = tick.avg ? 1 : tick.inBand ? 0.85 : 0.4;
-    if (e < -2700) return 0;
-    if (e < -1900) return (peak * (e + 2700)) / 800;
-    if (e < 140) return peak;
-    if (e < 460) return peak * (1 - (e - 140) / 320);
-    return 0;
+    let o: number;
+    if (e < -2700) o = 0;
+    else if (e < -1900) o = (peak * (e + 2700)) / 800;
+    else if (e < 140) o = peak;
+    else if (e < 460) o = peak * (1 - (e - 140) / 320);
+    else o = 0;
+    // Hero-Gate: KEIN Maßband auf dem stillen Off-White-Hero (sonst blutet der
+    // Tick-Glow als Fleck durch). Erst einblenden, wenn die Tiefe dunkel wird
+    // (parallel zum teal-Crossfade ab ~0.10).
+    const gate = p < 0.1 ? 0 : p > 0.17 ? 1 : (p - 0.1) / 0.07;
+    return o * gate;
   });
   const cls = tick.avg
     ? styles.tickAvg
