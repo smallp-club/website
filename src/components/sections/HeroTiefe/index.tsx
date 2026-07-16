@@ -235,7 +235,10 @@ function StationLayer({
       ? // spät + knapp einblenden, damit die move-Station nicht in die noch
         // stehende Stats-Zahl hineinragt.
         ([focus - 0.03, focus] as const)
-      : ([focus - 0.1, focus - 0.03, focus + 0.03, focus + 0.08] as const);
+      : // Straffes Sicht-Fenster: spät einblenden, FRÜH + knapp ausblenden, damit
+        // beim Weiterscrollen der alte Inhalt nicht in den neuen hineinsteht.
+        // (Der z-Flug läuft weiter, aber unsichtbar — nur die Opacity ist eng.)
+        ([focus - 0.07, focus - 0.02, focus + 0.01, focus + 0.045] as const);
   const oOut = isFirst
     ? ([1, 1, 0] as const)
     : isLast

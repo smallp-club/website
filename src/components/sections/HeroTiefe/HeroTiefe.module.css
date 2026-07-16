@@ -358,8 +358,9 @@
 .tick {
   position: absolute;
   left: 50%;
-  /* Maßstrahl tiefer gesetzt → kreuzt die Stations-Texte weniger, mehr Ruhe. */
-  top: 72%;
+  /* Maßstrahl an den unteren Rand → kreuzt die Stations-Inhalte (v.a. den
+     Bild-Absatz) nicht mehr, sitzt als dezente Grundlinie unten. */
+  top: 84%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -370,23 +371,23 @@
 .tickMark {
   display: block;
   width: 3px;
-  height: 30px;
-  background: rgba(247, 246, 242, 0.28);
+  height: 26px;
+  background: rgba(247, 246, 242, 0.18);
   border-radius: 2px;
 }
-/* 95%-Band: leuchtet — hier liegen fast alle. */
+/* 95%-Band: leuchtet leicht — hier liegen fast alle. */
 .tickBand .tickMark {
-  height: 46px;
+  height: 40px;
   width: 4px;
-  background: var(--spc-turquoise);
-  box-shadow: 0 0 18px rgba(123, 220, 181, 0.4);
+  background: rgba(123, 220, 181, 0.75);
+  box-shadow: 0 0 14px rgba(123, 220, 181, 0.28);
 }
 /* Durchschnitt (13 cm): der Anker. */
 .tickAvg .tickMark {
-  height: 78px;
-  width: 6px;
-  background: #f7f6f2;
-  box-shadow: 0 0 26px rgba(123, 220, 181, 0.5);
+  height: 64px;
+  width: 5px;
+  background: rgba(247, 246, 242, 0.85);
+  box-shadow: 0 0 20px rgba(123, 220, 181, 0.3);
 }
 .tickLabel {
   font-family: var(--font-display);
