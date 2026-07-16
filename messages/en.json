@@ -30,5 +30,49 @@
     "fact": "Fact",
     "readMore": "Read more",
     "backToTop": "Back to top"
+  },
+  "landing": {
+    "ariaLabel": "no measure, no pressure. scroll through the flight.",
+    "tagline": "no measure, no pressure",
+    "hero": {
+      "small": "small penis?",
+      "big": "big deal.",
+      "pay": "and?"
+    },
+    "recognition": "you know the feeling. or you know someone who does.",
+    "image": {
+      "eyebrow": "photo coming",
+      "caption": "just an ordinary guy. coffee, morning. relaxed, at ease with himself.",
+      "under": "no measure. a person."
+    },
+    "myth": {
+      "tag": "supposedly.",
+      "big": "size decides."
+    },
+    "fact": {
+      "tag": "the truth.",
+      "big": "85% of partners are satisfied. 55% of men are with themselves.",
+      "source": "lever, frederick & peplau, 2006. n=52,000+"
+    },
+    "stat": {
+      "number91": "91%",
+      "number2": "2%",
+      "sr": "91 percent think they are too small. only 2 percent actually are.",
+      "line91": "this many think they are too small.",
+      "line2": "this few actually are."
+    },
+    "ruler": {
+      "average": "average",
+      "band": "95% of all men"
+    },
+    "move": {
+      "big": "more people think this than you think.",
+      "cta": "become a member",
+      "note": "free. forever. without us measuring you."
+    },
+    "reducedStat": {
+      "big": "91% think they are too small. only 2% actually are.",
+      "source": "veale 2015 / lever 2006. average 13 cm, 95% of all men between 9.8 and 16.4 cm."
+    }
   }
 }

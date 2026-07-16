@@ -30,5 +30,49 @@
     "fact": "Fakt",
     "readMore": "Mehr erfahren",
     "backToTop": "Nach oben"
+  },
+  "landing": {
+    "ariaLabel": "no measure, no pressure. durch den flug scrollen.",
+    "tagline": "no measure, no pressure",
+    "hero": {
+      "small": "kleiner penis?",
+      "big": "großes thema.",
+      "pay": "und?"
+    },
+    "recognition": "du kennst das gefühl. oder du kennst jemanden, der es kennt.",
+    "image": {
+      "eyebrow": "bild folgt",
+      "caption": "ein ganz normaler mann. beim kaffee, morgens. entspannt, mit sich im reinen.",
+      "under": "kein maß. ein mensch."
+    },
+    "myth": {
+      "tag": "angeblich.",
+      "big": "größe entscheidet."
+    },
+    "fact": {
+      "tag": "wahr ist.",
+      "big": "85% der partner sind zufrieden. 55% der männer mit sich selbst.",
+      "source": "lever, frederick & peplau, 2006. n=52.000+"
+    },
+    "stat": {
+      "number91": "91 %",
+      "number2": "2 %",
+      "sr": "91 prozent halten sich für zu klein. nur 2 prozent sind es wirklich.",
+      "line91": "so viele halten sich für zu klein.",
+      "line2": "so wenige sind es wirklich."
+    },
+    "ruler": {
+      "average": "durchschnitt",
+      "band": "95% aller männer"
+    },
+    "move": {
+      "big": "das denken mehr menschen, als du denkst.",
+      "cta": "mit-glied werden",
+      "note": "kostenlos. für immer. ohne dass wir dich messen."
+    },
+    "reducedStat": {
+      "big": "91 % halten sich für zu klein. nur 2 % sind es wirklich.",
+      "source": "veale 2015 / lever 2006. durchschnitt 13 cm, 95% aller männer zwischen 9,8 und 16,4 cm."
+    }
   }
 }

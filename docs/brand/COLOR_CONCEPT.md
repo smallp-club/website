@@ -6,13 +6,13 @@
 
 ## Grundsatz
 
-**Off-White ist der Normalzustand. Farbe ist ein Ereignis.**
+**Off-White ist der Normalzustand. Farbe ist ein Ereignis.** *(gilt für Innen-Seiten; Landing siehe Update 2026-07-16)*
 
 Jede Farbe die auftaucht, muss verdient sein. Wenn man nicht erklären kann *warum genau hier* Farbe, gehört sie weg. Die 60/25/10/3/2-Verteilung aus DESIGN.md ist keine Empfehlung — sie ist ein strukturelles Gesetz.
 
 ---
 
-## Farbkarte der Landing Page
+## Farbkarte der Landing Page (archiviert — Sektions-Landing; Landing siehe Update 2026-07-16)
 
 | Abschnitt | Hintergrund | Erlaubte Farbe | Begründung |
 |---|---|---|---|
@@ -27,6 +27,8 @@ Jede Farbe die auftaucht, muss verdient sein. Wenn man nicht erklären kann *war
 ---
 
 ## Sektionsregeln (Detail)
+
+> *Beschreibt die archivierte Sektions-Landing. Für die aktuelle immersive Landing (`/`) siehe Update 2026-07-16. Gilt weiter als Referenz für einen möglichen Rückbau.*
 
 ### Nav
 Ausgangszustand: `--surface-bg` vollständig transparent — Off-White setzt sich fort.
@@ -162,6 +164,8 @@ Beide Marker sind lowercase, satzeinleitend, mit Punkt. Das Label-Wort wechselt 
 
 ## Absolut verbotene Kombinationen
 
+> *Diese Verbote gelten für die Innen-Seiten. Die immersive Landing (`/`) hat einen dunklen Grund mit mehreren Brand-Farben als Tiefen-Atmosphäre — das ist die scoped Ausnahme (siehe Update 2026-07-16), kein Freibrief. Insbesondere: der Landing-Farbwechsel ist ein Opacity-**Crossfade** zwischen vollflächigen Ebenen, KEIN Farbgradient innerhalb einer Fläche — Gradienten auf Brand-Farben bleiben überall verboten.*
+
 **Off-White Text auf Turquoise-Fläche** — 1,52:1, nicht lesbar. Existiert nicht.
 
 **Sienna auf Turquoise** — 2,68:1. Existiert nicht.
@@ -177,3 +181,58 @@ Beide Marker sind lowercase, satzeinleitend, mit Punkt. Das Label-Wort wechselt 
 **Farbgradient auf Brand-Farben** — keine Gradienten zwischen Turquoise und Dark Turquoise, kein Sienna-Gradient. Einzige Ausnahme: transparenter Scrim (Off-White → transparent) für Scroll-Fade-Effekte an Sektionskanten.
 
 **Body-Text in Sienna** — `--signal` ist für Chips und Error-Borders. Sienna auf Off-White (4,08:1) besteht AA nur für Large Text — Fließtext ist verboten.
+
+---
+
+## Update 2026-07-16 — Immersive Landing
+
+Die Landing-Page (`/`) ist seit dem 16.07.2026 kein Off-White-Sektions-Scroll
+mehr, sondern eine immersive Tiefen-Bühne (`HeroTiefe`): dunkler Grund, per
+Scroll überblendet (dark teal `#123B3C` → schwarz `#0A0A0A` → deep turquoise
+`#1D5556`), ein Maßband das in die Tiefe läuft, eine Partikel-Formation zum
+Stats-Moment, Stationen die durch den Raum fliegen. Kevin hat die Farb-
+Guardrails für diese eine Seite bewusst gelockert. Das ist kein Widerruf des
+Konzepts, sondern eine **scoped Ausnahme**. Die Reasoning-Historie oben bleibt
+gültig — für die Innen-Seiten.
+
+**Geltungsbereich ab jetzt:**
+
+- **Innen-Seiten** (`/mythen`, `/club`, `/magazin`, `/partner`, `/mit-glied/*`,
+  alle Service- und Legal-Pages) — das gesamte Farbkonzept oben gilt
+  unverändert weiter. Off-White ist der Normalzustand, Farbe bleibt Ereignis,
+  ein Akzent pro Screen, kein zweiter dunkler Block, Sienna nur als Mythos-
+  Marker. An diesen Regeln ist nichts aufgeweicht.
+- **Landing (`/`)** — eigene Regeln, unten. Die „Farbkarte der Landing Page"
+  und die „Sektionsregeln (Detail)" weiter oben beschreiben die **archivierte**
+  Sektions-Landing und gelten nur noch als Referenz für einen möglichen
+  Rückbau. Sie sind nicht mehr die Regel für `/`.
+
+**Regeln der immersiven Landing:**
+
+1. **Der Grund ist dunkel, nicht Off-White.** Der Wechsel dark teal → schwarz →
+   deep turquoise ist ein Scroll-**Crossfade** (gestapelte Opacity-Ebenen),
+   kein Farbgradient auf Brand-Farben und kein Effekt-Flip. Die Reise durch die
+   Tiefe IST der erste Eindruck. Off-White kehrt auf jeder Innen-Seite zurück,
+   das ist der gewollte Kontrast: durch das Dunkel hindurch in die ruhigen Räume.
+2. **Mehrere Brand-Farben dürfen gleichzeitig als Tiefen-Atmosphäre
+   existieren** — turquoise, deep, sienna als driftende Partikel bei niedriger
+   Opacity (≤ 0,28). Das ist Volumen, kein konkurrierender Akzent-Block. Die
+   „ein Akzent pro Screen"-Regel gilt hier nicht, weil es keine flächigen
+   Akzent-Blöcke gibt, nur Licht in der Tiefe.
+3. **Sienna bleibt trotz Ausnahme diszipliniert.** Auf der Landing erscheint
+   Sienna zweifach: als Mythos-Marker `angeblich.` (sanktioniert) und als eine
+   ambient Tiefen-Partikel bei 0,14 Opacity. Sienna wird NICHT zum flächigen
+   Raum und NICHT zum dekorativen Text-Akzent. Die Partikel ist Atmosphäre,
+   kein Label.
+4. **Mythos/Fakt behält die Inline-Präfix-Sprache.** `angeblich.` in Sienna,
+   `wahr ist.` in Deep-Turquoise. Der Reveal ist hier ein Vorbei-Flug zweier
+   Stationen (cinematisch erlaubt, siehe „Geltungsbereich der Doktrin" oben),
+   muss aber peer bleiben: kein „du hast falsch gedacht", keine Fanfare.
+5. **A11y ist nicht Teil der Ausnahme.** Off-White-Text auf teal `#123B3C`,
+   schwarz und deep turquoise besteht AA/AAA. Der Kontrast-Standard bleibt hart,
+   auch im Dunkeln. Reduced-Motion bekommt den flachen, voll lesbaren Stack.
+6. **Die Landing endet in Ruhe.** Der Flug landet auf der `move`-Station und
+   gleitet in den Deep-Turquoise-Footer über. Das „ausatmen" bleibt Pflicht,
+   auch wenn der Weg dahin jetzt ein Flug ist. Der Stats-Moment inszeniert
+   Entlastung, keinen Schock — abgehende Partikel lösen sich nach oben ins
+   Licht, sie stürzen nicht.

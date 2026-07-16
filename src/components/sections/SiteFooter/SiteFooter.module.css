@@ -9,6 +9,12 @@
      Footer ist jetzt einfach unter dem Main-Content, scrollt mit.
      min-height 100dvh sorgt für seinen vollen Brand-Auftritt. */
   position: relative;
+  /* z-index:1 hebt den Footer eine Stufe über positionierten Main-Content
+     (z.B. die immersive Landing-Bühne mit eigenem Stacking-Context, z-index:0).
+     Dadurch GLEITET der Footer am Seitenende über den letzten gepinnten Frame
+     statt darunter zu verschwinden. Auf allen anderen Routes ohne Wirkung,
+     weil dort nichts mit dem Footer überlappt. */
+  z-index: 1;
   min-height: 100dvh;
   /* overflow: clip statt hidden — kappt Focus-Ringe nicht visuell.
      hidden als Fallback für Browser ohne clip-Support (vor 2022). */

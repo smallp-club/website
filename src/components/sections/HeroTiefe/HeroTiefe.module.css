@@ -1,0 +1,551 @@
+/* ==================================================================
+   TIEFE — Tiefen-Scroll 3D. Echte CSS-perspective, Kamerafahrt via Scroll.
+   ================================================================== */
+
+.scroll {
+  position: relative;
+  /* Eigener Stacking-Context (z-index:0). Der globale Footer liegt mit
+     z-index:1 EINE Stufe höher und GLEITET dadurch am Ende über den (noch
+     gepinnten) letzten Frame — Cover statt Push, ganz ohne negativen z-index.
+     Die sticky Bühne pinnt bei top:0 und füllt den Viewport, deshalb bleibt
+     oben kein Off-White-Balken (der alte z-index:-1-Hack hatte den Body
+     durchscheinen lassen). */
+  z-index: 0;
+  height: 860vh; /* mehr Scroll-Strecke → jede Station hält spürbar inne */
+  background: #0a0a0a;
+  /* Hero bündig unter die schwebende Nav-Pille ziehen → Hero-Inhalt sitzt
+     zentriert. Verzeiht kleine Abweichungen: der Hero ist off-white und
+     blendet nahtlos mit dem Body, ein Rest-Spalt wäre unsichtbar. */
+  margin-top: -56px;
+  /* Überlappung: der Footer deckt am Ende den fertig stehenden letzten Frame
+     ab. Nahtlos, weil die letzte Farb-Ebene ebenfalls Deep-Turquoise ist. */
+  margin-bottom: -55vh;
+}
+
+.sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh; /* stabile Höhe trotz iOS-Adressleiste */
+  overflow: hidden;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+}
+
+.bgBase {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #f7f6f2;
+}
+.bgLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-style: preserve-3d;
+}
+
+.world {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---- Stationen ---- */
+.station {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+
+.plate {
+  width: min(92vw, 1120px);
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  line-height: 0.94;
+  letter-spacing: -0.03em;
+}
+
+/* HERO — bg ist hier off-white → dunkler Text */
+.plateHero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+}
+.eyebrow {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(0.85rem, 1.5vw, 1.1rem);
+  letter-spacing: 0.24em;
+  color: #1d5556;
+  margin: 0 0 1rem;
+}
+/* Maßstab-Umkehr: „klein" bleibt physisch klein, „groß" überragt. */
+.heroSmall {
+  font-weight: 400;
+  font-size: clamp(0.95rem, 2.4vw, 1.6rem);
+  color: #6f6c63; /* WCAG AA auf Off-White (≈4.6:1) */
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+.heroBig {
+  font-weight: 600;
+  font-size: clamp(3.4rem, 14vw, 13rem);
+  color: #0a0a0a;
+  margin: 0.1em 0 0;
+}
+.heroPay {
+  font-weight: 500;
+  font-size: clamp(2.5rem, 9vw, 8rem);
+  color: #1d5556;
+  margin: 0.1em 0 0;
+}
+
+/* LINE — bg dark teal → helle Schrift */
+.lineBig {
+  font-weight: 400;
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: #f7f6f2;
+  max-width: 20ch;
+  margin-inline: auto;
+  line-height: 1.02;
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.4);
+}
+
+/* IMAGE — menschlicher moment (foto-slot), bg dark teal */
+.imageSlot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+}
+.imageFrame {
+  width: min(74vw, 400px);
+  aspect-ratio: 4 / 5;
+  border-radius: 18px;
+  border: 1.5px dashed rgba(123, 220, 181, 0.55);
+  background: linear-gradient(
+    160deg,
+    rgba(247, 246, 242, 0.06),
+    rgba(123, 220, 181, 0.04)
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: clamp(1.5rem, 4vw, 2.6rem);
+  text-align: center;
+}
+.imageEyebrow {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  color: var(--spc-turquoise);
+}
+.imageCaption {
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
+  line-height: 1.5;
+  color: rgba(247, 246, 242, 0.82);
+  max-width: 24ch;
+}
+.imageUnder {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4.5vw, 3.2rem);
+  letter-spacing: -0.02em;
+  color: #f7f6f2;
+  margin: 0;
+}
+
+/* MYTHOS / FAKT — bg dark teal */
+.mythTag {
+  font-weight: 500;
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+  color: #e8916b; /* aufgehelltes Sienna → AA auf dunklem Teal-Grund */
+  margin: 0 0 0.4rem;
+}
+.mythBig {
+  font-weight: 600;
+  font-size: clamp(2.4rem, 8vw, 6.5rem);
+  color: #f7f6f2;
+  margin: 0;
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.4);
+}
+.factTag {
+  font-weight: 500;
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+  color: #7bdcb5;
+  margin: 0 0 0.4rem;
+}
+.factBig {
+  font-weight: 500;
+  font-size: clamp(1.6rem, 4.6vw, 3.6rem);
+  color: #f7f6f2;
+  max-width: 22ch;
+  margin-inline: auto;
+  line-height: 1.06;
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.4);
+}
+.source {
+  font-family: var(--font-body);
+  font-size: clamp(0.8rem, 1.4vw, 1rem);
+  letter-spacing: 0;
+  color: #aab5af; /* solide statt Alpha → stabiler Kontrast auf wanderndem Grund */
+  margin: 1.4rem 0 0;
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.5);
+}
+
+/* STATS — bg schwarz */
+.plateStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.statNum {
+  font-weight: 700;
+  font-size: clamp(6rem, 26vw, 22rem);
+  line-height: 0.8;
+  color: #7bdcb5;
+  margin: 0;
+  text-shadow: 0 0 80px rgba(123, 220, 181, 0.35);
+  animation: statGlow 3.2s ease-in-out infinite;
+}
+@keyframes statGlow {
+  0%, 100% { text-shadow: 0 0 60px rgba(123, 220, 181, 0.3); }
+  50% { text-shadow: 0 0 120px rgba(123, 220, 181, 0.65); }
+}
+.statLabel {
+  font-weight: 500;
+  font-size: clamp(1.3rem, 3.6vw, 2.8rem);
+  color: #f7f6f2;
+  max-width: 20ch;
+  margin: 1.2rem auto 0.5rem;
+}
+.statSub {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  letter-spacing: 0;
+  color: #7bdcb5;
+  margin: 0;
+}
+
+/* BEWEGUNG — bg deep turquoise */
+.plateMove {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+}
+.moveBig {
+  font-weight: 600;
+  font-size: clamp(2rem, 6vw, 5rem);
+  color: #f7f6f2;
+  max-width: 18ch;
+  margin: 0;
+  line-height: 1;
+  text-shadow: 0 2px 24px rgba(10, 10, 10, 0.4);
+}
+.cta {
+  pointer-events: auto;
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1rem, 1.8vw, 1.3rem);
+  padding: 1rem 2.4rem;
+  min-height: 52px;
+  border-radius: 999px;
+  background: #7bdcb5;
+  color: #0a0a0a;
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.25s ease;
+  box-shadow: 0 10px 40px rgba(123, 220, 181, 0.3);
+}
+.cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 50px rgba(123, 220, 181, 0.45);
+}
+.cta:focus-visible {
+  outline: 3px solid #f7f6f2; /* Off-White-Ring, klar sichtbar auf dunklem Grund */
+  outline-offset: 3px;
+}
+.moveNote {
+  font-family: var(--font-body);
+  font-size: clamp(0.9rem, 1.6vw, 1.15rem);
+  letter-spacing: 0;
+  color: #c2cec8; /* solide statt Alpha */
+  margin: 0;
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.5);
+}
+
+/* ---- Tiefen-Partikel ---- */
+.particle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  pointer-events: none;
+}
+.ci {
+  border-radius: 50%;
+}
+.ob {
+  border-radius: 999px;
+}
+
+/* ---- Maßband-Ticks ---- */
+.tick {
+  position: absolute;
+  left: 50%;
+  top: 63%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.tickMark {
+  display: block;
+  width: 3px;
+  height: 30px;
+  background: rgba(247, 246, 242, 0.5);
+  border-radius: 2px;
+}
+/* 95%-Band: leuchtet — hier liegen fast alle. */
+.tickBand .tickMark {
+  height: 46px;
+  width: 4px;
+  background: var(--spc-turquoise);
+  box-shadow: 0 0 18px rgba(123, 220, 181, 0.8);
+}
+/* Durchschnitt (13 cm): der Anker. */
+.tickAvg .tickMark {
+  height: 78px;
+  width: 6px;
+  background: #f7f6f2;
+  box-shadow: 0 0 26px rgba(123, 220, 181, 0.95);
+}
+.tickLabel {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.05rem, 2vw, 1.55rem);
+  letter-spacing: 0.02em;
+  color: rgba(169, 240, 210, 0.85);
+  white-space: nowrap;
+  text-shadow: 0 2px 16px rgba(10, 10, 10, 0.7);
+}
+.tickLabel::after {
+  content: ' cm';
+  font-size: 0.6em;
+  opacity: 0.7;
+}
+.tickBand .tickLabel,
+.tickAvg .tickLabel {
+  color: #d4f7e6;
+}
+.tickNote {
+  font-family: var(--font-body);
+  font-size: clamp(0.72rem, 1.3vw, 0.95rem);
+  letter-spacing: 0.06em;
+  color: var(--spc-turquoise);
+  white-space: nowrap;
+  text-shadow: 0 2px 14px rgba(10, 10, 10, 0.85);
+}
+
+/* ---- Atmosphäre: driftende Licht-Glows ---- */
+.glow1,
+.glow2,
+.glow3 {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  filter: blur(90px);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.glow1 {
+  width: 55vw;
+  height: 55vw;
+  left: -5%;
+  top: 6%;
+  background: radial-gradient(circle, rgba(123, 220, 181, 0.55), transparent 70%);
+  animation: glowDrift1 26s ease-in-out infinite alternate;
+}
+.glow2 {
+  width: 48vw;
+  height: 48vw;
+  right: -8%;
+  top: 30%;
+  background: radial-gradient(circle, rgba(29, 85, 86, 0.6), transparent 70%);
+  animation: glowDrift2 32s ease-in-out infinite alternate;
+}
+.glow3 {
+  width: 40vw;
+  height: 40vw;
+  left: 30%;
+  bottom: -10%;
+  background: radial-gradient(circle, rgba(192, 90, 56, 0.4), transparent 70%);
+  animation: glowDrift3 38s ease-in-out infinite alternate;
+}
+@keyframes glowDrift1 {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(12%, 8%, 0) scale(1.25); }
+}
+@keyframes glowDrift2 {
+  from { transform: translate3d(0, 0, 0) scale(1.1); }
+  to { transform: translate3d(-10%, -6%, 0) scale(0.9); }
+}
+@keyframes glowDrift3 {
+  from { transform: translate3d(0, 0, 0) scale(0.95); }
+  to { transform: translate3d(8%, -10%, 0) scale(1.2); }
+}
+
+/* ---- Stats-Partikel-Moment (Canvas-Formation) ---- */
+.statMoment {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+.statCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.statText {
+  position: absolute;
+  left: 50%;
+  top: 64%;
+  transform: translateX(-50%);
+  width: min(92vw, 900px);
+  height: 0;
+}
+.statLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.4rem, 3.6vw, 2.8rem);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: #f7f6f2;
+}
+.statLineTruth {
+  color: var(--spc-turquoise);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---- Atmosphäre ---- */
+.vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    120% 90% at 50% 50%,
+    transparent 55%,
+    rgba(10, 10, 10, 0.28) 100%
+  );
+}
+
+/* ---- reduced-motion: flacher, voll lesbarer Stack ---- */
+.reduced {
+  background: #f7f6f2;
+  color: #0a0a0a;
+}
+.reducedSection {
+  min-height: 70svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 8vw, 6rem) 1.25rem;
+  border-bottom: 1px solid #dedbd1;
+}
+.reducedSection .lineBig,
+.reducedSection .mythBig,
+.reducedSection .factBig,
+.reducedSection .moveBig,
+.reducedSection .statLabel {
+  color: #0a0a0a;
+}
+.reducedSection .factTag {
+  color: #1d5556;
+}
+.reducedSection .heroSmall,
+.reducedSection .source,
+.reducedSection .statSub,
+.reducedSection .moveNote {
+  color: #6f6c63;
+}
+.reducedSection .statNum {
+  color: #1d5556;
+  text-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow1,
+  .glow2,
+  .glow3,
+  .statNum {
+    animation: none;
+  }
+}
+
+/* ---- mobile ---- */
+@media (max-width: 719px) {
+  .sticky {
+    perspective: 640px;
+  }
+  .heroBig {
+    font-size: clamp(3rem, 18vw, 7rem);
+  }
+  .plate {
+    width: min(88vw, 1120px);
+  }
+  /* Glow ist auf iOS-WebKit der teuerste Posten: eine Fläche weg, Radius
+     runter, KEIN screen-Blend (Backdrop-Readback) und KEINE Dauer-Animation
+     (Compositing im Leerlauf) mehr — statischer, günstiger Radialverlauf. */
+  .glow1,
+  .glow2 {
+    filter: blur(55px);
+    mix-blend-mode: normal;
+    animation: none;
+    opacity: 0.4;
+  }
+  .glow3 {
+    display: none;
+  }
+}

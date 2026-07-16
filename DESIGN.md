@@ -18,6 +18,8 @@ The grid of translucent obrounds and circles used as a background texture (dark 
 | Dark Turquoise Mystery | `--spc-turquoise-deep` | `#1D5556` | Authority / competence accent | ~3 % |
 | Burnt Sienna | `--spc-sienna` | `#C05A38` | Myth signal / rare warm emphasis | ~2 % |
 
+> **Note (2026-07-16):** The ~60/25/10/3/2 distribution and "Off-White dominant" describe the **inner pages**. The landing `/` is an immersive dark depth-stage (`HeroTiefe`) that deliberately inverts this — dark ground, brand colours as depth atmosphere. Scoped exception, see COLOR_CONCEPT Update 2026-07-16. Off-White returns on every inner page.
+
 ### Semantic roles
 
 ```css
@@ -44,7 +46,7 @@ The grid of translucent obrounds and circles used as a background texture (dark 
 **Key constraints:**
 - Burnt Sienna is **large text / decorative only** — never body copy
 - Off-White must never appear as text on a Pastel Turquoise background
-- One accent per view: Turquoise OR Sienna — never both at large scale simultaneously
+- One accent per view: Turquoise OR Sienna — never both at large scale simultaneously *(inner pages only; the landing `/` is an immersive dark depth-stage — see COLOR_CONCEPT Update 2026-07-16)*
 
 ### Dark-mode surface
 
