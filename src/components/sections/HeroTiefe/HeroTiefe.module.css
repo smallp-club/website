@@ -584,9 +584,6 @@
   line-height: 1.1;
   color: #f7f6f2;
 }
-.statLineTruth {
-  color: var(--spc-turquoise);
-}
 /* Quelle unter den Stat-Zeilen (Veale 2015) — jede Zahl braucht ihre Quelle. */
 .statSource {
   position: absolute;

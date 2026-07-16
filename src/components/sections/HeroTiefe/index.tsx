@@ -719,10 +719,7 @@ function StatParticles({
         <motion.p className={styles.statLine} style={{ opacity: op91 }}>
           {t('stat.line91')}
         </motion.p>
-        <motion.p
-          className={`${styles.statLine} ${styles.statLineTruth}`}
-          style={{ opacity: op2 }}
-        >
+        <motion.p className={styles.statLine} style={{ opacity: op2 }}>
           {t('stat.line2')}
         </motion.p>
         <p className={styles.statSource}>{t('stat.source')}</p>
