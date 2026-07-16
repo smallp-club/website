@@ -27,6 +27,7 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   type MotionValue,
+  type MotionStyle,
 } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import styles from './HeroTiefe.module.css';
@@ -118,21 +119,19 @@ function RulerTick({
   progress: MotionValue<number>;
 }) {
   const t = useTranslations('landing');
-  const z = useTransform(progress, (p) => tick.z + p * RULER_FLIGHT);
+  // Flaches, GLEICHMÄSSIGES Maßband: die cm-Position kommt aus --cm (uniform im
+  // CSS), die Abstände sind exakt gleich wie bei einem echten Maßband — NICHT
+  // perspektivisch gestaucht. Nur die Opacity animiert: mit der Tiefe ein
+  // (Hero bleibt frei), zum Footer-Anflug wieder aus.
   const opacity = useTransform(progress, (p) => {
-    const e = tick.z + p * RULER_FLIGHT;
-    const peak = tick.avg ? 1 : tick.inBand ? 0.85 : 0.4;
-    let o: number;
-    if (e < -2700) o = 0;
-    else if (e < -1900) o = (peak * (e + 2700)) / 800;
-    else if (e < 140) o = peak;
-    else if (e < 460) o = peak * (1 - (e - 140) / 320);
-    else o = 0;
-    // Hero-Gate: KEIN Maßband auf dem stillen Off-White-Hero (sonst blutet der
-    // Tick-Glow als Fleck durch). Erst einblenden, wenn die Tiefe dunkel wird
-    // (parallel zum teal-Crossfade ab ~0.10).
-    const gate = p < 0.1 ? 0 : p > 0.17 ? 1 : (p - 0.1) / 0.07;
-    return o * gate;
+    const peak = tick.avg ? 1 : tick.inBand ? 0.9 : 0.5;
+    let gate: number;
+    if (p < 0.1) gate = 0;
+    else if (p < 0.17) gate = (p - 0.1) / 0.07;
+    else if (p < 0.82) gate = 1;
+    else if (p < 0.86) gate = 1 - (p - 0.82) / 0.04;
+    else gate = 0;
+    return peak * gate;
   });
   const cls = tick.avg
     ? styles.tickAvg
@@ -144,7 +143,7 @@ function RulerTick({
       className={`${styles.tick} ${cls}`}
       initial={false}
       aria-hidden
-      style={{ x: '-50%', z, opacity }}
+      style={{ opacity, '--cm': tick.cm } as MotionStyle}
     >
       <span className={styles.tickMark} />
       {tick.label && <span className={styles.tickLabel}>{tick.label}</span>}
@@ -881,11 +880,10 @@ export function HeroTiefe() {
     };
   }, [reduce, rx, ry]);
 
-  // Mobil weniger gleichzeitige 3D-Layer: nur beschriftete/markierte Maßband-
-  // Ticks (7 statt 21). Jeder Tick ist ein eigener composited Layer.
-  const ticks = isMobile
-    ? RULER_TICKS.filter((tk) => tk.label || tk.avg || tk.noteKey)
-    : RULER_TICKS;
+  // Alle 21 cm-Marken (auch mobil): ein GLEICHMÄSSIGES Maßband braucht alle
+  // Graduierungen in gleichen Abständen. Die Ticks sind jetzt flach (kein 3D-
+  // Layer-Flug mehr), also mobil unkritisch.
+  const ticks = RULER_TICKS;
 
   if (reduce) {
     // Flacher, voll lesbarer Stack ohne Flug. Enthält den Stats-Moment als

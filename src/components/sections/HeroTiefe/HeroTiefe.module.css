@@ -370,42 +370,48 @@
 /* ---- Maßband-Ticks ---- */
 .tick {
   position: absolute;
-  left: 50%;
-  /* Maßstrahl an den unteren Rand → kreuzt die Stations-Inhalte (v.a. den
-     Bild-Absatz) nicht mehr, sitzt als dezente Grundlinie unten. */
-  top: 84%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  transform-style: preserve-3d;
+  /* GLEICHMÄSSIGE Abstände wie ein echtes Maßband: jede cm-Marke sitzt bei
+     uniform X (8%..92% über cm 0..20) → exakt gleiche Intervalle. Am unteren
+     Rand als dezente, flache Grundlinie (kein perspektivisches Fliegen). */
+  left: calc(8% + var(--cm) * 4.2%);
+  top: 80%;
+  transform: translateX(-50%);
   pointer-events: none;
 }
+/* Graduierungen hängen von einer gemeinsamen Grundlinie (Marken-Oberkante),
+   längere Marken für Band/Durchschnitt. */
 .tickMark {
   display: block;
-  width: 3px;
-  height: 26px;
-  background: rgba(247, 246, 242, 0.18);
+  margin: 0 auto;
+  width: 2px;
+  height: 13px;
+  background: rgba(247, 246, 242, 0.16);
   border-radius: 2px;
 }
 /* 95%-Band: leuchtet leicht — hier liegen fast alle. */
 .tickBand .tickMark {
-  height: 40px;
-  width: 4px;
-  background: rgba(123, 220, 181, 0.75);
-  box-shadow: 0 0 14px rgba(123, 220, 181, 0.28);
+  height: 22px;
+  width: 3px;
+  background: rgba(123, 220, 181, 0.6);
+  box-shadow: 0 0 12px rgba(123, 220, 181, 0.25);
 }
 /* Durchschnitt (13 cm): der Anker. */
 .tickAvg .tickMark {
-  height: 64px;
-  width: 5px;
+  height: 32px;
+  width: 3px;
   background: rgba(247, 246, 242, 0.85);
-  box-shadow: 0 0 20px rgba(123, 220, 181, 0.3);
+  box-shadow: 0 0 18px rgba(123, 220, 181, 0.32);
 }
+/* Zahlen auf einer festen Baseline unter den Marken → alle bündig, egal wie
+   lang die Marke ist. */
 .tickLabel {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: clamp(1.05rem, 2vw, 1.55rem);
+  font-size: clamp(0.8rem, 1.4vw, 1.05rem);
   letter-spacing: 0.02em;
   color: rgba(169, 240, 210, 0.5);
   white-space: nowrap;
@@ -418,15 +424,30 @@
 }
 .tickBand .tickLabel,
 .tickAvg .tickLabel {
-  color: rgba(212, 247, 230, 0.66);
+  color: rgba(212, 247, 230, 0.7);
 }
 .tickNote {
+  position: absolute;
+  top: 62px;
+  left: 50%;
+  transform: translateX(-50%);
   font-family: var(--font-body);
-  font-size: clamp(0.72rem, 1.3vw, 0.95rem);
-  letter-spacing: 0.06em;
+  font-size: clamp(0.62rem, 1vw, 0.82rem);
+  letter-spacing: 0.05em;
   color: rgba(123, 220, 181, 0.6);
   white-space: nowrap;
   text-shadow: 0 2px 14px rgba(10, 10, 10, 0.85);
+}
+/* Schmale Screens: die Text-Notizen (durchschnitt / 95% aller männer) sitzen
+   zu eng beieinander und überlappen → weglassen. Die Marken + Zahlen + das
+   leuchtende 95%-Band tragen die Bedeutung auch ohne die Notizen. */
+@media (max-width: 719px) {
+  .tickNote {
+    display: none;
+  }
+  .tickLabel {
+    font-size: 0.72rem;
+  }
 }
 
 /* ---- Atmosphäre: driftende Licht-Glows ---- */
