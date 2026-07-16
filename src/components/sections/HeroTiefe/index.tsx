@@ -27,7 +27,6 @@ import {
   useMotionValueEvent,
   useReducedMotion,
   type MotionValue,
-  type MotionStyle,
 } from 'framer-motion';
 import { useTranslations } from 'next-intl';
 import styles from './HeroTiefe.module.css';
@@ -119,19 +118,22 @@ function RulerTick({
   progress: MotionValue<number>;
 }) {
   const t = useTranslations('landing');
-  // Flaches, GLEICHMÄSSIGES Maßband: die cm-Position kommt aus --cm (uniform im
-  // CSS), die Abstände sind exakt gleich wie bei einem echten Maßband — NICHT
-  // perspektivisch gestaucht. Nur die Opacity animiert: mit der Tiefe ein
-  // (Hero bleibt frei), zum Footer-Anflug wieder aus.
+  // 3D-Maßband: jede cm-Marke sitzt in EIGENER Tiefe (tick.z) und fliegt von
+  // hinten nach vorne (z = tick.z + p*RULER_FLIGHT). Perspektive = echte
+  // Dreidimensionalität. Opacity fenstert das sichtbare Tiefen-Segment.
+  const z = useTransform(progress, (p) => tick.z + p * RULER_FLIGHT);
   const opacity = useTransform(progress, (p) => {
-    const peak = tick.avg ? 1 : tick.inBand ? 0.9 : 0.5;
-    let gate: number;
-    if (p < 0.1) gate = 0;
-    else if (p < 0.17) gate = (p - 0.1) / 0.07;
-    else if (p < 0.82) gate = 1;
-    else if (p < 0.86) gate = 1 - (p - 0.82) / 0.04;
-    else gate = 0;
-    return peak * gate;
+    const e = tick.z + p * RULER_FLIGHT;
+    const peak = tick.avg ? 1 : tick.inBand ? 0.85 : 0.4;
+    let o: number;
+    if (e < -2700) o = 0;
+    else if (e < -1900) o = (peak * (e + 2700)) / 800;
+    else if (e < 140) o = peak;
+    else if (e < 460) o = peak * (1 - (e - 140) / 320);
+    else o = 0;
+    // Hero-Gate: kein Maßband-Fleck auf dem off-white Hero.
+    const gate = p < 0.1 ? 0 : p > 0.17 ? 1 : (p - 0.1) / 0.07;
+    return o * gate;
   });
   const cls = tick.avg
     ? styles.tickAvg
@@ -143,7 +145,7 @@ function RulerTick({
       className={`${styles.tick} ${cls}`}
       initial={false}
       aria-hidden
-      style={{ opacity, '--cm': tick.cm } as MotionStyle}
+      style={{ x: '-50%', z, opacity }}
     >
       <span className={styles.tickMark} />
       {tick.label && <span className={styles.tickLabel}>{tick.label}</span>}
@@ -776,14 +778,6 @@ export function HeroTiefe() {
     offset: ['start start', 'end end'],
   });
 
-  // Maßband kommt als EINE flache Ebene von hinten nach vorne: alle Marken
-  // teilen dieses eine translateZ → die Abstände bleiben exakt gleich (echtes
-  // Maßband), während die ganze Ebene aus der Tiefe heranfliegt. Anfang ist der
-  // Mess-Strich im Hero, das Band entrollt sich beim Scrollen in den Raum.
-  const rulerZ = useTransform(scrollYProgress, (p) =>
-    lerp(p, [0.1, 0.52], [-1150, 0])
-  );
-
   // Mobile bekommt eine REDUZIERTE Bühne (State of the Art: nicht 1:1 portieren)
   // — weniger gleichzeitige 3D-Layer entlastet das GPU-Layer-Budget auf iOS.
   const [isMobile, setIsMobile] = useState(false);
@@ -896,10 +890,11 @@ export function HeroTiefe() {
     };
   }, [reduce, rx, ry]);
 
-  // Alle 21 cm-Marken (auch mobil): ein GLEICHMÄSSIGES Maßband braucht alle
-  // Graduierungen in gleichen Abständen. Die Ticks sind jetzt flach (kein 3D-
-  // Layer-Flug mehr), also mobil unkritisch.
-  const ticks = RULER_TICKS;
+  // Mobil weniger gleichzeitige 3D-Layer: nur beschriftete/markierte Maßband-
+  // Ticks (7 statt 21). Jeder Tick ist ein eigener composited Layer.
+  const ticks = isMobile
+    ? RULER_TICKS.filter((tk) => tk.label || tk.avg || tk.noteKey)
+    : RULER_TICKS;
 
   if (reduce) {
     // Flacher, voll lesbarer Stack ohne Flug. Enthält den Stats-Moment als
@@ -951,13 +946,9 @@ export function HeroTiefe() {
             initial={false}
             style={{ rotateX: rx, rotateY: ry }}
           >
-            {/* Maßband-Ebene: alle Marken auf EINER Ebene (gleiche Abstände),
-                die als Ganzes von hinten nach vorne fliegt (rulerZ). */}
-            <motion.div className={styles.rulerPlane} style={{ z: rulerZ }}>
-              {ticks.map((tk, i) => (
-                <RulerTick key={i} tick={tk} progress={scrollYProgress} />
-              ))}
-            </motion.div>
+            {ticks.map((tk, i) => (
+              <RulerTick key={i} tick={tk} progress={scrollYProgress} />
+            ))}
 
             {STATIONS.map((s, i) => (
               <StationLayer
