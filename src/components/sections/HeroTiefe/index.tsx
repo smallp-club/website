@@ -391,35 +391,82 @@ function StatParticles({
       y: number;
       kept: boolean;
       seed: number;
+      variant: number; // welche Silhouetten-Haltung
+      scale: number; // leichte Größen-Streuung
+      shade: number; // leichte Helligkeits-Streuung (Individuen)
     };
     let parts: P[] = [];
 
-    // Sprite: ein winziges Menschen-Piktogramm. Die Zahl besteht aus lauter
-    // Menschen — es sind ja Prozent der MÄNNER. Beim Morph 91% → 2% lichtet
-    // sich die Menge dramatisch. Einmal gezeichnet, dann pro Partikel als
-    // Sprite (performant).
-    const buildSprite = (): HTMLCanvasElement | null => {
+    // Die Zahl besteht aus lauter Menschen (es sind ja Prozent der MÄNNER).
+    // Statt EINER Klon-Figur mehrere Silhouetten-HALTUNGEN → die Menge liest als
+    // VERSCHIEDENE Menschen, nicht als Kopien. Anonym per Konstruktion (kein
+    // Gesicht), konsent-frei, marken-eigen. Beim Morph 91% → 2% bleibt die Menge
+    // stehen: es lichtet sich der Irrtum, nicht der Mensch. Pro Partikel wird
+    // unten in build() eine Variante + leichte Größe/Helligkeit gewürfelt.
+    type Draw = (s: CanvasRenderingContext2D) => void;
+    const buildSprites = (): HTMLCanvasElement[] => {
       const S = 48;
-      const sc = document.createElement('canvas');
-      sc.width = S;
-      sc.height = S;
-      const s = sc.getContext('2d');
-      if (!s) return null;
-      s.fillStyle = '#7bdcb5';
-      // Kopf
-      s.beginPath();
-      s.arc(24, 13, 8.5, 0, Math.PI * 2);
-      s.fill();
-      // Körper (Schultern → Rumpf)
-      s.beginPath();
-      s.moveTo(9, 46);
-      s.quadraticCurveTo(11, 25, 24, 25);
-      s.quadraticCurveTo(37, 25, 39, 46);
-      s.closePath();
-      s.fill();
-      return sc;
+      const body = (s: CanvasRenderingContext2D, lx: number, rx: number) => {
+        s.beginPath();
+        s.moveTo(lx, 46);
+        s.quadraticCurveTo(lx + 2, 24, 24, 24);
+        s.quadraticCurveTo(rx - 2, 24, rx, 46);
+        s.closePath();
+        s.fill();
+      };
+      const arm = (
+        s: CanvasRenderingContext2D,
+        x1: number,
+        y1: number,
+        x2: number,
+        y2: number
+      ) => {
+        s.beginPath();
+        s.moveTo(x1, y1);
+        s.lineTo(x2, y2);
+        s.stroke();
+      };
+      const variants: Draw[] = [
+        (s) => body(s, 10, 38), // stehend
+        (s) => {
+          body(s, 12, 36);
+          arm(s, 16, 28, 9, 13);
+          arm(s, 32, 28, 39, 13);
+        }, // arme hoch (offen)
+        (s) => body(s, 7, 41), // breit / kräftig
+        (s) => {
+          body(s, 12, 36);
+          arm(s, 33, 30, 44, 23);
+        }, // ein arm zur seite (winkt)
+        (s) => {
+          body(s, 13, 35);
+          arm(s, 15, 31, 12, 41);
+          arm(s, 33, 31, 36, 41);
+        }, // hände an der hüfte
+        (s) => body(s, 14, 34), // schmal
+      ];
+      const out: HTMLCanvasElement[] = [];
+      for (const draw of variants) {
+        const sc = document.createElement('canvas');
+        sc.width = S;
+        sc.height = S;
+        const s = sc.getContext('2d');
+        if (!s) continue;
+        s.fillStyle = '#7bdcb5';
+        s.strokeStyle = '#7bdcb5';
+        s.lineWidth = 4.5;
+        s.lineCap = 'round';
+        s.lineJoin = 'round';
+        // Kopf (alle Varianten gleich)
+        s.beginPath();
+        s.arc(24, 12, 8, 0, Math.PI * 2);
+        s.fill();
+        draw(s);
+        out.push(sc);
+      }
+      return out;
     };
-    const sprite = buildSprite();
+    const sprites = buildSprites();
 
     const sample = (text: string) => {
       const off = document.createElement('canvas');
@@ -476,6 +523,9 @@ function StatParticles({
           y: Math.random() * H,
           kept,
           seed: Math.random(),
+          variant: sprites.length ? (Math.random() * sprites.length) | 0 : 0,
+          scale: 0.85 + Math.random() * 0.32,
+          shade: 0.7 + Math.random() * 0.3,
         };
       });
     };
@@ -550,10 +600,13 @@ function StatParticles({
           }
           pt.x += (gx - pt.x) * 0.2;
           pt.y += (gy - pt.y) * 0.2;
-          ctx.globalAlpha = al;
-          if (sprite) {
-            ctx.drawImage(sprite, pt.x - psz / 2, pt.y - psz / 2, psz, psz);
+          const spr = sprites[pt.variant];
+          const sz = psz * pt.scale;
+          if (spr) {
+            ctx.globalAlpha = al * pt.shade;
+            ctx.drawImage(spr, pt.x - sz / 2, pt.y - sz / 2, sz, sz);
           } else {
+            ctx.globalAlpha = al;
             ctx.fillRect(pt.x, pt.y, 3, 3);
           }
         }
@@ -593,12 +646,16 @@ function StatParticles({
       ctx.fillStyle = '#7bdcb5';
       const psz = W < 720 ? 12 : 10;
       for (const pt of parts) {
-        if (sprite) {
-          ctx.drawImage(sprite, pt.t91x - psz / 2, pt.t91y - psz / 2, psz, psz);
+        const spr = sprites[pt.variant];
+        const sz = psz * pt.scale;
+        if (spr) {
+          ctx.globalAlpha = pt.shade;
+          ctx.drawImage(spr, pt.t91x - sz / 2, pt.t91y - sz / 2, sz, sz);
         } else {
           ctx.fillRect(pt.t91x, pt.t91y, 3, 3);
         }
       }
+      ctx.globalAlpha = 1;
     } else {
       ensureRunning();
     }
