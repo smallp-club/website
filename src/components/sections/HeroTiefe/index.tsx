@@ -634,6 +634,47 @@ function StatParticles({
   );
 }
 
+/* ---- Farb-Ebenen (Paket B: native Scroll-Timeline mit framer-Fallback) ----
+   Die drei vollflächigen Crossfade-Ebenen sind tolerant getaktet (ein paar %
+   Versatz im Progress ist unsichtbar). Wo der Browser `animation-timeline`
+   kann (iOS 26+, Chrome 115+), laufen sie auf dem Compositor-Thread statt als
+   framer-useTransform pro Frame in JS. Sonst der bewährte framer-Pfad.
+   Die narrative Stations-/Stats-Choreografie bleibt bewusst in framer. */
+function BgColorsFramer({ progress }: { progress: MotionValue<number> }) {
+  const tealOp = useTransform(progress, (p) => lerp(p, [0.09, 0.15], [0, 1]));
+  const blackOp = useTransform(progress, (p) => lerp(p, [0.52, 0.59], [0, 1]));
+  const deepOp = useTransform(progress, (p) => lerp(p, [0.8, 0.86], [0, 1]));
+  return (
+    <>
+      <motion.div
+        className={styles.bgLayer}
+        initial={false}
+        style={{ backgroundColor: TEAL, opacity: tealOp }}
+      />
+      <motion.div
+        className={styles.bgLayer}
+        initial={false}
+        style={{ backgroundColor: BLACK, opacity: blackOp }}
+      />
+      <motion.div
+        className={styles.bgLayer}
+        initial={false}
+        style={{ backgroundColor: DEEP, opacity: deepOp }}
+      />
+    </>
+  );
+}
+
+function BgColorsCss() {
+  return (
+    <>
+      <div className={`${styles.bgLayer} ${styles.bgTeal}`} />
+      <div className={`${styles.bgLayer} ${styles.bgBlack}`} />
+      <div className={`${styles.bgLayer} ${styles.bgDeep}`} />
+    </>
+  );
+}
+
 /* ================================================================= */
 
 export function HeroTiefe() {
@@ -654,6 +695,18 @@ export function HeroTiefe() {
     on();
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
+  }, []);
+
+  // Paket B: native CSS-Scroll-Timeline verfügbar? (iOS 26+, Chrome/Edge 115+)
+  // Startwert false → SSR + älterer Browser bekommen den framer-Pfad; nach
+  // Hydration schaltet unterstützende Browser auf den Compositor-Pfad.
+  const [cssTl, setCssTl] = useState(false);
+  useEffect(() => {
+    setCssTl(
+      typeof CSS !== 'undefined' &&
+        typeof CSS.supports === 'function' &&
+        CSS.supports('animation-timeline: scroll()')
+    );
   }, []);
 
   // CTA nur fokussierbar, wenn die move-Station sichtbar ist (a11y H2).
@@ -677,15 +730,6 @@ export function HeroTiefe() {
     () => () => document.documentElement.removeAttribute('data-footer-rising'),
     []
   );
-
-  // Farb-Ebenen-Opacity (Crossfade, Funktions-form gegen ScrollTimeline-Remap).
-  // Teal ist voll gesetzt, BEVOR die erste helle Station-Zeile (line, 0.19)
-  // aufblendet → kein transienter Kontrast-Verlust (a11y H4).
-  const tealOp = useTransform(scrollYProgress, (p) => lerp(p, [0.09, 0.15], [0, 1]));
-  // Schwarz liegt VOR dem Stats-Fokus (0.62) voll → die Partikel-Formation
-  // steht auf schwarzem Grund (Stats-Doktrin), nicht auf halbem Teal.
-  const blackOp = useTransform(scrollYProgress, (p) => lerp(p, [0.52, 0.59], [0, 1]));
-  const deepOp = useTransform(scrollYProgress, (p) => lerp(p, [0.8, 0.86], [0, 1]));
 
   // Mouse-look: Kamera kippt leicht mit dem Cursor. Rohe MotionValues +
   // CSS-transition auf der world (kein framer-Spring → keine WAAPI-Keyframes).
@@ -798,21 +842,11 @@ export function HeroTiefe() {
     >
       <div className={styles.sticky} onMouseMove={onMove}>
         <div className={styles.bgBase} />
-        <motion.div
-          className={styles.bgLayer}
-          initial={false}
-          style={{ backgroundColor: TEAL, opacity: tealOp }}
-        />
-        <motion.div
-          className={styles.bgLayer}
-          initial={false}
-          style={{ backgroundColor: BLACK, opacity: blackOp }}
-        />
-        <motion.div
-          className={styles.bgLayer}
-          initial={false}
-          style={{ backgroundColor: DEEP, opacity: deepOp }}
-        />
+        {cssTl ? (
+          <BgColorsCss />
+        ) : (
+          <BgColorsFramer progress={scrollYProgress} />
+        )}
 
         {/* Atmosphäre: driftendes Licht in der Tiefe (Volumen statt Leere). */}
         <div className={styles.glow1} aria-hidden />

@@ -50,6 +50,41 @@
   z-index: 0;
 }
 
+/* Paket B: native Scroll-Timeline für die Farb-Crossfades (Compositor-Thread
+   statt framer-useTransform pro Frame). scroll(root block) = vertikaler
+   Fortschritt des Seiten-Scrollers; die animation-range-Prozente entsprechen
+   den framer-lerp-Fenstern. `both` hält den Rand-Zustand außerhalb des
+   Fensters (davor opacity 0, danach 1). Nur aktiv, wenn HeroTiefe per
+   Feature-Erkennung auf den CSS-Pfad schaltet (sonst greifen diese Klassen
+   nie). */
+@keyframes bgFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.bgTeal,
+.bgBlack,
+.bgDeep {
+  opacity: 0;
+  animation: bgFade linear both;
+  animation-timeline: scroll(root block);
+}
+.bgTeal {
+  background: #123b3c;
+  animation-range: 9% 15%;
+}
+.bgBlack {
+  background: #0a0a0a;
+  animation-range: 52% 59%;
+}
+.bgDeep {
+  background: #1d5556;
+  animation-range: 80% 86%;
+}
+
 .stage {
   position: absolute;
   inset: 0;
