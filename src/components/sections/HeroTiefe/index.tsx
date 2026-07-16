@@ -239,7 +239,9 @@ function StationContent({
     case 'hero':
       return (
         <div className={`${styles.plate} ${styles.plateHero}`}>
-          <p className={styles.eyebrow}>{t('tagline')}</p>
+          {/* Kein Tagline-Eyebrow: der Hero steht als pure Ankunft (kleiner
+              penis? großes thema. und?) ungerahmt am stärksten. Die Tagline
+              bleibt Marken-Klammer im Footer, nicht vorweggenommen. */}
           <p className={styles.heroSmall}>{t('hero.small')}</p>
           <h1 className={styles.heroBig}>{t('hero.big')}</h1>
           <p className={styles.heroPay}>{t('hero.pay')}</p>
