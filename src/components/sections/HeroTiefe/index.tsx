@@ -65,39 +65,6 @@ const STAT_FOCUS = 0.62;
 const MORPH_START = 0.63;
 const MORPH_LEN = 0.08;
 
-/* ---- Maßband-Feld: die Tiefe IST voller Messen ----
-   Statt abstrakter Formen ein Feld feiner Mess-Striche, verstreut in der 3D-
-   Tiefe. Du fliegst durch einen Raum aus lauter Messen — die paar Zentimeter,
-   um die sich alles dreht, winzig in der Weite. Ein paar tragen eine kleine
-   cm-Zahl. Thematisch (messen), räumlich (verstreute Tiefe), marken-eigen
-   (verlängert das Maßband). Deterministisch → kein Hydration-Mismatch. */
-const MEASURE_FIELD = [
-  { x: -42, y: -30, z: -1500, len: 20, num: 0 },
-  { x: 40, y: -34, z: -2300, len: 14, num: 12 },
-  { x: -46, y: 28, z: -1300, len: 26, num: 0 },
-  { x: 32, y: 34, z: -1900, len: 16, num: 0 },
-  { x: 14, y: -40, z: -1100, len: 12, num: 15 },
-  { x: -22, y: 13, z: -2600, len: 30, num: 0 },
-  { x: 48, y: 9, z: -1600, len: 18, num: 0 },
-  { x: -36, y: -10, z: -900, len: 10, num: 0 },
-  { x: 26, y: 25, z: -2800, len: 34, num: 13 },
-  { x: -14, y: -22, z: -2100, len: 22, num: 0 },
-  { x: 44, y: -20, z: -2500, len: 16, num: 0 },
-  { x: -50, y: 4, z: -1750, len: 24, num: 11 },
-  { x: 8, y: 38, z: -1400, len: 14, num: 0 },
-  { x: -28, y: -38, z: -2000, len: 18, num: 0 },
-  { x: 36, y: 20, z: -1200, len: 12, num: 0 },
-  { x: -8, y: 31, z: -2400, len: 28, num: 14 },
-  { x: 50, y: -6, z: -1000, len: 16, num: 0 },
-  { x: -44, y: -18, z: -2700, len: 32, num: 0 },
-  { x: 20, y: -30, z: -1550, len: 14, num: 0 },
-  { x: -18, y: 40, z: -1850, len: 20, num: 0 },
-  { x: 42, y: 36, z: -2200, len: 18, num: 16 },
-  { x: -34, y: 8, z: -1300, len: 12, num: 0 },
-  { x: 12, y: 16, z: -2900, len: 36, num: 0 },
-  { x: -50, y: -34, z: -1650, len: 22, num: 0 },
-] as const;
-
 /* ---- Maßband-Rückgrat: cm-Ticks, die in die Tiefe laufen ----
    Das Klein-Thema räumlich: du fliegst an einem Maßband entlang, die paar
    Zentimeter sind winzig in der Weite. Geometrische (nicht-Text) Ebene. */
@@ -141,34 +108,6 @@ function lerp(p: number, inp: number[], out: number[]): number {
   return out[n - 1] ?? 0;
 }
 
-/* ---- Mess-Strich im Tiefen-Feld (eigene Komponente wegen useTransform-Hook) ----
-   Driftet nur sanft in der Tiefe (wie die alten Partikel), rast NICHT auf die
-   Kamera zu → kein Fly-Forward-Ruckeln. Faint, ambient. Dynamische Länge als
-   CSS-Variable (kein Inline-Style-Wert). */
-function MeasureMark({
-  m,
-  drift,
-}: {
-  m: (typeof MEASURE_FIELD)[number];
-  drift: MotionValue<number>;
-}) {
-  const z = useTransform(drift, (v) => m.z + v);
-  return (
-    <motion.div
-      className={styles.measureMark}
-      initial={false}
-      aria-hidden
-      style={{ x: `${m.x}vw`, y: `${m.y}vh`, z }}
-    >
-      <span
-        className={styles.measureTick}
-        style={{ '--len': `${m.len}px` } as React.CSSProperties}
-      />
-      {m.num > 0 && <span className={styles.measureNum}>{m.num}</span>}
-    </motion.div>
-  );
-}
-
 /* ---- Maßband-Tick (fliegt in die Tiefe) ---- */
 function RulerTick({
   tick,
@@ -179,14 +118,6 @@ function RulerTick({
 }) {
   const t = useTranslations('landing');
   const z = useTransform(progress, (p) => tick.z + p * RULER_FLIGHT);
-  // Diagonale: das Maß beginnt links-hinten (tief, e sehr negativ) und kommt
-  // nach vorne-rechts (nah, e positiv). x wandert mit der Tiefe von links nach
-  // rechts, während die Marke fliegt.
-  const x = useTransform(progress, (p) => {
-    const e = tick.z + p * RULER_FLIGHT;
-    const s = Math.max(0, Math.min(1, (e + 2700) / 3160)); // -2700..460 → 0..1
-    return `${(-32 + s * 64).toFixed(1)}vw`; // -32vw (links) … +32vw (rechts)
-  });
   const opacity = useTransform(progress, (p) => {
     const e = tick.z + p * RULER_FLIGHT;
     const peak = tick.avg ? 1 : tick.inBand ? 0.85 : 0.4;
@@ -206,7 +137,7 @@ function RulerTick({
       className={`${styles.tick} ${cls}`}
       initial={false}
       aria-hidden
-      style={{ x, z, opacity }}
+      style={{ x: '-50%', z, opacity }}
     >
       <span className={styles.tickMark} />
       {tick.label && <span className={styles.tickLabel}>{tick.label}</span>}
@@ -908,18 +839,11 @@ export function HeroTiefe() {
     };
   }, [reduce, rx, ry]);
 
-  // Sanfter Tiefen-Drift über den ganzen Scroll (Feld + Maßband).
-  const partDrift = useTransform(scrollYProgress, (p) => p * 900);
-
   // Mobil weniger gleichzeitige 3D-Layer: nur beschriftete/markierte Maßband-
-  // Ticks (7 statt 21) und ein ausgedünntes Mess-Feld (12 statt 24). Jeder
-  // Tick / jede Mark ist ein eigener composited Layer + ein useTransform/Frame.
+  // Ticks (7 statt 21). Jeder Tick ist ein eigener composited Layer.
   const ticks = isMobile
     ? RULER_TICKS.filter((tk) => tk.label || tk.avg || tk.noteKey)
     : RULER_TICKS;
-  const field = isMobile
-    ? MEASURE_FIELD.filter((_, i) => i % 2 === 0)
-    : MEASURE_FIELD;
 
   if (reduce) {
     // Flacher, voll lesbarer Stack ohne Flug. Enthält den Stats-Moment als
@@ -971,10 +895,6 @@ export function HeroTiefe() {
             initial={false}
             style={{ rotateX: rx, rotateY: ry }}
           >
-            {field.map((m, i) => (
-              <MeasureMark key={i} m={m} drift={partDrift} />
-            ))}
-
             {ticks.map((tk, i) => (
               <RulerTick key={i} tick={tk} progress={scrollYProgress} />
             ))}
