@@ -47,12 +47,14 @@ type Station = {
 const STATIONS: Station[] = [
   { focus: 0.05, kind: 'hero' },
   { focus: 0.15, kind: 'line' },
-  { focus: 0.25, kind: 'image' }, // menschlicher moment nach der wiedererkennung
-  { focus: 0.35, kind: 'myth' },
-  { focus: 0.45, kind: 'fact' },
+  { focus: 0.3, kind: 'myth' },
+  { focus: 0.44, kind: 'fact' },
+  // Bild-Slot NACH den Stats: das menschliche Gesicht der gerade gelieferten
+  // Entlastung (91→2), nicht mehr vorweggenommen vor Mythos/Fakt. Zwischen der
+  // Stats-Formation (fadet bis ~0.75 aus) und der move-Station.
+  { focus: 0.79, kind: 'image' },
   // move steht als letzte Station und BLEIBT (isLast → fliegt nicht weg),
-  // fertig geformt bevor der Footer ab ~0.91 darüber gleitet. Blendet erst
-  // NACH der Stats-Formation ein (kein Überlappen mit der Zahl).
+  // fertig geformt bevor der Footer ab ~0.91 darüber gleitet.
   { focus: 0.86, kind: 'move' },
 ];
 
@@ -63,7 +65,7 @@ const STAT_FOCUS = 0.62;
 // läuft dann bewusst gedehnt ab. Beide Werte steuern BEIDE Morph-Rechnungen
 // (MotionValue für die Text-Zeilen + die Canvas-Schleife) — immer synchron.
 const MORPH_START = 0.63;
-const MORPH_LEN = 0.08;
+const MORPH_LEN = 0.06;
 
 /* ---- Maßband-Rückgrat: cm-Ticks, die in die Tiefe laufen ----
    Das Klein-Thema räumlich: du fliegst an einem Maßband entlang, die paar
@@ -329,13 +331,13 @@ function StatParticles({
   // Erst NACH dem Fakt-Text einblenden (0.51), synchron zum Männchen-Einflug —
   // sonst überlappt „so viele halten sich für zu klein." den ausblendenden Fakt.
   const wrapOpacity = useTransform(progress, (p) =>
-    lerp(p, [0.51, 0.56, 0.79, 0.83], [0, 1, 1, 0])
+    lerp(p, [0.51, 0.56, 0.71, 0.75], [0, 1, 1, 0])
   );
   // Wie die anderen Slides: kurz im Zustand bleiben, LEICHT nach vorne kommen,
   // dann weiter. Der ganze Prozent-Block driftet über 91%- + 2%-Halt langsam
   // nach vorn (Scale 1 → 1.11) und fliegt am Ende weg (→ 1.24 + Fade).
   const wrapScale = useTransform(progress, (p) =>
-    lerp(p, [0.56, 0.63, 0.79, 0.85], [1, 1.05, 1.11, 1.24])
+    lerp(p, [0.56, 0.63, 0.71, 0.76], [1, 1.05, 1.11, 1.24])
   );
   // Morph 0 → 1: „91 %" (glauben) zerfällt zu „2 %" (sind es wirklich).
   const morph = useTransform(progress, (p) =>
@@ -570,8 +572,8 @@ function StatParticles({
       let a: number;
       if (rel < -0.11) a = 0;
       else if (rel < -0.06) a = (rel + 0.11) / 0.05;
-      else if (rel < 0.19) a = 1;
-      else if (rel < 0.25) a = 1 - (rel - 0.19) / 0.06;
+      else if (rel < 0.09) a = 1;
+      else if (rel < 0.13) a = 1 - (rel - 0.09) / 0.04;
       else a = 0;
       // Einflug: die Männchen fliegen von AUSSEN herein und setzen sich zur
       // Zahl zusammen (asm 0→1 über p 0.50→0.61, VOR dem Morph bei 0.63). Sie
