@@ -239,12 +239,18 @@ function StationContent({
     case 'hero':
       return (
         <div className={`${styles.plate} ${styles.plateHero}`}>
-          {/* Kein Tagline-Eyebrow: der Hero steht als pure Ankunft (kleiner
-              penis? großes thema. und?) ungerahmt am stärksten. Die Tagline
-              bleibt Marken-Klammer im Footer, nicht vorweggenommen. */}
-          <p className={styles.heroSmall}>{t('hero.small')}</p>
-          <h1 className={styles.heroBig}>{t('hero.big')}</h1>
-          <p className={styles.heroPay}>{t('hero.pay')}</p>
+          {/* Voller Ankunftssatz als EIN h1 (drei Spans visuell): semantisch
+              „kleiner penis? großes thema. und?" statt Fragment (SEO). Kein
+              Tagline-Eyebrow — der Hero steht pur, die Tagline bleibt Footer-
+              Klammer. */}
+          <h1 className={styles.heroH1}>
+            <span className={styles.heroSmall}>{t('hero.small')}</span>
+            <span className={styles.heroBig}>{t('hero.big')}</span>
+            <span className={styles.heroPay}>{t('hero.pay')}</span>
+          </h1>
+          {/* Mess-Strich als ruhiges Scroll-Signal: erdet den Hero unten und
+              deutet die Tiefe darunter an. Off-white-sicher (dunkel/teal). */}
+          <span className={styles.scrollCue} aria-hidden />
         </div>
       );
     case 'line':
