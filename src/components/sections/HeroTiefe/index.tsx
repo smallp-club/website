@@ -669,6 +669,53 @@ export function HeroTiefe() {
     rx.set(-ny * 6);
   }
 
+  // Mobiles Pendant zum mouse-look: die Handy-BEWEGUNG kippt die Kamera.
+  // deviceorientation (Gyroskop) → dieselben rx/ry wie die Maus. Gegen die
+  // Halte-Position kalibriert (erster Event = Nullpunkt), damit egal in welchem
+  // Winkel man das Handy hält, erst das Bewegen die Szene neigt.
+  // iOS 13+ verlangt requestPermission NACH einer Nutzer-Geste → an den ersten
+  // touchend gehängt (einmalig). Android/andere starten direkt.
+  useEffect(() => {
+    if (reduce || typeof window === 'undefined') return;
+    const DOE = window.DeviceOrientationEvent as
+      | (typeof DeviceOrientationEvent & {
+          requestPermission?: () => Promise<'granted' | 'denied' | 'default'>;
+        })
+      | undefined;
+    if (!DOE) return;
+
+    const clamp = (v: number, min: number, max: number) =>
+      v < min ? min : v > max ? max : v;
+    let base: { beta: number; gamma: number } | null = null;
+    const onOrient = (e: DeviceOrientationEvent) => {
+      if (e.beta == null || e.gamma == null) return;
+      if (!base) base = { beta: e.beta, gamma: e.gamma };
+      // gamma = links/rechts-Neigung → ry; beta = vor/zurück → rx.
+      ry.set(clamp((e.gamma - base.gamma) / 2.5, -10, 10));
+      rx.set(clamp(-(e.beta - base.beta) / 2.5, -8, 8));
+    };
+    const start = () => window.addEventListener('deviceorientation', onOrient);
+
+    let onGesture: (() => void) | null = null;
+    if (typeof DOE.requestPermission === 'function') {
+      onGesture = () => {
+        DOE.requestPermission?.()
+          .then((res) => {
+            if (res === 'granted') start();
+          })
+          .catch(() => {});
+      };
+      window.addEventListener('touchend', onGesture, { once: true });
+    } else {
+      start();
+    }
+
+    return () => {
+      window.removeEventListener('deviceorientation', onOrient);
+      if (onGesture) window.removeEventListener('touchend', onGesture);
+    };
+  }, [reduce, rx, ry]);
+
   // Partikel-Parallax: langsamer Tiefen-Drift über den ganzen Scroll.
   const partDrift = useTransform(scrollYProgress, (p) => p * 900);
 
