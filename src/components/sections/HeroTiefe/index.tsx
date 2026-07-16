@@ -76,6 +76,7 @@ const RULER_TICKS = Array.from({ length: 21 }, (_, i) => {
   const inBand = cm >= 10 && cm <= 16;
   const avg = cm === 13;
   return {
+    cm,
     z: -150 - i * 150,
     inBand,
     avg,
@@ -181,18 +182,21 @@ function StationLayer({
   // statt flach still zu stehen. Erst danach fliegt sie weg (→ +170) und die
   // nächste kommt. Genau das „langsam etwas weiter nach vorne, dann weg".
   const zRange = isFirst
-    ? ([0, focus + 0.06, focus + 0.11] as const)
+    ? ([0, focus, focus + 0.045] as const)
     : isLast
       ? ([focus - 0.12, focus] as const)
       : ([focus - 0.09, focus - 0.02, focus + 0.04, focus + 0.075] as const);
   const zOut = isFirst
-    ? ([0, 0, 90] as const)
+    ? ([0, 0, 130] as const)
     : isLast
       ? ([-1300, 0] as const)
       : ([-1300, -30, 45, 170] as const);
 
   const oRange = isFirst
-    ? ([0, focus + 0.06, focus + 0.11] as const)
+    ? // Hero früh + entschieden ausblenden (voll bis zum Fokus, dann weg bis
+      // focus+0.045), damit er verschwunden ist, BEVOR die nächste Station
+      // prominent wird — kein Durchgeistern mehr über dem stehenden Hero.
+      ([0, focus, focus + 0.045] as const)
     : isLast
       ? // spät + knapp einblenden, damit die move-Station nicht in die noch
         // stehende Stats-Zahl hineinragt.
@@ -311,8 +315,16 @@ function StatParticles({
   const num91 = t('stat.number91');
   const num2 = t('stat.number2');
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // Erst NACH dem Fakt-Text einblenden (0.51), synchron zum Männchen-Einflug —
+  // sonst überlappt „so viele halten sich für zu klein." den ausblendenden Fakt.
   const wrapOpacity = useTransform(progress, (p) =>
-    lerp(p, [0.48, 0.53, 0.79, 0.83], [0, 1, 1, 0])
+    lerp(p, [0.51, 0.56, 0.79, 0.83], [0, 1, 1, 0])
+  );
+  // Wie die anderen Slides: kurz im Zustand bleiben, LEICHT nach vorne kommen,
+  // dann weiter. Der ganze Prozent-Block driftet über 91%- + 2%-Halt langsam
+  // nach vorn (Scale 1 → 1.11) und fliegt am Ende weg (→ 1.24 + Fade).
+  const wrapScale = useTransform(progress, (p) =>
+    lerp(p, [0.56, 0.63, 0.79, 0.85], [1, 1.05, 1.11, 1.24])
   );
   // Morph 0 → 1: „91 %" (glauben) zerfällt zu „2 %" (sind es wirklich).
   const morph = useTransform(progress, (p) =>
@@ -495,20 +507,28 @@ function StatParticles({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       const a91 = sample(num91);
       const a2 = sample(num2);
+      const ocx = W / 2;
+      const ocy = H * 0.42;
       parts = a91.map((t, i) => {
         const kept = i < a2.length;
         const t2 = kept
           ? a2[i]!
           : { x: Math.random() * W, y: Math.random() * H };
+        // Start WEIT AUSSERHALB des Bildes, radial in Richtung der End-Position
+        // (plus Streuung) — die Männchen fliegen von außen herein und setzen
+        // sich zur Zahl zusammen, statt fertig dazustehen.
+        const spread = 1.7 + Math.random() * 1.6;
+        const startX = ocx + (t.x - ocx) * spread + (Math.random() - 0.5) * W * 0.3;
+        const startY = ocy + (t.y - ocy) * spread + (Math.random() - 0.5) * H * 0.3;
         return {
           t91x: t.x,
           t91y: t.y,
           t2x: t2.x,
           t2y: t2.y,
-          sx: Math.random() * W,
-          sy: Math.random() * H,
-          x: Math.random() * W,
-          y: Math.random() * H,
+          sx: startX,
+          sy: startY,
+          x: startX,
+          y: startY,
           kept,
           seed: Math.random(),
           variant: sprites.length ? (Math.random() * sprites.length) | 0 : 0,
@@ -532,14 +552,26 @@ function StatParticles({
         running = false;
         return;
       }
-      // Plateau: die Formation (91 % / 2 %) bleibt in einem BREITEN Fenster um
-      // den Fokus voll geformt — die Männchen stehen lange, bevor sie faden.
-      const a = dist < 0.19 ? 1 : dist > 0.25 ? 0 : 1 - (dist - 0.19) / 0.06;
+      // Opacity-Hüllkurve: SPÄT einblenden (erst wenn der Fakt-Text weg ist,
+      // ~p 0.51 → keine Überlappung mehr), breites Plateau über Morph + 2%-Halt,
+      // dann ausblenden. rel = signierter Abstand zum Fokus.
+      const rel = p - STAT_FOCUS;
+      let a: number;
+      if (rel < -0.11) a = 0;
+      else if (rel < -0.06) a = (rel + 0.11) / 0.05;
+      else if (rel < 0.19) a = 1;
+      else if (rel < 0.25) a = 1 - (rel - 0.19) / 0.06;
+      else a = 0;
+      // Einflug: die Männchen fliegen von AUSSEN herein und setzen sich zur
+      // Zahl zusammen (asm 0→1 über p 0.50→0.61, VOR dem Morph bei 0.63). Sie
+      // werden ~0.51 sichtbar (nach dem Fakt-Text) und fliegen sichtbar ein —
+      // kein fertiges Dastehen mehr, keine Überlappung mit dem Fakt.
+      const asm = Math.max(0, Math.min(1, (p - (STAT_FOCUS - 0.12)) / 0.11));
+      const asmE = asm * asm * (3 - 2 * asm);
       ctx.clearRect(0, 0, W, H);
       if (a > 0.002 && parts.length) {
         const mx = mouse.current.x;
         const my = mouse.current.y;
-        const ease = a * a * (3 - 2 * a);
         const m = Math.max(0, Math.min(1, (p - MORPH_START) / MORPH_LEN));
         const psz = W < 720 ? 12 : 10;
         const cx = W / 2;
@@ -572,8 +604,8 @@ function StatParticles({
             ty = pt.t91y + oy * drift - mp * 70;
             al = a * (1 - mp);
           }
-          let gx = pt.sx + (tx - pt.sx) * ease;
-          let gy = pt.sy + (ty - pt.sy) * ease;
+          let gx = pt.sx + (tx - pt.sx) * asmE;
+          let gy = pt.sy + (ty - pt.sy) * asmE;
           // Cursor-Repel nur wenn es einen echten Cursor gibt (mx>0). Auf Touch
           // bleibt mouse.current.x bei -9999 → der ganze Block ist reine
           // Verschwendung pro Partikel pro Frame und wird übersprungen.
@@ -664,7 +696,10 @@ function StatParticles({
   }, [reduce, progress, mouse, num91, num2]);
 
   return (
-    <motion.div className={styles.statMoment} style={{ opacity: wrapOpacity }}>
+    <motion.div
+      className={styles.statMoment}
+      style={{ opacity: wrapOpacity, scale: wrapScale }}
+    >
       <canvas ref={canvasRef} className={styles.statCanvas} aria-hidden />
       <span className={styles.srOnly}>{t('stat.sr')}</span>
       <div className={styles.statText}>
