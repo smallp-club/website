@@ -130,8 +130,10 @@ function RulerTick({
     const peak = tick.avg ? 1 : tick.inBand ? 0.9 : 0.55;
     // Hero-Gate: kein Maßband-Fleck auf dem off-white Hero.
     const gate = p < 0.1 ? 0 : p < 0.16 ? (p - 0.1) / 0.06 : 1;
-    // Footer-Anflug: aus.
-    const out = p > 0.82 ? Math.max(0, 1 - (p - 0.82) / 0.04) : 1;
+    // VOR dem Stats-Moment ausblenden: das Maßband (mittig) darf nicht durch die
+    // ebenfalls mittige 91/2-Männchen-Formation schneiden. Es begleitet die
+    // Mythos/Fakt-Ebene und verlässt die Bühne, bevor die Zahl kommt.
+    const out = p > 0.47 ? Math.max(0, 1 - (p - 0.47) / 0.05) : 1;
     return peak * depthFade * gate * out;
   });
   const cls = tick.avg
