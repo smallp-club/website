@@ -323,7 +323,8 @@
 .tick {
   position: absolute;
   left: 50%;
-  top: 63%;
+  /* Maßstrahl tiefer gesetzt → kreuzt die Stations-Texte weniger, mehr Ruhe. */
+  top: 72%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -335,7 +336,7 @@
   display: block;
   width: 3px;
   height: 30px;
-  background: rgba(247, 246, 242, 0.5);
+  background: rgba(247, 246, 242, 0.28);
   border-radius: 2px;
 }
 /* 95%-Band: leuchtet — hier liegen fast alle. */
@@ -343,21 +344,21 @@
   height: 46px;
   width: 4px;
   background: var(--spc-turquoise);
-  box-shadow: 0 0 18px rgba(123, 220, 181, 0.8);
+  box-shadow: 0 0 18px rgba(123, 220, 181, 0.4);
 }
 /* Durchschnitt (13 cm): der Anker. */
 .tickAvg .tickMark {
   height: 78px;
   width: 6px;
   background: #f7f6f2;
-  box-shadow: 0 0 26px rgba(123, 220, 181, 0.95);
+  box-shadow: 0 0 26px rgba(123, 220, 181, 0.5);
 }
 .tickLabel {
   font-family: var(--font-display);
   font-weight: 500;
   font-size: clamp(1.05rem, 2vw, 1.55rem);
   letter-spacing: 0.02em;
-  color: rgba(169, 240, 210, 0.85);
+  color: rgba(169, 240, 210, 0.5);
   white-space: nowrap;
   text-shadow: 0 2px 16px rgba(10, 10, 10, 0.7);
 }
@@ -368,13 +369,13 @@
 }
 .tickBand .tickLabel,
 .tickAvg .tickLabel {
-  color: #d4f7e6;
+  color: rgba(212, 247, 230, 0.66);
 }
 .tickNote {
   font-family: var(--font-body);
   font-size: clamp(0.72rem, 1.3vw, 0.95rem);
   letter-spacing: 0.06em;
-  color: var(--spc-turquoise);
+  color: rgba(123, 220, 181, 0.6);
   white-space: nowrap;
   text-shadow: 0 2px 14px rgba(10, 10, 10, 0.85);
 }
@@ -443,7 +444,9 @@
 .statText {
   position: absolute;
   left: 50%;
-  top: 64%;
+  /* Höher gesetzt → sitzt näher unter der Zahl und über dem (jetzt tieferen)
+     Maßstrahl, statt ihn zu kreuzen. */
+  top: 57%;
   transform: translateX(-50%);
   width: min(92vw, 900px);
   height: 0;
