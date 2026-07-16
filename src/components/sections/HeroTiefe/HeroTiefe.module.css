@@ -427,21 +427,21 @@
 }
 
 /* ---- Maßband-Ticks ---- */
+/* .tick ist ein 0-Punkt auf der Maßband-Mittelachse (top:84%); Strich, Zahl und
+   Marker-Text hängen absolut daran: Strich zentriert, Zahl RECHTS, Note LINKS. */
 .tick {
   position: absolute;
   left: 50%;
-  /* Maßstrahl an den unteren Rand → kreuzt die Stations-Inhalte (v.a. den
-     Bild-Absatz) nicht mehr, sitzt als dezente Grundlinie unten. */
   top: 84%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
   transform-style: preserve-3d;
   pointer-events: none;
 }
+/* Graduierung = vertikaler Strich, auf der Achse zentriert */
 .tickMark {
-  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
   width: 3px;
   height: 26px;
   background: rgba(247, 246, 242, 0.18);
@@ -461,7 +461,12 @@
   background: rgba(247, 246, 242, 0.85);
   box-shadow: 0 0 20px rgba(123, 220, 181, 0.3);
 }
+/* Zahl: RECHTS neben dem Strich, auf Mark-Mitte */
 .tickLabel {
+  position: absolute;
+  left: 0.85rem;
+  top: 0;
+  transform: translateY(-50%);
   font-family: var(--font-display);
   font-weight: 500;
   font-size: clamp(1.05rem, 2vw, 1.55rem);
@@ -479,7 +484,13 @@
 .tickAvg .tickLabel {
   color: rgba(212, 247, 230, 0.66);
 }
+/* Besonderer Marker-Text: LINKS vom Strich, rechtsbündig */
 .tickNote {
+  position: absolute;
+  right: 0.85rem;
+  top: 0;
+  transform: translateY(-50%);
+  text-align: right;
   font-family: var(--font-body);
   font-size: clamp(0.72rem, 1.3vw, 0.95rem);
   letter-spacing: 0.06em;
