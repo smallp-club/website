@@ -87,7 +87,7 @@ Diese Aussage geht in die Privacy Policy als Brand-Statement. Macht die Brand st
 ### Schritt 4 — EU-Region-Forcing bei US-Anbietern
 
 Konfigurations-Check:
-- **Vercel:** Projekt-Region auf `fra1` (Frankfurt) setzen
+- **Vercel:** Serverless-Function-Region auf `fra1` (Frankfurt) — **erledigt 2026-07-16** per `vercel.json` (`"regions": ["fra1"]`). Vorher liefen alle Deployments auf `iad1` (US-Ost), obwohl die Doku „forced" behauptete. Verifiziert per Preview-Deployment (Region-Wahl vom Plan erlaubt), dann auf `main` gemerged. Statische Assets + Edge-Middleware laufen ohnehin global am nächsten Edge (DE = Frankfurt).
 - **Supabase:** Projekt in EU West (Frankfurt) anlegen, nicht US East
 - **Upstash:** Region EU-West (Frankfurt) wählen
 - **Cloudflare:** keine Region-Wahl (CDN ist global), aber DE-User werden ohnehin von Frankfurt-Edge served
