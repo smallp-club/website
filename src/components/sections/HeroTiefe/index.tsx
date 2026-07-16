@@ -776,6 +776,14 @@ export function HeroTiefe() {
     offset: ['start start', 'end end'],
   });
 
+  // Maßband kommt als EINE flache Ebene von hinten nach vorne: alle Marken
+  // teilen dieses eine translateZ → die Abstände bleiben exakt gleich (echtes
+  // Maßband), während die ganze Ebene aus der Tiefe heranfliegt. Anfang ist der
+  // Mess-Strich im Hero, das Band entrollt sich beim Scrollen in den Raum.
+  const rulerZ = useTransform(scrollYProgress, (p) =>
+    lerp(p, [0.1, 0.52], [-1150, 0])
+  );
+
   // Mobile bekommt eine REDUZIERTE Bühne (State of the Art: nicht 1:1 portieren)
   // — weniger gleichzeitige 3D-Layer entlastet das GPU-Layer-Budget auf iOS.
   const [isMobile, setIsMobile] = useState(false);
@@ -943,9 +951,13 @@ export function HeroTiefe() {
             initial={false}
             style={{ rotateX: rx, rotateY: ry }}
           >
-            {ticks.map((tk, i) => (
-              <RulerTick key={i} tick={tk} progress={scrollYProgress} />
-            ))}
+            {/* Maßband-Ebene: alle Marken auf EINER Ebene (gleiche Abstände),
+                die als Ganzes von hinten nach vorne fliegt (rulerZ). */}
+            <motion.div className={styles.rulerPlane} style={{ z: rulerZ }}>
+              {ticks.map((tk, i) => (
+                <RulerTick key={i} tick={tk} progress={scrollYProgress} />
+              ))}
+            </motion.div>
 
             {STATIONS.map((s, i) => (
               <StationLayer

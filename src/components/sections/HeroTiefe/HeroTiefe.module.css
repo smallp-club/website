@@ -427,6 +427,14 @@
 }
 
 /* ---- Maßband-Ticks ---- */
+/* Maßband-Ebene: trägt alle cm-Marken auf EINER Ebene und fliegt als Ganzes
+   in Z (von hinten nach vorne). Dadurch bleiben die Abstände gleich. */
+.rulerPlane {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
 .tick {
   position: absolute;
   /* GLEICHMÄSSIGE Abstände wie ein echtes Maßband: jede cm-Marke sitzt bei
