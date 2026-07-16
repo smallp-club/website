@@ -42,7 +42,7 @@
     "recognition": "du kennst das gefühl. oder du kennst jemanden, der es kennt.",
     "image": {
       "eyebrow": "bild folgt",
-      "caption": "ein ganz normaler mann. beim kaffee, morgens. entspannt, mit sich im reinen.",
+      "caption": "ein ganz normaler mann. beim kaffee, morgens. macht kein ding draus.",
       "under": "kein maß. ein mensch."
     },
     "myth": {
@@ -59,7 +59,8 @@
       "number2": "2 %",
       "sr": "91 prozent halten sich für zu klein. nur 2 prozent sind es wirklich.",
       "line91": "so viele halten sich für zu klein.",
-      "line2": "so wenige sind es wirklich."
+      "line2": "so wenige sind es wirklich.",
+      "source": "veale et al., bju international, 2015. n=15.521"
     },
     "ruler": {
       "average": "durchschnitt",

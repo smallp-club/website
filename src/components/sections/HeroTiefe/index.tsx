@@ -723,6 +723,7 @@ function StatParticles({
         >
           {t('stat.line2')}
         </motion.p>
+        <p className={styles.statSource}>{t('stat.source')}</p>
       </div>
     </motion.div>
   );

@@ -42,7 +42,7 @@
     "recognition": "you know the feeling. or you know someone who does.",
     "image": {
       "eyebrow": "photo coming",
-      "caption": "just an ordinary guy. coffee, morning. relaxed, at ease with himself.",
+      "caption": "just an ordinary guy. coffee, morning. makes no big deal of it.",
       "under": "no measure. a person."
     },
     "myth": {
@@ -59,7 +59,8 @@
       "number2": "2%",
       "sr": "91 percent think they are too small. only 2 percent actually are.",
       "line91": "this many think they are too small.",
-      "line2": "this few actually are."
+      "line2": "this few actually are.",
+      "source": "veale et al., bju international, 2015. n=15,521"
     },
     "ruler": {
       "average": "average",

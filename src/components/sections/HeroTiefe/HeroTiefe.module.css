@@ -587,6 +587,20 @@
 .statLineTruth {
   color: var(--spc-turquoise);
 }
+/* Quelle unter den Stat-Zeilen (Veale 2015) — jede Zahl braucht ihre Quelle. */
+.statSource {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 3.4rem;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: clamp(0.72rem, 1.3vw, 0.9rem);
+  letter-spacing: 0.04em;
+  color: rgba(212, 247, 230, 0.42);
+  text-shadow: 0 2px 14px rgba(10, 10, 10, 0.7);
+}
 .srOnly {
   position: absolute;
   width: 1px;
