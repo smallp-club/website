@@ -29,6 +29,7 @@ import {
   type MotionValue,
 } from 'framer-motion';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 import styles from './HeroTiefe.module.css';
 
 /* ---- Farb-Reise durch den Raum ----
@@ -273,8 +274,15 @@ function StationContent({
       return (
         <div className={styles.imageSlot}>
           <div className={styles.imageFrame}>
-            <span className={styles.imageEyebrow}>{t('image.eyebrow')}</span>
-            <span className={styles.imageCaption}>{t('image.caption')}</span>
+            {/* Schnappschuss-Look (Nacht/Blitz) sitzt bewusst auf dem dunklen
+                Tiefen-Grund. next/image optimiert + lazy-loaded pro Gerät. */}
+            <Image
+              src="/imagery/steps-reden.jpg"
+              alt="ein paar männer sitzen auf einer treppe, reden und lachen zusammen"
+              fill
+              sizes="(max-width: 640px) 88vw, 560px"
+              className={styles.imagePhoto}
+            />
           </div>
           <p className={styles.imageUnder}>{t('image.under')}</p>
         </div>

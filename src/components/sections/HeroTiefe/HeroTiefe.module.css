@@ -234,36 +234,16 @@
   gap: 1.6rem;
 }
 .imageFrame {
-  width: min(74vw, 400px);
-  aspect-ratio: 4 / 5;
+  position: relative;
+  width: min(88vw, 560px);
+  aspect-ratio: 3 / 2;
   border-radius: 18px;
-  border: 1.5px dashed rgba(123, 220, 181, 0.55);
-  background: linear-gradient(
-    160deg,
-    rgba(247, 246, 242, 0.06),
-    rgba(123, 220, 181, 0.04)
-  );
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: clamp(1.5rem, 4vw, 2.6rem);
-  text-align: center;
+  overflow: hidden;
+  border: 1px solid rgba(247, 246, 242, 0.12);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
-.imageEyebrow {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
-  color: var(--spc-turquoise);
-}
-.imageCaption {
-  font-family: var(--font-body);
-  font-size: clamp(0.95rem, 1.8vw, 1.2rem);
-  line-height: 1.5;
-  color: rgba(247, 246, 242, 0.82);
-  max-width: 24ch;
+.imagePhoto {
+  object-fit: cover;
 }
 .imageUnder {
   font-family: var(--font-display);
