@@ -79,5 +79,8 @@ export default async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next|_vercel|.*\\..*).*)'],
+  // opengraph-image/twitter-image sind extensionslose Next-Metadata-Routen
+  // (kein Punkt im Pfad) → ohne Ausschluss fängt der next-intl-Proxy sie ab
+  // und 404't sie, wodurch Social-/Crawler-Vorschaubilder nicht laden.
+  matcher: ['/((?!api|_next|_vercel|opengraph-image|twitter-image|.*\\..*).*)'],
 };

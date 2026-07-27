@@ -25,7 +25,7 @@ export default async function OgImage() {
       >
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '32px' }}>
           <div style={{ display: 'flex', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#7BDCB5', marginRight: '14px' }} />
-          <span style={{ display: 'flex', color: '#6F6C63', fontSize: '13px', fontFamily: 'Chillax', letterSpacing: '0.18em', textTransform: 'uppercase' }}>
+          <span style={{ display: 'flex', color: '#9A968C', fontSize: '15px', fontFamily: 'Chillax', letterSpacing: '0.01em' }}>
             small p club
           </span>
         </div>
