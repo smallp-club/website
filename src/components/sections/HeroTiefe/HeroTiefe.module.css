@@ -655,23 +655,35 @@
        Tiefer-Eintauchen. Desktop bleibt bei 1000px (voller Tiefen-Effekt). */
     perspective: 900px;
   }
+  .scroll {
+    /* Kürzere Strecke → jeder Wisch bewegt spürbar mehr Fortschritt, der
+       Scroll wirkt reaktiv statt zäh. Die Choreografie lebt in [0,1]-Progress,
+       bleibt also identisch — nur dichter über die Strecke verteilt. */
+    height: 820vh;
+  }
   .heroBig {
     font-size: clamp(3rem, 18vw, 7rem);
   }
   .plate {
     width: min(88vw, 1120px);
   }
-  /* Glow ist auf iOS-WebKit der teuerste Posten: eine Fläche weg, Radius
-     runter, KEIN screen-Blend (Backdrop-Readback) und KEINE Dauer-Animation
-     (Compositing im Leerlauf) mehr — statischer, günstiger Radialverlauf. */
-  .glow1,
-  .glow2 {
-    filter: blur(55px);
+  /* iOS-WebKit-Killer #1: `filter: blur()`. Der Radial-Verlauf ist von sich aus
+     weich → Blur ganz weg (kein großflächiges Filter-Recompositing pro Frame).
+     Nur EIN ruhiger, statischer Blob bleibt als Tiefen-Atmosphäre; der zweite
+     und dritte Glow entfallen mobil komplett. */
+  .glow1 {
+    filter: none;
     mix-blend-mode: normal;
     animation: none;
-    opacity: 0.4;
+    opacity: 0.3;
   }
+  .glow2,
   .glow3 {
     display: none;
+  }
+  /* Kein Gyro-Tilt auf Mobile (JS-seitig gated) → die 3D-`world` bleibt beim
+     Scrollen statisch. Transition raus, damit nichts nachzieht/recomposited. */
+  .world {
+    transition: none;
   }
 }

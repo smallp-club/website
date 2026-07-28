@@ -860,7 +860,11 @@ export function HeroTiefe() {
   // iOS 13+ verlangt requestPermission NACH einer Nutzer-Geste → an den ersten
   // touchend gehängt (einmalig). Android/andere starten direkt.
   useEffect(() => {
-    if (reduce || typeof window === 'undefined') return;
+    // Gyro-Tilt NUR auf Desktop-Zeigergeräten mit Sinn (Maus-Pendant). Auf dem
+    // Handy kippte jede Handbewegung die ganze preserve-3d-world (12 Layer) mit
+    // Transition → Dauer-Recomposite gegen den Scroll = Haupt-Ruckelquelle.
+    // Mobil komplett aus: die Bühne bleibt beim Scrollen ruhig und flüssig.
+    if (reduce || isMobile || typeof window === 'undefined') return;
     const DOE = window.DeviceOrientationEvent as
       | (typeof DeviceOrientationEvent & {
           requestPermission?: () => Promise<'granted' | 'denied' | 'default'>;
@@ -904,11 +908,15 @@ export function HeroTiefe() {
       window.removeEventListener('deviceorientation', onOrient);
       if (onGesture) window.removeEventListener('touchend', onGesture);
     };
-  }, [reduce, rx, ry]);
+  }, [reduce, isMobile, rx, ry]);
 
-  // Mobil weniger gleichzeitige 3D-Layer: nur beschriftete/markierte Ticks.
+  // Mobil deutlich weniger gleichzeitige 3D-Layer: nur Dekaden (0/10/20) plus
+  // die beiden Marker (Durchschnitt 13, Bandkante 16). ~5 statt 21 Ticks →
+  // weniger preserve-3d-Ebenen, die iOS pro Scroll-Frame neu zusammensetzt.
   const ticks = isMobile
-    ? RULER_TICKS.filter((tk) => tk.label || tk.avg || tk.noteKey)
+    ? RULER_TICKS.filter(
+        (tk) => (tk.label && tk.cm % 10 === 0) || tk.avg || tk.noteKey
+      )
     : RULER_TICKS;
 
   if (reduce) {
