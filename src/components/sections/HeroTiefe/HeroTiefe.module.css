@@ -654,4 +654,25 @@
   .rulerRail {
     transform: rotateX(12deg) rotateY(-15deg);
   }
+  /* Ruler mobil AUFGERÄUMT: der Clutter kam aus vielen überlappenden Labels +
+     stark unterschiedlichen Strich-Höhen. Fix: nur der Durchschnitt trägt Text
+     („durchschnitt 13 cm"), alle anderen Ticks sind die nackte, ruhige Schiene.
+     Marken uniformer + ohne Glow → liest als sauberes Maßband in die Tiefe
+     statt als Balken-Equalizer mit Text-Salat. */
+  .tick:not(.tickAvg) .tickLabel,
+  .tick:not(.tickAvg) .tickNote {
+    display: none;
+  }
+  .tickMark {
+    height: 20px;
+    opacity: 0.7;
+  }
+  .tickBand .tickMark {
+    height: 26px;
+    box-shadow: none;
+  }
+  .tickAvg .tickMark {
+    height: 38px;
+    box-shadow: none;
+  }
 }
