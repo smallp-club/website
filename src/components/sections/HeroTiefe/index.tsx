@@ -259,9 +259,6 @@ function StationContent({
             <span className={styles.heroBig}>{t('hero.big')}</span>
             <span className={styles.heroPay}>{t('hero.pay')}</span>
           </h1>
-          {/* Mess-Strich als ruhiges Scroll-Signal: erdet den Hero unten und
-              deutet die Tiefe darunter an. Off-white-sicher (dunkel/teal). */}
-          <span className={styles.scrollCue} aria-hidden />
         </div>
       );
     case 'line':
