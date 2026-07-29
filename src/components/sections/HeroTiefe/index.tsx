@@ -910,12 +910,14 @@ export function HeroTiefe() {
     };
   }, [reduce, isMobile, rx, ry]);
 
-  // Mobil deutlich weniger gleichzeitige 3D-Layer: nur Dekaden (0/10/20) plus
-  // die beiden Marker (Durchschnitt 13, Bandkante 16). ~5 statt 21 Ticks →
-  // weniger preserve-3d-Ebenen, die iOS pro Scroll-Frame neu zusammensetzt.
+  // Mobil eine dichte, aber nicht überladene Schiene: Dekaden-Labels + das ganze
+  // 95%-Band (10–16) + Marker. ~10 statt 21 Ticks — genug Dichte, damit die
+  // schräg gestellte Rail als durchgehendes Maßband in die Tiefe liest (nicht
+  // als ein paar einsame Striche). Der Perf-Gewinn kam aus Blur+Gyro, nicht aus
+  // der Tick-Zahl, deshalb hier wieder mehr.
   const ticks = isMobile
     ? RULER_TICKS.filter(
-        (tk) => (tk.label && tk.cm % 10 === 0) || tk.avg || tk.noteKey
+        (tk) => tk.label || tk.inBand || tk.avg || tk.noteKey
       )
     : RULER_TICKS;
 
@@ -969,9 +971,16 @@ export function HeroTiefe() {
             initial={false}
             style={{ rotateX: rx, rotateY: ry }}
           >
-            {ticks.map((tk, i) => (
-              <RulerTick key={i} tick={tk} progress={scrollYProgress} />
-            ))}
+            {/* Eigene Maßband-Ebene: bekommt mobil einen festen Schräg-Winkel
+                (CSS), damit die in die Tiefe fliegende Schiene auch OHNE Kamera-
+                Kippen (Gyro ist mobil aus) als 3D-Tiefe liest statt frontal zu
+                kollabieren. Desktop: kein Extra-Winkel, die Rail erbt den
+                dynamischen Maus-Tilt der world. */}
+            <div className={styles.rulerRail}>
+              {ticks.map((tk, i) => (
+                <RulerTick key={i} tick={tk} progress={scrollYProgress} />
+              ))}
+            </div>
 
             {STATIONS.map((s, i) => (
               <StationLayer

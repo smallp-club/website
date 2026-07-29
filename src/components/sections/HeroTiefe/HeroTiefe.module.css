@@ -102,6 +102,16 @@
   transition: transform 0.14s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ---- Maßband-Ebene ----
+   Eigene preserve-3d-Ebene für die cm-Ticks. Desktop: keine Eigen-Rotation, die
+   Rail erbt den dynamischen Maus-Tilt der world. Mobil (Gyro aus) bekommt sie
+   eine feste Schräglage (Media-Query unten), damit die Tiefe liest. */
+.rulerRail {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
 /* ---- Stationen ---- */
 .station {
   position: absolute;
@@ -685,5 +695,13 @@
      Scrollen statisch. Transition raus, damit nichts nachzieht/recomposited. */
   .world {
     transition: none;
+  }
+  /* Feste Schräglage der Maßband-Schiene NUR mobil: man schaut die in die Tiefe
+     fliegenden cm-Marken schräg an → sie staffeln sich lesbar in den Raum statt
+     frontal aufeinander zu kollabieren. Statischer Transform → kein Per-Frame-
+     Recompositing, kein Jank. Ersetzt den mobil abgeschalteten Gyro-Tilt für
+     genau das eine Element, das die Tiefe am stärksten trägt. */
+  .rulerRail {
+    transform: rotateX(12deg) rotateY(-15deg);
   }
 }
