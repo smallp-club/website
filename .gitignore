@@ -42,3 +42,7 @@ emails/.rendered/
 
 # AVV-Sammelmappe (DSGVO Audit-Spur, nicht öffentlich)
 legal/avv/**/*.pdf
+
+# Workspace-Screenshots als JPEG (Browser-Debug)
+/*.jpeg
+/*.jpg
