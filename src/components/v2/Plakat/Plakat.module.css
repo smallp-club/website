@@ -788,7 +788,7 @@ a.notePrompt:focus-visible {
 
 .join {
   position: relative;
-  background-color: var(--v2-act);
+  background-color: var(--v2-poster-paper);
   background-image: var(--plakat-paper-noise-soft);
   background-size: 240px;
   background-blend-mode: multiply;
@@ -845,7 +845,7 @@ a.notePrompt:focus-visible {
   text-align: right;
   font-family: var(--font-body);
   font-size: var(--v2-small);
-  color: var(--v2-on-act-muted);
+  color: var(--v2-muted-on-paper);
 }
 
 @media (max-width: 900px) {
@@ -999,7 +999,7 @@ a.notePrompt:focus-visible {
 
 /* ---------- Papier-Material (PaperSkin) für Zettel, Beitritt ---------- */
 .note { isolation: isolate; --skin-wear: 0.35; --skin-crease: 0.7; }
-.join { isolation: isolate; --skin-crease: 0.7; }
+.join { isolation: isolate; --skin-crease: 0.5; --skin-wear: 0.4; }
 .strip { isolation: isolate; z-index: 4; --skin-wear: 0; --skin-crease: 0.45; }
 
 /* ---------- Hero: Bahnen abreißen ---------- */

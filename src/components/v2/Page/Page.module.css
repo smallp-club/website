@@ -564,7 +564,7 @@
   position: relative;
   margin-top: clamp(3rem, 6vw, 5rem);
   padding: clamp(4.5rem, 9vw, 7rem) var(--v2-gutter) clamp(4rem, 8vw, 6rem);
-  background-color: var(--v2-act);
+  background-color: var(--v2-poster-paper);
   background-image: var(--v2-paper-noise-soft);
   background-size: 240px;
   background-blend-mode: multiply;
@@ -578,7 +578,7 @@
 }
 
 .joinHead .chapterEyebrow {
-  color: var(--v2-on-act-muted);
+  color: var(--v2-muted-on-paper);
 }
 
 .joinNr {
@@ -587,7 +587,7 @@
   font-family: var(--font-plakat-number), var(--font-display);
   font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
   line-height: 0.85;
-  color: var(--v2-on-act-muted);
+  color: var(--v2-muted-on-paper);
 }
 
 .joinTitle {
@@ -736,6 +736,6 @@
 
 /* ---------- Papier-Material (PaperSkin) ---------- */
 .marginNote { isolation: isolate; --skin-wear: 0.3; --skin-crease: 0.6; }
-.joinBlock { isolation: isolate; --skin-crease: 0.7; }
+.joinBlock { isolation: isolate; --skin-crease: 0.5; --skin-wear: 0.4; }
 .strip { isolation: isolate; z-index: 4; --skin-wear: 0; --skin-crease: 0.45; }
 .posterSheet { --skin-x: 20%; --skin-y: 60%; }
