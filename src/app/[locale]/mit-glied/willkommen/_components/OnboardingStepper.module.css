@@ -1,4 +1,5 @@
-/* OnboardingStepper — drei stille Schritte. */
+/* OnboardingStepper V2 — drei stille Schritte. Kopf kommt aus dem
+ * Innenseiten-System (PageHead), hier nur Bühne, Würfel und Kacheln. */
 
 .stepper {
   min-height: 60vh;
@@ -6,18 +7,26 @@
 
 /* ----- Step 1: Arrival ----- */
 
+.stage {
+  max-width: var(--v2-max);
+  margin-inline: auto;
+  padding: clamp(2.5rem, 5vw, 4rem) var(--v2-gutter) clamp(4rem, 8vw, 6rem);
+}
+
 .arrival {
   display: flex;
   justify-content: flex-start;
-  min-height: var(--space-9);
+  min-height: 3rem;
 }
 
+/* Der Weiter-Knopf erscheint nach kurzer Pause (Verhalten wie bisher).
+ * Reduced Motion: sofort sichtbar, per CSS und per JS. */
 .arrival > * {
   opacity: 0;
   transform: translateY(8px);
   transition:
-    opacity var(--duration-slow, 360ms) var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
-    transform var(--duration-slow, 360ms) var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+    opacity var(--v2-dur-fast) var(--v2-ease),
+    transform var(--v2-dur-fast) var(--v2-ease);
 }
 
 .arrival[data-arrow-visible] > * {
@@ -38,7 +47,7 @@
 .suggestionList {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: 0.75rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -49,34 +58,33 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: var(--space-3) var(--space-5);
-  min-height: var(--touch-min);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-pill);
-  background-color: var(--surface-bg);
-  color: var(--text-strong);
+  min-height: 2.75rem;
+  padding: 0.5rem 1.25rem;
+  border: 1.5px solid var(--spc-black);
+  border-radius: var(--v2-pill);
+  background-color: var(--v2-paper-raised);
+  color: var(--spc-black);
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-heading-sm);
-  letter-spacing: var(--tracking-tight);
+  font-weight: 600;
+  font-size: var(--v2-h3);
+  line-height: 1.1;
   cursor: pointer;
   transition:
-    background-color var(--duration-base, 200ms) var(--ease-standard, ease-out),
-    border-color var(--duration-base, 200ms) var(--ease-standard, ease-out),
-    transform var(--duration-base, 200ms) var(--ease-standard, ease-out);
+    background-color var(--v2-dur-fast) var(--v2-ease),
+    border-color var(--v2-dur-fast) var(--v2-ease),
+    transform var(--v2-dur-fast) var(--v2-ease);
 }
 
-.suggestionPill:hover:not(:disabled),
-.suggestionPill:focus-visible:not(:disabled) {
-  background-color: var(--accent);
-  color: var(--text-on-accent);
-  border-color: var(--accent);
+.suggestionPill:hover:not(:disabled) {
+  background-color: var(--v2-act);
+  border-color: var(--v2-act);
+  color: var(--v2-on-act);
   transform: translateY(-1px);
 }
 
 .suggestionPill:focus-visible {
-  outline: none;
-  box-shadow: var(--shadow-focus);
+  outline: 2px solid var(--spc-turquoise-deep);
+  outline-offset: 3px;
 }
 
 .suggestionPill:disabled {
@@ -86,17 +94,16 @@
 
 .suggestionPill[data-loading] {
   opacity: 1;
-  background-color: var(--accent);
-  color: var(--text-on-accent);
-  border-color: var(--accent);
+  background-color: var(--v2-act);
+  border-color: var(--v2-act);
+  color: var(--v2-on-act);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .suggestionPill {
     transition: none;
   }
-  .suggestionPill:hover:not(:disabled),
-  .suggestionPill:focus-visible:not(:disabled) {
+  .suggestionPill:hover:not(:disabled) {
     transform: none;
   }
 }
@@ -104,19 +111,20 @@
 .error {
   margin: 0;
   font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  color: var(--signal);
+  font-size: var(--v2-small);
+  line-height: 1.5;
+  color: var(--v2-error);
 }
 
 .errorPrefix {
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
+  font-weight: 600;
 }
 
 .actionRow {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
+  gap: 0.75rem;
   align-items: center;
 }
 
@@ -125,7 +133,7 @@
 .tileGrid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
+  gap: clamp(1rem, 2vw, 1.5rem);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -133,53 +141,53 @@
 
 @media (min-width: 600px) {
   .tileGrid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 .tile {
   display: flex;
   flex-direction: column;
-  background-color: var(--surface-bg);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+  background-color: var(--v2-paper-raised);
+  border: 1px solid var(--v2-hairline-light);
+  box-shadow: 0 18px 32px -26px rgba(0, 0, 0, 0.45);
 }
 
 .tileMedia {
   aspect-ratio: 4 / 3;
-  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
-  background-image:
-    repeating-linear-gradient(
-      45deg,
-      rgba(10, 10, 10, 0.02) 0,
-      rgba(10, 10, 10, 0.02) 1px,
-      transparent 1px,
-      transparent 12px
-    );
+  background-color: var(--v2-paper-sunken);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
 }
 
 .tileMeta {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-4);
+  gap: 0.25rem;
+  padding: 1rem 1.25rem 1.25rem;
 }
 
 .tileCategory {
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-heading-sm);
-  color: var(--text-strong);
+  font-weight: 700;
+  font-size: var(--v2-h3);
+  line-height: 1.2;
+  color: var(--spc-black);
 }
 
 .tileSubtitle {
   font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  color: var(--text-muted);
+  font-size: var(--v2-small);
+  color: var(--v2-muted-on-paper);
+}
+
+.tileNote {
+  margin-top: 1.25rem;
 }
 
 .finishRow {
   display: flex;
   justify-content: flex-start;
+  padding: clamp(2rem, 4vw, 3rem) 0 clamp(4rem, 8vw, 6rem);
 }

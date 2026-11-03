@@ -15,6 +15,7 @@ import { redirect } from 'next/navigation';
 import { requireMember } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { generatePseudonyms } from '@/lib/members/pseudonym';
+import { Page } from '@/components/v2/Page';
 import { OnboardingStepper } from './_components/OnboardingStepper';
 import { ROLL_BATCH_SIZE } from './onboarding-types';
 
@@ -54,11 +55,11 @@ export default async function WillkommenPage() {
   const initialSuggestions = await generatePseudonyms(ROLL_BATCH_SIZE, checkAvailable);
 
   return (
-    <main id="main-content">
+    <Page>
       <OnboardingStepper
         currentPseudonym={profile.pseudonym}
         initialSuggestions={initialSuggestions}
       />
-    </main>
+    </Page>
   );
 }

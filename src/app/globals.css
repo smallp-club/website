@@ -8,6 +8,7 @@
 @import '../../tokens/spacing.css';
 @import '../../tokens/typography.css';
 @import '../../tokens/base.css';
+@import '../../tokens/v2.css';
 
 @font-face {
   font-family: 'Chillax';

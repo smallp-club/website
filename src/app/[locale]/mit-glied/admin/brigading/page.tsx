@@ -1,13 +1,15 @@
 /**
- * /mit-glied/admin/brigading — aktive Brigading-Wellen im Atelier-Stil.
+ * /mit-glied/admin/brigading — aktive Brigading-Wellen (V2, Plakat-Sprache).
  */
 
 import Link from 'next/link';
 import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
+import { EndLink, PageHead, Wide } from '@/components/v2/Page';
 import { ShellWrap } from '../../_components/MemberShell';
-import atelier from '../../_components/MemberShell/atelier.module.css';
+import { MemberPage } from '../../_components/MemberPage';
+import ui from '../_components/adminUi.module.css';
 import styles from './brigading.module.css';
 
 export const metadata = {
@@ -49,56 +51,51 @@ export default async function AdminBrigadingPage() {
 
   return (
     <ShellWrap session={session} pageLabel="brigading">
-      <section className={atelier.arrival}>
-        <span className={atelier.eyebrow}>brigading-quarantäne</span>
-        <h1 className={atelier.title}>aktive wellen.</h1>
-        <p className={atelier.body}>
-          {rows.length} bericht{rows.length === 1 ? '' : 'e'} mit brigading-flag,
-          gruppiert pro stunde. eine welle: mehrere accounts haben die gleiche
-          5-wort-sequenz gepostet, innerhalb von 24h.
-        </p>
-      </section>
+      <MemberPage>
+      <PageHead
+        eyebrow="brigading-quarantäne"
+        title="aktive wellen."
+        lead={`${rows.length} bericht${rows.length === 1 ? '' : 'e'} mit brigading-flag, gruppiert pro stunde. eine welle: mehrere accounts haben die gleiche 5-wort-sequenz gepostet, innerhalb von 24h.`}
+        size="compact"
+        wall="night"
+      />
 
-      <section className={atelier.section}>
-        <header className={atelier.sectionHead}>
-          <span className={atelier.eyebrowMuted}>wellen</span>
-        </header>
-
+      <Wide label="wellen">
+        <h2 className={ui.blockTitle}>wellen</h2>
         {buckets.length === 0 ? (
-          <p className={atelier.empty}>
+          <p className={ui.empty}>
             keine welle aktuell. wird ausgelöst sobald drei verschiedene
             accounts in 24h die gleiche 5-wort-sequenz posten.
           </p>
         ) : (
-          <ul className={styles.bucketList} role="list">
+          <ul className={styles.buckets} role="list">
             {buckets.map((bucket) => (
               <li key={bucket.key} className={styles.bucket}>
-                <header className={styles.bucketHead}>
+                <h3 className={styles.bucketHead}>
                   <span className={styles.bucketLabel}>{bucket.label}</span>
-                  <span className={styles.bucketCount}>
+                  <span className={ui.time}>
                     {bucket.stories.length} bericht
                     {bucket.stories.length === 1 ? '' : 'e'}
                   </span>
-                </header>
-                <ul className={styles.storyList} role="list">
+                </h3>
+                <ul className={ui.rows} role="list">
                   {bucket.stories.map((s) => (
-                    <li key={s.id} className={styles.storyRow}>
-                      <Link
-                        href={`/mit-glied/admin/inbox/${s.id}`}
-                        className={styles.storyLink}
-                      >
-                        <div className={styles.storyMeta}>
-                          <span className={styles.pseudonym}>{s.pseudonym}</span>
-                          <span className={styles.status} data-status={s.status}>
-                            {STATUS_LABEL[s.status] ?? s.status}
-                          </span>
-                          <span className={styles.time}>
+                    <li key={s.id} className={ui.row}>
+                      <Link href={`/mit-glied/admin/inbox/${s.id}`} className={ui.rowLink}>
+                        <span className={ui.rowHead}>
+                          <span className={ui.rowTitle}>{s.pseudonym}</span>
+                          <span className={ui.time}>
                             {DATE_TIME.format(new Date(s.created_at))}
                           </span>
-                        </div>
-                        <p className={styles.preview}>
+                        </span>
+                        <span className={ui.rowMeta}>
+                          <span className={ui.status} data-status={s.status}>
+                            {STATUS_LABEL[s.status] ?? s.status}
+                          </span>
+                        </span>
+                        <span className={ui.preview}>
                           {s.body.length > 140 ? s.body.slice(0, 140) + '…' : s.body}
-                        </p>
+                        </span>
                       </Link>
                     </li>
                   ))}
@@ -107,13 +104,10 @@ export default async function AdminBrigadingPage() {
             ))}
           </ul>
         )}
-      </section>
+      </Wide>
 
-      <section className={atelier.section}>
-        <Link href="/mit-glied/admin" className={atelier.linkAccent}>
-          zurück zum dashboard →
-        </Link>
-      </section>
+      <EndLink line="zurück" href="/mit-glied/admin" label="zum dashboard" />
+      </MemberPage>
     </ShellWrap>
   );
 }

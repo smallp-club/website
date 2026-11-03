@@ -1,5 +1,9 @@
 /**
- * /mit-glied/admin/inbox/[uuid] — Detail im Atelier-Stil.
+ * /mit-glied/admin/inbox/[uuid] — Detail (V2, Plakat-Sprache).
+ *
+ * Freigabe, Ablehnung und Ban-Panel (inkl. TOTP-Re-Auth) unverändert, nur
+ * die Präsentation ist neu. Farbsprache MEMBER_SECURITY §7: durchlassen =
+ * Turquoise, nicht durch = Sienna, sperren = Schwarz.
  */
 
 import { notFound } from 'next/navigation';
@@ -11,8 +15,10 @@ import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../../../erfahrungen/neu/story-types';
 import { approveStoryAction, rejectStoryAction } from '../actions';
 import { banUserFromStoryAction } from '../../blocklist/actions';
+import { Chapter, EndLink, PageHead, SubHead, pageStyles } from '@/components/v2/Page';
 import { ShellWrap } from '../../../_components/MemberShell';
-import atelier from '../../../_components/MemberShell/atelier.module.css';
+import { MemberPage } from '../../../_components/MemberPage';
+import ui from '../../_components/adminUi.module.css';
 import styles from './detail.module.css';
 
 export const metadata = {
@@ -66,53 +72,46 @@ export default async function AdminInboxDetailPage({ params, searchParams }: Pag
 
   return (
     <ShellWrap session={session} pageLabel="bericht prüfen">
-      <section className={atelier.arrival}>
-        <span className={atelier.eyebrow}>bericht prüfen</span>
-        <h1 className={atelier.title}>{story.pseudonym}</h1>
-        <p className={atelier.body}>
-          {DATE_TIME_LONG.format(new Date(story.created_at))}
-          {story.age_range && ` · alter: ${story.age_range.replace('_', '–')}`}
-        </p>
-        <div className={styles.metaRow}>
-          <span className={styles.status} data-status={story.status}>
-            {STATUS_LABEL[story.status] ?? story.status}
-          </span>
-          {story.flags.map((f) => (
-            <span
-              key={f}
-              className={styles.flag}
-              data-level={f.startsWith('flag_high:') ? 'high' : 'low'}
-            >
-              {f}
+      <MemberPage>
+      <PageHead
+        eyebrow="bericht prüfen"
+        title={story.pseudonym}
+        lead={`${DATE_TIME_LONG.format(new Date(story.created_at))}${story.age_range ? ` · alter: ${story.age_range.replace('_', '–')}` : ''}`}
+        size="compact"
+        wall="night"
+      >
+        <ul className={ui.flags} role="list" aria-label="status und flags">
+          <li>
+            <span className={[ui.flag, styles.statusTag].join(' ')} data-status={story.status}>
+              {STATUS_LABEL[story.status] ?? story.status}
             </span>
+          </li>
+          {story.flags.map((f) => (
+            <li key={f}>
+              <span className={ui.flag} data-level={f.startsWith('flag_high:') ? 'high' : 'low'}>
+                {f}
+              </span>
+            </li>
           ))}
-        </div>
-      </section>
+        </ul>
+      </PageHead>
 
-      <section className={atelier.section}>
-        <header className={atelier.sectionHead}>
-          <span className={atelier.eyebrowMuted}>prompt</span>
-        </header>
-        <p className={styles.promptLine}>
-          <em>{PROMPT_LABEL[story.prompt_key] ?? story.prompt_key}</em>
-        </p>
-      </section>
-
-      <section className={atelier.section}>
-        <header className={atelier.sectionHead}>
-          <span className={atelier.eyebrowMuted}>text</span>
-        </header>
+      <Chapter
+        eyebrow="prompt"
+        title={<em className={styles.promptTitle}>{PROMPT_LABEL[story.prompt_key] ?? story.prompt_key}</em>}
+      >
+        <SubHead>text</SubHead>
         <blockquote className={styles.bodyQuote}>{story.body}</blockquote>
-        <p className={styles.lengthCaption}>{story.body.length} zeichen.</p>
-      </section>
+        <p className={ui.hint}>{story.body.length} zeichen.</p>
+      </Chapter>
 
       {isPending && (
-        <section className={atelier.section}>
-          <header className={atelier.sectionHead}>
-            <span className={atelier.eyebrowMuted}>entscheiden</span>
-          </header>
-          <p className={atelier.sectionBody}>
-            durchlassen oder nicht. approve erscheint auf <Link href="/stimmen" className={atelier.inlineLink}>/stimmen</Link>{' '}
+        <Chapter eyebrow="entscheiden" title="durchlassen oder nicht." sunken>
+          <p>
+            approve erscheint auf{' '}
+            <Link href="/stimmen" className={pageStyles.link}>
+              /stimmen
+            </Link>{' '}
             mit pseudonym. reject bleibt unsichtbar.
           </p>
           <div className={styles.actionRow}>
@@ -131,21 +130,24 @@ export default async function AdminInboxDetailPage({ params, searchParams }: Pag
           </div>
 
           <details className={styles.banDetails}>
-            <summary className={styles.banSummary}>user sperren (ban)</summary>
+            <summary className={styles.banSummary}>
+              <span>user sperren (ban)</span>
+              <span className={styles.banMark} aria-hidden="true" />
+            </summary>
             <div className={styles.banPanel}>
-              <p className={styles.banIntro}>
+              <p className={ui.hint}>
                 löscht den account komplett, setzt email-hash auf blocklist.
                 unwiderruflich. nur bei brigading, hass, oder wiederholten verstößen.
               </p>
               {reauthFailed && (
-                <p className={styles.reauthError} role="alert">
+                <p className={ui.notice} role="alert">
                   der 2fa-code war nicht aktuell. sperren wurde nicht ausgeführt.
                   nimm den code, der gerade in deiner app steht, und probier nochmal.
                 </p>
               )}
               <form action={banUserFromStoryAction} className={styles.banForm}>
                 <input type="hidden" name="story_id" value={story.id} />
-                <label className={styles.banLabel} htmlFor="ban-reason">
+                <label className={ui.label} htmlFor="ban-reason">
                   grund (interner vermerk)
                 </label>
                 <textarea
@@ -153,10 +155,10 @@ export default async function AdminInboxDetailPage({ params, searchParams }: Pag
                   name="reason"
                   rows={2}
                   maxLength={500}
-                  className={styles.banTextarea}
+                  className={ui.textarea}
                   placeholder="z.b. brigading welle 2026-06-24"
                 />
-                <label className={styles.banLabel} htmlFor="ban-totp">
+                <label className={ui.label} htmlFor="ban-totp">
                   bestätigung mit 2fa-code
                 </label>
                 <input
@@ -170,39 +172,35 @@ export default async function AdminInboxDetailPage({ params, searchParams }: Pag
                   maxLength={6}
                   spellCheck={false}
                   placeholder="123456"
-                  className={styles.banTotpInput}
+                  className={ui.codeInput}
                 />
-                <p className={styles.banHint}>
+                <p className={ui.hint}>
                   sperren ist nicht zurückzunehmen. die sechs ziffern aus deiner
                   authenticator-app sind die bewusste bestätigung.
                 </p>
-                <SubmitButton variant="destructive" loadingLabel="sperre …">
-                  account löschen + sperren
-                </SubmitButton>
+                <div>
+                  <SubmitButton variant="primary" loadingLabel="sperre …">
+                    account löschen + sperren
+                  </SubmitButton>
+                </div>
               </form>
             </div>
           </details>
-        </section>
+        </Chapter>
       )}
 
       {!isPending && (
-        <section className={atelier.section}>
-          <header className={atelier.sectionHead}>
-            <span className={atelier.eyebrowMuted}>entschieden</span>
-          </header>
-          <p className={atelier.sectionBody}>
+        <Chapter eyebrow="entschieden" sunken>
+          <p>
             {story.status === 'approved'
               ? `durchgelassen am ${story.approved_at ? DATE_TIME_LONG.format(new Date(story.approved_at)) : '?'}.`
               : 'abgelehnt.'}
           </p>
-        </section>
+        </Chapter>
       )}
 
-      <section className={atelier.section}>
-        <Link href="/mit-glied/admin/inbox" className={atelier.linkAccent}>
-          zurück zur inbox →
-        </Link>
-      </section>
+      <EndLink line="zurück" href="/mit-glied/admin/inbox" label="zur inbox" />
+      </MemberPage>
     </ShellWrap>
   );
 }

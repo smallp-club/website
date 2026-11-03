@@ -1,26 +1,54 @@
 /* /stimmen — Public-Wall, editorial-Layout. */
 
+/* Jeder Bericht hängt als Zettel mit Klebeband an der Wand, wie auf der
+   Startseite. Schräglage und Papier wechseln im Rhythmus der Liste. */
 .list {
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-9);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 22rem), 1fr));
+  gap: clamp(2.5rem, 5vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
 }
 
 .story {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: 0.875rem;
+  padding: 2.25rem 1.75rem 1.5rem;
+  background-color: var(--v2-note-white);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
+  color: var(--v2-note-ink);
+  transform: rotate(var(--note-tilt, -0.8deg));
+  box-shadow: 0 12px 24px -16px rgba(0, 0, 0, 0.45);
+}
+
+.story:nth-child(3n + 2) { --note-tilt: 0.9deg; background-color: var(--v2-note-cream); }
+.story:nth-child(3n + 3) { --note-tilt: -0.4deg; background-color: var(--v2-note-kraft); }
+
+/* Klebeband oben mittig */
+.story::before {
+  content: "";
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  width: 5.5rem;
+  height: 1.6rem;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(240, 232, 210, 0.78);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
 .promptLead {
   margin: 0;
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-heading-sm);
-  color: var(--text-muted);
+  font-weight: 600;
+  font-size: var(--v2-small);
+  color: var(--v2-deep);
 }
 
 .promptLead em {
@@ -30,10 +58,11 @@
 .bodyQuote {
   margin: 0;
   padding: 0;
-  font-family: var(--font-body);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-relaxed);
-  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: max(1.1875rem, var(--v2-lead));
+  line-height: 1.4;
+  color: var(--v2-note-ink);
   white-space: pre-wrap;
 }
 
@@ -42,26 +71,58 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: baseline;
-  gap: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--border-hairline);
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1.5px dashed rgba(10, 10, 10, 0.22);
 }
 
 .attribution {
   display: flex;
   align-items: baseline;
-  gap: var(--space-1);
+  gap: 0.25rem;
   font-family: var(--font-body);
 }
 
 .pseudonym {
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-body-md);
-  color: var(--text-strong);
+  font-weight: 600;
+  font-size: var(--v2-small);
+  color: var(--v2-deep);
 }
 
 .date {
-  font-size: var(--text-caption);
-  color: var(--text-muted);
+  font-size: var(--v2-caption);
+  color: var(--v2-note-muted);
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .story { transform: none; }
+}
+
+/* ─── V2-Ergänzungen ─────────────────────────────────────────────── */
+
+.prompts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.prompts li {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--v2-hairline-light);
+  border-radius: var(--v2-pill);
+  font-family: var(--font-display);
+  font-size: var(--v2-small);
+  font-style: italic;
+  color: var(--spc-black);
+}
+
+.headNote {
+  margin: 1.25rem 0 0;
+  font-size: var(--v2-caption);
+  color: var(--v2-muted-on-paper);
+}
+

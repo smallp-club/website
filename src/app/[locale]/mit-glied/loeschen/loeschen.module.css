@@ -1,0 +1,9 @@
+/* Löschen — nur die Button-Reihe auf dem Papierbogen. */
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0;
+}

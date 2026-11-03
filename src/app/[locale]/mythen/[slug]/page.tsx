@@ -1,14 +1,11 @@
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
 import { Source } from '@/components/primitives/Source';
-import { StickyCrossfade } from '@/components/patterns/StickyCrossfade';
-import { CardFan, type CardFanItem } from '@/components/patterns/CardFan';
+import { Chapter, JoinBlock, Margin, Page, Wide } from '@/components/v2/Page';
+import { MythHero } from '@/components/v2/MythHero';
+import { MythList } from '@/components/v2/MythList';
+import { Link } from '@/i18n/navigation';
+import styles from './page.module.css';
 import {
   getAllMythSlugs,
   getMythBySlug,
@@ -86,12 +83,12 @@ export async function generateMetadata({ params }: PageProps) {
   const myth = getMythBySlug(slug);
   if (!myth) {
     return {
-      title: 'mythos. — small p club',
+      title: 'mythos. · small p club',
       robots: { index: false, follow: false },
     };
   }
   return {
-    title: 'mythos. — small p club',
+    title: 'mythos. · small p club',
     description: 'no measure, no pressure. ein mythos, ein fakt, eine quelle.',
     robots: { index: false, follow: false },
   };
@@ -103,106 +100,77 @@ export default async function MythosDetailPage({ params }: PageProps) {
   if (!myth) notFound();
 
   const related = getRelatedMyths(slug);
-  const relatedCards: CardFanItem[] = related.map((m) => ({
-    id: m.slug,
-    eyebrow: `mythos · ${m.category}`,
-    headline: m.myth,
-    body: m.teaser,
-    cta: 'wahr ist.',
-    href: `/mythen/${m.slug}`,
-  }));
-
   const nonce = (await headers()).get('x-nonce') ?? undefined;
   const schemas = buildMythSchemas(myth, slug);
 
   return (
-    <main id="main-content">
-      {/* JSON-LD: Article + ScholarlyArticle-Citations für GEO + BreadcrumbList
-          für Google SERP. Inline-Scripts brauchen CSP-Nonce (sonst geblockt). */}
+    <Page>
+      {/* JSON-LD: Article + ScholarlyArticle-Citations (GEO) + BreadcrumbList.
+          Inline-Scripts brauchen die CSP-Nonce. */}
       <script
         type="application/ld+json"
         nonce={nonce}
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.article) }}
       />
       <script
         type="application/ld+json"
         nonce={nonce}
+        suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.breadcrumb) }}
       />
-      {/* Page-Titel als sr-only h1 — StickyCrossfade ist visuell der Hero,
-          rendert aber semantisch als <p>. WCAG verlangt genau eine h1
-          pro Page; der Mythen-Statement ist hier die natürliche Wahl. */}
-      <h1 className="sr-only">mythos: {myth.myth}</h1>
-      <StickyCrossfade
+
+      <MythHero
+        category={myth.category}
         myth={myth.myth}
         fact={myth.fact}
         source={myth.sourceShort}
-        id="mythos-hero"
       />
 
-      <Section tone="light" rhythm="standard" aria-label="einordnung">
-        <Container width="prose">
-          <Stack gap={5}>
-            <Stack gap={3}>
-              <Eyebrow>einordnung · {myth.category}</Eyebrow>
-              <Heading level={2} variant="lede">
-                was die zahl bedeutet.
-              </Heading>
-            </Stack>
-            <Stack gap={4}>
-              {myth.einordnung.map((absatz, i) => (
-                <Body key={i}>{absatz}</Body>
-              ))}
-            </Stack>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter
+        nr="01"
+        eyebrow={`einordnung · ${myth.category}`}
+        title="was die zahl bedeutet."
+        aside={<Margin label="quelle">{myth.sourceShort}</Margin>}
+      >
+        {myth.einordnung.map((absatz, i) => (
+          <p key={i}>{absatz}</p>
+        ))}
+      </Chapter>
 
-      <Section tone="light" rhythm="standard" aria-label="zweite lesart">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>zweite lesart</Eyebrow>
-            <Heading level={2} variant="lede">
-              der gesellschaftliche blick.
-            </Heading>
-            <Body>{myth.zweiteLesart}</Body>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter nr="02" eyebrow="zweite lesart" title="der gesellschaftliche blick.">
+        <p>{myth.zweiteLesart}</p>
+      </Chapter>
 
-      <Section tone="light" rhythm="standard" aria-label="quellen">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>quellen</Eyebrow>
-            <Heading level={2} variant="lede">
-              spezifisch zitiert.
-            </Heading>
-            <Stack gap={2}>
-              {myth.sources.map((s, i) => (
-                <Source key={i} {...s} locale="de" />
-              ))}
-            </Stack>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter nr="03" eyebrow="quellen" title="alles zum nachprüfen.">
+        <p className={styles.caption}>englische titel stehen im original.</p>
+        <div className={styles.sources}>
+          {myth.sources.map((s, i) => (
+            <Source key={i} {...s} locale="de" />
+          ))}
+        </div>
+      </Chapter>
+
+      <JoinBlock
+        nr="04"
+        title="wenn das gerade gutgetan hat: davon kommt mehr."
+        lead="selten und per mail. betroffen musst du dafür nicht sein."
+        turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+      />
 
       {related.length > 0 && (
-        <Section tone="light" rhythm="standard" aria-label="weiterlesen">
-          <Container width="prose">
-            <Stack gap={3}>
-              <Eyebrow>weiterlesen</Eyebrow>
-              <Heading level={2} variant="lede">
-                verwandte mythen.
-              </Heading>
-            </Stack>
-          </Container>
-          <CardFan
-            items={relatedCards}
-            label="verwandte mythen"
-            id="related-myths"
-          />
-        </Section>
+        <>
+          <Chapter nr="05" eyebrow="weiterlesen" title="das hängt damit zusammen." />
+          <Wide label="verwandte mythen">
+            <MythList items={related} />
+            <p className={styles.back}>
+              <Link href="/mythen" className={styles.backLink}>
+                alle sechs mythen
+              </Link>
+            </p>
+          </Wide>
+        </>
       )}
-    </main>
+    </Page>
   );
 }

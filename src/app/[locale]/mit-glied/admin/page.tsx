@@ -1,17 +1,20 @@
 /**
- * /mit-glied/admin — Dashboard im Atelier-Stil.
+ * /mit-glied/admin — Dashboard (V2, Plakat-Sprache).
  *
- * Editorial-Sections mit Hairlines, typographisches Stat-Grid statt
- * Card-Container. Attention-Strip mit Sienna-Hairline links (kein
- * Pastel-Vollfüllung). Recent-Aktionen als Hairline-Liste analog
- * zu Berichten auf Eingang.
+ * Wand-Kopf mit Titelplakat, darauf ein Papierbogen mit dem, was wartet.
+ * Darunter Zahlen als Anton-Plakatziffern, Arbeitsplätze und letzte Aktionen
+ * als ruhige Zeilenlisten. Daten-Loader unverändert.
  */
 
 import Link from 'next/link';
 import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { getListStats } from '@/lib/brevo';
+import { PageHead, Wide } from '@/components/v2/Page';
+import { anton } from '@/components/v2/Plakat/fonts';
 import { ShellWrap } from '../_components/MemberShell';
+import { MemberPage } from '../_components/MemberPage';
+import ui from './_components/adminUi.module.css';
 import styles from './admin.module.css';
 
 export const metadata = {
@@ -43,6 +46,13 @@ const ACTION_LABEL: Record<string, string> = {
   mfa_verify: '2fa bestätigt',
 };
 
+const WORKPLACES = [
+  { href: '/mit-glied/admin/inbox', label: 'inbox', body: 'berichte kuratieren, approve oder reject.' },
+  { href: '/mit-glied/admin/audit', label: 'audit-log', body: 'letzte 200 admin-aktionen, chronologisch.' },
+  { href: '/mit-glied/admin/brigading', label: 'brigading', body: 'aktive quarantäne-wellen.' },
+  { href: '/mit-glied/admin/blocklist', label: 'blocklist', body: 'gesperrte mails und ips.' },
+];
+
 export default async function AdminDashboardPage() {
   const session = await requireAdminWithMfa();
   const service = createSupabaseServiceClient();
@@ -73,134 +83,111 @@ export default async function AdminDashboardPage() {
 
   return (
     <ShellWrap session={session} pageLabel="admin">
-      <section className={styles.arrival}>
-        <h1 className={styles.title}>admin.</h1>
-        <p className={styles.subtitle}>kuratieren, sperren, sichten.</p>
-      </section>
-
-      {needsAttention && (
-        <Link href="/mit-glied/admin/inbox" className={styles.attention}>
-          <span className={styles.attentionEyebrow}>was wartet</span>
-          <span className={styles.attentionLine}>
-            {pending === 1 ? 'ein bericht in der inbox.' : `${pending} berichte in der inbox.`}
-          </span>
-          {flagHighPending > 0 && (
-            <span className={styles.attentionFlag}>
-              {flagHighPending} davon mit flag-high. zuerst sichten.
+      <MemberPage>
+      <PageHead
+        eyebrow="admin"
+        title="admin."
+        lead="kuratieren, sperren, sichten."
+        size="compact"
+        wall="night"
+      >
+        {needsAttention ? (
+          <Link href="/mit-glied/admin/inbox" className={ui.attention}>
+            <span className={ui.attentionEyebrow}>was wartet</span>
+            <span className={ui.attentionLine}>
+              {pending === 1 ? 'ein bericht in der inbox.' : `${pending} berichte in der inbox.`}
             </span>
+            {flagHighPending > 0 && (
+              <span className={ui.attentionFlag}>
+                {flagHighPending} davon mit flag-high. zuerst sichten.
+              </span>
+            )}
+          </Link>
+        ) : undefined}
+      </PageHead>
+
+      <div className={anton.variable}>
+        <Wide label="zahlen">
+          <h2 className={ui.blockTitle}>zahlen</h2>
+          <dl className={ui.stats}>
+            <Stat label="pending" value={pending} accent={pending > 0} />
+            <Stat
+              label="flag-high ungesichtet"
+              value={flagHighPending}
+              accent={flagHighPending > 0}
+            />
+            <Stat label="neue berichte (24 h)" value={last24h} />
+            <Stat label="approved gesamt" value={approvedTotal} />
+            <Stat label="blocklist-einträge" value={blocklistCount} />
+            <Stat label="admin-aktionen (24 h)" value={auditLast24h} />
+          </dl>
+        </Wide>
+
+        <Wide label="newsletter">
+          <h2 className={ui.blockTitle}>newsletter</h2>
+          <dl className={ui.stats}>
+            <Stat
+              label="brevo-abonnenten (aktiv)"
+              value={brevoStats.ok ? brevoStats.totalSubscribers : 0}
+            />
+            <Stat
+              label="abgemeldet (blacklisted)"
+              value={brevoStats.ok ? brevoStats.totalBlacklisted : 0}
+            />
+            <Stat label="opt-in im profil" value={profileOptIns} />
+          </dl>
+          {!brevoStats.ok && (
+            <p className={[ui.notice, styles.brevoHint].join(' ')}>
+              {brevoStats.reason === 'config_missing'
+                ? 'brevo-keys fehlen in den env vars. ohne keys läuft die liste nicht.'
+                : brevoStats.reason === 'not_found'
+                  ? 'die brevo-liste wurde nicht gefunden. list-id prüfen.'
+                  : 'brevo-api hat nicht geantwortet. checken im brevo-dashboard.'}
+            </p>
           )}
-        </Link>
-      )}
+        </Wide>
+      </div>
 
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>zahlen</span>
-        </header>
-        <dl className={styles.statGrid}>
-          <Stat label="pending" value={pending} accent={pending > 0} />
-          <Stat
-            label="flag-high ungesichtet"
-            value={flagHighPending}
-            accent={flagHighPending > 0}
-          />
-          <Stat label="neue berichte (24 h)" value={last24h} />
-          <Stat label="approved gesamt" value={approvedTotal} />
-          <Stat label="blocklist-einträge" value={blocklistCount} />
-          <Stat label="admin-aktionen (24 h)" value={auditLast24h} />
-        </dl>
-      </section>
-
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>newsletter</span>
-        </header>
-        <dl className={styles.statGrid}>
-          <Stat
-            label="brevo-abonnenten (aktiv)"
-            value={brevoStats.ok ? brevoStats.totalSubscribers : 0}
-          />
-          <Stat
-            label="abgemeldet (blacklisted)"
-            value={brevoStats.ok ? brevoStats.totalBlacklisted : 0}
-          />
-          <Stat
-            label="opt-in im profil"
-            value={profileOptIns}
-          />
-        </dl>
-        {!brevoStats.ok && (
-          <p className={styles.brevoHint}>
-            {brevoStats.reason === 'config_missing'
-              ? 'brevo-keys fehlen in den env vars. ohne keys läuft die liste nicht.'
-              : brevoStats.reason === 'not_found'
-                ? 'die brevo-liste wurde nicht gefunden. list-id prüfen.'
-                : 'brevo-api hat nicht geantwortet. checken im brevo-dashboard.'}
-          </p>
-        )}
-      </section>
-
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>arbeitsplätze</span>
-        </header>
-        <ul className={styles.workList} role="list">
-          <li className={styles.workItem}>
-            <Link href="/mit-glied/admin/inbox" className={styles.workLink}>
-              <span className={styles.workLabel}>inbox</span>
-              <span className={styles.workBody}>
-                berichte kuratieren, approve oder reject.
-              </span>
-            </Link>
-          </li>
-          <li className={styles.workItem}>
-            <Link href="/mit-glied/admin/audit" className={styles.workLink}>
-              <span className={styles.workLabel}>audit-log</span>
-              <span className={styles.workBody}>
-                letzte 200 admin-aktionen, chronologisch.
-              </span>
-            </Link>
-          </li>
-          <li className={styles.workItem}>
-            <Link href="/mit-glied/admin/brigading" className={styles.workLink}>
-              <span className={styles.workLabel}>brigading</span>
-              <span className={styles.workBody}>
-                aktive quarantäne-wellen.
-              </span>
-            </Link>
-          </li>
-          <li className={styles.workItem}>
-            <Link href="/mit-glied/admin/blocklist" className={styles.workLink}>
-              <span className={styles.workLabel}>blocklist</span>
-              <span className={styles.workBody}>
-                gesperrte mails und ips.
-              </span>
-            </Link>
-          </li>
+      <Wide label="arbeitsplätze">
+        <h2 className={ui.blockTitle}>arbeitsplätze</h2>
+        <ul className={styles.work} role="list">
+          {WORKPLACES.map((w) => (
+            <li key={w.href} className={styles.workItem}>
+              <Link href={w.href} className={styles.workLink}>
+                <span className={styles.workLabel}>{w.label}</span>
+                <span className={styles.workBody}>{w.body}</span>
+                <span className={styles.workArrow} aria-hidden="true">
+                  →
+                </span>
+              </Link>
+            </li>
+          ))}
         </ul>
-      </section>
+      </Wide>
 
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>letzte aktionen</span>
-        </header>
-        {recentAudit.length === 0 ? (
-          <p className={styles.recentEmpty}>noch nichts protokolliert.</p>
-        ) : (
-          <ul className={styles.recentList} role="list">
-            {recentAudit.map((row) => (
-              <li key={row.id} className={styles.recentItem}>
-                <span className={styles.recentAction} data-action={row.action}>
-                  {ACTION_LABEL[row.action] ?? row.action}
-                </span>
-                <span className={styles.recentTarget}>{row.target_type}</span>
-                <span className={styles.recentTime}>
-                  {formatRelativeTime(row.created_at)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <Wide label="letzte aktionen">
+        <div>
+          <h2 className={ui.blockTitle}>letzte aktionen</h2>
+          {recentAudit.length === 0 ? (
+            <p className={ui.empty}>noch nichts protokolliert.</p>
+          ) : (
+            <ul className={ui.rows} role="list">
+              {recentAudit.map((row) => (
+                <li key={row.id} className={ui.row}>
+                  <div className={[ui.rowStatic, styles.recent].join(' ')}>
+                    <span className={ui.action} data-action={row.action}>
+                      {ACTION_LABEL[row.action] ?? row.action}
+                    </span>
+                    <span className={ui.rowMeta}>{row.target_type}</span>
+                    <span className={ui.time}>{formatRelativeTime(row.created_at)}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </Wide>
+      </MemberPage>
     </ShellWrap>
   );
 }
@@ -215,9 +202,9 @@ function Stat({
   accent?: boolean;
 }) {
   return (
-    <div className={styles.stat} data-accent={accent || undefined}>
-      <span className={styles.statValue}>{value.toLocaleString('de-DE')}</span>
-      <span className={styles.statLabel}>{label}</span>
+    <div className={ui.stat} data-accent={accent || undefined}>
+      <dt className={ui.statLabel}>{label}</dt>
+      <dd className={ui.statValue}>{value.toLocaleString('de-DE')}</dd>
     </div>
   );
 }

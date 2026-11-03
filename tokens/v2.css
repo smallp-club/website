@@ -1,0 +1,111 @@
+/* ============================================================
+   small p club — V2 Tokens (Redesign 2026-11)
+   Ergänzt die Basis-Tokens, ersetzt sie nicht. Alle V2-Komponenten
+   (src/components/v2) lesen nur von hier und den Basis-Tokens.
+
+   Grundsätze:
+   - Typo fluid in rem (skaliert mit der Browser-Schriftgröße, HIG
+     typography.md › Supporting Dynamic Type).
+   - Chillax 200 nur ab ~48px. Kleine Display-Schrift mind. 400
+     (HIG typography.md › „avoid light font weights").
+   - Bühne dunkel, Räume hell: --v2-night / --v2-ink / --v2-deep sind
+     die einzigen dunklen Flächen. Off-White bleibt die Welt der Innenseiten.
+   ============================================================ */
+
+:root {
+  /* ---- Flächen ---- */
+  --v2-night: #123b3c;          /* Ankommen, dunkles Teal */
+  --v2-ink: #0a0a0a;            /* die Zahl */
+  --v2-deep: #1d5556;           /* Einladung, Footer */
+  --v2-paper: #f7f6f2;          /* die Räume */
+  --v2-paper-raised: #fcfbf8;
+  --v2-paper-sunken: #edebe4;
+
+  /* Papierfaser (SVG-Rauschen), Startseite und Innenseiten */
+  --v2-paper-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --v2-paper-noise-soft: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27240%27 height=%27240%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix values=%270 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E");
+
+  /* Kleisterfalten: Licht auf welligem Papier (SVG-Beleuchtung), per soft-light über Plakate */
+  --v2-paper-wrinkle: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27520%27 height=%27520%27%3E%3Cfilter id=%27w%27 x=%270%27 y=%270%27 width=%27100%25%27 height=%27100%25%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%27.0085%27 numOctaves=%273%27 seed=%2711%27 stitchTiles=%27stitch%27/%3E%3CfeDiffuseLighting lighting-color=%27%23fff%27 surfaceScale=%272.2%27%3E%3CfeDistantLight azimuth=%27235%27 elevation=%2758%27/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23w)%27/%3E%3C/svg%3E");
+
+  /* Plakatnacht (Startseite): Papiere, Nachtwand, Zettel */
+  --v2-poster-paper: #f2efe6;
+  --v2-poster-old: #e9e2d2;
+  --v2-poster-ink: #161616;
+  --v2-poster-ink-text: #efebe1;
+  --v2-night-wall: #0b0b0b;
+  --v2-dusk-wall: #1a1410;
+  --v2-note-white: #fdfcf8;
+  --v2-note-kraft: #d9c19c;
+  --v2-note-cream: #f3ead2;
+  --v2-note-ink: #141414;
+  --v2-note-muted: #3f3d37;
+  --v2-on-act-muted: #0f2b26;
+
+  /* Text auf Dunkel: Off-White, gedämpft mit Deckkraft statt Grau-Hex,
+     damit es auf allen drei dunklen Flächen gleich wirkt.
+     Gemessen: muted 0.72 → 6.7:1 auf night, 9.6:1 auf ink, 4.9:1 auf deep.
+     faint 0.5 → 4.1 / 5.0 / 3.3, darum nur ≥ 18px oder dekorativ. */
+  --v2-on-dark: #f7f6f2;
+  --v2-on-dark-muted: rgba(247, 246, 242, 0.72);
+  --v2-on-dark-faint: rgba(247, 246, 242, 0.5);  /* nur dekorativ, nie für Text unter 24px */
+  --v2-hairline-dark: rgba(247, 246, 242, 0.18);
+  --v2-hairline-light: rgba(10, 10, 10, 0.12);
+
+  /* Akzent: Turquoise ist die eine Handlung. Auf Dunkel auch für `wahr ist.`
+     (#7BDCB5 auf #123B3C = 7.6:1). Auf Hell: Deep Turquoise. */
+  --v2-act: #7bdcb5;
+  --v2-act-hover: #95e5c5;
+  --v2-act-press: #5fc79c;
+  --v2-on-act: #0a0a0a;          /* 12:1 */
+  --v2-myth: #c05a38;            /* nur `angeblich.` */
+  --v2-myth-on-dark: #e08a6a;    /* Sienna aufgehellt für Dunkel: 4.7:1 night, 7.6:1 ink. Nie auf deep (3.2) */
+  --v2-myth-on-poster: #a4452a;  /* angeblich. auf altem Plakatpapier, 4.6:1 auf poster-old */
+  --v2-error: #a4452a;          /* Sienna-Press, 5.6:1 auf paper, nur Fehlertext */
+  --v2-error-on-dark: #f2b39b;  /* 7.9:1 auf deep, nur Fehlertext */
+  --v2-muted-on-paper: #6f6c63;  /* 4.85:1 auf paper */
+  --v2-muted-on-sunken: #5c5a52; /* auf sunken, Slate wäre 4.4:1 */
+  --v2-fact: #1d5556;
+
+  /* ---- Typografie, fluid ---- */
+  --v2-stage: clamp(3rem, 1.6rem + 6.4vw, 10rem);       /* 48 → 160 */
+  --v2-stage-2: clamp(2.5rem, 1.6rem + 4.2vw, 7rem);    /* 40 → 112 */
+  --v2-number: clamp(7rem, 3rem + 20vw, 24rem);         /* 112 → 384 */
+  --v2-h1: clamp(2.75rem, 1.6rem + 4.6vw, 6rem);        /* 44 → 96 */
+  --v2-h2: clamp(2rem, 1.4rem + 2.4vw, 3.5rem);         /* 32 → 56 */
+  --v2-h3: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);    /* 22 → 28 */
+  --v2-lead: clamp(1.1875rem, 1.05rem + 0.5vw, 1.5rem); /* 19 → 24 */
+  --v2-body: 1.0625rem;                                 /* 17 */
+  --v2-small: 0.9375rem;                                /* 15 */
+  --v2-caption: 0.8125rem;                              /* 13 */
+  --v2-eyebrow: 0.875rem;                               /* 14 */
+
+  --v2-track-stage: -0.035em;
+  --v2-track-h: -0.025em;
+  --v2-lead-stage: 0.96;
+  --v2-lead-h: 1.04;
+
+  /* ---- Raum ---- */
+  --v2-gutter: clamp(1.25rem, 0.6rem + 3vw, 4rem);      /* 20 → 64 Seitenrand */
+  --v2-section: clamp(6rem, 3rem + 10vw, 12.5rem);      /* 96 → 200 */
+  --v2-section-tight: clamp(4rem, 2.5rem + 6vw, 8rem);
+  --v2-max: 82rem;      /* 1312 */
+  --v2-measure: 38rem;  /* Lesespalte ~64ch */
+
+  /* ---- Bewegung ---- */
+  --v2-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --v2-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --v2-dur: 640ms;
+  --v2-dur-fast: 200ms;
+
+  /* ---- Form ---- */
+  --v2-radius: 28px;
+  --v2-radius-sm: 14px;
+  --v2-pill: 999px;
+  --v2-control-h: 3.5rem;  /* 56px Touch-Ziel */
+}
+
+/* V2: Fokus nicht unter der sticky Nav verstecken (WCAG 2.4.11) */
+html {
+  scroll-padding-top: 6rem;
+}

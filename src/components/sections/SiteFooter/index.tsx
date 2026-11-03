@@ -164,7 +164,7 @@ export function SiteFooter({ memberCount = 23, forceRevealed }: SiteFooterProps 
               >
                 <span className={styles.verbWord}>weitergeben</span>
                 <ArrowRightThin className={styles.verbArrow} />
-                <span className={styles.verbTarget}>unterstuetzen</span>
+                <span className={styles.verbTarget}>unterstützen</span>
               </Link>
             </div>
           </div>

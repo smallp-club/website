@@ -1,15 +1,18 @@
 /**
  * /mit-glied/karte — die mit-glied-karte als digitales Artefakt.
  *
- * Atelier-Stil: kompakter Intro, Karte als freier Hero ohne Card-Wrap,
- * Aktionen darunter. Print-CSS hidet alles außer der Karte.
+ * V2: Wand-Kopf (compact) als Bildschirm-Hülle, darunter die Karte frei
+ * auf Papier, Aktionen darunter. Print-CSS hidet alles außer der Karte
+ * (Kopf, Aktionen, Hinweis), Karte und @page bleiben unverändert.
  */
 
 import { requireMember } from '@/lib/members/auth';
 import { ShellWrap } from '../_components/MemberShell';
+import { MemberPage } from '../_components/MemberPage';
 import { MitGliedKarte } from '../_components/MitGliedKarte';
 import { PrintTrigger } from './_components/PrintTrigger';
 import Link from 'next/link';
+import { PageHead, pageStyles } from '@/components/v2/Page';
 import styles from './karte.module.css';
 
 export const metadata = {
@@ -32,34 +35,35 @@ export default async function KartePage() {
 
   return (
     <ShellWrap session={session} pageLabel="karte">
-      <div className={styles.viewport}>
-        <section className={styles.intro}>
-          <span className={styles.eyebrow}>deine karte</span>
-          <h1 className={styles.title}>trag das hier mit dir.</h1>
-          <p className={styles.body}>
-            ein druck, ein moment haltung. kein ausweis, keine nummer.
+      <MemberPage>
+        <PageHead
+          eyebrow="deine karte"
+          size="compact"
+          title="trag das hier mit dir."
+          lead="ein druck, ein moment haltung. kein ausweis, keine nummer."
+        />
+
+        <div className={styles.viewport}>
+          <div className={styles.cardWrapper}>
+            <MitGliedKarte
+              pseudonym={profile.pseudonym}
+              joinedDate={joinedDate}
+            />
+          </div>
+
+          <div className={styles.actionRow}>
+            <PrintTrigger />
+            <Link href="/mit-glied/eingang" className={[pageStyles.link, styles.back].join(' ')}>
+              zurück zur übersicht
+            </Link>
+          </div>
+
+          <p className={[pageStyles.fine, styles.hint].join(' ')}>
+            tipp: im print-dialog „ziel: als pdf sichern“ wählen.
+            format a6 quer, ränder auf null.
           </p>
-        </section>
-
-        <div className={styles.cardWrapper}>
-          <MitGliedKarte
-            pseudonym={profile.pseudonym}
-            joinedDate={joinedDate}
-          />
         </div>
-
-        <div className={styles.actionRow}>
-          <PrintTrigger />
-          <Link href="/mit-glied/eingang" className={styles.back}>
-            zurück zur übersicht
-          </Link>
-        </div>
-
-        <p className={styles.hint}>
-          tipp: im print-dialog „ziel: als pdf sichern" wählen.
-          format a6 quer, ränder auf null.
-        </p>
-      </div>
+      </MemberPage>
     </ShellWrap>
   );
 }

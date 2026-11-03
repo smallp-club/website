@@ -1,0 +1,196 @@
+import Image from 'next/image';
+import { Link } from '@/i18n/navigation';
+import styles from './Footer.module.css';
+
+export type FooterVariant = 'abriss' | 'wand';
+
+export interface FooterProps {
+  /** Aktuelle Memberzahl, kommt gecacht aus Supabase. */
+  memberCount: number;
+  /**
+   * Zwei Entwürfe zur Auswahl, nur bis Kethe entschieden hat:
+   * `abriss` = ein großes Abschlussplakat mit Abreißstreifen,
+   * `wand` = die Nachtwand läuft weiter, Plakat, Zettel und Sticker kleben drauf.
+   */
+  variant?: FooterVariant;
+}
+
+const ROOMS = [
+  { href: '/club', label: 'club' },
+  { href: '/mythen', label: 'mythen' },
+  { href: '/magazin', label: 'magazin' },
+  { href: '/partner', label: 'partner' },
+  { href: '/stimmen', label: 'stimmen' },
+] as const;
+
+const SMALL_PRINT = [
+  { href: '/kontakt', label: 'kontakt' },
+  { href: '/impressum', label: 'impressum' },
+  { href: '/datenschutz', label: 'datenschutz' },
+  { href: '/privacy/anonym-bleiben', label: 'anonym bleiben' },
+] as const;
+
+function memberLine(count: number): string {
+  const noun = count === 1 ? 'mit-glied' : 'mit-glieder';
+  return `${count.toLocaleString('de-DE')} ${noun}. auch ohne-glied.`;
+}
+
+/**
+ * Footer V2 in Plakat-Sprache. Server-Komponente, kein JS im Browser.
+ *
+ * Inhalt bleibt die Klammer aus V1: Tagline oben, Sign-off unten
+ * („wir sind ein club. ohne uns zu messen.“), Memberzahl, das Verb-Pärchen
+ * mitnehmen/weitergeben und das Kleingedruckte. Die Bildmarke darf hier
+ * stehen (einziger erlaubter Ort), als Sticker, nicht als Wasserzeichen.
+ */
+export function Footer({ memberCount, variant = 'abriss' }: FooterProps) {
+  return variant === 'wand' ? <WallFooter memberCount={memberCount} /> : <TearFooter memberCount={memberCount} />;
+}
+
+function Verbs({ className }: { className?: string }) {
+  return (
+    <ul className={className} role="list">
+      <li>
+        <Link href="/shop" className={styles.verb}>
+          <span className={styles.verbWord}>mitnehmen</span>
+          <span className={styles.verbTarget}>
+            shop <span aria-hidden="true">→</span>
+          </span>
+        </Link>
+      </li>
+      <li>
+        <Link href="/unterstuetzen" className={styles.verb}>
+          <span className={styles.verbWord}>weitergeben</span>
+          <span className={styles.verbTarget}>
+            unterstützen <span aria-hidden="true">→</span>
+          </span>
+        </Link>
+      </li>
+    </ul>
+  );
+}
+
+function Rooms({ className }: { className?: string }) {
+  return (
+    <nav aria-label="räume">
+      <ul className={className} role="list">
+        {ROOMS.map((r) => (
+          <li key={r.href}>
+            <Link href={r.href} className={styles.room}>
+              {r.label}.
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+/* ─── Variante A: Abschlussplakat mit Abreißstreifen ──────────────── */
+
+function TearFooter({ memberCount }: { memberCount: number }) {
+  return (
+    <footer className={`${styles.footer} ${styles.tear}`}>
+      <h2 className="sr-only">fußzeile</h2>
+      <div className={styles.tearInner}>
+        <div className={styles.tearTop}>
+          <p className={styles.tagline}>
+            no measure,
+            <br />
+            no pressure.
+          </p>
+          <div className={styles.tearAside}>
+            <p className={styles.manifesto}>ja, wir reden hier über penisse.</p>
+            <p className={styles.members}>{memberLine(memberCount)}</p>
+          </div>
+        </div>
+
+        <div className={styles.tearMid}>
+          <Rooms className={styles.rooms} />
+          <Verbs className={styles.verbs} />
+        </div>
+
+        <div className={styles.tearSign}>
+          <Image
+            src="/brand/smallpclub-mark-turquoise.svg"
+            alt=""
+            width={40}
+            height={42}
+            className={styles.mark}
+          />
+          <p className={styles.signoff}>wir sind ein club. ohne uns zu messen.</p>
+        </div>
+      </div>
+
+      {/* Abreißstreifen: jeder Streifen ist ein Link ins Kleingedruckte */}
+      <nav aria-label="kleingedrucktes" className={styles.strips}>
+        <ul role="list">
+          {SMALL_PRINT.map((s) => (
+            <li key={s.href} className={styles.stripItem}>
+              <Link href={s.href} className={styles.stripLink}>
+                {s.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </footer>
+  );
+}
+
+/* ─── Variante B: die Wand läuft weiter ───────────────────────────── */
+
+function WallFooter({ memberCount }: { memberCount: number }) {
+  return (
+    <footer className={`${styles.footer} ${styles.wall}`}>
+      <h2 className="sr-only">fußzeile</h2>
+      <div className={styles.wallPhoto} aria-hidden="true">
+        <Image src="/imagery/plakat/wall-night.webp" alt="" fill sizes="100vw" className={styles.cover} />
+      </div>
+      <div className={styles.wallShade} aria-hidden="true" />
+
+      <div className={styles.wallInner}>
+        <div className={styles.wallPoster}>
+          <p className={styles.tagline}>
+            no measure,
+            <br />
+            no pressure.
+          </p>
+          <p className={styles.manifesto}>ja, wir reden hier über penisse.</p>
+          <p className={styles.posterFoot}>
+            <span>{memberLine(memberCount)}</span>
+            <span>small p club</span>
+          </p>
+        </div>
+
+        <div className={styles.wallNote}>
+          <span className={styles.tape} aria-hidden="true" />
+          <Rooms className={styles.noteRooms} />
+        </div>
+
+        <div className={styles.wallVerbs}>
+          <Verbs className={styles.verbsDark} />
+        </div>
+
+        <span className={styles.sticker} aria-hidden="true">
+          <Image src="/brand/smallpclub-mark-turquoise.svg" alt="" width={44} height={46} />
+        </span>
+      </div>
+
+      <div className={styles.wallBase}>
+        <p className={styles.signoffDark}>wir sind ein club. ohne uns zu messen.</p>
+        <nav aria-label="kleingedrucktes">
+          <ul className={styles.fine} role="list">
+            {SMALL_PRINT.map((s) => (
+              <li key={s.href}>
+                <Link href={s.href} className={styles.fineLink}>
+                  {s.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
+    </footer>
+  );
+}

@@ -11,6 +11,8 @@ const staticCsp = isDev
   : "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data:; manifest-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests";
 
 const nextConfig: NextConfig = {
+  // Nur Dev: Handy im selben WLAN darf die lokale Vorschau laden (HMR).
+  allowedDevOrigins: ['192.168.178.*'],
   async headers() {
     return [
       {

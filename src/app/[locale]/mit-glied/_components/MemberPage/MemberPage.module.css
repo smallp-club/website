@@ -1,0 +1,29 @@
+/* Papiergrund wie `.page` im V2-Page-System, eingebettet in die MemberShell. */
+
+.page {
+  /* Shell-Padding (MemberShell.module.css `.content`) aufheben → Wand randlos. */
+  margin: calc(-1 * var(--space-6)) calc(-1 * var(--gutter)) calc(-1 * var(--space-9));
+  padding-bottom: clamp(4rem, 8vw, 6rem);
+  background-color: var(--v2-paper);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
+  color: var(--spc-black);
+  overflow-x: clip;
+}
+
+@media (min-width: 1024px) {
+  .page {
+    margin: calc(-1 * var(--space-7)) calc(-1 * var(--space-7)) calc(-1 * var(--space-11));
+  }
+}
+
+/* Kopf: kein Unterziehen unter die SiteNav (gibt es hier nicht). */
+.page > header:first-child {
+  margin-top: 0;
+}
+
+/* Kopf-Innenraum: weniger Luft oben, weil keine Nav darüber liegt. */
+.page > header:first-child > div:last-child {
+  padding-top: clamp(3.5rem, 8svh, 5.5rem);
+}

@@ -1,86 +1,58 @@
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
+/**
+ * /partner — V2, Satzspiegel. Kein Beitrittsweg (entscheidungen.md #8).
+ */
+
+import { Chapter, Page, PageHead } from '@/components/v2/Page';
+import { Snapshot } from '@/components/v2/Snapshot';
+import styles from './partner.module.css';
 
 export const metadata = {
-  title: 'partner. — small p club',
-  description:
-    'wer die haltung teilt. organisationen, die strukturell mit uns laufen.',
+  title: 'partner. · small p club',
+  description: 'organisationen, die die haltung von small p club teilen. kooperationen per mail.',
 };
 
-export default function PartnerListePage() {
+export default function PartnerPage() {
   return (
-    <main id="main-content">
-      {/* ── Haltungsaussage (Hero) */}
-      <Section tone="light" rhythm="standard" aria-label="haltungsaussage">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>partner</Eyebrow>
-            <Heading level={1} variant="display">
-              wer die haltung teilt, gehört dazu.
-            </Heading>
-            <Body>
-              wir suchen keine sponsoren. wir suchen organisationen, die seit
-              jahren die arbeit machen, wofür wir gerade erst reichweite haben.
-              wer mit uns läuft, läuft, weil die richtung passt, nicht weil
-              eine rechnung dahinter steht.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+    <Page>
+      <PageHead
+        eyebrow="partner"
+        title="wer die haltung teilt, gehört dazu."
+        lead="wir suchen organisationen, die seit jahren mit jungen und männern arbeiten und denen eine stimme mit reichweite nützt."
+      />
 
-      {/* ── Aktive Partner (Logo-Grid Platzhalter) */}
-      <Section tone="light" rhythm="standard" aria-label="aktive partner">
-        <Container width="default">
-          <Stack gap={4}>
-            <Eyebrow>aktive partner</Eyebrow>
-            <Heading level={2} variant="lede">
-              noch leer. ehrlich.
-            </Heading>
-            <Body>
-              wir bauen langsam. wer dazukommt, taucht hier als logo auf.
-              klein, ruhig, ohne pitch.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter
+        nr="01"
+        eyebrow="aktive partner"
+        title="hier steht noch niemand."
+        aside={
+          <Snapshot src="/imagery/plakat/gruppenraum.webp" ratio="3/2" tilt={1.2} alt="stühle im kreis in einem gruppenraum, auf einem flipchart steht noch ein halber satz, ein mann räumt tassen ab." />
+        }
+      >
+        <p>wir fragen erst an, wenn diese seite fertig ist und man sieht, wofür wir stehen.</p>
+        <p>
+          wer zusagt, steht hier mit logo und einem satz zu seiner arbeit. später kommen längere
+          texte dazu, von beiden seiten geschrieben.
+        </p>
+      </Chapter>
 
-      {/* ── Partner-Story-Slot */}
-      <Section tone="light" rhythm="standard" aria-label="partner-stories">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>geschichten</Eyebrow>
-            <Heading level={2} variant="lede">
-              längere texte, sobald wir partner haben.
-            </Heading>
-            <Body>
-              ein bis zwei partner-stories. editorial, kein corporate-pitch.
-              von beiden seiten geschrieben.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter nr="02" eyebrow="was wir nicht machen" title="kein sponsoring, kein co-branding.">
+        <p>
+          geld nehmen wir von partnern keins. pharmafirmen und anbieter von vergrößerung bleiben
+          draußen, egal in welcher form.
+        </p>
+      </Chapter>
 
-      {/* ── Kooperations-CTA */}
-      <Section tone="light" rhythm="standard" aria-label="kooperationen">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>mitmachen</Eyebrow>
-            <Heading level={2} variant="lede">
-              kooperationen direkt per mail.
-            </Heading>
-            <Body>
-              kein formular, kein crm. eine mail an{' '}
-              <a href="mailto:hello@smallp.club">hello@smallp.club</a>{' '}
-              genügt. am besten mit zwei sätzen wer ihr seid und was ihr
-              macht.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
-    </main>
+      <Chapter nr="03" eyebrow="kontakt" title="zwei sätze per mail reichen.">
+        <p>
+          schreib uns, wer ihr seid und woran ihr arbeitet. kethe antwortet selbst, ein formular gibt
+          es dafür nicht.
+        </p>
+        <p>
+          <a href="mailto:hello@smallp.club" className={styles.mail}>
+            mail an hello@smallp.club
+          </a>
+        </p>
+      </Chapter>
+    </Page>
   );
 }

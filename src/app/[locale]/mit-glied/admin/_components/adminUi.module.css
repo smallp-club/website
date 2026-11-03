@@ -1,0 +1,341 @@
+/* Admin V2 — gemeinsame Bausteine der Admin-Seiten (Plakat-Sprache, ruhig).
+   Nur von src/app/[locale]/mit-glied/admin/* genutzt. Farben ausschließlich
+   über --v2-* / --spc-*. Admin-Farbsprache MEMBER_SECURITY §7:
+   durchlassen = Turquoise, nicht durch = Sienna, sperren = Schwarz. */
+
+/* ─── Abschnitt in voller Rasterbreite (in <Wide>) ───────────────── */
+
+.blockTitle {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--v2-h3);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--spc-black);
+}
+
+.blockLead {
+  margin: 0 0 1.5rem;
+  max-width: var(--v2-measure);
+  font-family: var(--font-body);
+  font-size: var(--v2-body);
+  line-height: 1.6;
+  color: var(--v2-muted-on-paper);
+}
+
+.empty {
+  margin: 0;
+  padding-block: 1.25rem;
+  border-top: 1.5px solid var(--spc-black);
+  font-family: var(--font-body);
+  font-size: var(--v2-body);
+  line-height: 1.6;
+  color: var(--v2-muted-on-paper);
+}
+
+/* ─── Zahlen (Anton-Ziffern) ─────────────────────────────────────── */
+
+.stats {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1.5px solid var(--spc-black);
+}
+
+@media (min-width: 60rem) {
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem 1.5rem 0;
+  border-bottom: 1px solid var(--v2-hairline-light);
+}
+
+.statLabel {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  line-height: 1.4;
+  color: var(--v2-muted-on-paper);
+}
+
+.statValue {
+  margin: 0;
+  font-family: var(--font-plakat-number), var(--font-display);
+  font-weight: 400;
+  font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+  line-height: 0.9;
+  font-variant-numeric: tabular-nums;
+  color: var(--spc-black);
+}
+
+.stat[data-accent] .statValue {
+  color: var(--v2-deep);
+}
+
+/* ─── Hinweise (Warten, Fehler, Konfiguration) ───────────────────── */
+
+.notice {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  background-color: var(--v2-paper-sunken);
+  border-left: 3px solid var(--spc-sienna);
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  line-height: 1.55;
+  color: var(--spc-black);
+}
+
+.attention {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-height: 44px;
+  padding: 1rem 1.25rem;
+  background-color: var(--v2-paper-sunken);
+  border-left: 3px solid var(--spc-sienna);
+  color: var(--spc-black);
+  text-decoration: none;
+  transition: background-color var(--v2-dur-fast) var(--v2-ease);
+}
+
+.attention:hover {
+  background-color: var(--v2-paper-raised);
+}
+
+.attention:focus-visible {
+  outline: 2px solid var(--spc-turquoise-deep);
+  outline-offset: 3px;
+}
+
+.attentionEyebrow {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--v2-eyebrow);
+  color: var(--v2-error);
+}
+
+.attentionLine {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--v2-h3);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+.attentionFlag {
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  color: var(--v2-muted-on-sunken);
+}
+
+/* ─── Zeilen-Listen (Inbox, Audit, Blocklist, Wellen) ────────────── */
+
+.rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1.5px solid var(--spc-black);
+}
+
+.row {
+  border-bottom: 1px solid var(--v2-hairline-light);
+}
+
+.row[data-flag='high'] {
+  border-left: 3px solid var(--spc-sienna);
+}
+
+.rowLink,
+.rowStatic {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem 0;
+  color: var(--spc-black);
+  text-decoration: none;
+}
+
+.row[data-flag='high'] .rowLink,
+.row[data-flag='high'] .rowStatic {
+  padding-left: 1rem;
+}
+
+.rowLink {
+  min-height: 44px;
+  transition: background-color var(--v2-dur-fast) var(--v2-ease);
+}
+
+.rowLink:hover {
+  background-color: var(--v2-paper-sunken);
+}
+
+.rowLink:focus-visible {
+  outline: 2px solid var(--spc-turquoise-deep);
+  outline-offset: 2px;
+}
+
+.rowHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+}
+
+.rowTitle {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--v2-lead);
+  line-height: 1.25;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--v2-dur-fast) var(--v2-ease);
+}
+
+.rowLink:hover .rowTitle {
+  text-decoration-color: currentColor;
+}
+
+.rowMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  line-height: 1.45;
+  color: var(--v2-muted-on-paper);
+}
+
+.time {
+  font-family: var(--font-body);
+  font-size: var(--v2-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--v2-muted-on-paper);
+}
+
+.prompt {
+  font-style: italic;
+}
+
+.preview {
+  margin: 0;
+  max-width: var(--v2-measure);
+  font-family: var(--font-body);
+  font-size: var(--v2-body);
+  line-height: 1.6;
+  color: var(--spc-ink);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--v2-small);
+  color: var(--spc-black);
+}
+
+/* Status / Aktion */
+
+.status,
+.action {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--spc-black);
+}
+
+.status[data-status='approved'],
+.action[data-action='approve'] {
+  color: var(--v2-deep);
+}
+
+.status[data-status='rejected'],
+.action[data-action='reject'],
+.action[data-action='ban'] {
+  font-style: italic;
+  color: var(--v2-muted-on-paper);
+}
+
+.flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.flag {
+  display: inline-block;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid var(--v2-hairline-light);
+  font-family: var(--font-mono);
+  font-size: var(--v2-caption);
+  line-height: 1.5;
+  color: var(--v2-muted-on-paper);
+}
+
+.flag[data-level='high'] {
+  border-color: var(--v2-error);
+  color: var(--v2-error);
+}
+
+/* ─── Formulare (Re-Auth, Ban, Entsperren) ───────────────────────── */
+
+.label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--v2-small);
+  color: var(--spc-black);
+}
+
+.hint {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--v2-caption);
+  line-height: 1.55;
+  color: var(--v2-muted-on-paper);
+}
+
+.textarea,
+.codeInput {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.75rem 0.875rem;
+  border: 1.5px solid var(--spc-black);
+  border-radius: 0;
+  background-color: var(--v2-paper-raised);
+  color: var(--spc-black);
+  font-family: var(--font-body);
+  font-size: var(--v2-body);
+}
+
+.textarea {
+  resize: vertical;
+}
+
+.codeInput {
+  max-width: 13rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.18em;
+  text-align: center;
+}
+
+.codeInputSmall {
+  max-width: 8rem;
+  letter-spacing: 0.12em;
+}
+
+.textarea:focus-visible,
+.codeInput:focus-visible {
+  outline: 2px solid var(--spc-turquoise-deep);
+  outline-offset: 2px;
+}

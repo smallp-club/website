@@ -1,0 +1,28 @@
+.root {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity var(--v2-dur) var(--v2-ease) var(--delay, 0ms),
+    transform var(--v2-dur) var(--v2-ease) var(--delay, 0ms);
+}
+
+.root[data-revealed='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Ohne JS (oder vor Hydration) nie unsichtbar bleiben. */
+@media (scripting: none) {
+  .root {
+    opacity: 1;
+    transform: none;
+  }
+}

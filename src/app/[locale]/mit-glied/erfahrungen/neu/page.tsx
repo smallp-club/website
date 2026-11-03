@@ -1,15 +1,16 @@
 /**
  * /mit-glied/erfahrungen/neu — Erfahrungsbericht einreichen.
  *
- * Atelier-Stil: kompakter Header, Cooldown-Notice als Editorial-Strip
- * mit Hairline statt Section-Padding-Wand.
+ * V2-Plakat-Sprache: kompakter Wand-Kopf, darunter das Formular mit den
+ * fünf Satzanfängen als Zettel. Cooldown-Hinweis als eigener Kopf.
  */
 
 import Link from 'next/link';
 import { requireMember, type MemberSession } from '@/lib/members/auth';
+import { Chapter, PageHead, pageStyles } from '@/components/v2/Page';
 import { ShellWrap } from '../../_components/MemberShell';
+import { MemberPage } from '../../_components/MemberPage';
 import { StoryForm } from './_components/StoryForm';
-import atelier from '../../_components/MemberShell/atelier.module.css';
 
 export const metadata = {
   title: 'erfahrungsbericht schreiben. — small p club',
@@ -41,18 +42,15 @@ export default async function ErfahrungNeuPage() {
 
   return (
     <ShellWrap session={session} pageLabel="neuer bericht">
-      <section className={atelier.arrival}>
-        <span className={atelier.eyebrow}>neuer bericht</span>
-        <h1 className={atelier.title}>dein text, fünf prompts zur wahl.</h1>
-        <p className={atelier.body}>
-          pseudonym wandert mit, alter-range optional. zwischen 80 und 1500
-          zeichen. kevin schaut alles an, was nicht hart abgelehnt wird.
-        </p>
-      </section>
-
-      <section className={atelier.section}>
+      <MemberPage>
+        <PageHead
+          eyebrow="neuer bericht"
+          size="compact"
+          title="dein text. ein satzanfang, der rest bist du."
+          lead="zwischen 80 und 1500 zeichen. dein ausgedachter name steht darunter, das alter ist freiwillig. kethe liest jeden text."
+        />
         <StoryForm pseudonym={profile.pseudonym} />
-      </section>
+      </MemberPage>
     </ShellWrap>
   );
 }
@@ -63,21 +61,30 @@ function CooldownNotice({ session, allowedAt }: { session: MemberSession; allowe
 
   return (
     <ShellWrap session={session} pageLabel="neuer bericht">
-      <section className={atelier.arrival}>
-        <span className={atelier.eyebrow}>noch nicht</span>
-        <h1 className={atelier.title}>kurz raum, anzukommen.</h1>
-        <p className={atelier.body}>
-          dein erster bericht klappt 24 stunden nach anmeldung. das ist kein
-          misstrauen, das ist eine kleine pause. komm wieder ab{' '}
-          <strong>{dateLabel}, {timeLabel}</strong>.
-        </p>
-      </section>
-
-      <section className={atelier.section}>
-        <Link href="/mit-glied/eingang" className={atelier.linkAccent}>
-          zurück zum eingang →
-        </Link>
-      </section>
+      <MemberPage>
+        <PageHead
+          eyebrow="noch nicht"
+          size="compact"
+          title="kurz raum, anzukommen."
+          lead={
+            <>
+              dein erster bericht klappt 24 stunden nach anmeldung. das ist kein
+              misstrauen, das ist eine kleine pause. komm wieder ab{' '}
+              <strong>
+                {dateLabel}, {timeLabel}
+              </strong>
+              .
+            </>
+          }
+        />
+        <Chapter eyebrow="bis dahin">
+          <p>
+            <Link href="/mit-glied/eingang" className={pageStyles.link}>
+              zurück zum eingang →
+            </Link>
+          </p>
+        </Chapter>
+      </MemberPage>
     </ShellWrap>
   );
 }

@@ -6,7 +6,7 @@ import { headers } from 'next/headers';
 import { Inter } from 'next/font/google';
 import { routing } from '@/i18n/routing';
 import { SkipToContent } from '@/components/primitives/SkipToContent';
-import { SiteFooterContainer } from '@/components/sections/SiteFooter/SiteFooterContainer';
+import { FooterContainer } from '@/components/v2/Footer/FooterContainer';
 import { FooterGate } from '@/components/sections/SiteFooter/FooterGate';
 import { SiteNavContainer } from '@/components/sections/SiteNav/SiteNavContainer';
 import { NavGate } from '@/components/sections/SiteNav/NavGate';
@@ -125,7 +125,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           </NavGate>
           {children}
           <FooterGate>
-            <SiteFooterContainer />
+            <FooterContainer />
           </FooterGate>
         </NextIntlClientProvider>
       </body>

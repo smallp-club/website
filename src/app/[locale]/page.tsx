@@ -1,22 +1,13 @@
 import { headers } from 'next/headers';
-import { HeroTiefe } from '@/components/sections/HeroTiefe';
+import { Plakatnacht } from '@/components/v2/Plakat';
 
 /**
- * Landing — die immersive Tiefen-Bühne ist der erste Eindruck.
+ * Landing V2 — „Plakatnacht" (Branch v2-redesign). „Ein Satz" liegt in
+ * src/components/_archive/v2-landing-ein-satz. Die bisherige immersive
+ * Bühne `HeroTiefe` bleibt unangetastet im Repo (Revert: Import tauschen).
  *
- * `HeroTiefe` rendert den vollen narrativen Flug (Hero → Wiedererkennung →
- * Mythos → Fakt → 91%→2%-Partikel → menschlicher Moment → Bewegung) als ein
- * einziges scroll-getriebenes Erlebnis und trägt selbst das <main>-Landmark.
- * Nav + Footer kommen aus dem LocaleLayout; der Footer gleitet am Ende über
- * den letzten Frame (Stacking-Context in HeroTiefe.module.css).
- *
- * Zusätzlich: FAQPage-JSON-LD (GEO) — macht die Kernfakten mit Quellen für
- * KI-Suchen (ChatGPT/Perplexity/Claude) strukturiert zitierfähig. Der sichtbare
- * Inhalt lebt teils im Canvas; das strukturierte Markup liefert die Fakten
- * verlässlich als Entität nach.
- *
- * Die frühere sektionsbasierte Landing liegt unter
- * `_archive/page.landing-sections.tsx.bak` (Revert-Referenz).
+ * FAQPage-JSON-LD (GEO): nur belegte Zahlen. Die frühere 91-%-Angabe ließ
+ * sich keiner Primärquelle zuordnen und ist entfernt.
  */
 
 type FaqItem = { q: string; a: string };
@@ -24,11 +15,11 @@ type FaqItem = { q: string; a: string };
 const FAQ_DE: FaqItem[] = [
   {
     q: 'Wollen Frauen einen größeren Penis?',
-    a: '85 % der Partner sind mit der Penisgröße ihres Partners zufrieden (Lever, Frederick & Peplau, Psychology of Men & Masculinity, 2006, n=52.000+). Nur 55 % der Männer sind es mit sich selbst. Der Druck sitzt im Kopf, nicht in der Anatomie.',
+    a: '85 % der Partnerinnen sind mit der Penisgröße ihres Partners zufrieden (Lever, Frederick & Peplau, Psychology of Men & Masculinity, 2006, n=52.031). Nur 55 % der Männer sind es mit sich selbst.',
   },
   {
     q: 'Bin ich zu klein?',
-    a: '91 % der Männer halten sich für zu klein, aber nur rund 2 % liegen tatsächlich unter dem Normbereich (Veale et al., BJU International, 2015, n=15.521). Die Wahrnehmung weicht viel stärker ab als die Anatomie.',
+    a: 'Wahrscheinlich nicht. 95 % aller Männer liegen erigiert zwischen 9,8 und 16,4 cm, der Durchschnitt bei 13,12 cm (Veale et al., BJU International, 2015, n=15.521). Viele Männer im Normbereich wünschen sich trotzdem mehr. Der Druck sitzt in der Wahrnehmung, nicht in der Anatomie.',
   },
   {
     q: 'Was ist die durchschnittliche Penisgröße?',
@@ -39,11 +30,11 @@ const FAQ_DE: FaqItem[] = [
 const FAQ_EN: FaqItem[] = [
   {
     q: 'Do women want a bigger penis?',
-    a: '85% of partners are satisfied with their partner’s penis size (Lever, Frederick & Peplau, Psychology of Men & Masculinity, 2006, n=52,000+). Only 55% of men are satisfied with their own. The pressure is in the head, not the anatomy.',
+    a: '85% of female partners are satisfied with their partner’s penis size (Lever, Frederick & Peplau, Psychology of Men & Masculinity, 2006, n=52,031). Only 55% of men are satisfied with their own.',
   },
   {
     q: 'Am I too small?',
-    a: '91% of men think they are too small, but only about 2% actually fall below the normal range (Veale et al., BJU International, 2015, n=15,521). Perception is far more distorted than anatomy.',
+    a: 'Probably not. 95% of men fall between 9.8 and 16.4 cm erect, with an average of 13.12 cm (Veale et al., BJU International, 2015, n=15,521). Many men within the normal range still wish for more. The pressure sits in perception, not anatomy.',
   },
   {
     q: 'What is the average penis size?',
@@ -82,7 +73,7 @@ export default async function HomePage({ params }: Props) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema(locale)) }}
       />
-      <HeroTiefe />
+      <Plakatnacht turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY} />
     </>
   );
 }

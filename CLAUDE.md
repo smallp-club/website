@@ -47,6 +47,14 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 7. **Nach jeder Session:** alle neuen Erkenntnisse in CLAUDE.md + docs/ + Memory-Dateien einpflegen
 8. **Library-Doktrin:** Reuse-First. Vor jedem Build → erst Library prüfen, ob schon vorhanden. Neue Library-Komponenten sind props-getrieben, mobile-first, a11y-baseline (kein Audit am Ende), token-getrieben, korrekt benannt + dokumentiert. Standard: @docs/tech/COMPONENT_LIBRARY_STANDARD.md
 
+## Stand (2026-11-02, Session 18 — V2-Redesign auf Branch `v2-redesign`, NICHT live)
+
+- **V2 komplett gebaut, uncommitted auf `v2-redesign`** (main unberührt, kein Deploy). Startseite „Plakatnacht" (`src/components/v2/Plakat`, Kevin: „C1 ist es") ersetzt in `[locale]/page.tsx` die HeroTiefe (Revert: Import tauschen, HeroTiefe + alte Sections unangetastet; „Ein Satz" archiviert in `_archive/v2-landing-ein-satz`). Innenseiten-System `src/components/v2/Page` (Plakat-Sprache: Wand-Kopf, Plakatziffern, Zettel, Abreißstreifen; Fotos als `v2/Snapshot`) auf allen Seiten (Rechts-, Member- und Admin-Seiten mit `PageHead size="compact"`, innerhalb der MemberShell über den Wrapper `mit-glied/_components/MemberPage`). Einzige Ausnahme: 404 „4,04 cm“. Tokens `tokens/v2.css`.
+- **91-%-Zahl hatte keine Primärquelle** (Psychology Today 2015 meint nur Männer, die sich selbst als klein einstufen). V2 und FAQ-JSON-LD nutzen nur noch Lever 2006 (85/55, n=52.031) und Veale 2015. Live-Site (HeroTiefe) trägt die 91 % weiterhin.
+- **Doktrin-Änderung:** ThresholdGate auf /mit-glied ersetzt durch H1 direkt über dem Formular (Gate-Komponente bleibt als Plan B).
+- Ein Beitrittsformular `JoinInline` (Turnstile lädt erst bei Interaktion), einmal pro Seite, nie auf /partner und /unterstuetzen.
+- Offen: Kevin-Review der V2, Betreff/Absender der Magic-Link-Mail im Supabase-Dashboard prüfen, `--v2-myth-on-dark` (#e08a6a) als neue Sienna-Abstufung freigeben, echte Fotos für 10 Platzhalter (Motivsätze in lene.md §11).
+
 ## Stand (2026-07-13, Session 17 — Security-Audit end-to-end, Go-Live scharf, Member-Login zum ersten Mal live)
 
 **Marathon-Session quer durch Security, Deployment, Auth-Flow und zwei Prüfrunden. 9 Commits (bf03b3c → c8d980a), alle gepusht + live.**

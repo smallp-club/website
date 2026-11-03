@@ -12,13 +12,8 @@
  * Reply-Pattern. Report-Knopf unter jedem Bericht (dezenter Trigger).
  */
 
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
+import { Chapter, EndLink, Page, PageHead, Wide } from '@/components/v2/Page';
+import { Snapshot } from '@/components/v2/Snapshot';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../mit-glied/erfahrungen/neu/story-types';
@@ -26,8 +21,8 @@ import { ReportForm } from './_components/ReportForm';
 import styles from './stimmen.module.css';
 
 export const metadata = {
-  title: 'stimmen. — small p club',
-  description: 'kuratierte erfahrungsberichte. pseudonym, public, ohne kommentare.',
+  title: 'stimmen. · small p club',
+  description: 'erfahrungsberichte von mit-gliedern. unter ausgedachtem namen, kuratiert, ohne kommentare.',
 };
 
 const PROMPT_LABEL: Record<string, string> = Object.fromEntries(
@@ -68,80 +63,67 @@ export default async function StimmenPage() {
   }
 
   return (
-    <main id="main-content">
-      <Section tone="light" rhythm="loose" aria-label="stimmen hero">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>stimmen</Eyebrow>
-            <Heading level={1} variant="display">
-              berichte aus dem club.
-            </Heading>
-            <Body>
-              was andere geschrieben haben. ein prompt wählt den ton, der text
-              macht den rest. kein scroll-feed, kein like, keine kommentare.
-              lesen reicht.
-            </Body>
-            <Body tone="muted">
-              alle berichte sind kuratiert. wer die haltung daneben findet,
-              meldet sie. das geht direkt unter jedem bericht.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+    <Page>
+      <PageHead
+        eyebrow="stimmen"
+        wall="dusk"
+        title="was mit-glieder aufgeschrieben haben."
+        lead="jeder bericht beginnt mit einem satzanfang, den man sich aussucht. der rest ist der eigene text. kethe liest jeden, bevor er hier steht."
+        aside={
+          <Snapshot src="/imagery/plakat/parkbank.webp" ratio="4/5" tilt={1.8} alt="ein mann auf einer parkbank tippt in sein handy, das gesicht vom bild weg, neben ihm wartet ein hund an der leine." />
+        }
+      >
+        <ul className={styles.prompts} role="list" aria-label="die fünf satzanfänge">
+          {PROMPT_OPTIONS.map((p) => (
+            <li key={p.key}>{p.label}</li>
+          ))}
+        </ul>
+        <p className={styles.headNote}>kein feed, keine likes, keine kommentare. du liest einfach.</p>
+      </PageHead>
 
-      <Section tone="light" rhythm="standard" aria-label="berichte">
-        <Container width="prose">
-          {rows.length === 0 ? (
-            <Stack gap={3}>
-              <Eyebrow>leer</Eyebrow>
-              <Heading level={2} variant="lede">
-                noch keine berichte hier.
-              </Heading>
-              <Body tone="muted">
-                wir lassen uns zeit. der erste bericht ist immer der schwerste,
-                deiner vielleicht auch.
-              </Body>
-            </Stack>
-          ) : (
-            <ul className={styles.list} role="list">
-              {rows.map((row) => (
-                <li key={row.id} className={styles.story}>
-                  <p className={styles.promptLead}>
-                    <em>{PROMPT_LABEL[row.prompt_key] ?? row.prompt_key}</em>
-                  </p>
-                  <blockquote className={styles.bodyQuote}>{row.body}</blockquote>
-                  <footer className={styles.footer}>
-                    <div className={styles.attribution}>
-                      <span className={styles.pseudonym}>{row.pseudonym}</span>
-                      {row.approved_at && (
-                        <span className={styles.date}>
-                          · {DATE_LONG.format(new Date(row.approved_at))}
-                        </span>
-                      )}
-                    </div>
-                    <ReportForm
-                      storyId={row.id}
-                      turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-                    />
-                  </footer>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Container>
-      </Section>
-
-      {rows.length > 0 && (
-        <Section tone="light" rhythm="tight" aria-label="hinweis">
-          <Container width="prose">
-            <Caption tone="muted" as="p">
-              berichte mit „alter-" / „alte-" / „altes-"-präfix stammen von
-              mit-gliedern, die ihren account gelöscht haben. ihr bekenntnis
-              bleibt.
-            </Caption>
-          </Container>
-        </Section>
+      {rows.length === 0 ? (
+        <Chapter nr="01" eyebrow="noch leer" title="hier steht noch kein bericht.">
+          <p>der club ist jung, und hier erscheint nur, was jemand selbst aufgeschrieben hat.</p>
+          <p>die ersten texte schreibt kethe, unter seinem ausgedachten namen. das steht dann auch dabei.</p>
+        </Chapter>
+      ) : (
+        <Wide label="berichte">
+          <ul className={styles.list} role="list">
+            {rows.map((row) => (
+              <li key={row.id} className={styles.story}>
+                <p className={styles.promptLead}>
+                  <em>{PROMPT_LABEL[row.prompt_key] ?? row.prompt_key}</em>
+                </p>
+                <blockquote className={styles.bodyQuote}>{row.body}</blockquote>
+                <footer className={styles.footer}>
+                  <div className={styles.attribution}>
+                    <span className={styles.pseudonym}>{row.pseudonym}</span>
+                    {row.approved_at && (
+                      <span className={styles.date}>
+                        · {DATE_LONG.format(new Date(row.approved_at))}
+                      </span>
+                    )}
+                  </div>
+                  <ReportForm
+                    storyId={row.id}
+                    turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+                  />
+                </footer>
+              </li>
+            ))}
+          </ul>
+          <p className={styles.headNote}>
+            berichte mit „alter-“, „alte-“ oder „altes-“ vor dem namen stammen von mit-gliedern, die
+            ihr konto gelöscht haben. ihr bericht bleibt.
+          </p>
+        </Wide>
       )}
-    </main>
+
+      <EndLink
+        line="selbst etwas aufschreiben? dafür wirst du mit-glied, mit einer mail und ohne passwort."
+        href="/mit-glied"
+        label="mit-glied werden und schreiben"
+      />
+    </Page>
   );
 }

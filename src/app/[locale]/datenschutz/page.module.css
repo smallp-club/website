@@ -1,130 +1,112 @@
-.main {
-  padding-block: var(--space-9) var(--space-10);
-}
-
-.header {
-  margin-block-end: var(--space-9);
-}
-
-.stand {
-  color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: var(--text-caption);
-  margin-block-start: var(--space-3);
-}
-
-.section {
-  margin-block-end: var(--space-9);
-}
-
-.section h2 {
-  margin-block-end: var(--space-5);
-}
-
-.section h3 {
-  margin-block-end: var(--space-3);
-  margin-block-start: var(--space-6);
-}
+/* Lokale Ergänzungen zum V2-Kapitel (Page-System hat keine Listen, Tabellen, Anbieterblöcke). */
 
 .brandBlock {
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
-  font-size: var(--text-body-lg);
-  line-height: var(--leading-relaxed);
-  color: var(--text-strong);
-  margin-block-end: var(--space-6);
+  font-weight: 500;
+  font-size: var(--v2-lead);
+  line-height: 1.5;
+  color: var(--spc-black);
   white-space: pre-line;
 }
 
-.lead {
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
-  line-height: var(--leading-relaxed);
-  color: var(--text-strong);
-  margin-block-end: var(--space-4);
+.list {
+  margin: 0 0 1em;
+  padding-left: 1.25rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.list li::marker {
+  color: var(--v2-fact);
 }
 
 .provider {
-  margin-block-end: var(--space-6);
+  margin: 1.25rem 0 0;
+  padding: 1rem 1.25rem;
+  border-left: 2px solid var(--v2-fact);
+  background-color: var(--v2-paper-raised);
+}
+
+.provider + .provider {
+  margin-top: 0.75rem;
 }
 
 .providerName {
-  font-family: var(--font-body);
-  font-weight: var(--weight-medium);
-  font-size: var(--text-body-md);
-  color: var(--text-strong);
-  margin-block-end: var(--space-2);
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--v2-body);
+  line-height: 1.4;
+  color: var(--spc-black);
 }
 
 .providerDetail {
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  line-height: var(--leading-relaxed);
-  color: var(--text-muted);
-  margin-block-end: var(--space-1);
+  margin: 0 0 0.25rem;
+  font-size: var(--v2-small);
+  line-height: 1.6;
+  color: var(--v2-muted-on-paper);
+}
+
+.providerDetail:last-child {
+  margin-bottom: 0;
 }
 
 .providerDetail a {
-  color: var(--accent-contrast);
-  text-decoration: underline;
+  /* Mindesthöhe für Touch-Ziele in Anbieterblöcken */
+  display: inline-block;
+  padding-block: 0.6rem;
 }
 
 .tableWrap {
-  margin-block-end: var(--space-5);
+  margin: 0 0 1.5rem;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .cookieTable {
   border-collapse: collapse;
-  min-width: 480px;
+  min-width: 30rem;
   width: 100%;
 }
 
 .cookieTable caption {
   caption-side: top;
-  color: var(--text-muted);
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  margin-block-end: var(--space-3);
+  margin-bottom: 0.75rem;
   text-align: left;
+  font-size: var(--v2-small);
+  color: var(--v2-muted-on-paper);
 }
 
 .cookieTable th,
 .cookieTable td {
-  border-bottom: 1px solid var(--border-hairline);
-  padding: var(--space-3) var(--space-4);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--v2-hairline-light);
   text-align: left;
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm);
   vertical-align: top;
+  font-size: var(--v2-small);
+  color: var(--spc-black);
 }
 
 .cookieTable th {
-  font-weight: var(--weight-medium);
-  color: var(--text-strong);
+  font-family: var(--font-display);
+  font-weight: 600;
 }
 
-.cookieTable td {
-  color: var(--text-strong);
-}
-
-.cookieTable code,
-.providerDetail code {
-  background: var(--surface-sunken);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-mono);
-  font-size: var(--text-caption);
+.cookieTable code {
   padding: 0.1em 0.5em;
+  border-radius: 4px;
+  background: var(--v2-paper-sunken);
+  font-family: var(--font-mono);
+  font-size: var(--v2-caption);
 }
 
 .signOff {
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  color: var(--text-muted);
-  margin-block-start: var(--space-7);
+  margin-top: 2.5rem;
+  font-size: var(--v2-small);
+  color: var(--v2-muted-on-paper);
 }
 
-.signOff em {
-  font-style: italic;
+.tableWrap:focus-visible {
+  outline: 2px solid var(--spc-turquoise-deep);
+  outline-offset: 3px;
 }

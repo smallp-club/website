@@ -1,0 +1,227 @@
+.root {
+  width: 100%;
+  max-width: 34rem;
+}
+
+.light {
+  --j-ink: var(--spc-black);
+  --j-muted: var(--v2-muted-on-paper);
+  --j-field: var(--v2-paper-raised);
+  --j-line: rgba(10, 10, 10, 0.18);
+  --j-line-focus: var(--spc-turquoise-deep);
+  --j-error: var(--v2-error);
+  --j-success-bg: var(--v2-paper-sunken);
+}
+
+.dark {
+  --j-ink: var(--v2-on-dark);
+  --j-muted: var(--v2-on-dark-muted);
+  --j-field: rgba(247, 246, 242, 0.07);
+  --j-line: rgba(247, 246, 242, 0.28);
+  --j-line-focus: var(--v2-act);
+  --j-error: var(--v2-error-on-dark);
+  --j-success-bg: rgba(247, 246, 242, 0.08);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.label {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--v2-eyebrow);
+  letter-spacing: 0.01em;
+  color: var(--j-muted);
+}
+
+/* Feld und Button teilen sich eine Kapsel: eine Zeile, eine Handlung. */
+.row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  padding: 6px;
+  border-radius: var(--v2-pill);
+  background: var(--j-field);
+  box-shadow: inset 0 0 0 1px var(--j-line);
+  transition: box-shadow var(--v2-dur-fast) var(--v2-ease);
+}
+
+.row:focus-within {
+  box-shadow:
+    inset 0 0 0 2px var(--j-line-focus),
+    0 0 0 4px color-mix(in srgb, var(--j-line-focus) 22%, transparent);
+}
+
+.input {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: 0 1.125rem;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 1.0625rem; /* ≥16px, kein iOS-Zoom */
+  color: var(--j-ink);
+  border-radius: var(--v2-pill);
+}
+
+.input::placeholder {
+  color: var(--j-muted);
+  opacity: 1;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.submit {
+  flex: 0 0 auto;
+  min-height: 2.75rem;
+  padding: 0 1.5rem;
+  border: 0;
+  border-radius: var(--v2-pill);
+  background: var(--v2-act);
+  color: var(--v2-on-act);
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 0.005em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color var(--v2-dur-fast) var(--v2-ease),
+    transform var(--v2-dur-fast) var(--v2-ease);
+}
+
+.submit:hover {
+  background: var(--v2-act-hover);
+}
+
+.submit:active {
+  background: var(--v2-act-press);
+  transform: scale(0.98);
+}
+
+.submit:focus-visible {
+  outline: 2px solid var(--j-ink);
+  outline-offset: 2px;
+}
+
+.submit[aria-disabled='true'],
+.submit:disabled {
+  cursor: progress;
+}
+
+.hint {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  line-height: 1.5;
+  color: var(--j-muted);
+}
+
+.error {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  line-height: 1.5;
+  color: var(--j-error);
+}
+
+.check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  line-height: 1.5;
+  color: var(--j-muted);
+  cursor: pointer;
+  min-height: 2.75rem;
+  padding-top: 0.25rem;
+}
+
+.checkInput {
+  flex: 0 0 auto;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin: 0.05rem 0 0;
+  accent-color: var(--j-line-focus);
+  cursor: pointer;
+}
+
+.checkInput:focus-visible {
+  outline: 2px solid var(--j-line-focus);
+  outline-offset: 2px;
+}
+
+.turnstile:empty {
+  display: none;
+}
+
+.success {
+  padding: 1.5rem 1.75rem;
+  border-radius: var(--v2-radius-sm);
+  background: var(--j-success-bg);
+}
+
+.successTitle {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--v2-h3);
+  line-height: 1.15;
+  color: var(--j-ink);
+}
+
+.successBody {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--v2-body);
+  line-height: 1.6;
+  color: var(--j-muted);
+}
+
+.successBody strong {
+  color: var(--j-ink);
+  font-weight: 500;
+}
+
+@media (max-width: 30rem) {
+  .row {
+    flex-direction: column;
+    border-radius: var(--v2-radius-sm);
+  }
+  .input,
+  .submit {
+    min-height: var(--v2-control-h);
+  }
+  .submit {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .row,
+  .submit {
+    transition: none;
+  }
+  .submit:active {
+    transform: none;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

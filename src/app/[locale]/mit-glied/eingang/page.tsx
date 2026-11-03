@@ -1,6 +1,9 @@
 /**
  * /mit-glied/eingang — Heimat im Mit-Glied-Bereich.
  *
+ * V2 (2026-11): Wand-Kopf compact, Karte als volle Rasterbreite, danach
+ * Kapitel im Satzspiegel. Shell (Sidebar) bleibt unverändert.
+ *
  * Brand-Reset (Session 17 nach Kevin-Feedback): „Member-Atelier"-Position.
  * Nicht SaaS-Card-Grid, nicht Editorial-Magazin. Inhalte fließen als
  * Sektionen mit Hairline-Trennern, getragen durch Whitespace und
@@ -19,7 +22,9 @@ import { requireMember } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
 import { ShellWrap } from '../_components/MemberShell';
+import { MemberPage } from '../_components/MemberPage';
 import { MitGliedKarte } from '../_components/MitGliedKarte';
+import { Chapter, PageHead, Wide, pageStyles } from '@/components/v2/Page';
 import { toggleNewsletterAction } from './actions';
 import styles from './eingang.module.css';
 
@@ -102,160 +107,142 @@ export default async function EingangPage() {
 
   return (
     <ShellWrap session={session} pageLabel="übersicht">
-      {/* 1. ANKUNFT */}
-      <section className={styles.arrival}>
-        <h1 className={styles.greeting}>moin, {profile.pseudonym}.</h1>
-        <p className={styles.status}>
-          mit-glied seit {joinedDate.toLowerCase()}.
-          {storyCount === 0
-            ? ''
-            : storyCount === 1
-              ? ' ein bericht.'
-              : ` ${storyCount} berichte.`}
-        </p>
-      </section>
+      <MemberPage>
+        {/* 1. ANKUNFT */}
+        <PageHead
+          eyebrow="übersicht"
+          size="compact"
+          title={`moin, ${profile.pseudonym}.`}
+          lead={
+            <>
+              mit-glied seit {joinedDate.toLowerCase()}.
+              {storyCount === 0
+                ? ''
+                : storyCount === 1
+                  ? ' ein bericht.'
+                  : ` ${storyCount} berichte.`}
+            </>
+          }
+        />
 
-      {/* 2. KARTE — frei, kein Card-Wrap */}
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>deine karte</span>
-          <Link href="/mit-glied/karte" className={styles.sectionAction}>
-            drucken oder pdf
-          </Link>
-        </header>
-        <div className={styles.karteWrap}>
-          <MitGliedKarte
-            pseudonym={profile.pseudonym}
-            joinedDate={joinedDate}
-          />
-        </div>
-      </section>
-
-      {/* 3. BERICHTE */}
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>deine berichte</span>
-          {storyCount > 0 && (
-            <Link href="/mit-glied/erfahrungen" className={styles.sectionAction}>
-              alle ansehen
-            </Link>
-          )}
-        </header>
-
-        {stories.length === 0 ? (
-          <div className={styles.empty}>
-            <p className={styles.emptyText}>
-              noch nichts geschrieben. wenn du was hast, schreib&apos;s.
-            </p>
-            <Link href="/mit-glied/erfahrungen/neu" className={styles.linkAccent}>
-              ersten bericht schreiben →
+        {/* 2. KARTE — frei, kein Card-Wrap */}
+        <Wide label="deine karte">
+          <div className={styles.sectionHead}>
+            <p className={pageStyles.chapterEyebrow}>deine karte</p>
+            <Link href="/mit-glied/karte" className={[pageStyles.link, styles.action].join(' ')}>
+              drucken oder pdf
             </Link>
           </div>
-        ) : (
-          <>
-            <ul className={styles.berichteList} role="list">
-              {stories.map((s) => (
-                <li key={s.id} className={styles.berichtItem}>
-                  <Link
-                    href={`/mit-glied/erfahrungen/${s.id}`}
-                    className={styles.berichtLink}
-                  >
-                    <span className={styles.berichtPrompt}>
-                      {PROMPT_LABEL[s.prompt_key] ?? s.prompt_key}
-                    </span>
-                    <span className={styles.berichtMeta}>
-                      <span
-                        className={styles.berichtStatus}
-                        data-status={s.status}
-                      >
-                        {STATUS_LABEL[s.status] ?? s.status}
-                      </span>
-                      <span className={styles.berichtDate}>
-                        {formatBerichtDate(s.created_at)}
-                      </span>
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <Link
-              href="/mit-glied/erfahrungen/neu"
-              className={styles.linkAccent}
-            >
-              neuen bericht schreiben →
-            </Link>
-          </>
-        )}
-      </section>
-
-      {/* 4. MITLESEN — Editorial-Strip mit Hairlines */}
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>mitlesen</span>
-        </header>
-        <ul className={styles.raeumeList} role="list">
-          <li className={styles.raumItem}>
-            <Link href="/mit-glied/werkstatt" className={styles.raumLink}>
-              <span className={styles.raumLabel}>werkstatt</span>
-              <span className={styles.raumBody}>
-                mythen und magazin mitlesen, bevor sie public sind.
-              </span>
-            </Link>
-          </li>
-          <li className={styles.raumItem}>
-            <Link href="/mit-glied/keller" className={styles.raumLink}>
-              <span className={styles.raumLabel}>quellen-keller</span>
-              <span className={styles.raumBody}>
-                alles was hinter den fakten steht, sortiert.
-              </span>
-            </Link>
-          </li>
-          <li className={styles.raumItem}>
-            <Link href="/mit-glied/post" className={styles.raumLink}>
-              <span className={styles.raumLabel}>post</span>
-              <span className={styles.raumBody}>
-                alle newsletter zum nachlesen.
-              </span>
-            </Link>
-          </li>
-        </ul>
-      </section>
-
-      {/* 5. KONTO */}
-      <section className={styles.section}>
-        <header className={styles.sectionHead}>
-          <span className={styles.eyebrow}>konto</span>
-        </header>
-        <dl className={styles.kontoList}>
-          <div className={styles.kontoRow}>
-            <dt>pseudonym</dt>
-            <dd>{profile.pseudonym}</dd>
+          <div className={styles.karteWrap}>
+            <MitGliedKarte pseudonym={profile.pseudonym} joinedDate={joinedDate} />
           </div>
-          <div className={styles.kontoRow}>
-            <dt>beigetreten</dt>
-            <dd>{joinedDate}</dd>
-          </div>
-          <div className={styles.kontoRow}>
-            <dt>newsletter</dt>
-            <dd>
-              <span className={styles.newsletterStatus}>
-                {newsletterOptIn ? 'abonniert' : 'nicht abonniert'}
-              </span>
-              <form
-                action={toggleNewsletterAction}
-                className={styles.inlineToggle}
+        </Wide>
+
+        {/* 3. BERICHTE */}
+        <Chapter eyebrow="deine berichte">
+          {stories.length === 0 ? (
+            <>
+              <p>noch nichts geschrieben. wenn du was hast, schreib&apos;s.</p>
+              <Link
+                href="/mit-glied/erfahrungen/neu"
+                className={[pageStyles.link, styles.action].join(' ')}
               >
-                {!newsletterOptIn && (
-                  <input type="hidden" name="enable" value="on" />
+                ersten bericht schreiben →
+              </Link>
+            </>
+          ) : (
+            <>
+              <ul className={styles.list} role="list">
+                {stories.map((s) => (
+                  <li key={s.id} className={styles.item}>
+                    <Link href={`/mit-glied/erfahrungen/${s.id}`} className={styles.berichtLink}>
+                      <span className={styles.berichtPrompt}>
+                        {PROMPT_LABEL[s.prompt_key] ?? s.prompt_key}
+                      </span>
+                      <span className={styles.berichtMeta}>
+                        <span className={styles.berichtStatus} data-status={s.status}>
+                          {STATUS_LABEL[s.status] ?? s.status}
+                        </span>
+                        <span className={styles.berichtDate}>
+                          {formatBerichtDate(s.created_at)}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className={styles.linkRow}>
+                <Link
+                  href="/mit-glied/erfahrungen/neu"
+                  className={[pageStyles.link, styles.action].join(' ')}
+                >
+                  neuen bericht schreiben →
+                </Link>
+                {storyCount > 0 && (
+                  <Link
+                    href="/mit-glied/erfahrungen"
+                    className={[pageStyles.link, styles.action].join(' ')}
+                  >
+                    alle ansehen
+                  </Link>
                 )}
-                <button type="submit" className={styles.toggleLink}>
-                  {newsletterOptIn ? 'abbestellen' : 'abonnieren'}
-                </button>
-              </form>
-            </dd>
-          </div>
-        </dl>
-      </section>
+              </div>
+            </>
+          )}
+        </Chapter>
+
+        {/* 4. MITLESEN */}
+        <Chapter eyebrow="mitlesen" sunken>
+          <ul className={styles.list} role="list">
+            <li className={styles.item}>
+              <Link href="/mit-glied/werkstatt" className={styles.raumLink}>
+                <span className={styles.raumLabel}>werkstatt</span>
+                <span className={styles.raumBody}>
+                  mythen und magazin mitlesen, bevor sie public sind.
+                </span>
+              </Link>
+            </li>
+            <li className={styles.item}>
+              <Link href="/mit-glied/keller" className={styles.raumLink}>
+                <span className={styles.raumLabel}>quellen-keller</span>
+                <span className={styles.raumBody}>alles was hinter den fakten steht, sortiert.</span>
+              </Link>
+            </li>
+            <li className={styles.item}>
+              <Link href="/mit-glied/post" className={styles.raumLink}>
+                <span className={styles.raumLabel}>post</span>
+                <span className={styles.raumBody}>alle newsletter zum nachlesen.</span>
+              </Link>
+            </li>
+          </ul>
+        </Chapter>
+
+        {/* 5. KONTO */}
+        <Chapter eyebrow="konto">
+          <dl className={styles.kontoList}>
+            <div className={styles.kontoRow}>
+              <dt>pseudonym</dt>
+              <dd className={styles.mono}>{profile.pseudonym}</dd>
+            </div>
+            <div className={styles.kontoRow}>
+              <dt>beigetreten</dt>
+              <dd>{joinedDate}</dd>
+            </div>
+            <div className={styles.kontoRow}>
+              <dt>newsletter</dt>
+              <dd>
+                <span>{newsletterOptIn ? 'abonniert' : 'nicht abonniert'}</span>
+                <form action={toggleNewsletterAction} className={styles.inlineToggle}>
+                  {!newsletterOptIn && <input type="hidden" name="enable" value="on" />}
+                  <button type="submit" className={styles.toggleLink}>
+                    {newsletterOptIn ? 'abbestellen' : 'abonnieren'}
+                  </button>
+                </form>
+              </dd>
+            </div>
+          </dl>
+        </Chapter>
+      </MemberPage>
     </ShellWrap>
   );
 }

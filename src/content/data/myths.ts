@@ -57,7 +57,7 @@ export const MYTHS: readonly MythDetail[] = [
     sourceShort: 'Veale et al., BJU International, 2015, n=15.521',
     einordnung: [
       'die studienlage ist überschaubar: zwischen körpergröße und penislänge gibt es eine schwache statistische verbindung, korrelations-koeffizienten von 0,2 bis 0,6. das ist zu schwach, um aus dem einen aufs andere zu schließen. bei der schuhgröße ist auch das weg, keine signifikante korrelation in einer untersuchung mit über 100 männern.',
-      'eine schwache korrelation heißt: wenn du tausende männer misst, kommt im durchschnitt ein leichter trend raus. das sagt nichts über dich. der kleinste 1,90er, den die studie kennt, ist immer noch kleiner als der größte 1,70er.',
+      'eine schwache korrelation heißt: wenn du tausende männer misst, kommt im durchschnitt ein leichter trend raus. das sagt nichts über dich. aus deiner körpergröße lässt sich für dich nichts ablesen.',
       'die ableit-mechanik (hände, füße, nase) ist barhocker-folklore. wer das ernsthaft als hinweis nimmt, glaubt an gesichts-leser und tarot. der körper ist kein bauplan, der einen teil aus dem anderen herleitet.',
     ],
     zweiteLesart:
@@ -121,7 +121,7 @@ export const MYTHS: readonly MythDetail[] = [
     sourceShort: 'Skoda & Pedersen, SAGE Open, 2019',
     einordnung: [
       'pornodarsteller werden nach körper gecastet, nicht zufällig ausgewählt. sie liegen im oberen drittel der spanne, die studien für die gesamtbevölkerung messen. der durchschnitt ist nicht ihr durchschnitt.',
-      'dazu die kamera: unterperspektive macht alles länger, weitwinkel macht alles näher, schnitte zeigen nie die ganze szene. wer in pornos seinen vergleichs-maßstab sucht, vergleicht sich mit einer optisch maximierten auswahl der oberen 20 prozent.',
+      'dazu die kamera: unterperspektive macht alles länger, weitwinkel macht alles näher, schnitte zeigen nie die ganze szene. wer in pornos seinen vergleichs-maßstab sucht, vergleicht sich mit einer auswahl, die schon vor der kamera aussortiert wurde.',
       'eine experimentelle studie hat das nachgemessen: schon kurze konfrontation mit porno-content senkt das körperbild von männern messbar, auch bei männern, die vorher zufrieden waren. das ist die erste studie, die nicht nur korreliert, sondern den effekt aktiv zeigt.',
     ],
     zweiteLesart:
@@ -152,8 +152,8 @@ export const MYTHS: readonly MythDetail[] = [
     sourceShort: 'Reece, Herbenick & Dodge, Sexually Transmitted Infections (BMJ), 2009, n=1.661',
     einordnung: [
       'die kondom-passform geht in beide richtungen schief. eine erhebung mit über 1.600 männern hat gemessen, wie viele probleme welcher art haben: 21 prozent berichten von kondomen, die zu eng sind, 10 prozent von kondomen, die zu locker sind. „one size" funktioniert nicht.',
-      'die deutung „wenn\'s nicht passt, bin ich klein" ist die brand, die nur eine richtung sieht. wer ein zu lockeres kondom hat, hängt selten einem mythos nach. er kauft eine andere größe.',
-      'die größenpalette ist breiter, als die meisten regalketten zeigen. wer regelmäßig probleme hat, soll umfang messen, nicht länge, und nach passgenauen kondomen suchen. das ist eine sortier-frage, kein anlass zur eigendiagnose.',
+      'die deutung „wenn\'s nicht passt, bin ich klein" ist die deutung, die nur in eine richtung schaut. wer ein zu lockeres kondom hat, hängt selten einem mythos nach. er kauft eine andere größe.',
+      'die größenpalette ist breiter, als die meisten regalketten zeigen. wer öfter probleme hat, greift zu einer anderen größe. die gibt es, nur selten im drogerieregal. das ist eine frage des sortiments, nicht des körpers.',
     ],
     zweiteLesart:
       'dass scham-mythen immer nur in eine richtung schauen, ist kein zufall. sie suchen die deutung, die dich klein macht. ein kondom-problem ist erstmal ein produkt-problem, und produkte sind lösbar.',
@@ -170,7 +170,7 @@ export const MYTHS: readonly MythDetail[] = [
   {
     slug: 'was-der-andere-sagt',
     category: 'partner-perspektive',
-    myth: 'die partnerin findet größe so wichtig wie du.',
+    myth: 'größe ist für partner so wichtig wie für einen selbst.',
     teaser:
       '85 prozent der partnerinnen sind zufrieden. 55 prozent der männer mit sich selbst.',
     fact: '85 prozent der partnerinnen sind zufrieden mit der größe. nur 55 prozent der männer sind es mit sich selbst.',
@@ -199,10 +199,10 @@ export const MYTHS: readonly MythDetail[] = [
     teaser:
       'keine robuste studie zeigt das. was sex-zufriedenheit vorhersagt: aufmerksamkeit, vertrauen, kommunikation.',
     fact: 'keine robuste studie zeigt diesen zusammenhang. was guten sex vorhersagt, sind aufmerksamkeit, vertrauen und kommunikation.',
-    sourceShort: 'Herbenick et al., Journal of Sexual Medicine, 2018, n=52.031',
+    sourceShort: 'Herbenick et al., Journal of Sexual Medicine, 2018',
     einordnung: [
       'die literatur findet keinen robusten zusammenhang zwischen penislänge und sex-zufriedenheit, weder beim mann selbst noch beim partner. eine aktuelle übersichtsarbeit fasst zusammen: die verfügbaren studien zeigen unvollständige ergebnisse, keinen klaren effekt.',
-      'was sex-zufriedenheit tatsächlich vorhersagt, ist gut untersucht: aufmerksamkeit, vertrauen, kommunikation, gemeinsame zeit, vorspiel-länge. eine erhebung mit über 52.000 teilnehmenden listet diese faktoren ganz oben.',
+      'was sex-zufriedenheit tatsächlich vorhersagt, ist gut untersucht: aufmerksamkeit, vertrauen, kommunikation, gemeinsame zeit, vorspiel-länge.',
       'der körper ist eine voraussetzung, nicht ein argument. wer aufmerksamkeit übt, vertraut und kommuniziert, hat besseren sex als jemand, der mit dem perfekten körper innerlich woanders ist. das wissen die meisten, die genug erfahrung haben.',
     ],
     zweiteLesart:
@@ -217,7 +217,6 @@ export const MYTHS: readonly MythDetail[] = [
         author: 'Herbenick et al.',
         publication: 'Journal of Sexual Medicine',
         year: 2018,
-        n: 52031,
       },
     ],
     related: ['was-der-andere-sagt', 'was-die-kamera-zeigt'],

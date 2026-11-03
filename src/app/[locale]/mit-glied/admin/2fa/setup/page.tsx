@@ -8,7 +8,8 @@
  *
  * Setup nutzt `requireAdminBasic()` (kein MFA-Gate), sonst Endlos-Loop.
  *
- * Layout: kompakte Card im Zentrum, kein Editorial-Spread.
+ * Layout (V2): Wand-Kopf compact, Formular auf dem Papierbogen. Kein
+ * MemberShell, die Seite ist das Gate vor dem Admin-Bereich.
  */
 
 import { redirect } from 'next/navigation';
@@ -16,6 +17,7 @@ import { requireAdminBasic } from '@/lib/members/auth';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { enrollTotp, getMfaStatus } from '@/lib/members/mfa';
 import { TotpSetupForm } from './_components/TotpSetupForm';
+import { Page, PageHead } from '@/components/v2/Page';
 import twoFaStyles from '../2fa.module.css';
 
 export const metadata = {
@@ -40,27 +42,23 @@ export default async function TotpSetupPage() {
   const enrollment = await enrollTotp(supabase);
 
   return (
-    <main id="main-content" className={twoFaStyles.wrap}>
-      <div className={twoFaStyles.card}>
-        <header className={twoFaStyles.header}>
-          <span className={twoFaStyles.eyebrow}>admin · 2fa</span>
-          <h1 className={twoFaStyles.title}>zwei-faktor einrichten.</h1>
-          <p className={twoFaStyles.body}>
-            einmal scannen, sechs ziffern eingeben, fertig. ab dann brauchst
-            du beim admin-login einen code aus deiner authenticator-app.
-          </p>
-        </header>
-
+    <Page>
+      <PageHead
+        eyebrow="admin · 2fa"
+        title="zwei-faktor einrichten."
+        lead="einmal scannen, sechs ziffern eingeben, fertig. ab dann brauchst du beim admin-login einen code aus deiner authenticator-app."
+        size="compact"
+        wall="night"
+      >
         <TotpSetupForm
           qrCodeSvg={enrollment.qrCodeSvg}
           secret={enrollment.secret}
         />
-
         <p className={twoFaStyles.hint}>
           ohne 2fa kommst du nicht ins admin-panel. das ist absicht.
           nimm dir die zwei minuten.
         </p>
-      </div>
-    </main>
+      </PageHead>
+    </Page>
   );
 }

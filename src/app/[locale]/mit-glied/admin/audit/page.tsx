@@ -1,13 +1,14 @@
 /**
- * /mit-glied/admin/audit — Audit-Log im Atelier-Stil.
+ * /mit-glied/admin/audit — Audit-Log (V2, Plakat-Sprache).
  */
 
-import Link from 'next/link';
 import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { AdminAuditLogRow } from '@/lib/supabase/types';
+import { EndLink, PageHead, Wide } from '@/components/v2/Page';
 import { ShellWrap } from '../../_components/MemberShell';
-import atelier from '../../_components/MemberShell/atelier.module.css';
+import { MemberPage } from '../../_components/MemberPage';
+import ui from '../_components/adminUi.module.css';
 import styles from './audit.module.css';
 
 export const metadata = {
@@ -84,59 +85,51 @@ export default async function AdminAuditPage() {
 
   return (
     <ShellWrap session={session} pageLabel="audit-log">
-      <section className={atelier.arrival}>
-        <span className={atelier.eyebrow}>audit-log</span>
-        <h1 className={atelier.title}>wer was wann gemacht hat.</h1>
-        <p className={atelier.body}>
-          {rows.length} aktion{rows.length === 1 ? '' : 'en'} sichtbar, neueste zuerst.
-          hartes limit 200.
-        </p>
-      </section>
+      <MemberPage>
+      <PageHead
+        eyebrow="audit-log"
+        title="wer was wann gemacht hat."
+        lead={`${rows.length} aktion${rows.length === 1 ? '' : 'en'} sichtbar, neueste zuerst. hartes limit 200.`}
+        size="compact"
+        wall="night"
+      />
 
-      <section className={atelier.section}>
-        <header className={atelier.sectionHead}>
-          <span className={atelier.eyebrowMuted}>chronologisch</span>
-        </header>
-
+      <Wide label="chronologisch">
+        <h2 className={ui.blockTitle}>chronologisch</h2>
         {enriched.length === 0 ? (
-          <p className={atelier.empty}>
+          <p className={ui.empty}>
             noch keine admin-aktion. sobald jemand approved, rejected oder bant,
             taucht es hier auf.
           </p>
         ) : (
-          <ul className={styles.list} role="list">
+          <ul className={ui.rows} role="list">
             {enriched.map((entry) => (
-              <li key={entry.id} className={styles.entry}>
-                <div className={styles.head}>
-                  <span className={styles.action} data-action={entry.action}>
+              <li key={entry.id} className={ui.row}>
+                <div className={[ui.rowStatic, styles.entry].join(' ')}>
+                  <span className={ui.action} data-action={entry.action}>
                     {ACTION_LABEL[entry.action] ?? entry.action}
                   </span>
                   <span className={styles.target}>
                     {TARGET_LABEL[entry.target_type] ?? entry.target_type}
                   </span>
-                  <span className={styles.timestamp}>
+                  <span className={styles.who}>
+                    <span className={styles.admin}>{entry.admin_pseudonym ?? 'unbekannt'}</span>
+                    <span className={ui.mono} title={entry.target_id}>
+                      {entry.target_id.slice(0, 8)}…
+                    </span>
+                  </span>
+                  <span className={[ui.time, styles.when].join(' ')}>
                     {DATE_TIME.format(new Date(entry.created_at))}
-                  </span>
-                </div>
-                <div className={styles.meta}>
-                  <span className={styles.admin}>
-                    {entry.admin_pseudonym ?? 'unbekannt'}
-                  </span>
-                  <span className={styles.targetId} title={entry.target_id}>
-                    {entry.target_id.slice(0, 8)}…
                   </span>
                 </div>
               </li>
             ))}
           </ul>
         )}
-      </section>
+      </Wide>
 
-      <section className={atelier.section}>
-        <Link href="/mit-glied/admin" className={atelier.linkAccent}>
-          zurück zum dashboard →
-        </Link>
-      </section>
+      <EndLink line="zurück" href="/mit-glied/admin" label="zum dashboard" />
+      </MemberPage>
     </ShellWrap>
   );
 }

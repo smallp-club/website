@@ -1,8 +1,8 @@
 /**
- * /mit-glied/admin/blocklist — Liste + manueller Block im Atelier-Stil.
+ * /mit-glied/admin/blocklist — Liste + manueller Block (V2, Plakat-Sprache).
+ * Sperren-Button schwarz (MEMBER_SECURITY §7), Re-Auth per TOTP unverändert.
  */
 
-import Link from 'next/link';
 import { FormField } from '@/components/primitives/FormField';
 import { Input } from '@/components/primitives/Input';
 import { Textarea } from '@/components/primitives/Textarea';
@@ -12,7 +12,9 @@ import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { BlocklistRow } from '@/lib/supabase/types';
 import { banAction, unbanAction } from './actions';
 import { ShellWrap } from '../../_components/MemberShell';
-import atelier from '../../_components/MemberShell/atelier.module.css';
+import { MemberPage } from '../../_components/MemberPage';
+import { Chapter, EndLink, PageHead, Wide } from '@/components/v2/Page';
+import ui from '../_components/adminUi.module.css';
 import styles from './blocklist.module.css';
 
 export const metadata = {
@@ -58,114 +60,109 @@ export default async function AdminBlocklistPage({ searchParams }: PageProps) {
 
   return (
     <ShellWrap session={session} pageLabel="blocklist">
-      <section className={atelier.arrival}>
-        <span className={atelier.eyebrow}>blocklist</span>
-        <h1 className={atelier.title}>gesperrte mails und ips.</h1>
-        <p className={atelier.body}>
-          {rows.length} eintr{rows.length === 1 ? 'ag' : 'äge'} aktiv. hash-prefix sichtbar,
-          volltext nicht. jede aktion verlangt einen frischen 2fa-code.
-        </p>
-      </section>
+      <MemberPage>
+        <PageHead
+          eyebrow="blocklist"
+          title="gesperrte mails und ips."
+          lead={`${rows.length} eintr${rows.length === 1 ? 'ag' : 'äge'} aktiv. hash-prefix sichtbar, volltext nicht. jede aktion verlangt einen frischen 2fa-code.`}
+          size="compact"
+          wall="night"
+        />
 
-      <section className={atelier.section}>
-        <header className={atelier.sectionHead}>
-          <span className={atelier.eyebrowMuted}>liste</span>
-        </header>
+        <Wide label="liste">
+          <h2 className={ui.blockTitle}>liste</h2>
+          {rows.length === 0 ? (
+            <p className={ui.empty}>niemand gesperrt.</p>
+          ) : (
+            <ul className={ui.rows} role="list">
+              {rows.map((row) => (
+                <li key={row.id} className={ui.row}>
+                  <div className={ui.rowStatic}>
+                    <div className={styles.hashes}>
+                      <span className={ui.mono}>email: {shortHash(row.email_hash)}</span>
+                      {row.ip_hash && (
+                        <span className={ui.mono}>ip: {shortHash(row.ip_hash)}</span>
+                      )}
+                    </div>
+                    {row.reason && <p className={styles.reason}>{row.reason}</p>}
+                    <div className={styles.foot}>
+                      <span className={ui.time}>
+                        seit {DATE_TIME.format(new Date(row.banned_at))}
+                      </span>
+                      <form action={unbanAction} className={styles.unbanForm}>
+                        <input type="hidden" name="blocklist_id" value={row.id} />
+                        <input
+                          type="text"
+                          name="totp_code"
+                          required
+                          inputMode="numeric"
+                          autoComplete="one-time-code"
+                          pattern="[0-9]{6}"
+                          maxLength={6}
+                          spellCheck={false}
+                          placeholder="2fa-code"
+                          aria-label="2fa-code für entsperren"
+                          className={[ui.codeInput, ui.codeInputSmall].join(' ')}
+                        />
+                        <SubmitButton variant="ghost" loadingLabel="entsperre …">
+                          entsperren
+                        </SubmitButton>
+                      </form>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Wide>
 
-        {rows.length === 0 ? (
-          <p className={atelier.empty}>niemand gesperrt.</p>
-        ) : (
-          <ul className={styles.list} role="list">
-            {rows.map((row) => (
-              <li key={row.id} className={styles.entry}>
-                <div className={styles.head}>
-                  <span className={styles.hash}>email: {shortHash(row.email_hash)}</span>
-                  {row.ip_hash && (
-                    <span className={styles.hash}>ip: {shortHash(row.ip_hash)}</span>
-                  )}
-                </div>
-                {row.reason && <p className={styles.reason}>{row.reason}</p>}
-                <div className={styles.foot}>
-                  <span className={styles.timestamp}>
-                    seit {DATE_TIME.format(new Date(row.banned_at))}
-                  </span>
-                  <form action={unbanAction} className={styles.unbanForm}>
-                    <input type="hidden" name="blocklist_id" value={row.id} />
-                    <input
-                      type="text"
-                      name="totp_code"
-                      required
-                      inputMode="numeric"
-                      autoComplete="one-time-code"
-                      pattern="[0-9]{6}"
-                      maxLength={6}
-                      spellCheck={false}
-                      placeholder="2fa-code"
-                      aria-label="2fa-code für entsperren"
-                      className={styles.unbanTotp}
-                    />
-                    <SubmitButton variant="ghost" loadingLabel="entsperre …">
-                      entsperren
-                    </SubmitButton>
-                  </form>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className={atelier.section}>
-        <header className={atelier.sectionHead}>
-          <span className={atelier.eyebrowMuted}>manueller ban</span>
-        </header>
-        <p className={atelier.sectionBody}>
-          email-adresse pflicht, ip optional. hashes werden serverseitig
-          gebildet, klartext landet niemals in der db.
-        </p>
-        {reauthFailed && (
-          <p className={styles.reauthError} role="alert">
-            der 2fa-code war nicht aktuell. die aktion wurde nicht ausgeführt.
-            nimm den code, der gerade in deiner app steht, und probier nochmal.
+        <Chapter eyebrow="manueller ban" title="jemanden sperren." sunken>
+          <p>
+            email-adresse pflicht, ip optional. hashes werden serverseitig
+            gebildet, klartext landet niemals in der db.
           </p>
-        )}
-        <form action={banAction} className={styles.banForm}>
-          <FormField label="email-adresse" helperText="wird sofort sha-256 gehasht.">
-            <Input type="email" name="email" required placeholder="user@beispiel.de" />
-          </FormField>
-          <FormField label="ip-adresse (optional)" helperText="ipv4 oder ipv6, wird ebenfalls gehasht.">
-            <Input type="text" name="ip" placeholder="z.b. 203.0.113.1" />
-          </FormField>
-          <FormField label="grund (optional)" helperText="interner vermerk, nur für admin sichtbar.">
-            <Textarea name="reason" rows={3} maxLength={500} />
-          </FormField>
-          <FormField
-            label="bestätigung mit 2fa-code"
-            helperText="sechs ziffern aus deiner authenticator-app als bewusste bestätigung."
-          >
-            <Input
-              type="text"
-              name="totp_code"
-              required
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              pattern="[0-9]{6}"
-              maxLength={6}
-              spellCheck={false}
-              placeholder="123456"
-            />
-          </FormField>
-          <SubmitButton variant="destructive" loadingLabel="sperre …">
-            sperren
-          </SubmitButton>
-        </form>
-      </section>
+          {reauthFailed && (
+            <p className={ui.notice} role="alert">
+              der 2fa-code war nicht aktuell. die aktion wurde nicht ausgeführt.
+              nimm den code, der gerade in deiner app steht, und probier nochmal.
+            </p>
+          )}
+          <form action={banAction} className={styles.banForm}>
+            <FormField label="email-adresse" helperText="wird sofort sha-256 gehasht.">
+              <Input type="email" name="email" required placeholder="user@beispiel.de" />
+            </FormField>
+            <FormField label="ip-adresse (optional)" helperText="ipv4 oder ipv6, wird ebenfalls gehasht.">
+              <Input type="text" name="ip" placeholder="z.b. 203.0.113.1" />
+            </FormField>
+            <FormField label="grund (optional)" helperText="interner vermerk, nur für admin sichtbar.">
+              <Textarea name="reason" rows={3} maxLength={500} />
+            </FormField>
+            <FormField
+              label="bestätigung mit 2fa-code"
+              helperText="sechs ziffern aus deiner authenticator-app als bewusste bestätigung."
+            >
+              <Input
+                type="text"
+                name="totp_code"
+                required
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                pattern="[0-9]{6}"
+                maxLength={6}
+                spellCheck={false}
+                placeholder="123456"
+              />
+            </FormField>
+            <div>
+              <SubmitButton variant="primary" loadingLabel="sperre …">
+                sperren
+              </SubmitButton>
+            </div>
+          </form>
+        </Chapter>
 
-      <section className={atelier.section}>
-        <Link href="/mit-glied/admin" className={atelier.linkAccent}>
-          zurück zum dashboard →
-        </Link>
-      </section>
+        <EndLink line="zurück" href="/mit-glied/admin" label="zum dashboard" />
+      </MemberPage>
     </ShellWrap>
   );
 }

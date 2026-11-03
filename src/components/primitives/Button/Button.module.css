@@ -108,16 +108,17 @@
   box-shadow: none;
 }
 
-/* Destructive — nur Member-Bereich */
+/* Destructive — nur Member-Bereich. Grund in Sienna-Press: Off-White darauf 5,61:1 (AA),
+   reines Sienna hätte nur 4,08:1. */
 .button[data-variant='destructive'] {
-  background-color: var(--spc-sienna);
+  background-color: var(--spc-sienna-press);
   color: var(--spc-offwhite);
-  border-color: var(--spc-sienna);
+  border-color: var(--spc-sienna-press);
 }
 
 .button[data-variant='destructive']:hover:not(:disabled) {
-  background-color: var(--spc-sienna-press);
-  border-color: var(--spc-sienna-press);
+  background-color: color-mix(in srgb, var(--spc-sienna-press) 88%, var(--spc-black));
+  border-color: color-mix(in srgb, var(--spc-sienna-press) 88%, var(--spc-black));
   transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }

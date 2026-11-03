@@ -1,5 +1,5 @@
 /**
- * /mit-glied/admin/inbox — Kuratierungs-Inbox im Atelier-Stil.
+ * /mit-glied/admin/inbox — Kuratierungs-Inbox (V2, Plakat-Sprache).
  *
  * FLAG-HIGH zuerst, sonst Datum desc. Klick öffnet `/admin/inbox/[uuid]`.
  */
@@ -9,9 +9,10 @@ import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../../erfahrungen/neu/story-types';
+import { PageHead, Wide } from '@/components/v2/Page';
 import { ShellWrap } from '../../_components/MemberShell';
-import atelier from '../../_components/MemberShell/atelier.module.css';
-import styles from './inbox.module.css';
+import { MemberPage } from '../../_components/MemberPage';
+import ui from '../_components/adminUi.module.css';
 
 export const metadata = {
   title: 'admin · inbox. — small p club',
@@ -65,66 +66,66 @@ export default async function AdminInboxPage() {
 
   return (
     <ShellWrap session={session} pageLabel="inbox">
-      <section className={atelier.arrival}>
-        <span className={atelier.eyebrow}>inbox</span>
-        <h1 className={atelier.title}>kuratieren.</h1>
-        <p className={atelier.body}>
-          {counts.pending} in prüfung, {counts.flagHigh} flag-high, {counts.total} insgesamt sichtbar.
-          flag-high steht oben, sonst nach datum.
-        </p>
-      </section>
+      <MemberPage>
+      <PageHead
+        eyebrow="inbox"
+        title="kuratieren."
+        lead={`${counts.pending} in prüfung, ${counts.flagHigh} flag-high, ${counts.total} insgesamt sichtbar. flag-high steht oben, sonst nach datum.`}
+        size="compact"
+        wall="night"
+      />
 
-      <section className={atelier.section}>
-        <header className={atelier.sectionHead}>
-          <span className={atelier.eyebrowMuted}>berichte</span>
-        </header>
-
-        {rows.length === 0 ? (
-          <p className={atelier.empty}>nichts zu tun. noch keine berichte eingereicht.</p>
-        ) : (
-          <ul className={styles.list} role="list">
-            {rows.map((row) => {
-              const hasHigh = row.flags.some((f) => f.startsWith('flag_high:'));
-              return (
-                <li key={row.id} className={styles.item} data-flag={hasHigh ? 'high' : undefined}>
-                  <Link href={`/mit-glied/admin/inbox/${row.id}`} className={styles.link}>
-                    <div className={styles.head}>
-                      <span className={styles.pseudonym}>{row.pseudonym}</span>
-                      <span className={styles.timestamp}>
-                        {DATE_TIME.format(new Date(row.created_at))}
+      <Wide label="berichte">
+        <div>
+          <h2 className={ui.blockTitle}>berichte</h2>
+          {rows.length === 0 ? (
+            <p className={ui.empty}>nichts zu tun. noch keine berichte eingereicht.</p>
+          ) : (
+            <ul className={ui.rows} role="list">
+              {rows.map((row) => {
+                const hasHigh = row.flags.some((f) => f.startsWith('flag_high:'));
+                return (
+                  <li key={row.id} className={ui.row} data-flag={hasHigh ? 'high' : undefined}>
+                    <Link href={`/mit-glied/admin/inbox/${row.id}`} className={ui.rowLink}>
+                      <span className={ui.rowHead}>
+                        <span className={ui.rowTitle}>{row.pseudonym}</span>
+                        <span className={ui.time}>
+                          {DATE_TIME.format(new Date(row.created_at))}
+                        </span>
                       </span>
-                    </div>
-                    <div className={styles.meta}>
-                      <span className={styles.promptKey}>
-                        {PROMPT_LABEL[row.prompt_key] ?? row.prompt_key}
+                      <span className={ui.rowMeta}>
+                        <span className={ui.prompt}>
+                          {PROMPT_LABEL[row.prompt_key] ?? row.prompt_key}
+                        </span>
+                        <span className={ui.status} data-status={row.status}>
+                          {STATUS_LABEL[row.status] ?? row.status}
+                        </span>
                       </span>
-                      <span className={styles.status} data-status={row.status}>
-                        {STATUS_LABEL[row.status] ?? row.status}
+                      {row.flags.length > 0 && (
+                        <span className={ui.flags}>
+                          {row.flags.map((f) => (
+                            <span
+                              key={f}
+                              className={ui.flag}
+                              data-level={f.startsWith('flag_high:') ? 'high' : 'low'}
+                            >
+                              {f.replace('flag_high:', '').replace('flag_low:', '')}
+                            </span>
+                          ))}
+                        </span>
+                      )}
+                      <span className={ui.preview}>
+                        {row.body.length > 200 ? row.body.slice(0, 200) + '…' : row.body}
                       </span>
-                    </div>
-                    {row.flags.length > 0 && (
-                      <div className={styles.flagRow}>
-                        {row.flags.map((f) => (
-                          <span
-                            key={f}
-                            className={styles.flag}
-                            data-level={f.startsWith('flag_high:') ? 'high' : 'low'}
-                          >
-                            {f.replace('flag_high:', '').replace('flag_low:', '')}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                    <p className={styles.preview}>
-                      {row.body.length > 200 ? row.body.slice(0, 200) + '…' : row.body}
-                    </p>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </Wide>
+      </MemberPage>
     </ShellWrap>
   );
 }

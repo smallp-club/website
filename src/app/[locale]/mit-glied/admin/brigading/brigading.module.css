@@ -1,119 +1,31 @@
-/* Brigading-Wellen im Atelier-Stil. */
+/* Brigading-Wellen V2 — jede Welle mit Sienna-Kante, darin die Berichte. */
 
-.bucketList {
-  list-style: none;
-  padding: 0;
+.buckets {
   margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: 2.5rem;
 }
 
 .bucket {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  border-left: 2px solid var(--signal);
-  padding-left: var(--space-4);
+  padding-left: 1.25rem;
+  border-left: 3px solid var(--spc-sienna);
 }
 
 .bucketHead {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
   align-items: baseline;
+  gap: 0.5rem 1rem;
+  margin: 0 0 0.75rem;
 }
 
 .bucketLabel {
   font-family: var(--font-display);
-  font-weight: var(--weight-regular);
-  font-size: var(--text-body-lg);
-  color: var(--text-strong);
-  letter-spacing: -0.005em;
-}
-
-.bucketCount {
-  font-family: var(--font-body);
-  font-size: var(--text-caption);
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.storyList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.storyRow {
-  border-top: 1px solid var(--border-hairline);
-}
-
-.storyRow:first-child {
-  border-top: none;
-}
-
-.storyLink {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3) 0;
-  text-decoration: none;
-  color: var(--text-strong);
-  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.storyLink:active {
-  transform: translateY(0.5px);
-}
-
-.storyLink:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 2px var(--surface-bg),
-    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
-  border-radius: var(--radius-sm);
-}
-
-.storyMeta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  color: var(--text-muted);
-}
-
-.pseudonym {
-  font-family: var(--font-display);
-  font-weight: var(--weight-regular);
-  color: var(--text-strong);
-}
-
-.status {
-  color: var(--text-muted);
-}
-
-.status[data-status="approved"] {
-  color: var(--accent-contrast, var(--spc-turquoise-deep));
-}
-
-.status[data-status="rejected"] {
-  color: var(--text-muted);
-  font-style: italic;
-}
-
-.time {
-  font-variant-numeric: tabular-nums;
-}
-
-.preview {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: var(--text-body-md);
-  color: var(--text-strong);
-  line-height: var(--leading-relaxed);
-  opacity: 0.75;
+  font-weight: 700;
+  font-size: var(--v2-h3);
+  line-height: 1.2;
+  color: var(--spc-black);
 }

@@ -1,0 +1,31 @@
+/* Mythos-Detail V2 — Ergänzungen zum Page-System. */
+
+.caption {
+  font-size: var(--v2-caption);
+  color: var(--v2-muted-on-paper);
+}
+
+.sources {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.back {
+  margin: 2rem 0 0;
+  font-size: var(--v2-body);
+}
+
+.backLink {
+  color: var(--spc-turquoise-deep);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+}
+
+.backLink:focus-visible {
+  outline: 2px solid var(--spc-turquoise-deep);
+  outline-offset: 3px;
+  border-radius: 3px;
+}

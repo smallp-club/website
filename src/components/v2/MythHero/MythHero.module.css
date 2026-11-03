@@ -1,0 +1,153 @@
+/* MythHero — Mythos-Detailkopf als Wand mit zwei Plakaten. */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  margin-top: -56px;
+  background: var(--v2-dusk-wall);
+  color: var(--v2-on-dark);
+  overflow: hidden;
+}
+
+.wall {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.wall img {
+  filter: brightness(0.55) saturate(0.8);
+}
+
+.cover {
+  object-fit: cover;
+}
+
+.scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.4) 0%, transparent 35%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.inner {
+  max-width: var(--v2-max);
+  margin-inline: auto;
+  padding: clamp(8.5rem, 20svh, 12rem) var(--v2-gutter) clamp(3.5rem, 8vw, 6rem);
+}
+
+.eyebrow {
+  margin: 0 0 1.75rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--v2-eyebrow);
+  color: var(--v2-act);
+}
+
+.stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.poster {
+  position: relative;
+  isolation: isolate;
+  padding: clamp(1.25rem, 3vw, 2.25rem) clamp(1.25rem, 3.2vw, 2.5rem);
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.08),
+    0 18px 36px -20px rgba(0, 0, 0, 0.7);
+}
+
+.poster::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--v2-paper-noise);
+  background-size: 240px;
+  mix-blend-mode: multiply;
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.posterOld {
+  max-width: 34rem;
+  background-color: var(--v2-poster-old);
+  color: var(--spc-black);
+  transform: rotate(-1.4deg);
+}
+
+.posterFact {
+  max-width: 40rem;
+  margin: -1.25rem 0 0 clamp(1.5rem, 12vw, 14rem);
+  background-color: var(--v2-poster-paper);
+  color: var(--spc-black);
+  transform: rotate(0.8deg);
+  animation: paste 0.9s var(--ease-out) 0.45s both;
+}
+
+@keyframes paste {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.myth {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 1rem + 1.8vw, 2.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.mythPrefix {
+  font-weight: 700;
+  color: var(--v2-myth-on-poster);
+}
+
+.fact {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.875rem, 1.1rem + 2.8vw, 3.75rem);
+  hyphens: auto;
+  hyphenate-limit-chars: 12 6 6;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.factPrefix {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+  font-size: max(0.4em, 1.25rem);
+  letter-spacing: 0;
+  color: var(--spc-turquoise-deep);
+}
+
+.source {
+  margin: clamp(2rem, 4vw, 3rem) 0 0;
+  max-width: var(--v2-measure);
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  line-height: 1.5;
+  color: var(--v2-on-dark);
+}
+
+.sourceLabel {
+  margin-right: 0.5rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--v2-act);
+}
+
+@media (max-width: 760px) {
+  .hero { margin-top: -68px; }
+  .posterFact { margin-left: 0.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .posterFact { animation: none; }
+}

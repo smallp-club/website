@@ -1,0 +1,58 @@
+.grid {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: clamp(2.5rem, 5vw, 3.5rem) clamp(1.5rem, 2.5vw, 2.5rem);
+}
+
+@media (min-width: 48rem) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.meta {
+  margin: 1.25rem 0 0;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--v2-eyebrow);
+  color: var(--spc-turquoise-deep);
+}
+
+.status {
+  color: var(--v2-muted-on-paper);
+}
+
+.title {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: var(--v2-h3);
+  line-height: 1.25;
+  color: var(--spc-black);
+}
+
+.teaser {
+  margin: 0.75rem 0 0;
+  font-size: var(--v2-body);
+  line-height: 1.6;
+  color: var(--v2-muted-on-paper);
+}
+
+.source,
+.note {
+  margin: 0.75rem 0 0;
+  font-size: var(--v2-caption);
+  color: var(--v2-muted-on-paper);
+}
+
+.note {
+  margin-top: 2rem;
+}

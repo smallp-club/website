@@ -1,149 +1,154 @@
 /**
- * /club — Mission-Page.
+ * /club — Mission-Page (V2, Satzspiegel).
  *
- * ClubHero + Origin + Mission + „was wir nicht sind" + Crew +
- * Brand-Kanal-Block (Instagram).
+ * Herkunft, Haltung, Abgrenzung, Crew, Memberzahl, Beitritt, Instagram.
+ * Die Memberzahl steht hier und im Footer, nie neben dem Formular
+ * (entscheidungen.md #9). Texte: Lene, lene.md §1.
  */
 
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
-import { ClubHero } from '@/components/sections/ClubHero';
-
+import { Chapter, JoinBlock, Margin, Note, Page, PageHead } from '@/components/v2/Page';
+import { Snapshot } from '@/components/v2/Snapshot';
+import { getCachedMemberCount } from '@/lib/members/cached-count';
+import { memberCountVoice } from '@/lib/members/count';
 import styles from './page.module.css';
 
 export const metadata = {
-  title: 'club. — small p club',
-  description: 'wer wir sind, warum wir hier sind.',
+  title: 'club. · small p club',
+  description: 'wer hinter small p club steht und warum es den club gibt.',
 };
 
-export default function ClubPage() {
+export default async function ClubPage() {
+  let count = 0;
+  try {
+    count = await getCachedMemberCount();
+  } catch {
+    count = 0;
+  }
+  const countTitle =
+    count === 1 ? 'ein mit-glied. bisher.' : count > 1 ? `${count.toLocaleString('de-DE')} mit-glieder. bisher.` : null;
+  const countVoice = memberCountVoice(count);
+
   return (
-    <main id="main-content">
-      <ClubHero />
+    <Page>
+      <PageHead
+        eyebrow="club"
+        title="ein club ohne maßband."
+        lead="small p club ist eine bewegung gegen den stillen vergleich, den männer seit der umkleide mit sich herumtragen. hier musst du nichts beweisen."
+      />
 
-      {/* ── Origin */}
-      <Section tone="light" rhythm="standard" aria-label="wie es anfing">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>wie es anfing</Eyebrow>
-            <Heading level={2} variant="lede">
-              drei freunde, ein gespräch.
-            </Heading>
-            <Body>
-              kevin saß mit zwei freunden an einem tisch. irgendwann landete das
-              gespräch beim eigenen körper, bei der größe, beim schweigen darüber.
-              keiner hatte das vorher laut gesagt. alle hatten es seit jahren mit
-              sich rumgetragen.
-            </Body>
-            <Body>
-              der punkt war nicht, dass drei männer das thema hatten. der punkt war,
-              dass es bei allen seit der jugend mitläuft. umkleide, urlaub,
-              beziehungen, allein vorm spiegel. seit zehn, fünfzehn, zwanzig jahren.
-              und keiner spricht darüber.
-            </Body>
-            <Body>
-              zuerst gab es sticker. ein kleines p, ein erstes zeichen, dass das
-              thema überhaupt existiert. aus dem zeichen wurde eine haltung. aus
-              der haltung dieser club.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter
+        nr="01"
+        eyebrow="wie es anfing"
+        title="drei freunde, ein abend."
+        aside={
+          <Snapshot src="/imagery/plakat/club-tisch.webp" ratio="3/2" tilt={-1.4} alt="drei männer am küchentisch, einer schenkt kaffee nach, zwischen den tassen liegt ein bogen sticker." />
+        }
+      >
+        <p>
+          kethe saß mit zwei freunden zusammen. irgendwann ging es um den eigenen körper, um die
+          größe und um das schweigen darüber.
+        </p>
+        <p>
+          keiner hatte das vorher laut gesagt. alle drei kannten das gefühl seit der schule:
+          umkleide, schwimmbad, später das erste mal mit jemandem.
+        </p>
+        <p>
+          danach gab es sticker, ein kleines p zum aufkleben. aus dem zeichen wurde eine haltung,
+          aus der haltung dieser club.
+        </p>
+      </Chapter>
 
-      {/* ── Mission */}
-      <Section tone="light" rhythm="standard" aria-label="was wir wollen">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>was wir wollen</Eyebrow>
-            <Heading level={2} variant="lede">
-              druck wegnehmen.
-            </Heading>
-            <Body>
-              das ist der einzige job. nicht aufklären, nicht überzeugen, nicht
-              heilen. wenn der druck weg ist, lösen sich die meisten fragen von
-              selbst.
-            </Body>
-            <Body>
-              fakten stehen daneben, nicht dagegen. sie sind rückendeckung für eine
-              haltung, die der mann sowieso schon spürt, die er aber nie laut
-              ausgesprochen bekommen hat. die haltung sagt: du bist gut so wie du
-              bist. die fakten sagen: das ist auch statistisch wahr.
-            </Body>
-            <Body>
-              no measure, no pressure. nicht als slogan, als überzeugung.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter nr="02" eyebrow="was wir wollen" title="den druck rausnehmen.">
+        <p>
+          männer messen sich, ohne dass jemand fragt. im kopf, im vergleich mit dem nachbarn in der
+          dusche, im bildschirm.
+        </p>
+        <p>
+          wir stellen fakten daneben, mit autor, jahr und stichprobe. die fakten sind
+          rückendeckung. die haltung kommt vorher: du musst hier nichts beweisen.
+        </p>
+        <p className={styles.tagline}>no measure, no pressure.</p>
+      </Chapter>
 
-      {/* ── Was wir nicht sind */}
-      <Section tone="light" rhythm="standard" aria-label="was wir nicht sind">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>was wir nicht sind</Eyebrow>
-            <Heading level={2} variant="lede">
-              wir korrigieren niemanden.
-            </Heading>
-            <Body>
-              wir sind keine therapie. keine selbsthilfegruppe. kein
-              wellness-portal. wir haben keine app, keine pille, keine methode.
-              wer das sucht, ist hier falsch.
-            </Body>
-            <Body>
-              wir reden über das thema. wir stellen fakten daneben. wir tragen
-              das gemeinsam. mehr ist es nicht, und mehr soll es auch nicht sein.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter nr="03" eyebrow="was wir nicht sind" title="keine therapie, keine methode.">
+        <p>
+          wir sind keine praxis und keine selbsthilfegruppe. wer eine pille sucht, eine übung oder
+          ein versprechen in zentimetern, findet hier nichts davon.
+        </p>
+        <p>
+          wir korrigieren auch niemanden. wer hier liest, hat vorher nichts falsch gemacht. er hat
+          die zahlen nur nie gesehen.
+        </p>
+        <Note>
+          wenn es dir gerade richtig schlecht geht: telefonseelsorge, 0800 111 0 111. anonym,
+          kostenlos, rund um die uhr.
+        </Note>
+      </Chapter>
 
-      {/* ── Crew */}
-      <Section tone="light" rhythm="standard" aria-label="die crew">
-        <Container width="prose">
-          <Stack gap={4}>
-            <Eyebrow>die crew</Eyebrow>
-            <Heading level={2} variant="lede">
-              kevin. solo, erstmal.
-            </Heading>
-            <Body>
-              kevin theermann. designer, brand-owner. macht das hier solo. wer
-              dazukommt, taucht hier auf, mit vorname und einem satz. mehr nicht.
-            </Body>
-          </Stack>
-        </Container>
-      </Section>
+      <Chapter
+        nr="04"
+        eyebrow="wer dahinter steht"
+        title="kethe. ruhrgebiet. bisher allein."
+        aside={
+          <Snapshot src="/imagery/plakat/club-schreibtisch.webp" ratio="4/5" tilt={1.6} alt="ein mann am schreibtisch, von hinten über die schulter, er streicht in einem ausgedruckten text einen satz durch." />
+        }
+      >
+        <p>
+          kethe theermann ist designer und hat small p club angefangen. er schreibt die texte, baut
+          die seite und liest jeden eingereichten bericht selbst.
+        </p>
+        <p>
+          wer dazukommt, steht hier mit vornamen und einem satz. bis dahin ist das ein
+          ein-mann-club mit offener tür.
+        </p>
+      </Chapter>
 
-      {/* ── Brand-Kanal-Block (Instagram) */}
-      <Section tone="light" rhythm="standard" aria-label="wir sind hier auch">
-        <Container width="default">
-          <Stack gap={4}>
-            <Eyebrow>wir sind hier auch</Eyebrow>
-            <Heading level={2} variant="lede">
-              <a
-                href="https://www.instagram.com/smallpclub/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={styles.kanalLink}
-              >
-                @smallpclub auf instagram
-              </a>
-            </Heading>
-            <Body>
-              ein paar bilder, ein paar momente. keine ratschläge, keine
-              motivations-zitate. wer da hängt, hängt da. wer nicht, nicht.
-            </Body>
-            <Caption tone="muted" as="p">
-              externer link. wir setzen kein meta-pixel, kein tracking. dein
-              klick verlässt smallp.club.
-            </Caption>
-          </Stack>
-        </Container>
-      </Section>
-    </main>
+      {countTitle && (
+        <Chapter
+          nr="05"
+          eyebrow="wie viele wir sind"
+          title={countTitle}
+          aside={
+            <Margin label="quelle">
+              Lever, Frederick &amp; Peplau, Psychology of Men &amp; Masculinity, 2006, n=52.031
+            </Margin>
+          }
+        >
+          <p>
+            nur 55 prozent der männer sind mit ihrer größe zufrieden. bei den partnerinnen sind es
+            85 prozent.
+          </p>
+          <p>
+            fast die hälfte der männer ist mit sich unzufrieden. ihre partnerinnen meistens nicht.
+            zwischen diesen zahlen liegt das schweigen, um das es uns geht.
+          </p>
+          {countVoice && <Note>{countVoice}</Note>}
+        </Chapter>
+      )}
+
+      <JoinBlock
+        nr={countTitle ? '06' : '05'}
+        title="wenn du die haltung teilst, gehörst du dazu."
+        lead="betroffen musst du dafür nicht sein. freundin, vater, lehrerin, kumpel: der club ist für alle, die den druck leiser machen wollen."
+        turnstileSiteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
+      />
+
+      <Chapter nr={countTitle ? '07' : '06'} eyebrow="auch hier">
+        <p className={styles.insta}>
+          <a
+            href="https://www.instagram.com/smallpclub"
+            target="_blank"
+            rel="noopener noreferrer"
+            referrerPolicy="no-referrer"
+            className={styles.instaLink}
+          >
+            @smallpclub auf instagram
+            <span className={styles.srOnly}> (öffnet neues fenster)</span>
+          </a>
+        </p>
+        <p>bilder und sätze aus dem club. ratschläge gibt es dort keine, motivationssprüche auch nicht.</p>
+        <Note>externer link. wir setzen kein pixel und zählen keine klicks. dein klick verlässt smallp.club.</Note>
+      </Chapter>
+    </Page>
   );
 }

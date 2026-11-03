@@ -1,0 +1,39 @@
+/* Snapshot — Abzug mit weißem Rand und Klebeband. Tokens: tokens/v2.css */
+
+.root {
+  position: relative;
+  margin: 0;
+  padding: clamp(0.5rem, 1.6cqi, 0.875rem) clamp(0.5rem, 1.6cqi, 0.875rem) clamp(1.75rem, 5cqi, 2.75rem);
+  background-color: var(--v2-note-white);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.06),
+    0 18px 34px -20px rgba(0, 0, 0, 0.55);
+  container-type: inline-size;
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: var(--ratio, 3 / 2);
+  overflow: hidden;
+  background: var(--v2-paper-sunken);
+}
+
+.img {
+  object-fit: cover;
+}
+
+.tape {
+  position: absolute;
+  z-index: 1;
+  top: -0.8rem;
+  left: 50%;
+  width: clamp(4.5rem, 26cqi, 6.5rem);
+  height: 1.6rem;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(240, 232, 210, 0.8);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}

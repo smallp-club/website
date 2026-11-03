@@ -83,3 +83,23 @@ Was unverändert bleibt:
 Damit ist die „Motion"-Frage aus „Noch offen" für die Landing teilbeantwortet:
 Tiefen-Flug, kalm choreografiert, endet in Ruhe. Für die Innen-Seiten bleibt
 Motion beim ruhigen fade + translate.
+
+---
+
+## V2 (Branch `v2-redesign`, 2026-11-02) — Entwurf, nicht live
+
+Zwei Sprachen, eine Signatur:
+
+- **Landing „Ein Satz" (verworfen, archiviert):** Jede Bühne trägt einen Satz, die Schrift steht still.
+  Bewegt werden nur der Grund (Crossfade teal → schwarz → deep turquoise) und
+  eine Maßband-Hairline ohne Ziffern. Bei der Zahl-Bühne (Lever 2006, 85 % / 55 %)
+  verblassen die Ticks, die Linie läuft tickfrei bis in den Footer.
+- **Startseite „Plakatnacht" (ersetzt „Ein Satz"):** Kampagnenwand bei Nacht, Plakate als
+  HTML auf Fotos, Fakt-Plakat überklebt den Mythos, Beitritt als Abreißstreifen.
+- **Innenseiten in Plakat-Sprache:** Kopf als Wand-Foto mit gekleistertem Titelplakat,
+  Kapitel mit Anton-Plakatziffer und Chillax 700, Marginalien als Zettel mit
+  Klebeband, Fotos als eingeklebte Abzüge, Beitritt als türkises Plakat.
+- Code: `src/components/v2/*`, Tokens: `tokens/v2.css`. Entscheidungsprotokoll:
+  `~/.claude/team/projekte/smallp-v2/entscheidungen.md`.
+- Doktrin-Änderung: Das ThresholdGate auf `/mit-glied` ist durch die H1
+  „mit-glied. auch ohne-glied." direkt über dem Formular ersetzt.

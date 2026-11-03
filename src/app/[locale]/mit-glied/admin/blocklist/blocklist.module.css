@@ -1,99 +1,39 @@
-/* Blocklist im Atelier-Stil. */
+/* Blocklist V2 — Einträge mit Entsperren-Formular, manueller Ban. */
 
-.list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  border-top: 1px solid var(--border-hairline);
-}
-
-.entry {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-4) 0;
-  border-bottom: 1px solid var(--border-hairline);
-}
-
-.head {
+.hashes {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
-}
-
-.hash {
-  font-family: var(--font-mono);
-  font-size: var(--text-body-sm);
-  color: var(--text-strong);
+  gap: 0.25rem 1.25rem;
 }
 
 .reason {
   margin: 0;
   font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  color: var(--text-muted);
+  font-size: var(--v2-small);
   font-style: italic;
+  color: var(--v2-muted-on-paper);
 }
 
 .foot {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-3);
   align-items: center;
   justify-content: space-between;
-}
-
-.timestamp {
-  font-family: var(--font-body);
-  font-size: var(--text-caption);
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
+  gap: 0.75rem 1rem;
 }
 
 .unbanForm {
   margin: 0;
   display: flex;
-  gap: var(--space-2);
-  align-items: center;
   flex-wrap: wrap;
-}
-
-.unbanTotp {
-  font-family: var(--font-mono);
-  font-size: var(--text-body-md);
-  letter-spacing: 0.12em;
-  text-align: center;
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--border-hairline);
-  border-radius: var(--radius-sm);
-  background-color: var(--surface-bg);
-  color: var(--text-strong);
-  width: 110px;
-  min-height: 44px;
-}
-
-.unbanTotp:focus-visible {
-  outline: none;
-  box-shadow:
-    0 0 0 2px var(--surface-bg),
-    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .banForm {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  max-width: 480px;
-}
-
-.reauthError {
-  margin: 0 0 var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  background-color: var(--surface-sunken, rgba(10, 10, 10, 0.04));
-  border-left: 3px solid var(--signal);
-  font-family: var(--font-body);
-  font-size: var(--text-body-sm);
-  color: var(--text-strong);
+  gap: 1.25rem;
+  max-width: 30rem;
+  margin-top: 1.5rem;
 }

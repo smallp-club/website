@@ -1,0 +1,98 @@
+.root {
+  container-type: inline-size;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.frame {
+  position: relative;
+  aspect-ratio: var(--ratio, 4 / 5);
+  border-radius: var(--v2-radius-sm);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  isolation: isolate;
+}
+
+/* Licht statt Grau: ein einzelner weicher Lichtfleck, wie Tageslicht
+   durch ein Fenster. Kein Farbverlauf zwischen Brand-Farben, nur
+   Helligkeit derselben Fläche. */
+.frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120% 80% at 78% 12%, var(--ph-light) 0%, transparent 60%),
+    var(--ph-ground);
+}
+
+.light {
+  --ph-ground: var(--v2-paper-sunken);
+  --ph-light: rgba(255, 255, 255, 0.75);
+  --ph-ink: var(--spc-ink);
+  --ph-muted: var(--v2-muted-on-paper);
+  --ph-mark: rgba(10, 10, 10, 0.35);
+}
+
+.dark {
+  --ph-ground: rgba(247, 246, 242, 0.06);
+  --ph-light: rgba(247, 246, 242, 0.09);
+  --ph-ink: var(--v2-on-dark);
+  --ph-muted: var(--v2-on-dark-muted);
+  --ph-mark: rgba(247, 246, 242, 0.4);
+}
+
+.dark .frame {
+  box-shadow: inset 0 0 0 1px var(--v2-hairline-dark);
+}
+
+.motif {
+  max-width: 22ch;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(0.875rem, 5.5cqi, 1.5rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ph-ink);
+  text-wrap: balance;
+}
+
+.ratio {
+  position: absolute;
+  top: clamp(1rem, 2.4vw, 1.5rem);
+  right: clamp(1rem, 2.4vw, 1.5rem);
+  font-family: var(--font-body);
+  font-size: var(--v2-caption);
+  font-variant-numeric: tabular-nums;
+  color: var(--ph-muted);
+}
+
+.mark {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--ph-mark);
+  border-style: solid;
+  border-width: 0;
+}
+.tl { top: 10px; left: 10px; border-top-width: 1px; border-left-width: 1px; }
+.tr { top: 10px; right: 10px; border-top-width: 1px; border-right-width: 1px; }
+.bl { bottom: 10px; left: 10px; border-bottom-width: 1px; border-left-width: 1px; }
+.br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
+
+.caption {
+  display: flex;
+  gap: 0.75rem;
+  font-family: var(--font-body);
+  font-size: var(--v2-caption);
+  line-height: 1.4;
+  color: var(--ph-muted);
+}
+
+.figure {
+  font-variant-numeric: tabular-nums;
+}

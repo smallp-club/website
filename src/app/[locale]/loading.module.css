@@ -1,21 +1,44 @@
-.root {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  z-index: 9999;
-  overflow: hidden;
+.stage {
+  display: grid;
+  place-items: center;
+  min-height: 100svh;
+  margin-top: -56px;
+  background: var(--v2-night-wall);
 }
 
-.bar {
-  height: 100%;
-  width: 40%;
-  background: var(--spc-turquoise);
-  animation: slide 1.2s var(--ease-out) infinite;
+@media (max-width: 760px) {
+  .stage {
+    margin-top: -68px;
+  }
 }
 
-@keyframes slide {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(350%); }
+/* Zettel, der erst nach 0,5 s angeklebt wird: von links gestrichen */
+.note {
+  margin: 0;
+  padding: 0.75rem 1.25rem 0.875rem;
+  transform: rotate(-1.5deg);
+  background-color: var(--v2-poster-paper);
+  background-image: var(--v2-paper-noise-soft);
+  color: var(--spc-black);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  box-shadow: 0 14px 24px -14px rgba(0, 0, 0, 0.7);
+  animation: paste 0.45s var(--ease-out) 0.5s both;
+}
+
+@keyframes paste {
+  from { clip-path: inset(-10% 100% -10% -10%); }
+  to { clip-path: inset(-10% -10% -10% -10%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note {
+    animation: show 0s linear 0.5s both;
+  }
+
+  @keyframes show {
+    from { visibility: hidden; }
+    to { visibility: visible; }
+  }
 }

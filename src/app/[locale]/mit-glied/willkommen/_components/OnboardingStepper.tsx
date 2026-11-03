@@ -1,13 +1,7 @@
 'use client';
 
 import { useActionState, useEffect, useState, useTransition } from 'react';
-import { Section } from '@/components/primitives/Section';
-import { Container } from '@/components/primitives/Container';
-import { Stack } from '@/components/primitives/Stack';
-import { Eyebrow } from '@/components/primitives/Eyebrow';
-import { Heading } from '@/components/primitives/Heading';
-import { Body } from '@/components/primitives/Body';
-import { Caption } from '@/components/primitives/Caption';
+import { PageHead, Wide, pageStyles } from '@/components/v2/Page';
 import { Button } from '@/components/primitives/Button';
 import { SubmitButton } from '@/components/primitives/SubmitButton';
 import {
@@ -74,36 +68,30 @@ function ArrivalStep({ onAdvance }: { onAdvance: () => void }) {
   }, []);
 
   return (
-    <Section tone="light" rhythm="loose" aria-label="schritt 1">
-      <Container width="prose">
-        <Stack gap={6}>
-          <Stack gap={4}>
-            <Eyebrow>schritt 1 von 3</Eyebrow>
-            <Heading level={1} variant="display">
-              du bist drin.
-            </Heading>
-            <Body>
-              keine bestätigungsmail, keine wartezeit. ab jetzt mit-glied. auch
-              ohne-glied.
-            </Body>
-          </Stack>
-
-          <div
-            className={styles.arrival}
-            data-arrow-visible={arrowVisible || undefined}
+    <>
+      <PageHead
+        eyebrow="schritt 1 von 3"
+        size="compact"
+        poster="act"
+        title="du bist drin."
+        lead="keine bestätigungsmail, keine wartezeit. ab jetzt mit-glied. auch ohne-glied."
+      />
+      <div className={styles.stage}>
+        <div
+          className={styles.arrival}
+          data-arrow-visible={arrowVisible || undefined}
+        >
+          <Button
+            type="button"
+            variant="primary"
+            onClick={onAdvance}
+            aria-label="weiter zu schritt 2"
           >
-            <Button
-              type="button"
-              variant="primary"
-              onClick={onAdvance}
-              aria-label="weiter zu schritt 2"
-            >
-              weiter
-            </Button>
-          </div>
-        </Stack>
-      </Container>
-    </Section>
+            weiter
+          </Button>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -154,70 +142,65 @@ function PseudonymStep({
   const errorMessage = state.status === 'error' ? state.message : undefined;
 
   return (
-    <Section tone="light" rhythm="loose" aria-label="schritt 2">
-      <Container width="prose">
-        <Stack gap={6}>
-          <Stack gap={4}>
-            <Eyebrow>schritt 2 von 3</Eyebrow>
-            <Heading level={2} variant="display">
-              dein name hier.
-            </Heading>
-            <Body>
-              wir nennen dich erstmal <strong>{currentPseudonym}</strong>. den
-              kannst du behalten, oder du würfelst was anderes. mehr als wählen
-              kannst du nicht, freitext gibt es nicht.
-            </Body>
-            <Body tone="muted">
-              würfel so oft du willst. der name, den du nimmst, bleibt. später
-              wechseln geht nicht.
-            </Body>
-          </Stack>
+    <PageHead
+      eyebrow="schritt 2 von 3"
+      size="compact"
+      title="dein name hier."
+      lead={
+        <>
+          wir nennen dich erstmal <strong>{currentPseudonym}</strong>. den
+          kannst du behalten, oder du würfelst was anderes. mehr als wählen
+          kannst du nicht, freitext gibt es nicht.
+        </>
+      }
+    >
+      <p className={pageStyles.fine}>
+        würfel so oft du willst. der name, den du nimmst, bleibt. später
+        wechseln geht nicht.
+      </p>
 
-          <ul className={styles.suggestionList} role="list">
-            {suggestions.map((name) => (
-              <li key={name}>
-                <button
-                  type="button"
-                  className={styles.suggestionPill}
-                  onClick={() => handleAccept(name)}
-                  disabled={acceptingName !== null || isRolling}
-                  data-loading={acceptingName === name || undefined}
-                  aria-label={`pseudonym ${name} übernehmen`}
-                >
-                  {name}
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          {errorMessage && (
-            <p className={styles.error} role="alert">
-              <span className={styles.errorPrefix}>hinweis.</span> {errorMessage}
-            </p>
-          )}
-
-          <div className={styles.actionRow}>
-            <Button
+      <ul className={styles.suggestionList} role="list">
+        {suggestions.map((name) => (
+          <li key={name}>
+            <button
               type="button"
-              variant="ghost"
-              onClick={handleRoll}
-              disabled={isRolling || acceptingName !== null}
-            >
-              {isRolling ? 'würfle …' : 'neu würfeln'}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => onAdvance()}
+              className={styles.suggestionPill}
+              onClick={() => handleAccept(name)}
               disabled={acceptingName !== null || isRolling}
+              data-loading={acceptingName === name || undefined}
+              aria-label={`pseudonym ${name} übernehmen`}
             >
-              {currentPseudonym} behalten
-            </Button>
-          </div>
+              {name}
+            </button>
+          </li>
+        ))}
+      </ul>
 
-        </Stack>
-      </Container>
-    </Section>
+      {errorMessage && (
+        <p className={styles.error} role="alert">
+          <span className={styles.errorPrefix}>hinweis.</span> {errorMessage}
+        </p>
+      )}
+
+      <div className={styles.actionRow}>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={handleRoll}
+          disabled={isRolling || acceptingName !== null}
+        >
+          {isRolling ? 'würfle …' : 'neu würfeln'}
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => onAdvance()}
+          disabled={acceptingName !== null || isRolling}
+        >
+          {currentPseudonym} behalten
+        </Button>
+      </div>
+    </PageHead>
   );
 }
 
@@ -226,39 +209,32 @@ function PseudonymStep({
 
 function ShopPreviewStep() {
   return (
-    <Section tone="light" rhythm="loose" aria-label="schritt 3">
-      <Container width="prose">
-        <Stack gap={6}>
-          <Stack gap={4}>
-            <Eyebrow>schritt 3 von 3</Eyebrow>
-            <Heading level={2} variant="display">
-              bald zu haben.
-            </Heading>
-            <Body>
-              wir machen sticker, shirts, ein paar andere haltungs-artefakte. als
-              mit-glied siehst du den shop 48 stunden früher als alle anderen.
-            </Body>
-          </Stack>
+    <>
+      <PageHead
+        eyebrow="schritt 3 von 3"
+        size="compact"
+        title="bald zu haben."
+        lead="sticker, shirts, taschen. wenn der shop aufmacht, bekommst du eine mail."
+      />
 
-          <ul className={styles.tileGrid} role="list">
-            <ProductTile category="sticker" subtitle="das dna-produkt." />
-            <ProductTile category="shirt" subtitle="trag die haltung." />
-            <ProductTile category="tote" subtitle="für alles, was du dabei hast." />
-          </ul>
+      <Wide label="shop-vorschau">
+        <ul className={styles.tileGrid} role="list">
+          <ProductTile category="sticker" subtitle="damit hat alles angefangen." />
+          <ProductTile category="shirt" subtitle="trag die haltung." />
+          <ProductTile category="tote" subtitle="für alles, was du dabei hast." />
+        </ul>
 
-          <Caption tone="muted" as="p">
-            visuelle platzhalter. echte produkt-kacheln kommen mit dem shop
-            (phase 8).
-          </Caption>
+        <p className={[pageStyles.note, styles.tileNote].join(' ')}>
+          noch gibt es nichts zu kaufen. die fotos kommen mit dem shop.
+        </p>
 
-          <form action={completeOnboardingAndContinue} className={styles.finishRow}>
-            <SubmitButton variant="primary" loadingLabel="bringe dich rein …">
-              alles klar. zum eingang.
-            </SubmitButton>
-          </form>
-        </Stack>
-      </Container>
-    </Section>
+        <form action={completeOnboardingAndContinue} className={styles.finishRow}>
+          <SubmitButton variant="primary" loadingLabel="bringe dich rein …">
+            alles klar. zum eingang.
+          </SubmitButton>
+        </form>
+      </Wide>
+    </>
   );
 }
 

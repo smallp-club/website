@@ -1,0 +1,901 @@
+/* ============================================================
+   Plakatnacht — Startseite V2
+   Eine Kampagnen-Wand. Plakate sind HTML auf Fotos.
+   Tokens: tokens/v2.css + Basis-Tokens. Keine Inline-Styles außer
+   CSS-Variablen (--tilt).
+   ============================================================ */
+
+.page {
+  --plakat-gutter: clamp(1rem, 4vw, 3.5rem);
+  --plakat-max: 1440px;
+  --plakat-paper-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --plakat-paper-noise-soft: url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%27240%27 height=%27240%27%3E%3Cfilter id=%27n%27%3E%3CfeTurbulence type=%27fractalNoise%27 baseFrequency=%27.85%27 numOctaves=%273%27 stitchTiles=%27stitch%27/%3E%3CfeColorMatrix values=%270 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .1 0%27/%3E%3C/filter%3E%3Crect width=%27100%25%27 height=%27100%25%27 filter=%27url(%23n)%27/%3E%3C/svg%3E");
+  background: var(--v2-paper);
+  color: var(--spc-black);
+  overflow-x: clip;
+}
+
+.cover {
+  object-fit: cover;
+}
+
+.contain {
+  object-fit: contain;
+  object-position: bottom center;
+}
+
+/* ---------- Plakat (Grundelement) ---------- */
+
+.poster {
+  position: relative;
+  isolation: isolate;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.08),
+    0 14px 30px -18px rgba(0, 0, 0, 0.55);
+}
+
+/* Papierfaser + Kleisterfalten. Zwei Ebenen über der Fläche, unter dem Text. */
+.poster::before,
+.poster::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Falten aus dem Kleister + Faser, multipliziert: Schatten in den Mulden */
+.poster::before {
+  background-image: var(--v2-paper-wrinkle), var(--plakat-paper-noise);
+  background-size: 520px, 240px;
+  background-position: var(--wrinkle-x, 0) var(--wrinkle-y, 0), 0 0;
+  mix-blend-mode: multiply;
+  opacity: 0.6;
+}
+
+/* Licht obendrauf: Knick quer, Kleisterglanz, Luftblasen, Wölbung zur Kante */
+.poster::after {
+  z-index: 1;
+  background:
+    radial-gradient(1.1rem 0.7rem at 22% 71%, rgba(255, 255, 255, 0.5), rgba(0, 0, 0, 0.12) 70%, transparent 72%),
+    radial-gradient(0.7rem 0.5rem at 78% 34%, rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0.1) 70%, transparent 72%),
+    linear-gradient(97deg, transparent 18%, rgba(0, 0, 0, 0.14) 19%, rgba(255, 255, 255, 0.3) 19.6%, transparent 23%),
+    linear-gradient(112deg, transparent 32%, rgba(255, 255, 255, 0.26) 46%, transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 20%, transparent 82%, rgba(0, 0, 0, 0.12));
+  mix-blend-mode: soft-light;
+}
+
+.poster_act { background-color: var(--v2-act); color: var(--spc-black); }
+.poster_paper { background-color: var(--v2-poster-paper); color: var(--spc-black); }
+.poster_ink { background-color: var(--v2-poster-ink); color: var(--v2-on-dark); }
+.poster_deep { background-color: var(--v2-deep); color: var(--v2-on-dark); }
+.poster_old {
+  background-color: var(--v2-poster-old);
+  color: var(--spc-black);
+  filter: saturate(0.85);
+}
+
+/* ---------- Gemeinsame Typo ---------- */
+
+.h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 1.5rem + 4.2vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.body {
+  margin: 1.5rem 0 0;
+  max-width: 34ch;
+  font-family: var(--font-body);
+  font-size: var(--v2-lead);
+  line-height: 1.5;
+  color: var(--v2-muted-on-paper);
+}
+
+.bodyStrong {
+  margin: 1rem 0 0;
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--v2-lead);
+  line-height: 1.35;
+  color: var(--spc-black);
+}
+
+.inlineLink,
+.inlineLinkDark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--v2-body);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+  border-radius: 4px;
+}
+
+.inlineLink { color: var(--v2-on-dark); }
+.inlineLinkDark { color: var(--spc-black); }
+
+.inlineLink:hover,
+.inlineLinkDark:hover {
+  text-decoration-thickness: 2px;
+}
+
+.inlineLink:focus-visible,
+.inlineLinkDark:focus-visible,
+.pillAct:focus-visible,
+.pillGhost:focus-visible {
+  outline: 2px solid var(--v2-act);
+  outline-offset: 3px;
+}
+
+.mythFoot .inlineLink:focus-visible,
+.inlineLinkDark:focus-visible,
+.pillGhost:focus-visible {
+  outline-color: var(--v2-deep);
+}
+
+.pillAct,
+.pillGhost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 0 1.75rem;
+  border-radius: 999px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.0625rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    transform 200ms var(--ease-out),
+    background-color 200ms var(--ease-out);
+}
+
+.pillAct {
+  background: var(--v2-act);
+  color: var(--v2-on-act);
+}
+
+.pillAct:hover { background: var(--v2-act-hover); transform: translateY(-1px); }
+.pillAct:active { background: var(--v2-act-press); transform: none; }
+
+.pillGhost {
+  margin-top: 2rem;
+  border: 1.5px solid var(--spc-black);
+  color: var(--spc-black);
+}
+
+.pillGhost:hover { background: var(--spc-black); color: var(--v2-paper); }
+
+/* ---------- 1 · Hero ---------- */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  /* zieht sich unter die sticky Nav (56px + Abstand) */
+  margin-top: -56px;
+  background: var(--v2-night-wall);
+  overflow: hidden;
+  color: var(--v2-on-dark);
+}
+
+.heroWall {
+  position: absolute;
+  inset: -4% 0 -4% 0;
+}
+
+.heroWall img {
+  filter: brightness(0.82) contrast(1.05);
+}
+
+.heroSheets {
+  position: absolute;
+  inset: 15% 15% 19% 15%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0;
+}
+
+.sheetSlot {
+  position: relative;
+}
+
+/* Bahnen überlappen wie geklebt: jede spätere liegt ein Stück über der vorigen */
+.sheet {
+  position: absolute;
+  inset: -1.5% -2.5% -1.5% -0.5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(0.75rem, 1.6vw, 1.75rem);
+  box-shadow:
+    -1px 0 0 rgba(0, 0, 0, 0.18),
+    0 18px 28px -16px rgba(0, 0, 0, 0.7);
+}
+
+/* Jede Bahn hat ihre eigenen Falten und eine eigene Macke an der Kante */
+.sheetSlot:nth-child(1) .sheet { --wrinkle-x: -40px; --wrinkle-y: -120px; clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%, 8% 96%, 3% 98%, 0 94%); }
+.sheetSlot:nth-child(2) .sheet { --wrinkle-x: -210px; --wrinkle-y: -30px; }
+.sheetSlot:nth-child(3) .sheet { --wrinkle-x: -330px; --wrinkle-y: -260px; clip-path: polygon(0 0, 78% 0, 82% 3%, 88% 1%, 94% 5%, 100% 4%, 100% 100%, 0 100%); }
+.sheetSlot:nth-child(4) .sheet { --wrinkle-x: -90px; --wrinkle-y: -380px; clip-path: polygon(0 0, 100% 0, 100% 62%, 96% 66%, 98% 72%, 94% 79%, 97% 86%, 93% 100%, 0 100%); }
+.sheetSlot:nth-child(5) .sheet { --wrinkle-x: -280px; --wrinkle-y: -190px; }
+.sheetSlot:nth-child(6) .sheet { --wrinkle-x: -150px; --wrinkle-y: -300px; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 30%, 3% 26%, 1% 20%, 4% 14%); }
+.sheetSlot:nth-child(7) .sheet { --wrinkle-x: -400px; --wrinkle-y: -60px; }
+.sheetSlot:nth-child(8) .sheet { --wrinkle-x: -20px; --wrinkle-y: -230px; clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 86%, 84% 100%, 0 100%); }
+
+.sheet::before { opacity: 0.85; }
+
+/* Mauerfugen unter dem Papier: waagrecht jede Reihe, senkrecht versetzt */
+.relief {
+  position: absolute;
+  inset: -1.5% -2.5% -1.5% 0;
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(180deg, transparent 0 calc(var(--brick-h) - 3px), rgba(0, 0, 0, 0.28) calc(var(--brick-h) - 3px), rgba(255, 255, 255, 0.35) calc(var(--brick-h) - 1px), transparent var(--brick-h)),
+    repeating-linear-gradient(90deg, transparent 0 calc(var(--brick-w) - 3px), rgba(0, 0, 0, 0.18) calc(var(--brick-w) - 3px), rgba(255, 255, 255, 0.22) calc(var(--brick-w) - 1px), transparent var(--brick-w));
+  mask-image: repeating-linear-gradient(180deg, #000 0 var(--brick-h), rgba(0, 0, 0, 0.35) var(--brick-h) calc(var(--brick-h) * 2));
+  mix-blend-mode: soft-light;
+  --brick-h: clamp(14px, 1.55vw, 24px);
+  --brick-w: clamp(44px, 4.9vw, 72px);
+}
+
+/* Druckzeile unten auf jeder Bahn, wie auf einem echten Kampagnenplakat */
+.sheetFoot {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  padding-top: 0.4rem;
+  border-top: 1.5px solid currentColor;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.6875rem, 0.45rem + 0.3vw, 0.8125rem);
+  letter-spacing: 0.01em;
+}
+
+.sheetText {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 0.6rem + 2.4vw, 3.1rem);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.wet {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.55) 45%, transparent 70%);
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+.heroMan {
+  position: absolute;
+  bottom: 0;
+  right: 27%;
+  width: min(24vw, 360px);
+  height: 86%;
+  filter: brightness(0.92) drop-shadow(0 30px 40px rgba(0, 0, 0, 0.55));
+  z-index: 2;
+}
+
+.heroScrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 34%;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.6) 45%, rgba(0, 0, 0, 0.88));
+  z-index: 3;
+  pointer-events: none;
+}
+
+.heroFoot {
+  position: absolute;
+  inset: auto var(--plakat-gutter) clamp(1.5rem, 4vh, 3rem) var(--plakat-gutter);
+  z-index: 4;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.heroLine {
+  margin: 0;
+  max-width: 28ch;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.125rem, 0.9rem + 0.9vw, 1.625rem);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+
+.heroFoot .pillAct {
+  background: var(--v2-paper);
+  color: var(--spc-black);
+}
+
+.heroFoot .pillAct:hover { background: var(--v2-paper-raised); }
+
+.heroLineSub {
+  display: block;
+  margin-top: 0.35rem;
+  font-weight: 400;
+  font-size: max(0.75em, var(--v2-small));
+  color: var(--v2-on-dark-muted);
+}
+
+/* Tablet: drei Bahnen breit, sonst bricht „measure,“ an die Kante */
+@media (min-width: 761px) and (max-width: 1100px) {
+  .heroSheets {
+    inset: 14% 8% 22% 8%;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .sheetSlot:nth-child(n + 7) { display: none; }
+  .heroMan { right: 12%; width: min(30vw, 320px); }
+  .sheetText { width: min-content; font-size: clamp(2.125rem, 4.4vw, 2.75rem); }
+}
+
+@media (max-width: 760px) {
+  .hero { margin-top: -68px; min-height: 92svh; }
+  .heroWall img { object-position: 50% 50%; }
+  .heroSheets {
+    inset: 13% 5% 30% 5%;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+  }
+  .sheetSlot:nth-child(n + 7) { display: none; }
+  .sheetText { font-size: clamp(1.25rem, 5.6vw, 1.75rem); }
+  .sheetFoot { font-size: 0.6875rem; }
+  .heroMan { right: 2%; width: 44vw; height: 62%; }
+  .heroFoot { flex-direction: column; align-items: flex-start; }
+}
+
+/* ---------- 2 · Recognition ---------- */
+
+.recog {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 6rem);
+  max-width: var(--plakat-max);
+  margin-inline: auto;
+  padding: clamp(5rem, 12vw, 10rem) var(--plakat-gutter);
+}
+
+.recogFrame {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.recogImg {
+  position: absolute;
+  inset: -8% 0;
+}
+
+@media (max-width: 900px) {
+  .recog { grid-template-columns: 1fr; }
+}
+
+/* ---------- 3 · Mythos wird überklebt ---------- */
+
+.myth {
+  position: relative;
+  height: 220vh;
+  background: var(--v2-dusk-wall);
+}
+
+.mythSticky {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.mythWall {
+  position: absolute;
+  inset: 0;
+}
+
+.mythShade {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.55));
+}
+
+.eyebrowOnWall,
+.eyebrowDark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.5rem);
+  letter-spacing: -0.02em;
+}
+
+.eyebrowOnWall {
+  position: absolute;
+  top: clamp(5.5rem, 12vh, 7rem);
+  left: var(--plakat-gutter);
+  color: var(--v2-on-dark);
+  z-index: 3;
+}
+
+.mythSlot {
+  position: relative;
+  z-index: 2;
+  width: min(88vw, 980px);
+  aspect-ratio: 16 / 9;
+}
+
+.mythPoster {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: clamp(1.5rem, 5vw, 4.5rem);
+}
+
+.mythUnder {
+  inset: -2% 4% 2% -4%;
+}
+
+.mythOver {
+  position: absolute;
+  inset: 0;
+}
+
+.mythText,
+.factText {
+  margin: 0;
+  max-width: 18ch;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 0.8rem + 3.6vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.factText { max-width: 20ch; }
+
+.prefixMyth,
+.prefixFact {
+  display: block;
+  margin-bottom: 0.6em;
+  /* ab 20px fett gilt es als Large Text: Sienna auf Altpapier braucht dann nur 3:1 */
+  font-size: max(0.6em, 1.25rem);
+}
+
+.prefixMyth { color: var(--v2-myth); }
+.prefixFact { color: var(--v2-act); }
+
+.mythHand {
+  position: absolute;
+  top: 18%;
+  width: clamp(160px, 26vw, 360px);
+  aspect-ratio: 1000 / 1113;
+  transform: translateX(-34%);
+  z-index: 3;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(to left, transparent 2%, #000 34%);
+  mask-image: linear-gradient(to left, transparent 2%, #000 34%);
+  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.5));
+}
+
+.mythFootWall,
+.mythFoot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+}
+
+.mythFootWall {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 3;
+  padding: 4rem var(--plakat-gutter) clamp(1rem, 4vh, 2.5rem);
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.82) 55%);
+  color: var(--v2-on-dark);
+}
+
+.sourceLine {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  color: var(--v2-on-dark);
+}
+
+.mythFoot .sourceLine { color: var(--v2-muted-on-paper); }
+.mythFoot .inlineLink { color: var(--spc-black); }
+
+.mythStill {
+  max-width: var(--plakat-max);
+  margin-inline: auto;
+  padding: clamp(5rem, 10vw, 8rem) var(--plakat-gutter);
+}
+
+.mythStillGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+  gap: 2rem;
+  margin-block: 2rem;
+}
+
+.mythStillGrid .mythPoster {
+  position: relative;
+  min-height: 320px;
+}
+
+@media (max-width: 760px) {
+  .mythSlot { aspect-ratio: 3 / 4; width: 86vw; }
+  .mythText, .factText { font-size: clamp(1.75rem, 8vw, 2.5rem); }
+  .mythHand { top: 30%; }
+}
+
+/* ---------- 4 · Die Lücke ---------- */
+
+.gap {
+  background: var(--v2-ink);
+  color: var(--v2-on-dark);
+  padding: clamp(5rem, 12vw, 10rem) var(--plakat-gutter) clamp(3rem, 6vw, 5rem);
+}
+
+.gapRow {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  gap: clamp(1rem, 3vw, 3rem);
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.gapCell {
+  container-type: inline-size;
+}
+
+/* Zahl oben, Satz unten: die Zahl ist das Erste, was beim Reinscrollen sichtbar ist */
+.gapPoster {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  aspect-ratio: 4 / 5;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+
+.gapNumber {
+  font-family: var(--font-plakat-number), var(--font-display);
+  font-size: clamp(4.5rem, 34cqi, 13rem);
+  line-height: 0.85;
+  letter-spacing: -0.01em;
+  color: var(--v2-poster-ink-text);
+}
+
+.gapNumberAct { color: var(--v2-act); }
+
+.gapLabel {
+  margin-top: 1.25rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(1.0625rem, 0.9rem + 0.6vw, 1.5rem);
+  color: var(--v2-poster-ink-text);
+}
+
+.gapLabelAct { color: var(--v2-act); }
+
+.gapLine {
+  margin: clamp(3rem, 6vw, 5rem) auto 0;
+  max-width: 24ch;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(1.5rem, 1rem + 1.6vw, 2.5rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+
+.gapSource {
+  margin: clamp(2.5rem, 5vw, 4rem) auto 0;
+  max-width: 1200px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  color: var(--v2-on-dark-muted);
+}
+
+@media (max-width: 760px) {
+  .gapRow { grid-template-columns: 1fr; }
+  .gapPoster { aspect-ratio: 4 / 3; }
+}
+
+/* ---------- 5 · Stimmen ---------- */
+
+.voices {
+  max-width: var(--plakat-max);
+  margin-inline: auto;
+  padding: clamp(5rem, 12vw, 10rem) var(--plakat-gutter);
+}
+
+.voicesHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 3rem;
+}
+
+.voicesHead .body { margin: 0; }
+
+.notes {
+  list-style: none;
+  margin: clamp(3rem, 6vw, 5rem) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.note {
+  position: relative;
+  padding: 2.25rem 1.75rem 1.75rem;
+  transform: rotate(var(--tilt, 0deg));
+  box-shadow: 0 12px 24px -16px rgba(0, 0, 0, 0.45);
+  background-image: var(--plakat-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
+}
+
+.notePaper { background-color: var(--v2-note-white); }
+.noteKraft { background-color: var(--v2-note-kraft); }
+.noteAct { background-color: var(--v2-act); }
+.noteCream { background-color: var(--v2-note-cream); }
+.noteLined {
+  background-color: var(--v2-note-white);
+  background-image:
+    repeating-linear-gradient(180deg, transparent 0 1.9rem, rgba(29, 85, 86, 0.22) 1.9rem calc(1.9rem + 1px)),
+    var(--plakat-paper-noise-soft);
+}
+
+.tape {
+  position: absolute;
+  top: -0.75rem;
+  left: 50%;
+  width: 5.5rem;
+  height: 1.6rem;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(240, 232, 210, 0.78);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.noteFigure { margin: 0; }
+
+.noteHand {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: max(1.1875rem, var(--v2-lead));
+  line-height: 1.4;
+  color: var(--v2-note-ink);
+}
+
+.noteName {
+  margin-top: 1rem;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--v2-small);
+  color: var(--v2-deep);
+}
+
+.notePrompt {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+a.notePrompt {
+  color: inherit;
+  text-decoration: none;
+  border-radius: 2px;
+}
+
+a.notePrompt:hover .notePromptLabel {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a.notePrompt:focus-visible {
+  outline: 2px solid var(--v2-deep);
+  outline-offset: 6px;
+}
+
+.notePromptLabel {
+  font-family: var(--font-plakat-hand), cursive;
+  font-weight: 600;
+  font-size: 1.75rem;
+  line-height: 1.15;
+  color: var(--v2-note-ink);
+}
+
+.notePromptBlank {
+  padding-top: 0.75rem;
+  border-top: 1.5px dashed rgba(10, 10, 10, 0.35);
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  color: var(--v2-note-muted);
+}
+
+.voicesFoot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 2.5rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+
+/* ---------- 6 · Beitritt ---------- */
+
+.join {
+  position: relative;
+  background-color: var(--v2-act);
+  background-image: var(--plakat-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
+  color: var(--spc-black);
+  padding: clamp(5rem, 10vw, 8rem) 0 clamp(4rem, 8vw, 6rem);
+  overflow: hidden;
+  scroll-margin-top: 0;
+}
+
+/* Titel sitzt auf derselben linken Kante wie der Abreißstreifen darunter */
+.joinTitle {
+  margin: 0 0 0 max(var(--plakat-gutter), (100% - 1080px) / 2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  max-width: 14ch;
+  font-size: clamp(3rem, 1rem + 8vw, 9.5rem);
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
+}
+
+.strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: center;
+  width: min(100% - 2 * var(--plakat-gutter), 1080px);
+  margin: clamp(3rem, 7vw, 6rem) auto 0;
+  padding: clamp(1.75rem, 3.5vw, 3rem) clamp(1.5rem, 4vw, 3.5rem);
+  background: var(--v2-paper);
+  box-shadow: 0 24px 40px -24px rgba(0, 0, 0, 0.45);
+  /* Abriss-Perforation links und rechts */
+  mask:
+    radial-gradient(circle at 0 50%, transparent 5px, #000 5.5px) left / 12px 14px repeat-y,
+    radial-gradient(circle at 100% 50%, transparent 5px, #000 5.5px) right / 12px 14px repeat-y,
+    linear-gradient(#000, #000) center / calc(100% - 24px) 100% no-repeat;
+}
+
+.stripList {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 clamp(0rem, 3vw, 2.5rem);
+  border-left: 1.5px dashed rgba(10, 10, 10, 0.25);
+  display: grid;
+  gap: 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--v2-body);
+}
+
+.joinCount {
+  margin: 2rem max(var(--plakat-gutter), (100% - 1080px) / 2) 0;
+  text-align: right;
+  font-family: var(--font-body);
+  font-size: var(--v2-small);
+  color: var(--v2-on-act-muted);
+}
+
+@media (max-width: 900px) {
+  .strip { grid-template-columns: 1fr; }
+  .stripList { border-left: 0; border-top: 1.5px dashed rgba(10, 10, 10, 0.25); padding: 1.5rem 0 0; }
+  .joinCount { text-align: left; }
+}
+
+/* ---------- 7 · Sticker ---------- */
+
+.stick {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+  align-items: center;
+  gap: clamp(2rem, 5vw, 6rem);
+  max-width: var(--plakat-max);
+  margin-inline: auto;
+  padding: clamp(5rem, 12vw, 10rem) var(--plakat-gutter);
+}
+
+.stickGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+
+.stickCell {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .stick { grid-template-columns: 1fr; }
+}
+
+/* Mythos: gepinnte Strecke nur mit Bewegung, sonst die stille Variante.
+   Umschaltung in CSS, damit Server und Client dasselbe HTML liefern. */
+@media (prefers-reduced-motion: no-preference) {
+  .mythStill { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .myth { display: none; }
+}
+
+/* ---------- Reduced Motion: keine Transformationen aus Bewegung ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .pillAct,
+  .pillGhost { transition: none; }
+  .pillAct:hover { transform: none; }
+
+  /* Framer Motion rendert serverseitig immer den Startzustand (gleiches HTML
+     für alle). Hier wird er überschrieben: alles hängt sofort, nichts
+     bewegt sich, auch keine Parallaxe. */
+  .heroWall,
+  .sheetSlot,
+  .heroMan,
+  .heroFoot,
+  .recogImg,
+  .recogText,
+  .gapCell,
+  .note,
+  .joinTitle,
+  .strip,
+  .stickCell {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .strip { rotate: -0.6deg; }
+  .wet { display: none; }
+}
+
+/* Ausgeblendeter Knopf wird beim Tabben wieder sichtbar */
+.heroFoot .pillAct:focus-visible { opacity: 1 !important; }
+
+/* Mobil sitzt die Nav unten: der Hero muss sich nicht mehr unter sie ziehen. */
+@media (max-width: 768px) {
+  .hero {
+    margin-top: 0;
+  }
+}

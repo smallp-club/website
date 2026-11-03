@@ -20,10 +20,10 @@
  *   im Hero-State die Wordmark, switcht beim Pin zur Bildmarke. Für die
  *   Landing-Page oder vergleichbare Pages mit eigenem Hero.
  *
- * Mobile (<768 px):
- * - Items collapsen, Burger triggert Off-White-Sheet.
- * - Sheet: Chillax Extralight 40–56 px, schließt via Backdrop/X/Escape,
- *   Body-Scroll-Lock, Auto-Focus, Member-Pille als CTA-Block unten.
+ * Mobile (≤768 px):
+ * - Bar + Member-Pille wandern als schwebende Leiste an den unteren Rand
+ *   (Daumenreichweite, App-Gefühl). Alle vier Räume bleiben sichtbar.
+ * - Startseite über einen runden Glas-Knopf oben links, der mitscrollt.
  *
  * Polish:
  * - Glas-Refraction: radial-Highlight folgt dem Cursor über der Bar
@@ -36,7 +36,7 @@
  * - <480 px: immer Bildmarke (Platz-Optimierung).
  */
 
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { Link, usePathname } from '@/i18n/navigation';
 import { setUnderlineOrigin } from '@/lib/hover';
@@ -54,47 +54,6 @@ const NAV_ITEMS = [
 
 const MEMBER_GUEST = { href: '/mit-glied', label: 'mit-glied' } as const;
 const MEMBER_LOGGED_IN_HREF = '/mit-glied/eingang';
-
-function BurgerIcon() {
-  return (
-    <svg
-      viewBox="0 0 256 256"
-      width="22"
-      height="22"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <line x1="40" y1="80" x2="216" y2="80" />
-      <line x1="40" y1="128" x2="216" y2="128" />
-      <line x1="40" y1="176" x2="216" y2="176" />
-    </svg>
-  );
-}
-
-function CloseIcon() {
-  return (
-    <svg
-      viewBox="0 0 256 256"
-      width="22"
-      height="22"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <line x1="200" y1="56" x2="56" y2="200" />
-      <line x1="56" y1="56" x2="200" y2="200" />
-    </svg>
-  );
-}
 
 export interface SiteNavProps {
   /**
@@ -117,11 +76,8 @@ export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}
     : MEMBER_GUEST;
   const pathname = usePathname();
   const [pinned, setPinned] = useState(!heroMode);
-  const [menuOpen, setMenuOpen] = useState(false);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
-  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
-  const sheetId = useId();
 
   /** FOUC-Fix: synchron echten Scroll-Stand auslesen vor erstem Paint. */
   useIsomorphicLayoutEffect(() => {
@@ -152,25 +108,6 @@ export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}
     return () => observer.disconnect();
   }, [heroMode]);
 
-  /** Mobile-Sheet: Escape-Key, Body-Scroll-Lock, Auto-Focus. */
-  useEffect(() => {
-    if (!menuOpen) return;
-
-    closeButtonRef.current?.focus();
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
-    };
-
-    document.addEventListener('keydown', handleKey);
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-
-    return () => {
-      document.removeEventListener('keydown', handleKey);
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [menuOpen]);
-
   /** Glas-Refraction: Pointer-Position als CSS-Vars auf die Bar setzen. */
   const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
     const target = navRef.current;
@@ -192,6 +129,13 @@ export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}
       {heroMode && (
         <div ref={sentinelRef} className={styles.sentinel} aria-hidden="true" />
       )}
+
+      {/* Mobil: Startseiten-Knopf oben links, scrollt mit weg. Die Leiste
+          selbst sitzt unten in Daumenreichweite. */}
+      <Link className={styles.mobileHome} href="/" aria-label="small p club Startseite">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/brand/smallpclub-mark-deep.svg" alt="" width={28} height={28} />
+      </Link>
 
       <div
         className={styles.navShell}
@@ -251,80 +195,19 @@ export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}
               ))}
             </ul>
 
-            <button
-              type="button"
-              className={styles.burger}
-              aria-label="hauptmenü öffnen"
-              aria-expanded={menuOpen}
-              aria-controls={sheetId}
-              onClick={() => setMenuOpen(true)}
-            >
-              <BurgerIcon />
-            </button>
           </div>
         </nav>
 
         <Link
           href={memberItem.href}
           className={styles.memberPill}
+          title={memberPseudonym}
           aria-current={isCurrent(memberItem.href) ? 'page' : undefined}
         >
           {memberItem.label}
         </Link>
       </div>
 
-      <div
-        id={sheetId}
-        className={styles.sheet}
-        data-open={menuOpen ? 'true' : 'false'}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Hauptnavigation"
-        aria-hidden={menuOpen ? undefined : 'true'}
-      >
-        <button
-          type="button"
-          className={styles.sheetBackdrop}
-          aria-label="menü schließen"
-          tabIndex={-1}
-          onClick={() => setMenuOpen(false)}
-        />
-        <div className={styles.sheetPanel}>
-          <button
-            ref={closeButtonRef}
-            type="button"
-            className={styles.sheetClose}
-            aria-label="menü schließen"
-            onClick={() => setMenuOpen(false)}
-          >
-            <CloseIcon />
-          </button>
-
-          <ul className={styles.sheetItems} role="list">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.href} className={styles.sheetItem}>
-                <Link
-                  href={item.href}
-                  className={styles.sheetLink}
-                  aria-current={isCurrent(item.href) ? 'page' : undefined}
-                  onClick={() => setMenuOpen(false)}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-
-          <Link
-            href={memberItem.href}
-            className={styles.sheetMemberPill}
-            aria-current={isCurrent(memberItem.href) ? 'page' : undefined}
-            onClick={() => setMenuOpen(false)}
-          >
-            {memberItem.label}
-          </Link>
-        </div>
-      </div>
     </>
   );
 }
