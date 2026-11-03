@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef, useState } from 'react';
-import { MotionConfig, motion, useScroll, useTransform } from 'framer-motion';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { MotionConfig, motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
 import { caveat } from './fonts';
 import { Poster, type PosterTone } from './Poster';
 import styles from './Plakat.module.css';
@@ -37,11 +37,12 @@ const UNDER: ReadonlyArray<string> = [
 function tearMotion(i: number) {
   const dir = i % 2 ? 1 : -1;
   return {
-    rotate: [0, dir * 3, dir * 22],
-    y: ['0%', '3%', '135%'],
-    x: ['0%', '0%', `${dir * 12}%`],
-    opacity: [1, 1, 0],
-    transition: { duration: 0.95, times: [0, 0.25, 1], ease: [0.55, 0, 0.8, 0.4] as const },
+    rotate: [0, dir * 3, dir * 14, dir * 28],
+    rotateX: [0, 12, 28, 46],
+    y: ['0%', '3%', '120%', '340%'],
+    x: ['0%', '0%', `${dir * 10}%`, `${dir * 22}%`],
+    opacity: [1, 1, 1, 0],
+    transition: { duration: 1.25, times: [0, 0.2, 0.62, 1], ease: [0.5, 0, 0.75, 0.3] as const },
   };
 }
 
@@ -102,30 +103,13 @@ export function Hero() {
                 <span>smallp.club</span>
               </span>
             </Poster>
-            <motion.div
-              className={styles.sheetFront}
-              animate={torn.has(i) ? tearMotion(i) : undefined}
-              whileHover={torn.has(i) ? undefined : { y: -3, rotate: i % 2 ? 0.6 : -0.6 }}
-              transition={{ type: 'spring', stiffness: 260, damping: 18 }}
-            >
-              <Poster tone={s.tone} tilt={s.tilt} className={styles.sheet} peel={false} paper={i % 2 ? 'b' : 'a'}>
-                <span className={styles.sheetText}>
-                  no measure,
-                  <br />
-                  no pressure.
-                </span>
-                <span className={styles.sheetFoot}>
-                  <span>small p club</span>
-                  <span>smallp.club</span>
-                </span>
-                <motion.span
-                  className={styles.wet}
-                  initial={{ opacity: 0.55 }}
-                  animate={{ opacity: 0 }}
-                  transition={{ duration: 2.2, delay: 1 + s.order * 0.16 }}
-                />
-              </Poster>
-            </motion.div>
+            {!torn.has(i) && (
+              <div className={styles.sheetFront}>
+                <Flex>
+                  <FrontPoster tone={s.tone} tilt={s.tilt} i={i} wetDelay={1 + s.order * 0.16} />
+                </Flex>
+              </div>
+            )}
           </motion.div>
         ))}
         {/* Die Ziegel drücken sich durchs nasse Papier: Fugen als Relief */}
@@ -161,6 +145,21 @@ export function Hero() {
 
       <div className={styles.heroScrim} aria-hidden="true" />
 
+      {/* Abgerissene Bahnen fallen vor allem anderen herunter, auch vor dem Mann. */}
+      <MotionConfig reducedMotion="user">
+        <div className={`${styles.heroSheets} ${styles.heroFall}`} aria-hidden="true">
+          {SHEETS.map((s, i) => (
+            <div key={i} className={styles.sheetSlot}>
+              {torn.has(i) && (
+                <motion.div className={styles.sheetFront} animate={tearMotion(i)}>
+                  <FrontPoster tone={s.tone} tilt={s.tilt} i={i} />
+                </motion.div>
+              )}
+            </div>
+          ))}
+        </div>
+      </MotionConfig>
+
       <motion.div
         className={styles.heroFoot}
         initial={{ opacity: 0, y: 16 }}
@@ -176,5 +175,82 @@ export function Hero() {
         </motion.a>
       </motion.div>
     </section>
+  );
+}
+
+/**
+ * Flex — eine Bahn, die nur oben festgeklebt ist.
+ * Unter dem Zeiger hebt sich die freie Unterkante zum Betrachter, die Seite
+ * am Zeiger kommt mit, schnelle Bewegungen lassen das Papier flattern. Beim
+ * Verlassen schwingt es mit weicher Feder an die Wand zurück. Nur bei feinem
+ * Zeiger und ohne Reduced Motion, sonst bleibt die Bahn ruhig.
+ */
+function Flex({ children }: { children: ReactNode }) {
+  const live = useRef(false);
+  useEffect(() => {
+    live.current =
+      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
+  const paper = { stiffness: 140, damping: 9, mass: 0.7 };
+  const rx = useSpring(0, paper);
+  const ry = useSpring(0, paper);
+  const rz = useSpring(0, { stiffness: 200, damping: 7, mass: 0.5 });
+  const lastX = useMotionValue(0);
+  const lift = useTransform(rx, (v) => Math.max(0, v) / 12);
+
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!live.current) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5;
+    const ny = (e.clientY - r.top) / r.height;
+    rx.set(3 + ny * 10);
+    ry.set(-nx * 9);
+    const v = e.clientX - lastX.get();
+    lastX.set(e.clientX);
+    rz.set(Math.max(-2.5, Math.min(2.5, v * 0.12)));
+  };
+  const onLeave = () => {
+    rx.set(0);
+    ry.set(0);
+    rz.set(0);
+  };
+
+  return (
+    <motion.div
+      className={styles.sheetFlex}
+      style={{ rotateX: rx, rotateY: ry, rotateZ: rz, '--lift': lift } as never}
+      onPointerEnter={(e) => lastX.set(e.clientX)}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/** Die vordere Bahn: frisch geklebt, beim ersten Erscheinen noch nass. */
+function FrontPoster({ tone, tilt, i, wetDelay }: { tone: PosterTone; tilt: number; i: number; wetDelay?: number }) {
+  return (
+    <Poster tone={tone} tilt={tilt} className={styles.sheet} peel={false} paper={i % 2 ? 'b' : 'a'}>
+      <span className={styles.sheetText}>
+        no measure,
+        <br />
+        no pressure.
+      </span>
+      <span className={styles.sheetFoot}>
+        <span>small p club</span>
+        <span>smallp.club</span>
+      </span>
+      {wetDelay !== undefined && (
+        <motion.span
+          className={styles.wet}
+          initial={{ opacity: 0.55 }}
+          animate={{ opacity: 0 }}
+          transition={{ duration: 2.2, delay: wetDelay }}
+        />
+      )}
+    </Poster>
   );
 }
