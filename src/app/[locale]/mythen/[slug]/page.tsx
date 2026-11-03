@@ -1,5 +1,4 @@
 import { notFound } from 'next/navigation';
-import { headers } from 'next/headers';
 import { Source } from '@/components/primitives/Source';
 import { Chapter, JoinBlock, Margin, Page, Wide } from '@/components/v2/Page';
 import { MythHero } from '@/components/v2/MythHero';
@@ -7,7 +6,6 @@ import { MythList } from '@/components/v2/MythList';
 import { Link } from '@/i18n/navigation';
 import styles from './page.module.css';
 import {
-  getAllMythSlugs,
   getMythBySlug,
   getRelatedMyths,
   type MythDetail,
@@ -74,9 +72,9 @@ interface PageProps {
   params: Promise<{ slug: string; locale: string }>;
 }
 
-export function generateStaticParams() {
-  return getAllMythSlugs().map((slug) => ({ slug }));
-}
+// Das Layout liest pro Anfrage Cookies und Header (Mitglieds-Pille, CSP-Nonce).
+// Statisches Vorrendern endet deshalb in Produktion mit DYNAMIC_SERVER_USAGE (500).
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
@@ -100,22 +98,19 @@ export default async function MythosDetailPage({ params }: PageProps) {
   if (!myth) notFound();
 
   const related = getRelatedMyths(slug);
-  const nonce = (await headers()).get('x-nonce') ?? undefined;
   const schemas = buildMythSchemas(myth, slug);
 
   return (
     <Page>
       {/* JSON-LD: Article + ScholarlyArticle-Citations (GEO) + BreadcrumbList.
-          Inline-Scripts brauchen die CSP-Nonce. */}
+          JSON-LD wird nicht ausgeführt, braucht also keine CSP-Nonce. */}
       <script
         type="application/ld+json"
-        nonce={nonce}
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.article) }}
       />
       <script
         type="application/ld+json"
-        nonce={nonce}
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.breadcrumb) }}
       />
