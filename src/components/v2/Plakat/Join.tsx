@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { JoinInline } from '../JoinInline';
 import styles from './Plakat.module.css';
+import { PaperSkin } from '../PaperSkin';
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -56,9 +57,11 @@ export function Join({
           <li>anonym, mit ausgedachtem namen.</li>
           <li>auf allen geräten abmelden, jederzeit.</li>
         </ul>
+        <PaperSkin variant="b" sheen={false} />
       </motion.div>
 
       {countLine && <p className={styles.joinCount}>{countLine}</p>}
+      <PaperSkin />
     </section>
   );
 }

@@ -1,0 +1,16 @@
+import { PageTick } from './PageTick';
+
+/**
+ * Wird bei jeder Navigation neu gemountet. PageTick löst den Seitenwechsel
+ * aus (neue Bahn über die Wand). Der Seiteninhalt bekommt keinen eigenen
+ * Transition-Namen, damit das Standbild der alten Seite dort bleibt, wo man
+ * gescrollt war.
+ */
+export default function Template({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <PageTick />
+      {children}
+    </>
+  );
+}

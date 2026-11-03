@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
+import { PageSwap } from '@/components/v2/PageSwap';
+import { PosterTouch } from '@/components/v2/PosterTouch';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
@@ -102,7 +104,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   const nonce = (await headers()).get('x-nonce') ?? undefined;
 
   return (
-    <html lang={locale} className={inter.variable}>
+    <html lang={locale} className={inter.variable} data-scroll-behavior="smooth">
       <head>
         <script
           type="application/ld+json"
@@ -123,6 +125,8 @@ export default async function LocaleLayout({ children, params }: Props) {
           <NavGate>
             <SiteNavContainer />
           </NavGate>
+          <PageSwap />
+          <PosterTouch />
           {children}
           <FooterGate>
             <FooterContainer />

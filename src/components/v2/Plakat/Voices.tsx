@@ -1,9 +1,11 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from '@/i18n/navigation';
 import { caveat } from './fonts';
 import styles from './Plakat.module.css';
+import { PaperSkin } from '../PaperSkin';
 
 export type VoiceNote =
   | { kind: 'story'; id: string; body: string; pseudonym: string }
@@ -22,6 +24,14 @@ const SPRING = { type: 'spring', stiffness: 160, damping: 24 } as const;
  */
 export function Voices({ notes }: { notes: ReadonlyArray<VoiceNote> }) {
   const firstPrompt = notes.findIndex((n) => n.kind === 'prompt');
+  const wall = useRef<HTMLUListElement>(null);
+  // Zettel lassen sich nur mit Maus/Trackpad verschieben. Auf Touch würde
+  // Ziehen das Scrollen blockieren. Erst nach dem Mount entschieden, damit
+  // Server und Client dasselbe HTML liefern.
+  const [canDrag, setCanDrag] = useState(false);
+  useEffect(() => {
+    setCanDrag(window.matchMedia('(hover: hover) and (pointer: fine)').matches);
+  }, []);
 
   return (
     <section className={`${styles.voices} ${caveat.variable}`} aria-labelledby="plakat-voices">
@@ -35,7 +45,7 @@ export function Voices({ notes }: { notes: ReadonlyArray<VoiceNote> }) {
         </p>
       </div>
 
-      <ul className={styles.notes}>
+      <ul className={styles.notes} ref={wall}>
         {notes.map((n, i) => (
           <motion.li
             key={n.id}
@@ -44,6 +54,13 @@ export function Voices({ notes }: { notes: ReadonlyArray<VoiceNote> }) {
             whileInView={{ y: 0, scale: 1, rotate: TILTS[i % TILTS.length]! }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ ...SPRING, delay: i * 0.08 }}
+            whileHover={{ y: -6, rotate: TILTS[i % TILTS.length]! * 0.4 }}
+            drag={canDrag && n.kind === 'story'}
+            dragConstraints={wall}
+            dragElastic={0.15}
+            dragMomentum={false}
+            whileDrag={{ scale: 1.05, rotate: 0, zIndex: 6, cursor: 'grabbing' }}
+            data-draggable={(canDrag && n.kind === 'story') || undefined}
           >
             <span className={styles.tape} aria-hidden="true" />
             {n.kind === 'story' ? (
@@ -60,6 +77,7 @@ export function Voices({ notes }: { notes: ReadonlyArray<VoiceNote> }) {
                 </span>
               </Link>
             )}
+            <PaperSkin variant={i % 2 ? "b" : "a"} sheen={false} />
           </motion.li>
         ))}
       </ul>

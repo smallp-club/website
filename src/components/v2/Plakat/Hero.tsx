@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useRef, useState } from 'react';
+import { MotionConfig, motion, useScroll, useTransform } from 'framer-motion';
+import { caveat } from './fonts';
 import { Poster, type PosterTone } from './Poster';
 import styles from './Plakat.module.css';
 
@@ -20,6 +21,30 @@ const SHEETS: ReadonlyArray<{ tone: PosterTone; tilt: number; order: number }> =
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
+/** Was unter jeder Bahn klebt. Wer abreißt, findet die nächste Zeile der Kampagne. */
+const UNDER: ReadonlyArray<string> = [
+  'hör auf zu messen.',
+  'ja, wir reden darüber. und?',
+  'kein lineal. nirgends.',
+  'du bist gut so.',
+  'auch ohne-glied.',
+  'der druck kommt aus dem vergleich.',
+  'wir messen euch nicht.',
+  'mit-glied werden. kostenlos.',
+];
+
+/** Die Bahn fällt von einer Ecke aus ab, wie Papier, das nur noch oben hält. */
+function tearMotion(i: number) {
+  const dir = i % 2 ? 1 : -1;
+  return {
+    rotate: [0, dir * 3, dir * 22],
+    y: ['0%', '3%', '135%'],
+    x: ['0%', '0%', `${dir * 12}%`],
+    opacity: [1, 1, 0],
+    transition: { duration: 0.95, times: [0, 0.25, 1], ease: [0.55, 0, 0.8, 0.4] as const },
+  };
+}
+
 /**
  * Hero „Plakatnacht": eine Wand bei Nacht, Bahn für Bahn wird gekleistert,
  * davor der Mann mit dem Pinsel. Die Plakate sind echtes HTML (scharf auf
@@ -31,6 +56,7 @@ const EASE = [0.16, 1, 0.3, 1] as const;
  */
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
+  const [torn, setTorn] = useState<ReadonlySet<number>>(new Set());
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
   const manY = useTransform(scrollYProgress, [0, 1], [0, 140]);
   const wallY = useTransform(scrollYProgress, [0, 1], [0, 60]);
@@ -54,37 +80,66 @@ export function Hero() {
         no measure, no pressure. small p club ist ein club für alle, die aufhören wollen zu messen.
       </h1>
 
-      <div className={styles.heroSheets} aria-hidden="true">
+      <MotionConfig reducedMotion="user">
+      {/* Die Bahnen sind Deko (aria-hidden). Abreißen ist ein Spiel für Zeiger
+          und Finger, der Inhalt darunter steht genauso auf /club. */}
+      <div className={`${styles.heroSheets} ${caveat.variable}`} aria-hidden="true">
         {SHEETS.map((s, i) => (
           <motion.div
             key={i}
             className={styles.sheetSlot}
-            initial={{ clipPath: 'inset(-6% -6% 100% -6%)' }}
-            animate={{ clipPath: 'inset(-6% -6% -6% -6%)' }}
+            data-torn={torn.has(i) || undefined}
+            initial={{ clipPath: 'inset(-6% -6% 106% -6%)' }}
+            animate={{ clipPath: 'inset(-6% -6% -6% -6%)', transitionEnd: { clipPath: 'none' } }}
             transition={{ duration: 0.75, delay: 0.35 + s.order * 0.16, ease: EASE }}
+            onClick={() => setTorn((prev) => new Set(prev).add(i))}
           >
-            <Poster tone={s.tone} tilt={s.tilt} className={styles.sheet}>
-              <span className={styles.sheetText}>
-                no measure,
-                <br />
-                no pressure.
-              </span>
+            {/* Darunter: die ältere Bahn mit einer anderen Zeile */}
+            <Poster tone={s.tone === 'act' ? 'paper' : 'act'} tilt={-s.tilt} className={`${styles.sheet} ${styles.sheetUnder}`} peel={false} paper={i % 2 ? 'a' : 'b'}>
+              <span className={styles.sheetUnderText}>{UNDER[i]}</span>
               <span className={styles.sheetFoot}>
                 <span>small p club</span>
                 <span>smallp.club</span>
               </span>
-                              <motion.span
+            </Poster>
+            <motion.div
+              className={styles.sheetFront}
+              animate={torn.has(i) ? tearMotion(i) : undefined}
+              whileHover={torn.has(i) ? undefined : { y: -3, rotate: i % 2 ? 0.6 : -0.6 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 18 }}
+            >
+              <Poster tone={s.tone} tilt={s.tilt} className={styles.sheet} peel={false} paper={i % 2 ? 'b' : 'a'}>
+                <span className={styles.sheetText}>
+                  no measure,
+                  <br />
+                  no pressure.
+                </span>
+                <span className={styles.sheetFoot}>
+                  <span>small p club</span>
+                  <span>smallp.club</span>
+                </span>
+                <motion.span
                   className={styles.wet}
                   initial={{ opacity: 0.55 }}
                   animate={{ opacity: 0 }}
                   transition={{ duration: 2.2, delay: 1 + s.order * 0.16 }}
                 />
-            </Poster>
+              </Poster>
+            </motion.div>
           </motion.div>
         ))}
         {/* Die Ziegel drücken sich durchs nasse Papier: Fugen als Relief */}
         <span className={styles.relief} />
+        <motion.span
+          className={styles.tearHint}
+          initial={{ opacity: 0, rotate: -8, y: 8 }}
+          animate={torn.size ? { opacity: 0, y: 8 } : { opacity: 1, rotate: -4, y: 0 }}
+          transition={{ duration: 0.5, delay: torn.size ? 0 : 3.2, ease: EASE }}
+        >
+          reiß ruhig eins ab.
+        </motion.span>
       </div>
+      </MotionConfig>
 
       <motion.div
         className={styles.heroMan}

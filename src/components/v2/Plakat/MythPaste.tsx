@@ -47,7 +47,7 @@ export function MythPaste({ myth, fact, source, href }: MythPasteProps) {
           <Poster tone="old" tilt={-1} className={styles.mythPoster}>
             <MythText myth={myth} />
           </Poster>
-          <Poster tone="deep" tilt={0.6} className={styles.mythPoster}>
+          <Poster tone="deep" tilt={0.6} className={styles.mythPoster} paper="b">
             <FactText fact={fact} />
           </Poster>
         </div>
@@ -73,7 +73,7 @@ export function MythPaste({ myth, fact, source, href }: MythPasteProps) {
             <MythText myth={myth} />
           </Poster>
           <motion.div className={styles.mythOver} style={{ clipPath: clip }}>
-            <Poster tone="deep" tilt={0.5} className={styles.mythPoster}>
+            <Poster tone="deep" tilt={0.5} className={styles.mythPoster} paper="b">
               <motion.div style={{ opacity: factOpacity }}>
                 <FactText fact={fact} />
               </motion.div>

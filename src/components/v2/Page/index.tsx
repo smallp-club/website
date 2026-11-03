@@ -4,6 +4,7 @@ import { Link } from '@/i18n/navigation';
 import { anton } from '../Plakat/fonts';
 import { JoinInline } from '../JoinInline';
 import styles from './Page.module.css';
+import { PaperSkin } from '../PaperSkin';
 
 /**
  * Innenseiten-System V2 in der Plakat-Sprache der Startseite.
@@ -80,12 +81,13 @@ export function PageHead({
               <span className={styles.scrapBack} aria-hidden="true" />
               <span className={styles.scrapLow} aria-hidden="true" />
               <div className={[styles.headPoster, poster === "act" ? styles.headPosterAct : ""].join(" ")}>
-                <div className={styles.posterSheet}>
+                <div className={styles.posterSheet} data-poster="">
                   <h1 className={styles.title}>{title}</h1>
                   <p className={styles.posterFoot} aria-hidden="true">
                     <span>no measure, no pressure.</span>
                     <span>small p club</span>
                   </p>
+                  <PaperSkin />
                 </div>
               </div>
             </div>
@@ -203,6 +205,7 @@ export function Margin({ label, children }: { label: string; children: ReactNode
       <span className={styles.tape} aria-hidden="true" />
       <span className={styles.marginLabel}>{label}</span>
       <span className={styles.marginText}>{children}</span>
+      <PaperSkin variant="b" sheen={false} />
     </div>
   );
 }
@@ -263,7 +266,9 @@ export function JoinBlock({ nr, title, lead, turnstileSiteKey }: JoinBlockProps)
         <p className={styles.stripLead}>{lead}</p>
         <JoinInline tone="light" turnstileSiteKey={turnstileSiteKey} />
         <JoinFine />
+        <PaperSkin variant="b" sheen={false} />
       </div>
+      <PaperSkin />
     </section>
   );
 }

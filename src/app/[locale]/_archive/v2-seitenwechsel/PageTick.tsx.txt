@@ -1,0 +1,36 @@
+'use client';
+
+import { ViewTransition } from 'react';
+import styles from './template.module.css';
+
+const EASE = 'cubic-bezier(0.16, 1, 0.3, 1)';
+
+/**
+ * Löst bei jedem Seitenwechsel die View Transition aus und streicht die neue
+ * Seite wie eine Plakatbahn von oben nach unten über die alte (die abdunkelt,
+ * siehe globals.css). Die Bewegung wird hier per Web Animations gesetzt, weil
+ * React die Root-Ebene sonst ausblendet (React animiert nur benannte
+ * Bereiche). Seine Ausblend-Animationen auf der Root werden daher aufgehoben.
+ */
+export function PageTick() {
+  return (
+    <ViewTransition
+      enter="page-tick"
+      exit="page-tick"
+      update="none"
+      onEnter={() => {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        for (const a of document.getAnimations()) {
+          const pseudo = (a.effect as KeyframeEffect | null)?.pseudoElement;
+          if (pseudo === '::view-transition' || pseudo === '::view-transition-group(root)') a.cancel();
+        }
+        document.documentElement.animate(
+          [{ clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0 0)' }],
+          { duration: 700, easing: EASE, fill: 'both', pseudoElement: '::view-transition-new(root)' },
+        );
+      }}
+    >
+      <span className={styles.tick} aria-hidden="true" />
+    </ViewTransition>
+  );
+}

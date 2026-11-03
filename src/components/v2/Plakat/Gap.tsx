@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Poster } from './Poster';
 import { anton } from './fonts';
+import { CountUp } from './CountUp';
 import styles from './Plakat.module.css';
 
 const SPRING = { type: 'spring', stiffness: 120, damping: 24, mass: 0.9 } as const;
@@ -33,15 +34,15 @@ export function Gap() {
       <div className={styles.gapRow}>
         <motion.div className={styles.gapCell} aria-hidden="true" {...drop(-1.4, 0)}>
           <Poster tone="ink" className={styles.gapPoster}>
-            <span className={styles.gapNumber}>85&nbsp;%</span>
+            <CountUp to={85} suffix={" %"} className={styles.gapNumber} />
             <span className={styles.gapLabel}>der partnerinnen sind zufrieden.</span>
           </Poster>
         </motion.div>
 
 
         <motion.div className={styles.gapCell} aria-hidden="true" {...drop(1.2, 0.25)}>
-          <Poster tone="ink" className={styles.gapPoster}>
-            <span className={`${styles.gapNumber} ${styles.gapNumberAct}`}>55&nbsp;%</span>
+          <Poster tone="ink" className={styles.gapPoster} paper="b">
+            <CountUp to={55} suffix={" %"} className={`${styles.gapNumber} ${styles.gapNumberAct}`} />
             <span className={`${styles.gapLabel} ${styles.gapLabelAct}`}>der männer mit sich selbst.</span>
           </Poster>
         </motion.div>

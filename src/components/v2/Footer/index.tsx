@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Link } from '@/i18n/navigation';
 import styles from './Footer.module.css';
+import { PaperSkin } from '../PaperSkin';
 
 export interface FooterProps {
   /** Aktuelle Memberzahl, kommt gecacht aus Supabase. */
@@ -27,6 +28,33 @@ function memberLine(count: number): string {
   return `${count.toLocaleString('de-DE')} ${noun}. auch ohne-glied.`;
 }
 
+function PrintContent({ memberCount }: FooterProps) {
+  return (
+    <>
+      <div className={styles.printHead}>
+        <p className={styles.members}>{memberLine(memberCount)}</p>
+        <Image
+          src="/brand/smallpclub-mark-turquoise.svg"
+          alt=""
+          width={44}
+          height={46}
+          className={styles.mark}
+        />
+      </div>
+
+      <p className={styles.tagline}>
+        <span>no measure,</span>
+        <span>no pressure.</span>
+      </p>
+
+      <div className={styles.printFoot}>
+        <p className={styles.manifesto}>ja, wir reden hier über penisse.</p>
+        <p className={styles.signoff}>wir sind ein club. ohne uns zu messen.</p>
+      </div>
+    </>
+  );
+}
+
 /**
  * Footer V2 „Großplakat“. Server-Komponente, kein JS im Browser.
  *
@@ -43,34 +71,26 @@ export function Footer({ memberCount }: FooterProps) {
       <span className={styles.relief} aria-hidden="true" />
 
       <div className={styles.billboard}>
-        <div className={styles.sheets} aria-hidden="true">
-          <span className={styles.sheet} />
-          <span className={styles.sheet} />
-          <span className={styles.sheet} />
+        {/* Der echte Text, unsichtbar, gibt Größe und Inhalt für Screenreader vor */}
+        <div className={`${styles.print} ${styles.printSource}`}>
+          <PrintContent memberCount={memberCount} />
         </div>
 
-        <div className={styles.print}>
-          <div className={styles.printHead}>
-            <p className={styles.members}>{memberLine(memberCount)}</p>
-            <Image
-              src="/brand/smallpclub-mark-turquoise.svg"
-              alt=""
-              width={44}
-              height={46}
-              className={styles.mark}
-            />
+        {/* Drei Bahnen, jede mit ihrem Teil des Drucks, leicht schief und
+            versetzt geklebt. Deshalb läuft die Schrift an den Stößen nicht
+            ganz glatt durch, wie bei einer echten Plakatwand. */}
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={styles.panel} aria-hidden="true" data-poster="">
+            <div className={styles.paste}>
+              <span className={styles.paper} />
+              <div className={styles.print}>
+                <PrintContent memberCount={memberCount} />
+              </div>
+              <PaperSkin variant={i === 1 ? "b" : "a"} />
+              <span className={styles.wear} />
+            </div>
           </div>
-
-          <p className={styles.tagline}>
-            <span>no measure,</span>
-            <span>no pressure.</span>
-          </p>
-
-          <div className={styles.printFoot}>
-            <p className={styles.manifesto}>ja, wir reden hier über penisse.</p>
-            <p className={styles.signoff}>wir sind ein club. ohne uns zu messen.</p>
-          </div>
-        </div>
+        ))}
       </div>
 
       <div className={styles.below}>

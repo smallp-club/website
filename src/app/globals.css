@@ -118,3 +118,55 @@ a {
     animation-duration: 0ms;
   }
 }
+
+/* ===== Seitenwechsel V2: eine neue Bahn wird über die Wand gestrichen =====
+   Die alte Seite bleibt als Standbild an der Wand und dunkelt ab, die neue
+   klebt von oben nach unten darüber (gleiche Bewegung wie die Hero-Bahnen).
+   Die Nav-Leiste hat einen eigenen Namen und steht still. Browser ohne
+   View Transitions wechseln ohne Effekt. */
+:root {
+  --page-paste-duration: 0.7s;
+  --page-paste-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+::view-transition-group(root) {
+  background: var(--v2-night-wall, #0b0b0b);
+}
+
+::view-transition-old(root) {
+  animation: var(--page-paste-duration) var(--page-paste-ease) both page-wall-dim;
+}
+
+::view-transition-new(root) {
+  animation: var(--page-paste-duration) var(--page-paste-ease) both page-paste;
+}
+
+/* Name global gesetzt, CSS Modules würden ihn sonst umbenennen */
+[data-site-nav] {
+  view-transition-name: site-nav;
+}
+
+::view-transition-group(site-nav),
+::view-transition-old(site-nav),
+::view-transition-new(site-nav) {
+  animation: none;
+}
+
+@keyframes page-wall-dim {
+  to { opacity: 0.45; }
+}
+
+@keyframes page-paste {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+  ::view-transition-old(root) { display: none; }
+}
+

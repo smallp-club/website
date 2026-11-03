@@ -50,48 +50,82 @@
   filter: drop-shadow(0 34px 40px rgba(0, 0, 0, 0.6));
 }
 
-.sheets {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/* Der echte Text: gibt die Größe vor und bleibt für Screenreader lesbar */
+.printSource {
+  opacity: 0;
 }
 
-.sheet {
-  position: relative;
+/* Eine Bahn: Papier und ihr Teil des Drucks, als Ganzes leicht schief und
+   versetzt geklebt. Der Schatten fällt auf die Bahn darunter. */
+.panel {
+  position: absolute;
+  inset: 0;
+  filter: drop-shadow(-3px 0 2px rgba(0, 0, 0, 0.45));
+}
+
+.panel:nth-child(2) { z-index: 1; transform-origin: 17% 50%; transform: rotate(-0.35deg) translate(-2px, 3px); filter: none; }
+.panel:nth-child(3) { z-index: 2; transform-origin: 50% 50%; transform: rotate(0.5deg) translate(3px, -5px); }
+.panel:nth-child(4) { z-index: 3; transform-origin: 83% 50%; transform: rotate(-0.25deg) translate(-1px, 6px); }
+
+/* Zuschnitt jeder Bahn, Kanten nicht ganz gerade */
+.paste {
+  position: absolute;
+  inset: 0;
+  isolation: isolate;
+  clip-path: var(--cut);
+  /* Farbe für den Abrieb im PaperSkin, gemalt wird sie von .paper */
+  background-color: var(--v2-deep);
+  --skin-wear: 0.5;
+}
+
+.panel:nth-child(2) .paste { --cut: polygon(0 0.5%, 18% 0, 34% 0.3%, 34% 100%, 21% 99.5%, 0 99.2%); --cut0: polygon(0 0.5%, 18% 0, 34% 0.3%, 34% 0.3%, 21% 0.2%, 0 0.5%); }
+.panel:nth-child(3) .paste { --cut: polygon(33.2% 0.8%, 50% 0, 67.4% 0.6%, 67.4% 99.4%, 51% 100%, 33.2% 99.6%); --cut0: polygon(33.2% 0.8%, 50% 0, 67.4% 0.6%, 67.4% 0.6%, 51% 0.2%, 33.2% 0.8%); }
+.panel:nth-child(4) .paste { --cut: polygon(66.6% 0, 84% 0.7%, 100% 0.2%, 100% 99%, 87% 100%, 66.6% 99.5%); --cut0: polygon(66.6% 0, 84% 0.7%, 100% 0.2%, 100% 0.2%, 87% 0.5%, 66.6% 0); }
+
+.paper {
+  position: absolute;
+  inset: 0;
   background-color: var(--v2-deep);
   background-image: var(--v2-paper-noise-soft);
 }
 
-/* Falten und Kleister je Bahn an anderer Stelle */
-.sheet::before {
-  content: "";
+/* Falten, Kleisterblasen und Druck liegen alle im selben Papier */
+
+.panel:nth-child(2) { --skin-x: 10%; --skin-y: 30%; }
+.panel:nth-child(3) { --skin-x: 60%; --skin-y: 70%; }
+.panel:nth-child(4) { --skin-x: 90%; --skin-y: 20%; }
+
+/* Abgegriffene Kante: helle Papierkante am Stoß, leichter Glanz von getrocknetem Kleister */
+.wear {
   position: absolute;
   inset: 0;
-  background-image: var(--v2-paper-wrinkle);
-  background-size: 520px 520px;
-  mix-blend-mode: multiply;
-  opacity: 0.32;
+  pointer-events: none;
 }
 
-.sheet:nth-child(1)::before { background-position: 0 0; }
-.sheet:nth-child(2)::before { background-position: -180px -90px; }
-.sheet:nth-child(3)::before { background-position: -320px -220px; }
-
-/* Nähte: jede Bahn überlappt die vorige ein Stück, mit Kante und Schatten */
-.sheet + .sheet {
-  margin-left: -6px;
-  box-shadow: -1px 0 0 rgba(255, 255, 255, 0.07), -6px 0 10px -6px rgba(0, 0, 0, 0.55);
+.panel:nth-child(3) .wear {
+  background:
+    linear-gradient(90deg, transparent 33.2%, rgba(255, 255, 255, 0.22) 33.2%, rgba(255, 255, 255, 0) calc(33.2% + 2px)),
+    radial-gradient(ellipse 18% 30% at 58% 32%, rgba(255, 255, 255, 0.05), transparent 70%);
 }
 
-.sheet:nth-child(2) { transform: translateY(3px); }
-.sheet:nth-child(3) { transform: translateY(-2px); }
+.panel:nth-child(4) .wear {
+  background:
+    linear-gradient(90deg, transparent 66.6%, rgba(255, 255, 255, 0.22) 66.6%, rgba(255, 255, 255, 0) calc(66.6% + 2px)),
+    linear-gradient(315deg, rgba(255, 255, 255, 0.08) 0, rgba(255, 255, 255, 0) 5%),
+    radial-gradient(ellipse 14% 22% at 80% 70%, rgba(255, 255, 255, 0.05), transparent 70%);
+}
 
 .print {
   position: relative;
   display: grid;
   gap: clamp(2rem, 5vw, 3.5rem);
   padding: clamp(1.5rem, 4vw, 3rem);
+}
+
+.paste .print {
+  position: absolute;
+  inset: 0;
+  align-content: start;
 }
 
 .printHead {
@@ -249,19 +283,18 @@
 }
 
 @media (max-width: 759px) {
-  .sheets {
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(3, 1fr);
-  }
+  /* Mobil liegen die Bahnen untereinander */
+  .panel { filter: drop-shadow(0 -3px 2px rgba(0, 0, 0, 0.45)); }
+  .panel:nth-child(2) { transform-origin: 50% 17%; transform: rotate(-0.4deg) translate(2px, -1px); filter: none; }
+  .panel:nth-child(3) { transform-origin: 50% 50%; transform: rotate(0.6deg) translate(-3px, 2px); }
+  .panel:nth-child(4) { transform-origin: 50% 83%; transform: rotate(-0.3deg) translate(2px, 3px); }
 
-  .sheet + .sheet {
-    margin-left: 0;
-    margin-top: -6px;
-    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.07), 0 -6px 10px -6px rgba(0, 0, 0, 0.55);
-  }
+  .panel:nth-child(2) .paste { --cut: polygon(0 0, 100% 0.4%, 100% 34%, 60% 33.6%, 0.4% 34%, 0 20%); --cut0: polygon(0 0, 100% 0.4%, 100% 0.4%, 60% 0.2%, 0.4% 0, 0 0); }
+  .panel:nth-child(3) .paste { --cut: polygon(0.3% 33.2%, 55% 33.5%, 100% 33.1%, 99.6% 67.4%, 40% 67%, 0 67.4%); --cut0: polygon(0.3% 33.2%, 55% 33.5%, 100% 33.1%, 99.6% 33.1%, 40% 33.3%, 0 33.2%); }
+  .panel:nth-child(4) .paste { --cut: polygon(0 66.6%, 45% 66.9%, 100% 66.5%, 100% 100%, 50% 99.6%, 0.5% 100%); --cut0: polygon(0 66.6%, 45% 66.9%, 100% 66.5%, 100% 66.5%, 50% 66.7%, 0.5% 66.6%); }
 
-  .sheet:nth-child(2) { transform: translateX(2px); }
-  .sheet:nth-child(3) { transform: translateX(-2px); }
+  .panel:nth-child(3) .wear,
+  .panel:nth-child(4) .wear { background: none; }
 }
 
 @media (min-width: 900px) {
@@ -280,21 +313,22 @@
   }
 }
 
-/* Bahnen werden beim Hineinscrollen geklebt, nur wo der Browser es kann */
+/* Bahnen werden beim Hineinscrollen geklebt, Bahn für Bahn von oben nach
+   unten. Der Druck kommt mit seiner Bahn. Nur wo der Browser es kann. */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .sheet {
+    .paste {
       animation: paste linear both;
       animation-timeline: view();
-      animation-range: entry 0% entry 70%;
     }
 
-    .sheet:nth-child(2) { animation-range: entry 10% entry 80%; }
-    .sheet:nth-child(3) { animation-range: entry 20% entry 90%; }
+    .panel:nth-child(2) .paste { animation-range: entry 0% entry 60%; }
+    .panel:nth-child(3) .paste { animation-range: entry 15% entry 75%; }
+    .panel:nth-child(4) .paste { animation-range: entry 30% entry 90%; }
 
     @keyframes paste {
-      from { clip-path: inset(0 0 100% 0); }
-      to { clip-path: inset(-20px -20px -20px -20px); }
+      from { clip-path: var(--cut0); }
+      to { clip-path: var(--cut); }
     }
   }
 }

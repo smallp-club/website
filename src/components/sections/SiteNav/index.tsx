@@ -139,6 +139,7 @@ export function SiteNav({ heroMode = false, memberPseudonym }: SiteNavProps = {}
 
       <div
         className={styles.navShell}
+        data-site-nav
         data-pinned={pinned ? 'true' : 'false'}
         data-hero-mode={heroMode ? 'true' : 'false'}
       >

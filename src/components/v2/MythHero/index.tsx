@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import styles from './MythHero.module.css';
+import { PaperSkin } from '../PaperSkin';
 
 export interface MythHeroProps {
   category: string;
@@ -29,15 +30,17 @@ export function MythHero({ category, myth, fact, source }: MythHeroProps) {
       <div className={styles.inner}>
         <p className={styles.eyebrow}>mythos · {category}</p>
         <div className={styles.stack}>
-          <div className={`${styles.poster} ${styles.posterOld}`}>
+          <div className={`${styles.poster} ${styles.posterOld}`} data-poster="">
             <h1 className={styles.myth}>
               <span className={styles.mythPrefix}>angeblich.</span> {myth}
             </h1>
+            <PaperSkin />
           </div>
-          <div className={`${styles.poster} ${styles.posterFact}`}>
+          <div className={`${styles.poster} ${styles.posterFact}`} data-poster="">
             <p className={styles.fact}>
               <span className={styles.factPrefix}>wahr ist.</span> {fact}
             </p>
+            <PaperSkin variant="b" />
           </div>
         </div>
         <p className={styles.source}>

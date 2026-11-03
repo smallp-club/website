@@ -7,6 +7,7 @@ import { Link } from '@/i18n/navigation';
 import type { MythDetail } from '@/content/data/myths';
 import { anton } from '../Plakat/fonts';
 import styles from './MythList.module.css';
+import { PaperSkin } from '../PaperSkin';
 
 export type MythListItem = Pick<
   MythDetail,
@@ -87,6 +88,7 @@ function MythPoster({ item: m, nr, tilt }: { item: MythListItem; nr: number; til
           aria-expanded={open}
           aria-controls={factId}
           onClick={toggle}
+          data-poster=""
         >
           <span className={styles.posterHead}>
             <span className={styles.nr} aria-hidden="true">
@@ -97,6 +99,7 @@ function MythPoster({ item: m, nr, tilt }: { item: MythListItem; nr: number; til
           <span className={styles.myth}>
             <span className={styles.prefixMyth}>angeblich.</span> {m.myth}
           </span>
+          <PaperSkin variant={nr % 2 ? "a" : "b"} />
         </button>
 
         <div
@@ -114,6 +117,7 @@ function MythPoster({ item: m, nr, tilt }: { item: MythListItem; nr: number; til
             {m.sourceShort}
           </p>
           <span className={styles.wet} aria-hidden="true" />
+          <PaperSkin variant={nr % 2 ? "b" : "a"} />
         </div>
 
         {/* Leiste unten über beiden Plakaten. Der Hinweis lässt Klicks auf
@@ -159,6 +163,7 @@ function MythPoster({ item: m, nr, tilt }: { item: MythListItem; nr: number; til
             </Link>
           </p>
         </div>
+        <PaperSkin sheen={false} />
       </div>
     </li>
   );

@@ -733,3 +733,9 @@
     margin-top: 0;
   }
 }
+
+/* ---------- Papier-Material (PaperSkin) ---------- */
+.marginNote { isolation: isolate; --skin-wear: 0.3; --skin-crease: 0.6; }
+.joinBlock { isolation: isolate; --skin-crease: 0.7; }
+.strip { isolation: isolate; z-index: 4; --skin-wear: 0; --skin-crease: 0.45; }
+.posterSheet { --skin-x: 20%; --skin-y: 60%; }

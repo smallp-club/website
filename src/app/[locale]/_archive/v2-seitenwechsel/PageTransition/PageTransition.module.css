@@ -1,0 +1,29 @@
+/* Neue Seite wird wie eine Plakatbahn aufgestrichen.
+   Nur während der Animation geclippt (fill backwards), danach ohne clip-path,
+   damit negative Ränder (Kopf unter der Nav) nicht abgeschnitten werden. */
+@media (prefers-reduced-motion: no-preference) {
+  .paste {
+    position: relative;
+    animation: paste 0.7s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+
+  /* nasser Kleister: leichter Glanz, der abtrocknet */
+  .paste::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 40%);
+    animation: dry 1.4s ease-out 0.2s both;
+  }
+}
+
+@keyframes paste {
+  from { clip-path: inset(-120px -40px calc(100% + 120px) -40px); }
+  to { clip-path: inset(-120px -40px -40px -40px); }
+}
+
+@keyframes dry {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}

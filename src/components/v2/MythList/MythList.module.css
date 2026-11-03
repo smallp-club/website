@@ -486,3 +486,7 @@
     transform: rotate(var(--tilt, 0deg));
   }
 }
+
+/* ---------- Papier-Material (PaperSkin) ---------- */
+.note { isolation: isolate; --skin-wear: 0.2; --skin-crease: 0.5; }
+.factPoster { --skin-x: 70%; --skin-y: 20%; }
