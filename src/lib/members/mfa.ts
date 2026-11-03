@@ -199,11 +199,14 @@ export async function consumeBackupCode(
 
   if (error || !match) return false;
 
-  const { error: updateError } = await backupTable
+  // Atomar: nur ein paralleler Request darf den Code verbrauchen (Audit L4).
+  const { data: consumed, error: updateError } = await backupTable
     .update({ used_at: new Date().toISOString() })
-    .eq('id', match.id);
+    .eq('id', match.id)
+    .is('used_at', null)
+    .select('id');
 
-  return !updateError;
+  return !updateError && Array.isArray(consumed) && consumed.length === 1;
 }
 
 /**

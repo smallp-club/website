@@ -18,12 +18,22 @@ function loadConfig(): BrevoConfig | null {
   return { apiKey, listId };
 }
 
-export async function addContactToList(email: string): Promise<BrevoResult> {
+/**
+ * Newsletter-Anmeldung per echtem Double-Opt-In (Security-Audit M5).
+ *
+ * Der Magic-Link-Klick belegt nur die Mail-Adresse, nicht die Newsletter-
+ * Einwilligung. Deshalb schickt Brevo eine eigene Bestätigungsmail
+ * (Template BREVO_DOI_TEMPLATE_ID). Erst der Klick darin setzt den Kontakt
+ * auf die Liste.
+ */
+export async function requestNewsletterDoubleOptIn(email: string): Promise<BrevoResult> {
   const config = loadConfig();
-  if (!config) return { ok: false, reason: 'config_missing' };
+  const templateId = Number.parseInt(process.env.BREVO_DOI_TEMPLATE_ID ?? '', 10);
+  if (!config || Number.isNaN(templateId)) return { ok: false, reason: 'config_missing' };
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://smallp.club';
 
   try {
-    const response = await fetch(`${BREVO_API_BASE}/contacts`, {
+    const response = await fetch(`${BREVO_API_BASE}/contacts/doubleOptinConfirmation`, {
       method: 'POST',
       headers: {
         'api-key': config.apiKey,
@@ -32,23 +42,17 @@ export async function addContactToList(email: string): Promise<BrevoResult> {
       },
       body: JSON.stringify({
         email,
-        listIds: [config.listId],
-        updateEnabled: true,
+        includeListIds: [config.listId],
+        templateId,
+        redirectionUrl: `${site}/mit-glied/eingang`,
       }),
     });
 
-    if (response.status === 201) {
-      return { ok: true, alreadyExists: false };
+    if (response.status === 201 || response.status === 204) {
+      return { ok: true, alreadyExists: response.status === 204 };
     }
-    if (response.status === 204) {
-      return { ok: true, alreadyExists: true };
-    }
-    if (response.status === 400) {
-      return { ok: false, reason: 'invalid_email' };
-    }
-    if (response.status === 429) {
-      return { ok: false, reason: 'rate_limit' };
-    }
+    if (response.status === 400) return { ok: false, reason: 'invalid_email' };
+    if (response.status === 429) return { ok: false, reason: 'rate_limit' };
     return { ok: false, reason: 'api_error' };
   } catch {
     return { ok: false, reason: 'api_error' };
@@ -56,12 +60,27 @@ export async function addContactToList(email: string): Promise<BrevoResult> {
 }
 
 /**
- * Entfernt eine Email aus der Newsletter-Liste — der Contact bleibt in Brevo
- * (für späteres Re-Subscribe ohne Neu-Eingabe), wird nur aus der Liste raus.
- *
- * 201 oder 204 = success. 400 mit `contact_already_removed_from_list` heißt
- * der Contact war nicht (mehr) in der Liste → idempotent als ok.
+ * Löscht den Kontakt komplett aus Brevo (Account-Löschung, Bann, Abbestellen).
+ * 404 = war nie da, zählt als erledigt.
  */
+export async function deleteContact(email: string): Promise<BrevoResult> {
+  const config = loadConfig();
+  if (!config) return { ok: false, reason: 'config_missing' };
+
+  try {
+    const response = await fetch(
+      `${BREVO_API_BASE}/contacts/${encodeURIComponent(email)}?identifierType=email_id`,
+      { method: 'DELETE', headers: { 'api-key': config.apiKey, accept: 'application/json' } },
+    );
+    if (response.status === 204) return { ok: true, alreadyExists: true };
+    if (response.status === 404) return { ok: true, alreadyExists: false };
+    if (response.status === 429) return { ok: false, reason: 'rate_limit' };
+    return { ok: false, reason: 'api_error' };
+  } catch {
+    return { ok: false, reason: 'api_error' };
+  }
+}
+
 export type BrevoListStats =
   | {
       ok: true;
@@ -113,41 +132,6 @@ export async function getListStats(): Promise<BrevoListStats> {
       totalBlacklisted: data.totalBlacklisted ?? 0,
       uniqueSubscribers: data.uniqueSubscribers ?? data.totalSubscribers ?? 0,
     };
-  } catch {
-    return { ok: false, reason: 'api_error' };
-  }
-}
-
-export async function removeContactFromList(email: string): Promise<BrevoResult> {
-  const config = loadConfig();
-  if (!config) return { ok: false, reason: 'config_missing' };
-
-  try {
-    const response = await fetch(
-      `${BREVO_API_BASE}/contacts/lists/${config.listId}/contacts/remove`,
-      {
-        method: 'POST',
-        headers: {
-          'api-key': config.apiKey,
-          'Content-Type': 'application/json',
-          accept: 'application/json',
-        },
-        body: JSON.stringify({ emails: [email] }),
-      }
-    );
-
-    if (response.status === 201 || response.status === 204) {
-      return { ok: true, alreadyExists: false };
-    }
-    if (response.status === 400) {
-      // Brevo returns 400 wenn Contact gar nicht in der Liste war — für uns
-      // ist das identisch mit „bereits draußen". Idempotent OK.
-      return { ok: true, alreadyExists: true };
-    }
-    if (response.status === 429) {
-      return { ok: false, reason: 'rate_limit' };
-    }
-    return { ok: false, reason: 'api_error' };
   } catch {
     return { ok: false, reason: 'api_error' };
   }

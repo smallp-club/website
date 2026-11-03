@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { timingSafeEqual } from 'node:crypto';
 
 /**
  * Client-IP-Resolver für Rate-Limits und Blocklist-Checks.
@@ -30,12 +31,13 @@ export async function getClientIp(): Promise<string | null> {
     // NICHT vertraut (sonst könnte ein Angreifer die IP fälschen und alle
     // IP-Limits + die IP-Blocklist aushebeln). Security-Audit 2026-07-13.
     //
-    // Übergangssicher: solange CF_VERIFY_SECRET nicht gesetzt ist, verhalten
-    // wir uns wie bisher (cf-connecting-ip vertrauen) — kein Bruch bei der
-    // Einführung. Scharf wird es erst, wenn das Secret gesetzt UND die
-    // Cloudflare-Regel aktiv ist.
+    // Ohne CF_VERIFY_SECRET wird cf-connecting-ip in Produktion nicht mehr
+    // vertraut (Audit L2, vorher fail-open). Vergleich zeitkonstant.
     const secret = process.env.CF_VERIFY_SECRET;
-    const stamped = !secret || hdrs.get('x-origin-verify') === secret;
+    const stamp = hdrs.get('x-origin-verify') ?? '';
+    const stamped = secret
+      ? stamp.length === secret.length && timingSafeEqual(Buffer.from(stamp), Buffer.from(secret))
+      : process.env.NODE_ENV !== 'production';
     if (stamped) return cf.trim();
   }
 

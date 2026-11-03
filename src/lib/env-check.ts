@@ -27,7 +27,8 @@ const REQUIRED_IN_PRODUCTION: RequiredVar[] = [
   { name: 'UPSTASH_REDIS_REST_TOKEN', purpose: 'Rate-Limit (sonst fail-closed)' },
   { name: 'TURNSTILE_SECRET_KEY', purpose: 'Bot-Schutz (sonst fail-closed)' },
   { name: 'NEXT_PUBLIC_TURNSTILE_SITE_KEY', purpose: 'Bot-Schutz Widget' },
-  { name: 'HASH_PEPPER', purpose: 'Blocklist-/Backup-Hash-Pepper' },
+  { name: 'HASH_PEPPER', purpose: 'Blocklist-/Backup-Hash-Pepper, Admin-Cookie' },
+  { name: 'CF_VERIFY_SECRET', purpose: 'Cloudflare-Stempel (sonst keine echte Client-IP)' },
   { name: 'NEXT_PUBLIC_SITE_URL', purpose: 'Magic-Link-Redirect-Origin' },
 ];
 

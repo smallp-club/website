@@ -1,9 +1,13 @@
 /**
- * /auth/verify — Token-Exchange für Magic-Link (PKCE-Flow).
+ * /auth/verify — Magic-Link einlösen.
  *
- * Supabase mit @supabase/ssr nutzt PKCE: der Magic-Link-URL trägt `?code=`,
- * den wir hier gegen eine Session tauschen. Anschließend wird sichergestellt,
- * dass ein Profile-Row mit unique Pseudonym existiert, dann Redirect zu /mit-glied/eingang.
+ * GET mit `token_hash` löst NICHT ein, sondern leitet auf /auth/einloggen.
+ * Erst der Knopf dort schickt per POST hierher (Mailfilter verbrauchen den
+ * Link sonst vorab, Security-Audit L8). Alt-Links mit `?code=` (PKCE) werden
+ * per GET weiter direkt eingelöst.
+ *
+ * Nach dem Einlösen: Blocklist-Check (Audit M1, ein Bann lässt sich sonst über
+ * die Supabase-API umgehen), Profil sicherstellen, Weiterleitung.
  *
  * Route liegt unter [locale]/auth/verify weil next-intl jeden Request in den
  * Locale-Namespace mapped (auch /auth/verify ohne Locale-Prefix wird intern
@@ -15,7 +19,9 @@ import type { EmailOtpType } from '@supabase/supabase-js';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { generatePseudonym } from '@/lib/members/pseudonym';
-import { addContactToList } from '@/lib/brevo';
+import { deleteContact, requestNewsletterDoubleOptIn } from '@/lib/brevo';
+import { isBanned } from '@/lib/members/blocklist';
+import { hashEmail } from '@/lib/hash';
 
 const MAX_PSEUDONYM_RETRIES = 8;
 
@@ -99,71 +105,95 @@ async function ensureProfile(
   throw new Error('pseudonym-generation hat zu oft kollidiert');
 }
 
+type LoggedIn = { userId: string; email: string | null; metadata: Record<string, unknown> };
+
+/** Nach POST muss die Weiterleitung 303 sein, sonst wiederholt der Browser den POST. */
+function go(origin: string, path: string, status: 302 | 303) {
+  return NextResponse.redirect(`${origin}${path}`, status);
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl;
   const tokenHash = searchParams.get('token_hash');
   const typeParam = searchParams.get('type');
   const code = searchParams.get('code');
 
-  const supabase = await createSupabaseServerClient();
-
-  // Primärer Pfad: Token-Hash-Verifikation (verifyOtp). Braucht KEINEN
-  // code_verifier-Cookie im anfordernden Browser — funktioniert damit
-  // browser- und geräte-übergreifend (anfordern am Laptop, öffnen am Handy).
-  // Der Fallback auf exchangeCodeForSession bleibt für Alt-Links (PKCE `?code=`)
-  // während der Umstellung des Supabase-Email-Templates erhalten.
-  let userId: string | null = null;
-  let userEmail: string | null = null;
-  let userMetadata: Record<string, unknown> = {};
-
   if (tokenHash && typeParam && VALID_OTP_TYPES.has(typeParam as EmailOtpType)) {
-    const { data, error } = await supabase.auth.verifyOtp({
-      type: typeParam as EmailOtpType,
-      token_hash: tokenHash,
-    });
-    if (error || !data.user) {
-      return NextResponse.redirect(`${origin}/mit-glied?error=expired_link`);
-    }
-    userId = data.user.id;
-    userEmail = data.user.email ?? null;
-    userMetadata = data.user.user_metadata ?? {};
-  } else if (code) {
-    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
-    if (error || !data.user) {
-      return NextResponse.redirect(`${origin}/mit-glied?error=expired_link`);
-    }
-    userId = data.user.id;
-    userEmail = data.user.email ?? null;
-    userMetadata = data.user.user_metadata ?? {};
-  } else {
-    return NextResponse.redirect(`${origin}/mit-glied?error=invalid_link`);
+    const next = new URLSearchParams({ token_hash: tokenHash, type: typeParam });
+    return go(origin, `/auth/einloggen?${next.toString()}`, 302);
+  }
+  if (!code) return go(origin, '/mit-glied?error=invalid_link', 302);
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+  if (error || !data.user) return go(origin, '/mit-glied?error=expired_link', 302);
+  return completeLogin(origin, 302, {
+    userId: data.user.id,
+    email: data.user.email ?? null,
+    metadata: data.user.user_metadata ?? {},
+  });
+}
+
+export async function POST(request: NextRequest) {
+  const { origin } = request.nextUrl;
+  // Nur das eigene Formular darf hier einlösen (Login-CSRF). Wegen
+  // Referrer-Policy no-referrer schicken Browser hier `Origin: null`,
+  // deshalb zählt Sec-Fetch-Site.
+  const sameOrigin =
+    request.headers.get('sec-fetch-site') === 'same-origin' ||
+    request.headers.get('origin') === origin;
+  if (!sameOrigin) {
+    return go(origin, '/mit-glied?error=invalid_link', 303);
   }
 
-  const newsletterOptIn =
-    (userMetadata['newsletter_opt_in'] as boolean | undefined) ?? false;
+  const form = await request.formData();
+  const tokenHash = String(form.get('token_hash') ?? '');
+  const typeParam = String(form.get('type') ?? '');
+  if (!tokenHash || !VALID_OTP_TYPES.has(typeParam as EmailOtpType)) {
+    return go(origin, '/mit-glied?error=invalid_link', 303);
+  }
+
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.verifyOtp({
+    type: typeParam as EmailOtpType,
+    token_hash: tokenHash,
+  });
+  if (error || !data.user) return go(origin, '/mit-glied?error=expired_link', 303);
+  return completeLogin(origin, 303, {
+    userId: data.user.id,
+    email: data.user.email ?? null,
+    metadata: data.user.user_metadata ?? {},
+  });
+}
+
+async function completeLogin(origin: string, status: 302 | 303, user: LoggedIn) {
+  // Gebannte Adresse? Account sofort wieder entfernen, Session beenden.
+  if (user.email && (await isBanned(hashEmail(user.email), null))) {
+    const supabase = await createSupabaseServerClient();
+    await supabase.auth.signOut({ scope: 'global' });
+    const service = createSupabaseServiceClient();
+    const { error } = await service.auth.admin.deleteUser(user.userId);
+    if (error) console.error('[auth/verify] banned user delete failed:', error.message);
+    await deleteContact(user.email);
+    return go(origin, '/mit-glied?error=invalid_link', status);
+  }
+
+  const newsletterOptIn = (user.metadata['newsletter_opt_in'] as boolean | undefined) ?? false;
 
   let profile: EnsureProfileResult;
   try {
-    profile = await ensureProfile(userId, newsletterOptIn);
+    profile = await ensureProfile(user.userId, newsletterOptIn);
   } catch (err) {
     console.error('[auth/verify] ensureProfile failed:', err);
-    return NextResponse.redirect(`${origin}/mit-glied?error=profile_create`);
+    return go(origin, '/mit-glied?error=profile_create', status);
   }
 
-  // Newsletter-Subscription nach erfolgreicher Email-Verifikation. Der Klick
-  // auf den Magic-Link IST der DOI-Beleg — User hat Email + Opt-In separat
-  // bestätigt, das deckt DSGVO-Pflicht zur Spezifität. Fehler bei Brevo
-  // werden nur geloggt: kein Block des Login-Flows, weil Newsletter
-  // sekundär ist und User hier bereits Mit-Glied geworden ist.
-  if (profile.isFresh && newsletterOptIn && userEmail) {
-    const brevoResult = await addContactToList(userEmail);
-    if (!brevoResult.ok) {
-      console.error('[auth/verify] brevo subscribe failed:', brevoResult.reason);
-    }
+  // Newsletter: Brevo schickt eine eigene Bestätigungsmail (echtes DOI,
+  // Audit M5). Fehler blockieren den Login nicht.
+  if (profile.isFresh && newsletterOptIn && user.email) {
+    const brevoResult = await requestNewsletterDoubleOptIn(user.email);
+    if (!brevoResult.ok) console.error('[auth/verify] brevo doi failed:', brevoResult.reason);
   }
 
-  const target = profile.onboardingCompletedAt
-    ? '/mit-glied/eingang'
-    : '/mit-glied/willkommen';
-  return NextResponse.redirect(`${origin}${target}`);
+  return go(origin, profile.onboardingCompletedAt ? '/mit-glied/eingang' : '/mit-glied/willkommen', status);
 }

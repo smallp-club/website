@@ -33,7 +33,12 @@ const TTL_MS = TTL_HOURS * 60 * 60 * 1000;
 // den 2h-Idle-Re-Challenge dauerhaft überspringen. Jetzt wird der Wert
 // server-seitig signiert; ein manipulierter Wert fällt bei der Prüfung durch.
 function signExpiry(value: string): string {
-  const secret = process.env.HASH_PEPPER ?? '';
+  // Ohne Pepper wäre das Cookie mit leerem Schlüssel fälschbar (Audit L2).
+  const secret = process.env.HASH_PEPPER;
+  if (!secret) {
+    if (process.env.NODE_ENV === 'production') throw new Error('HASH_PEPPER fehlt');
+    return createHmac('sha256', 'dev-only').update(`aal2:${value}`).digest('hex');
+  }
   return createHmac('sha256', secret).update(`aal2:${value}`).digest('hex');
 }
 

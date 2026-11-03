@@ -8,6 +8,7 @@ import { challengeAndVerify, consumeBackupCode, getMfaStatus } from '@/lib/membe
 import { setAdminAal2Expiry } from '@/lib/members/admin-session';
 import { consumeRateLimit } from '@/lib/rate-limit';
 import type { TotpChallengeFormState } from './challenge-types';
+import { safeAdminNextPath } from '@/lib/members/admin-next-path';
 
 /**
  * Verifiziert TOTP-Code für eine bestehende verifizierte Session.
@@ -29,7 +30,7 @@ export async function verifyTotpChallengeAction(
   }
 
   const rawCode = String(formData.get('code') ?? '').trim();
-  const next = sanitizeNextPath(String(formData.get('next') ?? ''));
+  const next = safeAdminNextPath(String(formData.get('next') ?? ''));
   const code = rawCode.replace(/\s/g, '');
 
   if (!/^\d{6}$/.test(code)) {
@@ -137,9 +138,3 @@ export async function verifyBackupCodeAction(
   redirect('/mit-glied/admin/2fa/setup');
 }
 
-/** Verhindert Open-Redirect: nur eigene Pfade akzeptieren. */
-function sanitizeNextPath(raw: string): string {
-  if (!raw.startsWith('/') || raw.startsWith('//')) return '/mit-glied/admin';
-  if (raw.startsWith('/mit-glied/admin/2fa/')) return '/mit-glied/admin';
-  return raw;
-}

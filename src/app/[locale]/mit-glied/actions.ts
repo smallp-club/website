@@ -6,7 +6,7 @@ import { getClientIp } from '@/lib/client-ip';
 import { consumeRateLimit } from '@/lib/rate-limit';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
-import { createSupabaseServiceClient } from '@/lib/supabase/service';
+import { isBanned } from '@/lib/members/blocklist';
 import type { AuthFormState } from './auth-types';
 
 /**
@@ -28,36 +28,6 @@ import type { AuthFormState } from './auth-types';
 // IP-Resolver lebt in src/lib/client-ip.ts — cf-connecting-ip zuerst,
 // damit Client-Spoofs auf x-forwarded-for nicht durchgehen (Security H3).
 
-async function isBanned(emailHash: string, ipHash: string | null): Promise<boolean> {
-  try {
-    const service = createSupabaseServiceClient();
-    const { data } = await service
-      .from('blocklist')
-      .select('email_hash')
-      .eq('email_hash', emailHash)
-      .limit(1);
-    if (Array.isArray(data) && data.length > 0) return true;
-
-    if (ipHash) {
-      const ipResult = await service
-        .from('blocklist')
-        .select('ip_hash')
-        .eq('ip_hash', ipHash)
-        .limit(1);
-      return Array.isArray(ipResult.data) && ipResult.data.length > 0;
-    }
-    return false;
-  } catch (err) {
-    // Blocklist-Check ist ein Sicherheits-Gate — bei Fehler nicht blind
-    // durchlassen. Production: fail-closed (als gebannt behandeln), sonst
-    // könnte ein gebannter User einen DB-Aussetzer als Wiedereintritt nutzen.
-    // Der Magic-Link-Flow hängt ohnehin an derselben Supabase-Instanz, ein
-    // echter Ausfall blockiert den Login also sowieso.
-    console.error('[isBanned] lookup failed:', err);
-    return process.env.NODE_ENV === 'production';
-  }
-}
-
 export async function requestMagicLink(
   _prev: AuthFormState,
   formData: FormData
@@ -67,11 +37,15 @@ export async function requestMagicLink(
   const newsletterOptIn = formData.get('newsletter') === 'on';
 
   // 1) Turnstile
+  // Security-Audit M1: Ist in Supabase Auth die CAPTCHA-Pflicht an
+  // (SUPABASE_AUTH_CAPTCHA=1), prüft Supabase das Token selbst. Dann schützt
+  // es auch den direkten Weg über die Supabase-API. Ein Turnstile-Token gilt
+  // nur einmal, deshalb prüfen wir es dann nicht zusätzlich hier.
   const ip = await getClientIp();
-  const captchaOk = await verifyTurnstileToken({
-    token: turnstileToken,
-    ip: ip ?? undefined,
-  });
+  const supabaseChecksCaptcha = process.env.SUPABASE_AUTH_CAPTCHA === '1';
+  const captchaOk = supabaseChecksCaptcha
+    ? turnstileToken.length > 0
+    : await verifyTurnstileToken({ token: turnstileToken, ip: ip ?? undefined });
   if (!captchaOk) {
     return {
       status: 'error',
@@ -90,8 +64,10 @@ export async function requestMagicLink(
   // 3) Blocklist
   const emailHash = hashEmail(email);
   const ipHash = ip ? hashIp(ip) : null;
+  // Security-Audit M3: gebannte Adressen bekommen dieselbe Antwort wie alle
+  // anderen. Sonst verrät das Formular Dritten, wer hier gesperrt wurde.
   if (await isBanned(emailHash, ipHash)) {
-    return { status: 'error', message: 'hier kommst du nicht rein. mehr sagen wir nicht.' };
+    return { status: 'success', email };
   }
 
   // 4) Rate-Limits — beide für localhost gebypasst, damit Dev-Testen nicht
@@ -119,8 +95,9 @@ export async function requestMagicLink(
     if (!emailResult.success) {
       return {
         status: 'error',
-        message:
-          'zu viele anfragen für diese mail. warte ein paar minuten, dann probier nochmal.',
+        // Gleicher Text wie bei der IP-Bremse: verrät nicht, dass gerade
+        // jemand mit dieser Adresse einloggt (Audit M3).
+        message: 'zu viele anfragen. probier es später nochmal.',
       };
     }
   }
@@ -132,6 +109,7 @@ export async function requestMagicLink(
       email,
       options: {
         shouldCreateUser: true,
+        ...(supabaseChecksCaptcha ? { captchaToken: turnstileToken } : {}),
         emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000'}/auth/verify`,
         data: {
           newsletter_opt_in: newsletterOptIn,
@@ -140,12 +118,14 @@ export async function requestMagicLink(
     });
     if (error) {
       console.error('[magic-link] supabase error:', error.status, error.code, error.message);
+      if (error.code === 'captcha_failed') {
+        return { status: 'error', message: 'der bot-check klemmt. lad die seite neu, dann nochmal.' };
+      }
       // Supabase-eigenes Rate-Limit (2/Email/h default) brand-voice-konform übersetzen
       if (error.status === 429 || error.code === 'over_email_send_rate_limit') {
         return {
           status: 'error',
-          message:
-            'zu viele anfragen für diese mail. warte ein paar minuten, dann probier nochmal.',
+          message: 'zu viele anfragen. probier es später nochmal.',
         };
       }
       return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };

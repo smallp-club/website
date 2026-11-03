@@ -7,7 +7,7 @@ import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { getCurrentMember } from '@/lib/members/auth';
 import { clearAdminAal2Expiry } from '@/lib/members/admin-session';
 import { makeExPseudonym } from '@/lib/members/pseudonym';
-import { addContactToList, removeContactFromList } from '@/lib/brevo';
+import { deleteContact, requestNewsletterDoubleOptIn } from '@/lib/brevo';
 
 /**
  * Logout — beendet die aktuelle Session.
@@ -80,6 +80,13 @@ export async function deleteAccountAction() {
     redirect('/mit-glied/loeschen?error=delete_failed');
   }
 
+  // Schritt 3b: Mail-Adresse auch aus Brevo entfernen (DSGVO, Audit M5).
+  // Fehler blockieren die Löschung nicht, werden aber geloggt.
+  if (session.user.email) {
+    const brevo = await deleteContact(session.user.email);
+    if (!brevo.ok) console.error('[delete-account] brevo delete failed:', brevo.reason);
+  }
+
   // Schritt 4: Session lokal beenden und zur Pre-Login-Page mit Bestätigung
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut({ scope: 'global' });
@@ -97,8 +104,8 @@ export async function deleteAccountAction() {
  * der UI-State konsistent bleibt. Bei Fehler wird geloggt und in den nächsten
  * Login/Sync versucht. User soll nicht in einem Inkonsistenz-Zustand hängen.
  *
- * Re-Subscribe nutzt addContactToList mit updateEnabled, also DSGVO-OK auch
- * wenn User vorher schon mal subscribed war.
+ * Anmelden schickt eine Brevo-Bestätigungsmail (echtes Double-Opt-In),
+ * abbestellen löscht den Kontakt komplett aus Brevo.
  */
 export async function toggleNewsletterAction(formData: FormData) {
   const session = await getCurrentMember();
@@ -112,8 +119,8 @@ export async function toggleNewsletterAction(formData: FormData) {
   }
 
   const brevoResult = enable
-    ? await addContactToList(email)
-    : await removeContactFromList(email);
+    ? await requestNewsletterDoubleOptIn(email)
+    : await deleteContact(email);
 
   if (!brevoResult.ok) {
     console.error('[toggleNewsletter] brevo call failed:', brevoResult.reason);

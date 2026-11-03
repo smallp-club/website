@@ -18,6 +18,7 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getMfaStatus } from '@/lib/members/mfa';
 import { ChallengeForm } from './_components/ChallengeForm';
 import { Page, PageHead } from '@/components/v2/Page';
+import { safeAdminNextPath } from '@/lib/members/admin-next-path';
 
 export const metadata = {
   title: '2fa bestätigen. — small p club',
@@ -45,7 +46,7 @@ export default async function TotpChallengePage({ searchParams }: PageProps) {
     redirect('/mit-glied/admin');
   }
 
-  const nextPath = sanitizeNext(next);
+  const nextPath = safeAdminNextPath(next);
 
   return (
     <Page>
@@ -66,10 +67,3 @@ export default async function TotpChallengePage({ searchParams }: PageProps) {
   );
 }
 
-function sanitizeNext(raw: string | undefined): string {
-  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) {
-    return '/mit-glied/admin';
-  }
-  if (raw.startsWith('/mit-glied/admin/2fa/')) return '/mit-glied/admin';
-  return raw;
-}

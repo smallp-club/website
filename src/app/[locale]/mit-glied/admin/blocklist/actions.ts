@@ -6,6 +6,7 @@ import { requireAdminWithMfa } from '@/lib/members/auth';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { verifyTotpForReauth } from '@/lib/members/mfa';
 import { hashEmail, hashIp } from '@/lib/hash';
+import { deleteContact } from '@/lib/brevo';
 
 /**
  * Ban-Mechanismus: Mail- und/oder IP-Hash auf die Blocklist setzen.
@@ -33,12 +34,11 @@ export async function banAction(formData: FormData): Promise<void> {
 
   if (!email && !ip) return;
 
-  const emailHash = email ? hashEmail(email) : null;
   const ipHash = ip ? hashIp(ip) : null;
-
-  // Wenn nur IP gegeben, brauchen wir trotzdem einen email_hash (NOT NULL).
-  // Konvention: leerer Hash für „nur IP gebannt"-Einträge.
-  if (!emailHash) return;
+  // email_hash ist NOT NULL + unique. Für reine IP-Banns ein eindeutiger
+  // Platzhalter, der nie zu einer echten Mail passt (Audit L7: vorher wurde
+  // ein IP-Bann stillschweigend verworfen).
+  const emailHash = email ? hashEmail(email) : `ip-only:${ipHash}`;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const blocklistTable = service.from('blocklist') as any;
@@ -149,8 +149,10 @@ export async function banUserFromStoryAction(formData: FormData): Promise<void> 
   const email = userResult.user.email;
   const emailHash = hashEmail(email);
 
-  // 3) Story rejecten
+  // 3) Story rejecten, übrige nicht veröffentlichte Berichte der Person
+  //    löschen (sonst bleiben sie verwaist in der Inbox, Audit L7)
   await storiesTable.update({ status: 'rejected' }).eq('id', storyId);
+  await storiesTable.delete().eq('user_id', userId).neq('status', 'approved').neq('id', storyId);
 
   // 4) Email-Hash auf Blocklist
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -169,6 +171,8 @@ export async function banUserFromStoryAction(formData: FormData): Promise<void> 
   //    Pseudonym sichtbar — kein „alter-"-Marker beim Ban, anders als beim
   //    self-delete)
   await service.auth.admin.deleteUser(userId);
+  const brevo = await deleteContact(email);
+  if (!brevo.ok) console.error('[admin-ban-user] brevo delete failed:', brevo.reason);
 
   // 6) Audit-Log
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

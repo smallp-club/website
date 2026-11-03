@@ -91,9 +91,12 @@ export async function acceptPseudonymAction(
   const service = createSupabaseServiceClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profilesTable = service.from('profiles') as any;
-  const { error } = await profilesTable
+  // Atomar: der Wechsel greift nur, solange noch keiner stattfand (Audit L5).
+  const { data: changed, error } = await profilesTable
     .update({ pseudonym: desired, pseudonym_changed_at: new Date().toISOString() })
-    .eq('user_id', session.user.id);
+    .eq('user_id', session.user.id)
+    .is('pseudonym_changed_at', null)
+    .select('user_id');
 
   if (error) {
     if (error.code === '23505') {
@@ -101,6 +104,10 @@ export async function acceptPseudonymAction(
     }
     console.error('[pseudonym-accept]', error);
     return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
+  }
+
+  if (!Array.isArray(changed) || changed.length === 0) {
+    return { status: 'error', message: 'dein name steht. wechseln geht nicht mehr.' };
   }
 
   revalidatePath('/mit-glied/willkommen');
