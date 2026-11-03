@@ -62,7 +62,7 @@
 }
 
 .stack:has(.mythPoster:hover) {
-  transform: rotate(var(--tilt, 0deg)) translateY(-3px);
+  transform: rotate(var(--tilt, 0deg));
 }
 
 /* Gemeinsame Plakat-Haut: Faser, Falten, Kleistergewölbe */
@@ -490,3 +490,9 @@
 /* ---------- Papier-Material (PaperSkin) ---------- */
 .note { isolation: isolate; --skin-wear: 0.2; --skin-crease: 0.5; }
 .factPoster { --skin-x: 70%; --skin-y: 20%; }
+
+/* Material kommt nur noch aus PaperSkin: keine zweite Falten- und Glanzebene */
+.mythPoster::before,
+.factPoster::before,
+.mythPoster::after,
+.factPoster::after { display: none; }

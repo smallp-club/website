@@ -59,7 +59,6 @@ export function Stickers() {
           whileInView={{ scale: 1, rotate: d.tilt }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.5 + i * 0.15 }}
-          whileHover={canDrag ? { scale: 1.06, rotate: d.tilt * 0.4 } : undefined}
           drag={canDrag}
           dragConstraints={grid}
           dragElastic={0.12}

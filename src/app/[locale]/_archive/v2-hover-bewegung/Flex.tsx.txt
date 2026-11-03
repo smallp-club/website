@@ -1,0 +1,52 @@
+/**
+ * Flex — eine Bahn, die nur oben festgeklebt ist.
+ * Unter dem Zeiger hebt sich die freie Unterkante zum Betrachter, die Seite
+ * am Zeiger kommt mit, schnelle Bewegungen lassen das Papier flattern. Beim
+ * Verlassen schwingt es mit weicher Feder an die Wand zurück. Nur bei feinem
+ * Zeiger und ohne Reduced Motion, sonst bleibt die Bahn ruhig.
+ */
+function Flex({ children }: { children: ReactNode }) {
+  const live = useRef(false);
+  useEffect(() => {
+    live.current =
+      window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
+  const paper = { stiffness: 140, damping: 9, mass: 0.7 };
+  const rx = useSpring(0, paper);
+  const ry = useSpring(0, paper);
+  const rz = useSpring(0, { stiffness: 200, damping: 7, mass: 0.5 });
+  const lastX = useMotionValue(0);
+  const lift = useTransform(rx, (v) => Math.max(0, v) / 12);
+
+  const onMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!live.current) return;
+    const r = e.currentTarget.getBoundingClientRect();
+    const nx = (e.clientX - r.left) / r.width - 0.5;
+    const ny = (e.clientY - r.top) / r.height;
+    rx.set(3 + ny * 10);
+    ry.set(-nx * 9);
+    const v = e.clientX - lastX.get();
+    lastX.set(e.clientX);
+    rz.set(Math.max(-2.5, Math.min(2.5, v * 0.12)));
+  };
+  const onLeave = () => {
+    rx.set(0);
+    ry.set(0);
+    rz.set(0);
+  };
+
+  return (
+    <motion.div
+      className={styles.sheetFlex}
+      style={{ rotateX: rx, rotateY: ry, rotateZ: rz, '--lift': lift } as never}
+      onPointerEnter={(e) => lastX.set(e.clientX)}
+      onPointerMove={onMove}
+      onPointerLeave={onLeave}
+    >
+      {children}
+    </motion.div>
+  );
+}
+

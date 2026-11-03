@@ -739,3 +739,7 @@
 .joinBlock { isolation: isolate; --skin-crease: 0.5; --skin-wear: 0.4; }
 .strip { isolation: isolate; z-index: 4; --skin-wear: 0; --skin-crease: 0.45; }
 .posterSheet { --skin-x: 20%; --skin-y: 60%; }
+
+/* Material kommt nur noch aus PaperSkin: keine zweite Falten- und Glanzebene */
+.posterSheet::before,
+.posterSheet::after { display: none; }

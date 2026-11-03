@@ -51,27 +51,23 @@
   inset: 0;
   z-index: -1;
   background-color: var(--poster-bg);
-  background-image:
-    radial-gradient(1.1rem 0.7rem at 22% 71%, rgba(255, 255, 255, 0.22), rgba(0, 0, 0, 0.1) 70%, transparent 72%),
-    radial-gradient(0.7rem 0.5rem at 78% 34%, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.08) 70%, transparent 72%),
-    linear-gradient(97deg, transparent 18%, rgba(0, 0, 0, 0.1) 19%, rgba(255, 255, 255, 0.14) 19.6%, transparent 23%),
-    var(--plakat-paper-noise-soft);
-  background-size: auto, auto, auto, 240px;
-  background-blend-mode: normal, normal, normal, multiply;
+  background-image: var(--plakat-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
   clip-path: var(--poster-clip);
   pointer-events: none;
 }
 
 /* Material über dem Druck. Bewusst ohne z-index und ohne clip-path, sonst
    bildet die Ebene eine eigene Gruppe und die Mischmodi sehen den Druck nicht.
-   Der Trick mit Innenabstand und content-box:
-   die Ebene malt selbst nichts, vererbt aber die Plakatfarbe an den Abrieb. */
+   background-clip: text: die Ebene malt selbst nichts (sie hat keine Schrift),
+   vererbt aber die Plakatfarbe an den Abrieb. Größe exakt wie das Plakat. */
 .skinClip {
   position: absolute;
   inset: 0;
-  padding: 50%;
   background-color: var(--poster-bg);
-  background-clip: content-box;
+  -webkit-background-clip: text;
+  background-clip: text;
   pointer-events: none;
 }
 
@@ -95,11 +91,6 @@
   pointer-events: none;
 }
 
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .peelable:hover {
-    --peel: 3.25rem;
-  }
-}
 
 .poster_act { --poster-bg: var(--v2-act); color: var(--spc-black); }
 .poster_paper { --poster-bg: var(--v2-poster-paper); color: var(--spc-black); }
@@ -236,6 +227,8 @@
 
 .heroSheets {
   position: absolute;
+  z-index: 1;
+  isolation: isolate;
   inset: 15% 15% 19% 15%;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -517,17 +510,25 @@
 .prefixMyth { color: var(--v2-myth); }
 .prefixFact { color: var(--v2-act); }
 
-.mythHand {
+/* Quast: die Borsten liegen an der Klebekante auf der Wand, der Stiel
+   steht schräg zum Betrachter und wirft seinen Schatten aufs Papier. */
+.mythBrush {
   position: absolute;
-  top: 18%;
-  width: clamp(160px, 26vw, 360px);
-  aspect-ratio: 1000 / 1113;
-  transform: translateX(-34%);
+  width: clamp(150px, 20vw, 290px);
+  aspect-ratio: 700 / 527;
+  /* Die Mitte des Borstenblocks sitzt auf der Kleisterkante. */
+  transform: translate(-45%, -58%);
   z-index: 3;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to left, transparent 2%, #000 34%);
-  mask-image: linear-gradient(to left, transparent 2%, #000 34%);
-  filter: drop-shadow(0 20px 24px rgba(0, 0, 0, 0.5));
+  perspective: 600px;
+}
+.mythBrushTilt {
+  position: absolute;
+  inset: 0;
+  /* Drehpunkt = Borsten an der Wand, der Griff schwenkt frei. */
+  transform-origin: 45% 58%;
+  /* Der Griff steht vor der Wand: weicher, weit versetzter Schatten plus Kontaktschatten. */
+  filter: drop-shadow(22px 30px 18px rgba(0, 0, 0, 0.42)) drop-shadow(3px 4px 3px rgba(0, 0, 0, 0.35));
 }
 
 .mythFootWall,
@@ -579,7 +580,7 @@
 @media (max-width: 760px) {
   .mythSlot { aspect-ratio: 3 / 4; width: 86vw; }
   .mythText, .factText { font-size: clamp(1.75rem, 8vw, 2.5rem); }
-  .mythHand { top: 30%; }
+  .mythBrush { width: clamp(110px, 30vw, 160px); }
 }
 
 /* ---------- 4 · Die Lücke ---------- */
@@ -1012,7 +1013,7 @@ a.notePrompt:focus-visible {
 .sheetSlot:nth-child(even) .sheetFront { transform-origin: 100% 0; }
 
 .sheetSlot { cursor: pointer; }
-.sheetSlot[data-torn] { cursor: default; z-index: 5; }
+.sheetSlot[data-torn] { cursor: default; }
 .sheetSlot[data-torn] .sheetFront { pointer-events: none; }
 
 .sheetUnder { box-shadow: none; }
@@ -1058,7 +1059,6 @@ a.notePrompt:focus-visible {
 
 /* ---------- Stimmen: Zettel heben, verschieben ---------- */
 .note { transition: box-shadow 0.3s var(--v2-ease); }
-.note:hover { box-shadow: 0 22px 34px -18px rgba(0, 0, 0, 0.5); }
 .note[data-draggable] { cursor: grab; touch-action: none; }
 .note[data-draggable]:active { cursor: grabbing; box-shadow: 0 34px 46px -20px rgba(0, 0, 0, 0.55); }
 
@@ -1066,21 +1066,29 @@ a.notePrompt:focus-visible {
   .stickStage { margin-bottom: 2.2rem; }
 }
 
-/* Bahn biegt sich unter dem Zeiger: oben geklebt, unten frei */
-.sheetSlot { perspective: 1100px; }
-.sheetFlex {
-  position: absolute;
-  inset: 0;
-  transform-origin: 50% 0;
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-.sheetFlex .sheet {
-  box-shadow:
-    -1px 0 0 rgba(0, 0, 0, 0.18),
-    0 calc(18px + var(--lift, 0) * 24px) calc(28px + var(--lift, 0) * 30px) -16px rgba(0, 0, 0, calc(0.7 - var(--lift, 0) * 0.2));
-}
 
 /* Fall-Ebene: liegt über Mann, Verlauf und Fußzeile */
 .heroFall { z-index: 6; pointer-events: none; }
 .heroFall .sheetSlot { cursor: default; }
+
+/* Gap passt immer in einen Bildschirm: Plakate richten sich nach der Höhe */
+.gap {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: 6.5rem 2rem;
+}
+.gapRow {
+  width: 100%;
+  max-width: min(1200px, calc((100svh - 19rem) * 2.67 + 3rem));
+}
+.gapPoster { aspect-ratio: 4 / 3; }
+.gapLine { margin-top: clamp(1.5rem, 3.5vh, 3rem); }
+.gapSource { margin-top: clamp(1rem, 2.5vh, 2rem); }
+
+@media (max-width: 760px) {
+  .gapRow { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; max-width: none; }
+  .gapPoster { aspect-ratio: 3 / 4; padding: 1rem; }
+  .gapLabel { font-size: 0.95rem; margin-top: 0.5rem; }
+}

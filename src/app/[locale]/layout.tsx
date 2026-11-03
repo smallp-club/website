@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { PageSwap } from '@/components/v2/PageSwap';
-import { PosterTouch } from '@/components/v2/PosterTouch';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { headers } from 'next/headers';
@@ -126,7 +125,6 @@ export default async function LocaleLayout({ children, params }: Props) {
             <SiteNavContainer />
           </NavGate>
           <PageSwap />
-          <PosterTouch />
           {children}
           <FooterGate>
             <FooterContainer />

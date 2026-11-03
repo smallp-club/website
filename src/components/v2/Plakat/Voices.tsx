@@ -54,7 +54,6 @@ export function Voices({ notes }: { notes: ReadonlyArray<VoiceNote> }) {
             whileInView={{ y: 0, scale: 1, rotate: TILTS[i % TILTS.length]! }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ ...SPRING, delay: i * 0.08 }}
-            whileHover={{ y: -6, rotate: TILTS[i % TILTS.length]! * 0.4 }}
             drag={canDrag && n.kind === 'story'}
             dragConstraints={wall}
             dragElastic={0.15}

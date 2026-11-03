@@ -36,6 +36,15 @@ export function MythPaste({ myth, fact, source, href }: MythPasteProps) {
   const clip = useTransform(edge, (v) => `inset(0% 0% 0% ${v}%)`);
   const handLeft = useTransform(edge, (v) => `${v}%`);
   const handOpacity = useTransform(scrollYProgress, [0.1, 0.18, 0.5, 0.58], [0, 1, 1, 0]);
+  // Der Quast streicht in Bahnen auf und ab, wie beim echten Kleistern.
+  // Fortschritt t läuft mit der Klebekante, Höhe folgt einer Sinusbahn,
+  // die Neigung folgt der Richtung (der Stiel zieht hinterher).
+  const STROKES = Math.PI * 5;
+  const brushTop = useTransform(edge, (v) => `${40 + Math.sin(((100 - v) / 100) * STROKES) * 24}%`);
+  // Die Borsten liegen an der Wand, der Griff zeigt zum Betrachter. Beim Streichen
+  // kippt der Griff gegen die Zugrichtung (rotateX), beim Wenden dreht er leicht mit.
+  const brushTiltX = useTransform(edge, (v) => Math.cos(((100 - v) / 100) * STROKES) * 14);
+  const brushRotate = useTransform(edge, (v) => Math.sin(((100 - v) / 100) * STROKES) * 6);
   // Der Fakt wird erst lesbar, wenn das Plakat fast liegt. Kein halber Satz.
   const factOpacity = useTransform(edge, [22, 4], [0, 1]);
 
@@ -80,11 +89,13 @@ export function MythPaste({ myth, fact, source, href }: MythPasteProps) {
             </Poster>
           </motion.div>
           <motion.div
-            className={styles.mythHand}
-            style={{ left: handLeft, opacity: handOpacity }}
+            className={styles.mythBrush}
+            style={{ left: handLeft, top: brushTop, opacity: handOpacity }}
             aria-hidden="true"
           >
-            <Image src="/imagery/plakat/hand.webp" alt="" fill sizes="30vw" className={styles.contain} />
+            <motion.div className={styles.mythBrushTilt} style={{ rotate: brushRotate, rotateX: brushTiltX, rotateY: 10 }}>
+              <Image src="/imagery/plakat/quast.webp" alt="" fill sizes="20vw" className={styles.contain} />
+            </motion.div>
           </motion.div>
         </div>
 

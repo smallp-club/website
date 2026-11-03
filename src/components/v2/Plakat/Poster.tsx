@@ -25,7 +25,7 @@ export interface PosterProps {
  * Das Material (Knitter, Abrieb, Glanz) kommt aus PaperSkin und liegt über
  * dem Druck. Schräglage und Ecke laufen über Custom Properties.
  */
-export function Poster({ tone, children, className, tilt = 0, peel = true, paper = 'a' }: PosterProps) {
+export function Poster({ tone, children, className, tilt = 0, peel = false, paper = 'a' }: PosterProps) {
   const cls = [styles.poster, styles[`poster_${tone}`], peel ? styles.peelable : '', className]
     .filter(Boolean)
     .join(' ');
