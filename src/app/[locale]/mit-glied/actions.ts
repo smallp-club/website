@@ -29,6 +29,20 @@ import type { AuthFormState } from './auth-types';
 // damit Client-Spoofs auf x-forwarded-for nicht durchgehen (Security H3).
 
 export async function requestMagicLink(
+  prev: AuthFormState,
+  formData: FormData
+): Promise<AuthFormState> {
+  // Ein Fehler in einem Dienst (Upstash, Turnstile, Supabase) darf nie die
+  // ganze Seite in die Fehlerseite werfen. Lieber eine ruhige Meldung am Formular.
+  try {
+    return await requestMagicLinkInner(prev, formData);
+  } catch (err) {
+    console.error('[magic-link] unhandled:', err);
+    return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
+  }
+}
+
+async function requestMagicLinkInner(
   _prev: AuthFormState,
   formData: FormData
 ): Promise<AuthFormState> {
