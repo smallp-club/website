@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { SkipToContent } from '@/components/primitives/SkipToContent';
 import { SiteFooterContainer } from '@/components/sections/SiteFooter/SiteFooterContainer';
 import { SiteNavContainer } from '@/components/sections/SiteNav/SiteNavContainer';
-import { FourCmReveal } from '@/components/sections/FourCmReveal';
+import { MassbandZug } from '@/components/sections/MassbandZug';
 import deMessages from '../../messages/de.json';
 import './globals.css';
 
@@ -26,7 +26,7 @@ export default async function RootNotFound() {
         <SkipToContent />
         <NextIntlClientProvider locale="de" messages={deMessages}>
           <SiteNavContainer />
-          <FourCmReveal />
+          <MassbandZug />
           <SiteFooterContainer />
         </NextIntlClientProvider>
       </body>
