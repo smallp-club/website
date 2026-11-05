@@ -19,11 +19,15 @@ import { Redis } from '@upstash/redis';
 
 /**
  * Liest die Upstash-Zugangsdaten. Beim Einfügen ins Vercel-Dashboard landen
- * leicht Leerzeichen, Zeilenumbrüche oder Anführungszeichen im Wert, dann
+ * leicht Leerzeichen, Zeilenumbrüche, Anführungszeichen oder ein mitkopiertes
+ * `NAME=` im Wert, dann
  * lehnt Upstash ab (2026-11-05 passiert). Darum wird beides bereinigt.
  */
 export function getUpstashCredentials(): { url: string; token: string } | null {
-  const clean = (v: string | undefined) => (v ?? '').replace(/\s+/g, '').replace(/^["']+|["']+$/g, '');
+  const clean = (v: string | undefined) => (v ?? '')
+      .replace(/\s+/g, '')
+      .replace(/^(?:export)?[A-Z_]+=/, '')
+      .replace(/^["']+|["']+$/g, '');
   const url = clean(process.env.UPSTASH_REDIS_REST_URL);
   const token = clean(process.env.UPSTASH_REDIS_REST_TOKEN);
   return url && token ? { url, token } : null;

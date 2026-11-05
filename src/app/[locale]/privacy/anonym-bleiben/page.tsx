@@ -1,16 +1,16 @@
-import type { Metadata } from 'next';
 
 import { Chapter, Note, Page, PageHead, pageStyles } from '@/components/v2/Page';
 
 import { ClearSiteDataButton } from './ClearSiteDataButton';
 import styles from './page.module.css';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'anonym bleiben',
+export const metadata = pageMetadata({
+  path: '/privacy/anonym-bleiben',
+  title: 'anonym bleiben.',
   description:
-    'wie du die site ohne spuren nutzt. drei wege, keine paranoia.',
-  robots: { index: false, follow: false },
-};
+    'wie du small p club ohne spuren nutzt: privates fenster, verlauf löschen, kein konto nötig. drei wege, keine paranoia.',
+});
 
 /**
  * /privacy/anonym-bleiben (V2, Plakat-Sprache, kompakter Kopf).

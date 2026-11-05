@@ -5,7 +5,7 @@ import { ShellWrap } from '../_components/MemberShell';
 import { MemberPage } from '../_components/MemberPage';
 
 export const metadata = {
-  title: 'berichte. — small p club',
+  title: 'berichte.',
   description: 'deine eingereichten berichte.',
   robots: { index: false, follow: false },
 };

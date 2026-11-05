@@ -4,7 +4,7 @@ import { ShellWrap } from '../_components/MemberShell';
 import { MemberPage } from '../_components/MemberPage';
 
 export const metadata = {
-  title: 'quellen-keller. — small p club',
+  title: 'quellen-keller.',
   description: 'alle studien hinter unseren fakten, sortiert.',
   robots: { index: false, follow: false },
 };

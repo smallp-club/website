@@ -34,6 +34,6 @@ export async function GET(request: NextRequest) {
     const reason = /unauthor|wrongpass|401/i.test(msg) ? 'auth' : /enotfound|getaddrinfo|fetch failed/i.test(msg) ? 'network' : 'other';
     let db = 'invalid-url';
     try { db = new URL(creds.url).hostname.split('.')[0] ?? db; } catch {}
-    return NextResponse.json({ ok: false, reason, db, tokenLength: creds.token.length }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
+    return NextResponse.json({ ok: false, reason, db, tokenLength: creds.token.length, tokenHasOddChars: /[^A-Za-z0-9_=-]/.test(creds.token) }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
   }
 }

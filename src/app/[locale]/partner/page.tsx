@@ -5,11 +5,15 @@
 import { Chapter, Page, PageHead } from '@/components/v2/Page';
 import { Snapshot } from '@/components/v2/Snapshot';
 import styles from './partner.module.css';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'partner. · small p club',
-  description: 'organisationen, die die haltung von small p club teilen. kooperationen per mail.',
-};
+export const metadata = pageMetadata({
+  path: '/partner',
+  title: 'partner.',
+  description:
+    'organisationen, die die haltung von small p club teilen. kooperationen per mail.',
+  indexable: false, // dünn, bis es partner gibt
+});
 
 export default function PartnerPage() {
   return (

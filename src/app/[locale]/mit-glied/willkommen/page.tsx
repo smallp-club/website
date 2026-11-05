@@ -20,7 +20,7 @@ import { OnboardingStepper } from './_components/OnboardingStepper';
 import { ROLL_BATCH_SIZE } from './onboarding-types';
 
 export const metadata = {
-  title: 'willkommen. — small p club',
+  title: 'willkommen.',
   description: 'drei stille schritte. dann bist du drin.',
   robots: { index: false, follow: false },
 };

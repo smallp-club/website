@@ -16,7 +16,7 @@ import { PageHead, pageStyles } from '@/components/v2/Page';
 import styles from './karte.module.css';
 
 export const metadata = {
-  title: 'mit-glied-karte. — small p club',
+  title: 'mit-glied-karte.',
   description: 'deine karte. ein druck, ein moment haltung.',
   robots: { index: false, follow: false },
 };

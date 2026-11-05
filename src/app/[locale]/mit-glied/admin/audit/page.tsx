@@ -12,7 +12,7 @@ import ui from '../_components/adminUi.module.css';
 import styles from './audit.module.css';
 
 export const metadata = {
-  title: 'admin · audit-log. — small p club',
+  title: 'admin · audit-log.',
   description: 'historie aller admin-aktionen.',
   robots: { index: false, follow: false },
 };

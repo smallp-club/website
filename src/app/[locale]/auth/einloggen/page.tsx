@@ -12,7 +12,7 @@ import { Button } from '@/components/primitives/Button';
 import styles from './einloggen.module.css';
 
 export const metadata = {
-  title: 'einloggen. — small p club',
+  title: 'einloggen.',
   description: 'ein klick, dann bist du drin.',
   robots: { index: false, follow: false },
 };

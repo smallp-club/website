@@ -4,7 +4,7 @@ import { ShellWrap } from '../_components/MemberShell';
 import { MemberPage } from '../_components/MemberPage';
 
 export const metadata = {
-  title: 'werkstatt. — small p club',
+  title: 'werkstatt.',
   description: 'neue texte, bevor sie öffentlich sind.',
   robots: { index: false, follow: false },
 };

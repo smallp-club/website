@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { NextIntlClientProvider } from 'next-intl';
+import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { jsonLd, siteGraph } from '@/lib/seo';
 import { PageSwap } from '@/components/v2/PageSwap';
 import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -45,45 +46,6 @@ const inter = Inter({
   display: 'swap',
 });
 
-const SITE_URL = 'https://smallp.club';
-
-const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'small p club',
-  url: SITE_URL,
-  logo: `${SITE_URL}/brand/smallpclub-mark-black.svg`,
-  description:
-    'Awareness-Bewegung gegen Scham und Vergleichsdruck rund um Männlichkeit und Körperbild.',
-  slogan: 'no measure, no pressure',
-  knowsAbout: [
-    'Männlichkeit',
-    'Körperbild',
-    'Körpergröße',
-    'Penisgröße',
-    'Mental Health',
-    'Body Image',
-    'Body Dysmorphic Disorder',
-    'Spectatoring',
-  ],
-  sameAs: ['https://www.instagram.com/smallpclub'],
-  contactPoint: {
-    '@type': 'ContactPoint',
-    email: 'hello@smallp.club',
-    contactType: 'general',
-    availableLanguage: ['de', 'en'],
-  },
-};
-
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  url: SITE_URL,
-  name: 'small p club',
-  inLanguage: ['de', 'en'],
-  publisher: { '@type': 'Organization', name: 'small p club' },
-};
-
 type Props = {
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
@@ -92,7 +54,7 @@ type Props = {
 export default async function LocaleLayout({ children, params }: Props) {
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as 'de' | 'en')) {
+  if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
 
@@ -109,13 +71,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           type="application/ld+json"
           nonce={nonce}
           suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          nonce={nonce}
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd(siteGraph) }}
         />
       </head>
       <body>

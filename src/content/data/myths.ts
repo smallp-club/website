@@ -14,6 +14,8 @@
 
 export interface SourceData {
   author: string;
+  /** Originaltitel der Studie (für Zitat und Schema). */
+  title?: string;
   publication: string;
   year: number;
   n?: number;
@@ -45,6 +47,11 @@ export interface MythDetail extends MythIndexItem {
   /** 2–3 verwandte Slugs für den CardFan unten */
   related: string[];
 }
+
+/** Veröffentlicht (erste Fassung der Detailseiten) und zuletzt inhaltlich geprüft.
+ *  Für Article-Schema und später das sichtbare „zuletzt geprüft". ISO-Datum. */
+export const MYTHS_PUBLISHED = '2026-06-23';
+export const MYTHS_REVIEWED = '2026-06-23';
 
 export const MYTHS: readonly MythDetail[] = [
   {

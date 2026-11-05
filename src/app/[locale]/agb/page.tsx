@@ -1,7 +1,7 @@
 import { Chapter, Page, PageHead } from '@/components/v2/Page';
 
 export const metadata = {
-  title: 'agb. — small p club',
+  title: 'agb.',
   description: 'allgemeine geschäftsbedingungen. gelten ab dem shop.',
 };
 

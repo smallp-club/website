@@ -5,12 +5,15 @@
 
 import { Chapter, JoinBlock, Page, PageHead } from '@/components/v2/Page';
 import { Snapshot } from '@/components/v2/Snapshot';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'shop. · small p club',
+export const metadata = pageMetadata({
+  path: '/shop',
+  title: 'shop.',
   description:
     'sticker und kleidung von small p club. gedruckt auf bestellung. der shop ist noch nicht offen.',
-};
+  indexable: false, // shop noch nicht offen
+});
 
 export default function ShopPage() {
   return (
