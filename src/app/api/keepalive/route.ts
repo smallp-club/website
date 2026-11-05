@@ -29,6 +29,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (err) {
     console.error('[keepalive] upstash ping failed:', err);
-    return NextResponse.json({ ok: false }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
+    // Vorübergehende Diagnose ohne Secrets: welche DB, welche Fehlerart.
+    const msg = String(err instanceof Error ? `${err.message} ${String(err.cause ?? '')}` : err);
+    const reason = /unauthor|wrongpass|401/i.test(msg) ? 'auth' : /enotfound|getaddrinfo|fetch failed/i.test(msg) ? 'network' : 'other';
+    let db = 'invalid-url';
+    try { db = new URL(url.trim()).hostname.split('.')[0] ?? db; } catch {}
+    return NextResponse.json({ ok: false, reason, db, urlHasSpaceOrQuote: /[\s"']/.test(url), tokenHasSpaceOrQuote: /[\s"']/.test(token) }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
   }
 }
