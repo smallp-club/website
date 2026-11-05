@@ -85,17 +85,29 @@
   height: 13mm;
 }
 
-/* Mobile: Karte verkleinert sich proportional und bleibt am Stück.
-   Skaliert via transform, damit die mm-Maße für den Druck intakt bleiben. */
-@media (max-width: 720px) {
+/* Bildschirm: Karte schrumpft per zoom, damit auch ihr Layout-Platz
+   mitschrumpft (transform ließ eine leere 148-mm-Spur stehen). Der Druck
+   bleibt bei echten mm-Maßen, weil zoom nur auf screen greift. */
+@media screen and (max-width: 600px) {
   .card {
-    transform: scale(0.78);
-    transform-origin: center top;
+    zoom: 0.8;
   }
 }
 
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
   .card {
-    transform: scale(0.58);
+    zoom: 0.62;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .card {
+    zoom: 0.55;
+  }
+}
+
+@media screen and (max-width: 359px) {
+  .card {
+    zoom: 0.48;
   }
 }

@@ -1,49 +1,156 @@
 /**
- * Karte-Page V2 — Wand-Kopf als Bildschirm-Hülle, Karte frei auf Papier.
- * Hülle ist MemberPage (Papiergrund in der Shell). Print-CSS hidet Kopf,
- * Aktionen und Hinweis und neutralisiert die Hülle. Die Karte selbst
- * (MitGliedKarte) und @page bleiben unverändert.
+ * Karte-Page V2 — Karte als geklebtes Plakat auf der Nachtwand,
+ * darunter Druck-Aktion und Zettel. Print-CSS hidet alles außer der Karte
+ * und neutralisiert Wand, Neigung und Klebeband.
  */
 
 .viewport {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: clamp(2rem, 5vw, 3.5rem);
   max-width: var(--v2-max);
   margin-inline: auto;
-  padding: clamp(3rem, 6vw, 5rem) var(--v2-gutter) clamp(4rem, 8vw, 6rem);
+  padding: clamp(2rem, 5vw, 4rem) var(--v2-gutter) clamp(4rem, 8vw, 6rem);
 }
 
-/* Die Karte ist fest 148 mm breit (Druckmaß). Auf schmalen Schirmen
- * scrollt sie in ihrer Spur, statt die Seite zu verbreitern. */
-.cardWrapper {
+/* ─── Nachtwand ─────────────────────────────────────────────────── */
+
+.stage {
+  --rx: 0deg;
+  --ry: 0deg;
   display: flex;
-  justify-content: flex-start;
-  overflow-x: auto;
-  padding-bottom: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  padding: clamp(3rem, 9vw, 6.5rem) clamp(1rem, 4vw, 3rem);
+  background-color: var(--v2-night-wall);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  perspective: 1100px;
+  overflow: hidden;
 }
 
-.cardWrapper > * {
-  flex: 0 0 auto;
-  box-shadow: 0 24px 40px -28px rgba(0, 0, 0, 0.45);
+.pasted {
+  position: relative;
+  transform: rotateX(var(--rx)) rotateY(var(--ry)) rotate(-2deg);
+  transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 34px 50px -28px rgba(0, 0, 0, 0.9), 0 6px 14px -8px rgba(0, 0, 0, 0.6);
+  animation: slap 620ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
-.actionRow {
+.tape {
+  position: absolute;
+  z-index: 2;
+  top: -0.8rem;
+  left: 12%;
+  width: 5.5rem;
+  height: 1.6rem;
+  transform: rotate(-6deg);
+  background: rgba(240, 232, 210, 0.82);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.tapeLow {
+  top: auto;
+  left: auto;
+  bottom: -0.7rem;
+  right: 10%;
+  transform: rotate(5deg);
+}
+
+@keyframes slap {
+  from {
+    opacity: 0;
+    transform: rotate(-7deg) scale(1.06) translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: rotateX(0deg) rotateY(0deg) rotate(-2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pasted {
+    animation: none;
+    transition: none;
+    transform: rotate(-2deg);
+  }
+}
+
+/* ─── Unter der Wand ────────────────────────────────────────────── */
+
+.below {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 48rem) {
+  .below {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.actionCol {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem 1.5rem;
-  align-items: center;
-}
-
-.back {
-  display: inline-flex;
-  align-items: center;
-  min-height: 2.75rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .hint {
-  max-width: 32rem;
+  max-width: 30rem;
+  margin: 0;
 }
+
+.wohinLabel {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-heading-md);
+  letter-spacing: -0.01em;
+}
+
+.notes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.note {
+  padding: 0.85rem 1.1rem;
+  background-color: var(--v2-note-white);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  color: var(--v2-note-ink);
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-body-md);
+  box-shadow: 0 10px 18px -14px rgba(0, 0, 0, 0.5);
+  transform: rotate(-1.5deg);
+}
+
+.note:nth-child(2) {
+  transform: rotate(1.2deg);
+}
+
+.note:nth-child(3) {
+  background-color: var(--v2-act);
+  color: var(--v2-on-act);
+  transform: rotate(-0.6deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .note,
+  .note:nth-child(2),
+  .note:nth-child(3) {
+    transform: none;
+  }
+}
+
+/* ─── Druck ─────────────────────────────────────────────────────── */
 
 @media print {
   :global(body) {
@@ -51,17 +158,14 @@
     margin: 0 !important;
     padding: 0 !important;
   }
-  /* Page-Chrome ausserhalb der Shell ausblenden */
   :global(body > .skip-link) {
     display: none !important;
   }
-  /* Page-spezifische UI-Elemente ausblenden */
   :global(header):has(~ .viewport),
-  .actionRow,
-  .hint {
+  .below,
+  .tape {
     display: none !important;
   }
-  /* V2-Hülle (MemberPage) neutralisieren: kein Papier, kein Polster-Ausgleich */
   :global(div):has(> .viewport) {
     margin: 0 !important;
     background: none !important;
@@ -71,11 +175,16 @@
     padding: 0;
     max-width: none;
   }
-  .cardWrapper {
-    overflow: visible;
+  .stage {
+    display: block;
     padding: 0;
+    background: none;
+    perspective: none;
+    overflow: visible;
   }
-  .cardWrapper > * {
+  .pasted {
+    transform: none !important;
+    animation: none !important;
     box-shadow: none;
   }
 }
