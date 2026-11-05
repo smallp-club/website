@@ -11,9 +11,10 @@ import { Chapter, PageHead, pageStyles } from '@/components/v2/Page';
 import { ShellWrap } from '../../_components/MemberShell';
 import { MemberPage } from '../../_components/MemberPage';
 import { StoryForm } from './_components/StoryForm';
+import { PROMPT_OPTIONS } from './story-types';
 
 export const metadata = {
-  title: 'erfahrungsbericht schreiben. — small p club',
+  title: 'erfahrungsbericht schreiben.',
   description: 'erfahrungsbericht für /stimmen einreichen.',
   robots: { index: false, follow: false },
 };
@@ -29,9 +30,16 @@ const DATE_FORMAT = new Intl.DateTimeFormat('de-DE', {
   timeZone: 'Europe/Berlin',
 });
 
-export default async function ErfahrungNeuPage() {
+export default async function ErfahrungNeuPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ prompt?: string | string[] }>;
+}) {
   const session = await requireMember();
   const { profile } = session;
+  const { prompt } = await searchParams;
+  const initialPrompt =
+    typeof prompt === 'string' && PROMPT_OPTIONS.some((p) => p.key === prompt) ? prompt : undefined;
 
   if (profile.first_submission_allowed_at) {
     const allowedAt = new Date(profile.first_submission_allowed_at);
@@ -49,7 +57,7 @@ export default async function ErfahrungNeuPage() {
           title="dein text. ein satzanfang, der rest bist du."
           lead="zwischen 80 und 1500 zeichen. dein ausgedachter name steht darunter, das alter ist freiwillig. kethe liest jeden text."
         />
-        <StoryForm pseudonym={profile.pseudonym} />
+        <StoryForm pseudonym={profile.pseudonym} initialPrompt={initialPrompt} />
       </MemberPage>
     </ShellWrap>
   );

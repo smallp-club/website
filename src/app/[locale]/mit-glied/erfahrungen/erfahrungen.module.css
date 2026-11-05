@@ -1,0 +1,176 @@
+/* Berichte V2 — Satzanfänge als Zettel zum Weiterschreiben,
+ * eigene Texte als Liste mit Stand. Materialien aus tokens/v2.css. */
+
+.prompts {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1.75rem 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  .prompts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.prompt {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.25rem;
+  min-height: 9rem;
+  padding: 1.6rem 1.4rem 1.2rem;
+  background-color: var(--v2-note-white);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  color: var(--v2-note-ink);
+  text-decoration: none;
+  box-shadow: 0 14px 24px -18px rgba(0, 0, 0, 0.55);
+  transform: rotate(-1.2deg);
+  transition:
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 260ms cubic-bezier(0.16, 1, 0.3, 1),
+    background-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prompts > li:nth-child(even) .prompt {
+  transform: rotate(1deg);
+}
+
+.prompt:hover,
+.prompts > li:nth-child(even) .prompt:hover {
+  transform: rotate(0deg) translateY(-3px);
+  background-color: var(--v2-act);
+  color: var(--v2-on-act);
+  box-shadow: 0 20px 30px -18px rgba(0, 0, 0, 0.6);
+}
+
+.prompt:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--v2-poster-paper),
+    0 0 0 5px var(--v2-deep);
+}
+
+.tape {
+  position: absolute;
+  top: -0.7rem;
+  left: 50%;
+  width: 4.5rem;
+  height: 1.4rem;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(240, 232, 210, 0.82);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.promptText {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: clamp(1.4rem, 1.15rem + 1vw, 1.9rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.promptGo {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-body-sm);
+  color: var(--v2-deep);
+}
+
+.prompt:hover .promptGo {
+  color: var(--v2-on-act);
+}
+
+.facts {
+  margin: 2.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+  font-size: var(--text-body-sm);
+  color: var(--v2-muted-on-paper);
+}
+
+.facts li::before {
+  content: '· ';
+  color: var(--v2-deep);
+  font-weight: 700;
+}
+
+/* ─── Eigene Texte ──────────────────────────────────────────────── */
+
+.own {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  border-top: 1.5px solid var(--v2-poster-ink);
+}
+
+.ownItem {
+  display: grid;
+  gap: 0.4rem;
+  padding: 1.1rem 0;
+  border-bottom: 1px solid var(--v2-hairline-light);
+  color: inherit;
+  text-decoration: none;
+}
+
+.ownItem:hover .ownBody {
+  color: var(--v2-poster-ink);
+}
+
+.ownItem:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--v2-deep);
+}
+
+.ownHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.25rem 1rem;
+}
+
+.ownPrompt {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-body-lg);
+}
+
+.ownStatus {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-caption);
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--v2-hairline-light);
+}
+
+.ownStatus[data-status='approved'] {
+  background-color: var(--v2-act);
+  color: var(--v2-on-act);
+  border-color: transparent;
+}
+
+.ownBody {
+  color: var(--v2-muted-on-paper);
+  line-height: 1.5;
+}
+
+.ownDate {
+  font-size: var(--text-caption);
+  color: var(--v2-muted-on-paper);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .prompt,
+  .prompts > li:nth-child(even) .prompt,
+  .prompt:hover {
+    transform: none;
+    transition: none;
+  }
+}

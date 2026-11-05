@@ -16,6 +16,8 @@ import {
 import styles from './StoryForm.module.css';
 
 interface StoryFormProps {
+  /** Vorausgewählter Satzanfang (aus ?prompt=, bereits validiert). */
+  initialPrompt?: string;
   pseudonym: string;
 }
 
@@ -26,7 +28,7 @@ interface StoryFormProps {
  * gewählte wird gerade gerückt und bekommt türkises Band. Logik, Feldnamen,
  * Moderation und Telefonseelsorge-Strip sind unverändert.
  */
-export function StoryForm({ pseudonym }: StoryFormProps) {
+export function StoryForm({ pseudonym, initialPrompt }: StoryFormProps) {
   const [state, formAction] = useActionState<StoryFormState, FormData>(
     submitStoryAction,
     initialStoryFormState
@@ -58,11 +60,19 @@ export function StoryForm({ pseudonym }: StoryFormProps) {
   }
 
   const errorMessage = state.status === 'error' ? state.message : undefined;
-  return <StoryFormBody pseudonym={pseudonym} formAction={formAction} errorMessage={errorMessage} />;
+  return (
+    <StoryFormBody
+      pseudonym={pseudonym}
+      initialPrompt={initialPrompt}
+      formAction={formAction}
+      errorMessage={errorMessage}
+    />
+  );
 }
 
 interface StoryFormBodyProps {
   pseudonym: string;
+  initialPrompt?: string;
   formAction: (formData: FormData) => void;
   errorMessage?: string;
 }
@@ -103,7 +113,7 @@ function SubmitPill() {
   );
 }
 
-function StoryFormBody({ pseudonym, formAction, errorMessage }: StoryFormBodyProps) {
+function StoryFormBody({ pseudonym, initialPrompt, formAction, errorMessage }: StoryFormBodyProps) {
   const [bodyLength, setBodyLength] = useState(0);
   const promptGroupId = useId();
   const ageGroupId = useId();
@@ -145,6 +155,7 @@ function StoryFormBody({ pseudonym, formAction, errorMessage }: StoryFormBodyPro
                   type="radio"
                   name="prompt_key"
                   value={p.key}
+                  defaultChecked={p.key === initialPrompt}
                   required
                   className={styles.radio}
                 />
