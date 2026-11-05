@@ -96,13 +96,24 @@
   gap: 0.25rem;
   margin: var(--space-3) var(--space-1) var(--space-6);
   padding: var(--space-5) var(--space-5) var(--space-4);
+  isolation: isolate;
   background-color: var(--v2-poster-paper);
-  background-image: var(--v2-paper-wrinkle), var(--v2-paper-noise-soft);
-  background-size: 520px, 240px;
-  background-blend-mode: multiply;
   color: var(--v2-poster-ink);
   transform: rotate(-1.2deg);
   box-shadow: 0 14px 28px -18px rgba(0, 0, 0, 0.8);
+}
+
+/* Faser und Falten wie die Titelplakate (Page.module.css .posterSheet::before) */
+.account::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--v2-paper-wrinkle), var(--v2-paper-noise);
+  background-size: 520px, 240px;
+  mix-blend-mode: multiply;
+  opacity: 0.62;
 }
 
 .tape {

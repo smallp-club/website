@@ -17,20 +17,31 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 12mm 13mm 10mm;
+  isolation: isolate;
   background-color: var(--v2-poster-paper);
-  background-image: var(--v2-paper-wrinkle), var(--v2-paper-noise-soft);
-  background-size: 520px, 240px;
-  background-blend-mode: multiply;
   color: var(--v2-poster-ink);
   font-family: var(--font-display);
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
+/* Faser und Falten wie die Titelplakate (Page.module.css .posterSheet::before) */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: var(--v2-paper-wrinkle), var(--v2-paper-noise);
+  background-size: 520px, 240px;
+  mix-blend-mode: multiply;
+  opacity: 0.62;
+}
+
 .statement {
   margin: 0;
   font-weight: var(--weight-bold);
-  font-size: 34pt;
+  font-size: 46pt;
   line-height: 0.95;
   letter-spacing: -0.025em;
 }
