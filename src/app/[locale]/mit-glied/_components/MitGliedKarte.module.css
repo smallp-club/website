@@ -1,66 +1,79 @@
 /**
- * MitGliedKarte — A6 quer (148×105mm), Off-White, Chillax-Display.
+ * MitGliedKarte — A6 quer (148×105mm) als kleines Plakat.
  *
- * Print-Behandlung lebt in der Page-CSS (karte.module.css), nicht
- * hier — die Komponente selbst weiß nicht ob sie embedded oder
- * gedruckt ist.
+ * Gleiche Materialien wie die Titelplakate der Innenseiten (tokens/v2.css):
+ * Plakatpapier mit Knitter, Chillax 700, 1,5-px-Linie über der Fußzeile.
+ * Print-Behandlung lebt in der Page-CSS (karte.module.css); hier nur
+ * print-color-adjust, damit das Papier mitgedruckt wird.
  */
 
 .card {
   width: 148mm;
   height: 105mm;
-  background-color: var(--surface-bg);
-  color: var(--text-strong);
-  padding: 14mm 14mm 12mm;
+  box-sizing: border-box;
   position: relative;
   overflow: hidden;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12mm 13mm 10mm;
+  background-color: var(--v2-poster-paper);
+  background-image: var(--v2-paper-wrinkle), var(--v2-paper-noise-soft);
+  background-size: 520px, 240px;
+  background-blend-mode: multiply;
+  color: var(--v2-poster-ink);
   font-family: var(--font-display);
-  border: 1px solid var(--border-faint);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
 }
 
 .statement {
-  font-family: var(--font-display);
-  font-weight: 200;
-  font-size: 56pt;
-  line-height: 0.95;
-  letter-spacing: -0.02em;
   margin: 0;
-  color: var(--text-strong);
+  font-weight: var(--weight-bold);
+  font-size: 34pt;
+  line-height: 0.95;
+  letter-spacing: -0.025em;
 }
 
 .statementSecond {
-  color: var(--text-muted);
+  color: var(--v2-deep);
+}
+
+.foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 6mm;
+  padding-top: 3mm;
+  border-top: 1.5px solid var(--v2-poster-ink);
 }
 
 .meta {
-  position: absolute;
-  bottom: 12mm;
-  left: 14mm;
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: 11pt;
-  line-height: 1.4;
-  color: var(--text-strong);
   margin: 0;
+  font-family: var(--font-body);
+  font-size: 9pt;
+  line-height: 1.4;
+  color: var(--v2-note-muted);
 }
 
 .metaPseudonym {
   display: block;
-  color: var(--text-muted);
-  margin-top: 2mm;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: 15pt;
+  line-height: 1.1;
+  color: var(--v2-poster-ink);
+  overflow-wrap: anywhere;
 }
 
 .mark {
-  position: absolute;
-  bottom: 12mm;
-  right: 14mm;
-  width: 18mm;
-  height: 18mm;
+  flex-shrink: 0;
+  width: 13mm;
+  height: 13mm;
 }
 
 /* Mobile: Karte verkleinert sich proportional und bleibt am Stück.
-   Wir skalieren via transform damit die mm-Maße intakt bleiben für Print. */
+   Skaliert via transform, damit die mm-Maße für den Druck intakt bleiben. */
 @media (max-width: 720px) {
   .card {
     transform: scale(0.78);

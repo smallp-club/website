@@ -1,5 +1,6 @@
 /**
- * MitGliedKarte — A6 quer (148×105mm), Off-White, Chillax-Display.
+ * MitGliedKarte — A6 quer (148×105mm) als kleines Plakat: Plakatpapier,
+ * Chillax 700, Abschlusslinie wie die Titelplakate der Innenseiten.
  *
  * Wiederverwendbar: lebt embedded auf /mit-glied/eingang als Hero und
  * auf /mit-glied/karte als Print-Artefakt. Markup + Brand-Voice
@@ -25,17 +26,19 @@ export function MitGliedKarte({ pseudonym, joinedDate }: MitGliedKarteProps) {
         <br />
         <span className={styles.statementSecond}>auch ohne-glied.</span>
       </p>
-      <p className={styles.meta}>
-        seit {joinedDate.toLowerCase()}.
-        <span className={styles.metaPseudonym}>{pseudonym}</span>
-      </p>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/brand/smallpclub-mark-black.svg"
-        alt=""
-        className={styles.mark}
-        aria-hidden="true"
-      />
+      <div className={styles.foot}>
+        <p className={styles.meta}>
+          <span className={styles.metaPseudonym}>{pseudonym}</span>
+          seit {joinedDate.toLowerCase()}.
+        </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/brand/smallpclub-mark-black.svg"
+          alt=""
+          className={styles.mark}
+          aria-hidden="true"
+        />
+      </div>
     </article>
   );
 }
