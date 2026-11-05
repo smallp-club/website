@@ -19,7 +19,7 @@ import { deleteAccountAction } from '../eingang/actions';
 import styles from './loeschen.module.css';
 
 export const metadata = {
-  title: 'account löschen.',
+  title: 'account löschen. — small p club',
   description: 'unwiderruflich, ohne nachfrage.',
   robots: { index: false, follow: false },
 };

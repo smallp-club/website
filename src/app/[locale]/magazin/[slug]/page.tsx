@@ -2,7 +2,7 @@ import { Chapter, Page, PageHead, pageStyles } from '@/components/v2/Page';
 import { Link } from '@/i18n/navigation';
 
 export const metadata = {
-  title: 'magazin · essay.',
+  title: 'magazin · essay. — small p club',
   description: 'ein essay aus dem magazin.',
   robots: { index: false, follow: false },
 };

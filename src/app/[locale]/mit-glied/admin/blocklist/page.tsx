@@ -18,7 +18,7 @@ import ui from '../_components/adminUi.module.css';
 import styles from './blocklist.module.css';
 
 export const metadata = {
-  title: 'admin · blocklist.',
+  title: 'admin · blocklist. — small p club',
   description: 'gesperrte mails und ips.',
   robots: { index: false, follow: false },
 };

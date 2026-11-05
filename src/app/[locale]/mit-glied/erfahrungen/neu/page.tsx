@@ -13,7 +13,7 @@ import { MemberPage } from '../../_components/MemberPage';
 import { StoryForm } from './_components/StoryForm';
 
 export const metadata = {
-  title: 'erfahrungsbericht schreiben.',
+  title: 'erfahrungsbericht schreiben. — small p club',
   description: 'erfahrungsbericht für /stimmen einreichen.',
   robots: { index: false, follow: false },
 };

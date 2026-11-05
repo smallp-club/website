@@ -131,10 +131,40 @@ export async function consumeRateLimit(
     // Development: durchlassen, damit lokales Testen ohne Upstash läuft.
     return { success: true, remaining: Number.POSITIVE_INFINITY, reset: 0 };
   }
-  const result = await limiter.limit(identifier);
-  return {
-    success: result.success,
-    remaining: result.remaining,
-    reset: result.reset,
-  };
+  try {
+    const result = await limiter.limit(identifier);
+    return {
+      success: result.success,
+      remaining: result.remaining,
+      reset: result.reset,
+    };
+  } catch (err) {
+    // Upstash konfiguriert, aber nicht erreichbar oder lehnt die Zugangsdaten
+    // ab (2026-11-05: falscher Token sperrte jeden Login). Statt alles zu
+    // blockieren, zählt die Instanz selbst mit. Schwächer als Redis (pro
+    // Instanz, nicht global), aber Turnstile und das Supabase-Mail-Limit
+    // greifen zusätzlich.
+    console.error('[rate-limit] upstash fehler, nutze speicher-limit für', name, err);
+    return consumeMemoryLimit(name, identifier);
+  }
+}
+
+const WINDOW_MS: Record<'s' | 'm' | 'h' | 'd', number> = { s: 1_000, m: 60_000, h: 3_600_000, d: 86_400_000 };
+const memoryHits = new Map<string, number[]>();
+
+function consumeMemoryLimit(name: RateLimitName, identifier: string): RateLimitResult {
+  const cfg = LIMITS[name];
+  const [amount, unit] = cfg.window.split(' ') as [string, 's' | 'm' | 'h' | 'd'];
+  const windowMs = Number(amount) * WINDOW_MS[unit];
+  const now = Date.now();
+  const key = `${cfg.prefix}:${identifier}`;
+  const hits = (memoryHits.get(key) ?? []).filter((t) => t > now - windowMs);
+  const reset = (hits[0] ?? now) + windowMs;
+  if (hits.length >= cfg.limit) {
+    memoryHits.set(key, hits);
+    return { success: false, remaining: 0, reset };
+  }
+  hits.push(now);
+  memoryHits.set(key, hits);
+  return { success: true, remaining: cfg.limit - hits.length, reset };
 }

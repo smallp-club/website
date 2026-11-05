@@ -21,7 +21,7 @@ import { Page, PageHead } from '@/components/v2/Page';
 import twoFaStyles from '../2fa.module.css';
 
 export const metadata = {
-  title: '2fa einrichten.',
+  title: '2fa einrichten. — small p club',
   description: 'admin-totp-setup.',
   robots: { index: false, follow: false },
 };

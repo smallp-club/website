@@ -5,37 +5,15 @@
 import { EndLink, Page, PageHead } from '@/components/v2/Page';
 import { MythList } from '@/components/v2/MythList';
 import { MYTHS } from '@/content/data/myths';
-import { absoluteUrl, jsonLd, webPageNode, pageMetadata } from '@/lib/seo';
 
-export const metadata = pageMetadata({
-  path: '/mythen',
-  title: 'mythen.',
-  description:
-    'sechs mythen über penisgröße, sechs fakten dagegen. jede zahl mit studie, autor, jahr und stichprobe. ruhig erklärt, ohne belehrung.',
-});
+export const metadata = {
+  title: 'mythen. · small p club',
+  description: 'sechs mythen, sechs fakten dagegen. jede quelle mit autor, jahr und stichprobe.',
+};
 
 export default function MythenListePage() {
   return (
     <Page>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: jsonLd({
-          '@context': 'https://schema.org',
-          ...webPageNode('/mythen', 'sechs mythen. sechs fakten dagegen.', 'CollectionPage', {
-            mainEntity: {
-              '@type': 'ItemList',
-              numberOfItems: MYTHS.length,
-              itemListElement: MYTHS.map((m, i) => ({
-                '@type': 'ListItem',
-                position: i + 1,
-                name: m.myth,
-                url: absoluteUrl(`/mythen/${m.slug}`),
-              })),
-            },
-          }),
-        }) }}
-      />
       <PageHead
         eyebrow="mythen"
         wall="dusk"

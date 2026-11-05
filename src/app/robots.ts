@@ -1,49 +1,75 @@
 /**
- * robots.txt — folgt dem Launch-Schalter `SITE_INDEXABLE` in src/lib/seo.ts.
+ * robots.txt — gibt Crawlern (Google, Bing, AI-Bots) Anweisungen.
  *
- * Vor dem Launch: alles dicht. Danach: alles offen außer Mitglieder-, Auth-
- * und internen Bereichen (IA.md §5). KI-Crawler sind ausdrücklich erlaubt —
- * Brand-Entscheidung: die Mission profitiert von KI-Sichtbarkeit.
+ * AKTUELL: Baustellen-Mode. Komplette Site ist disallow, weil noch noindex.
  *
- * Defense-in-Depth: /mit-glied/* und /auth/* bekommen zusätzlich den
- * X-Robots-Tag noindex aus src/proxy.ts.
+ * BEIM LAUNCH: untenstehenden Block tauschen — Site freigeben, Member- und
+ * Auth-Bereiche aussperren, Sitemap-URL hinterlegen. Komplette Doktrin in
+ * IA.md §5 (Indexierung-Matrix).
+ *
+ * Defense-in-Depth: auch wenn robots.txt umgeschaltet wird, bleiben für
+ * /mit-glied/* die X-Robots-Tag-Header im proxy.ts noindex — Crawler sollen
+ * eigene Verzeichnis-Schutz mehrfach gesichert haben.
  */
 
 import type { MetadataRoute } from 'next';
-import { SITE_INDEXABLE, SITE_URL } from '@/lib/seo';
 
-const PRIVATE_PATHS = [
-  '/mit-glied', // Präfix: deckt /mit-glied und alle Unterseiten ab
-  '/auth/',
-  '/api/',
-  '/preview/',
-  '/components-library/',
-];
-
-/** Explizit genannt, damit Bot-Filter (Cloudflare) und Betreiber es lesen können. */
-const AI_BOTS = [
-  'GPTBot',
-  'OAI-SearchBot',
-  'ChatGPT-User',
-  'ClaudeBot',
-  'Claude-SearchBot',
-  'Claude-User',
-  'PerplexityBot',
-  'Perplexity-User',
-  'Google-Extended',
-  'Applebot-Extended',
-  'CCBot',
-];
+const baseUrl = 'https://smallp.club';
 
 export default function robots(): MetadataRoute.Robots {
-  if (!SITE_INDEXABLE) {
-    return { rules: { userAgent: '*', disallow: '/' } };
-  }
+  // BAUSTELLE — Site komplett für Crawler dicht. Vor Launch umschalten:
+  return {
+    rules: {
+      userAgent: '*',
+      disallow: '/',
+    },
+  };
+
+  // LAUNCH-VARIANTE — beim noindex-Switch oben austauschen gegen:
+  // AI-Bots (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot) sind
+  // EXPLIZIT erlaubt — Brand-Entscheidung (CLAUDE.md / Cloudflare-Setup):
+  // unsere Mission profitiert von AI-Sichtbarkeit. Trade-off Trainings-Daten
+  // akzeptiert.
+  /*
+  const memberAuthDisallow = [
+    '/mit-glied/eingang',
+    '/mit-glied/willkommen',
+    '/mit-glied/erfahrungen',
+    '/mit-glied/admin',
+    '/mit-glied/loeschen',
+    '/mit-glied/karte',
+    '/auth/',
+    '/api/',
+    '/preview/',
+    '/components-library/',
+  ];
+  const aiBots = [
+    'GPTBot',           // OpenAI / ChatGPT
+    'ChatGPT-User',     // OpenAI ChatGPT browsing
+    'OAI-SearchBot',    // OpenAI Search-Index
+    'ClaudeBot',        // Anthropic Claude
+    'Claude-Web',       // Anthropic Claude browsing
+    'PerplexityBot',    // Perplexity
+    'Perplexity-User',  // Perplexity browsing
+    'Google-Extended',  // Google AI training opt-in
+    'Bingbot',          // Bing (auch Copilot)
+    'CCBot',            // Common Crawl (Trainings-Corpus)
+    'Applebot',         // Apple/Siri
+    'YouBot',           // You.com
+  ];
   return {
     rules: [
-      { userAgent: '*', allow: '/', disallow: PRIVATE_PATHS },
-      { userAgent: AI_BOTS, allow: '/', disallow: PRIVATE_PATHS },
+      { userAgent: '*', allow: '/', disallow: memberAuthDisallow },
+      // Explizite Allow-Regeln für AI-Bots — Cloudflare-Bot-Fight blockiert
+      // sonst möglicherweise. Selbe Disallow-Liste wie *.
+      ...aiBots.map((bot) => ({
+        userAgent: bot,
+        allow: '/',
+        disallow: memberAuthDisallow,
+      })),
     ],
-    sitemap: `${SITE_URL}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
+    host: baseUrl,
   };
+  */
 }

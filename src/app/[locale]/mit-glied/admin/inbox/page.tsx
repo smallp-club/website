@@ -15,7 +15,7 @@ import { MemberPage } from '../../_components/MemberPage';
 import ui from '../_components/adminUi.module.css';
 
 export const metadata = {
-  title: 'admin · inbox.',
+  title: 'admin · inbox. — small p club',
   description: 'kuratierungs-inbox für eingereichte erfahrungen.',
   robots: { index: false, follow: false },
 };

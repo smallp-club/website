@@ -18,7 +18,7 @@ import ui from './_components/adminUi.module.css';
 import styles from './admin.module.css';
 
 export const metadata = {
-  title: 'admin.',
+  title: 'admin. — small p club',
   description: 'admin-übersicht.',
   robots: { index: false, follow: false },
 };

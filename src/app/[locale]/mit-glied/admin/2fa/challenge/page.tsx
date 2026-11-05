@@ -21,7 +21,7 @@ import { Page, PageHead } from '@/components/v2/Page';
 import { safeAdminNextPath } from '@/lib/members/admin-next-path';
 
 export const metadata = {
-  title: '2fa bestätigen.',
+  title: '2fa bestätigen. — small p club',
   description: 'admin-totp-challenge.',
   robots: { index: false, follow: false },
 };

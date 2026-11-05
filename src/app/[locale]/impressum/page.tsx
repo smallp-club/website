@@ -1,15 +1,14 @@
+import type { Metadata } from 'next';
 
 import { Chapter, Note, Page, PageHead, pageStyles } from '@/components/v2/Page';
 
 import styles from './page.module.css';
-import { pageMetadata } from '@/lib/seo';
 
-export const metadata = pageMetadata({
-  path: '/impressum',
-  title: 'impressum.',
-  description:
-    'impressum von small p club: wer verantwortlich ist und wie du uns erreichst.',
-});
+export const metadata: Metadata = {
+  title: 'impressum',
+  description: 'angaben gemäß § 5 tmg.',
+  robots: { index: false, follow: false },
+};
 
 /**
  * /impressum (V2, Plakat-Sprache, kompakter Kopf).

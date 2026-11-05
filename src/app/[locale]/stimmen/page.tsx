@@ -19,15 +19,11 @@ import type { StoryRow } from '@/lib/supabase/types';
 import { PROMPT_OPTIONS } from '../mit-glied/erfahrungen/neu/story-types';
 import { ReportForm } from './_components/ReportForm';
 import styles from './stimmen.module.css';
-import { pageMetadata } from '@/lib/seo';
 
-export const metadata = pageMetadata({
-  path: '/stimmen',
-  title: 'stimmen.',
-  description:
-    'was männer über penisgröße, umkleide und scham aufgeschrieben haben. unter ausgedachtem namen, von hand gelesen, ohne kommentare und likes.',
-  indexable: false, // dünn, bis mehr berichte da sind
-});
+export const metadata = {
+  title: 'stimmen. · small p club',
+  description: 'erfahrungsberichte von mit-gliedern. unter ausgedachtem namen, kuratiert, ohne kommentare.',
+};
 
 const PROMPT_LABEL: Record<string, string> = Object.fromEntries(
   PROMPT_OPTIONS.map((p) => [p.key, p.label])

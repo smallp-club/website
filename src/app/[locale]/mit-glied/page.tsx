@@ -25,15 +25,11 @@ import {
 } from '@/components/v2/Page';
 import { JoinInline } from '@/components/v2/JoinInline';
 import { Snapshot } from '@/components/v2/Snapshot';
-import { pageMetadata } from '@/lib/seo';
 
-export const metadata = pageMetadata({
-  path: '/mit-glied',
-  title: 'mit-glied.',
-  description:
-    'mit-glied. auch ohne-glied. kostenlos, kein abo, kein passwort.',
-  indexable: false, // mitglieder-bereich bleibt draußen (IA §5)
-});
+export const metadata = {
+  title: 'mit-glied. · small p club',
+  description: 'mit-glied. auch ohne-glied. kostenlos, kein abo, kein passwort.',
+};
 
 interface MitGliedPageProps {
   searchParams: Promise<{ deleted?: string; error?: string }>;

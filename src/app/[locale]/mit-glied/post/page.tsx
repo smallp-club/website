@@ -4,7 +4,7 @@ import { ShellWrap } from '../_components/MemberShell';
 import { MemberPage } from '../_components/MemberPage';
 
 export const metadata = {
-  title: 'post.',
+  title: 'post. — small p club',
   description: 'newsletter-archiv. alles, was wir je geschickt haben.',
   robots: { index: false, follow: false },
 };

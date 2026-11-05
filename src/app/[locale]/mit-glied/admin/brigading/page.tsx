@@ -13,7 +13,7 @@ import ui from '../_components/adminUi.module.css';
 import styles from './brigading.module.css';
 
 export const metadata = {
-  title: 'admin · brigading.',
+  title: 'admin · brigading. — small p club',
   description: 'aktive brigading-quarantäne-wellen.',
   robots: { index: false, follow: false },
 };

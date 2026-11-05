@@ -29,7 +29,7 @@ import { toggleNewsletterAction } from './actions';
 import styles from './eingang.module.css';
 
 export const metadata = {
-  title: 'übersicht.',
+  title: 'übersicht. — small p club',
   description: 'dein platz im club.',
   robots: { index: false, follow: false },
 };

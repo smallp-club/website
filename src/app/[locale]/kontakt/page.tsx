@@ -1,15 +1,14 @@
+import type { Metadata } from 'next';
 
 import { Chapter, Note, Page, PageHead, Points, pageStyles } from '@/components/v2/Page';
 
 import styles from './page.module.css';
-import { ORG_ID, jsonLd, webPageNode, pageMetadata } from '@/lib/seo';
 
-export const metadata = pageMetadata({
-  path: '/kontakt',
-  title: 'kontakt.',
-  description:
-    'schreib uns an hello@smallp.club. kein formular, kein ticket-system. wir lesen alles und antworten selbst.',
-});
+export const metadata: Metadata = {
+  title: 'kontakt',
+  description: 'schreib uns. wir lesen alles.',
+  robots: { index: false, follow: false },
+};
 
 /**
  * /kontakt (V2, Plakat-Sprache, kompakter Kopf).
@@ -18,14 +17,6 @@ export const metadata = pageMetadata({
 export default function KontaktPage() {
   return (
     <Page>
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: jsonLd({
-          '@context': 'https://schema.org',
-          ...webPageNode('/kontakt', 'kontakt.', 'ContactPage', { about: { '@id': ORG_ID } }),
-        }) }}
-      />
       <PageHead
         eyebrow="service"
         title="kontakt"
