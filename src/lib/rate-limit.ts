@@ -17,12 +17,24 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+/**
+ * Liest die Upstash-Zugangsdaten. Beim Einfügen ins Vercel-Dashboard landen
+ * leicht Leerzeichen, Zeilenumbrüche oder Anführungszeichen im Wert, dann
+ * lehnt Upstash ab (2026-11-05 passiert). Darum wird beides bereinigt.
+ */
+export function getUpstashCredentials(): { url: string; token: string } | null {
+  const clean = (v: string | undefined) => (v ?? '').replace(/\s+/g, '').replace(/^["']+|["']+$/g, '');
+  const url = clean(process.env.UPSTASH_REDIS_REST_URL);
+  const token = clean(process.env.UPSTASH_REDIS_REST_TOKEN);
+  return url && token ? { url, token } : null;
+}
+
 let cachedRedis: Redis | null = null;
 function getRedis(): Redis | null {
   if (cachedRedis) return cachedRedis;
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) return null;
+  const creds = getUpstashCredentials();
+  if (!creds) return null;
+  const { url, token } = creds;
   cachedRedis = new Redis({ url, token });
   return cachedRedis;
 }

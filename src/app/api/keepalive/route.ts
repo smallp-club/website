@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { Redis } from '@upstash/redis';
+import { getUpstashCredentials } from '@/lib/rate-limit';
 
 /**
  * Täglicher Ping an Upstash (Vercel Cron, siehe vercel.json).
@@ -17,15 +18,14 @@ export async function GET(request: NextRequest) {
     return new NextResponse(null, { status: 401 });
   }
 
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (!url || !token) {
+  const creds = getUpstashCredentials();
+  if (!creds) {
     console.error('[keepalive] upstash nicht konfiguriert');
     return NextResponse.json({ ok: false }, { status: 500, headers: { 'Cache-Control': 'no-store' } });
   }
 
   try {
-    await new Redis({ url, token }).ping();
+    await new Redis(creds).ping();
     return NextResponse.json({ ok: true }, { headers: { 'Cache-Control': 'no-store' } });
   } catch (err) {
     console.error('[keepalive] upstash ping failed:', err);
@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     const msg = String(err instanceof Error ? `${err.message} ${String(err.cause ?? '')}` : err);
     const reason = /unauthor|wrongpass|401/i.test(msg) ? 'auth' : /enotfound|getaddrinfo|fetch failed/i.test(msg) ? 'network' : 'other';
     let db = 'invalid-url';
-    try { db = new URL(url.trim()).hostname.split('.')[0] ?? db; } catch {}
-    return NextResponse.json({ ok: false, reason, db, urlHasSpaceOrQuote: /[\s"']/.test(url), tokenHasSpaceOrQuote: /[\s"']/.test(token) }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
+    try { db = new URL(creds.url).hostname.split('.')[0] ?? db; } catch {}
+    return NextResponse.json({ ok: false, reason, db, tokenLength: creds.token.length }, { status: 502, headers: { 'Cache-Control': 'no-store' } });
   }
 }
