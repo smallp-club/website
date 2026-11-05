@@ -1,39 +1,19 @@
 import type { Metadata } from 'next';
+import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL, pageMetadata } from '@/lib/seo';
 
-const siteUrl = 'https://smallp.club';
-const siteTitle = 'small p club — no measure, no pressure';
-const siteDescription = 'Awareness-Bewegung gegen Scham und Vergleichsdruck rund um Männlichkeit und Körperbild.';
-
+/**
+ * Basis-Metadata. Canonical, robots und Open Graph kommen pro Seite aus
+ * `pageMetadata()` in `src/lib/seo.ts` — dort sitzt auch der Launch-Schalter.
+ * Seiten setzen ihren Titel ohne Markennamen, das Template hängt ihn an.
+ */
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
+  ...pageMetadata({ path: '/' }),
   title: {
-    default: siteTitle,
-    template: '%s — small p club',
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    template: `%s · ${SITE_NAME}`,
   },
-  description: siteDescription,
-  robots: { index: false, follow: false },
-  alternates: {
-    canonical: siteUrl,
-    languages: {
-      'de-DE': siteUrl,
-      'en-US': `${siteUrl}/en`,
-      'x-default': siteUrl,
-    },
-  },
-  openGraph: {
-    type: 'website',
-    locale: 'de_DE',
-    alternateLocale: 'en_US',
-    url: siteUrl,
-    siteName: 'small p club',
-    title: siteTitle,
-    description: siteDescription,
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: siteTitle,
-    description: siteDescription,
-  },
+  description: SITE_DESCRIPTION,
   // Bewusst KEINE Meta-Tag-Verification für Search Console / Bing Webmaster.
   // Brand-Doktrin: keine Drittanbieter-Snippets im HTML. Property-Ownership
   // wird per DNS-TXT-Record bei Cloudflare bewiesen (für User unsichtbar).

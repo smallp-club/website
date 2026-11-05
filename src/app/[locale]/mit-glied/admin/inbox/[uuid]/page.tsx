@@ -22,7 +22,7 @@ import ui from '../../_components/adminUi.module.css';
 import styles from './detail.module.css';
 
 export const metadata = {
-  title: 'admin · inbox · detail. — small p club',
+  title: 'admin · inbox · detail.',
   robots: { index: false, follow: false },
 };
 

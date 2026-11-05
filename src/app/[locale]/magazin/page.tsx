@@ -6,11 +6,15 @@
 import { Chapter, EndLink, Page, PageHead, Wide } from '@/components/v2/Page';
 import { Snapshot } from '@/components/v2/Snapshot';
 import styles from './magazin.module.css';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'magazin. · small p club',
-  description: 'lange texte über männlichkeit, scham und den vergleich. drei essays in arbeit.',
-};
+export const metadata = pageMetadata({
+  path: '/magazin',
+  title: 'magazin.',
+  description:
+    'essays über männlichkeit, scham und das ständige vergleichen. kultur, psychologie, persönliches. selten, aber dann ganz.',
+  indexable: false, // dünn, bis das erste essay steht
+});
 
 const ESSAYS = [
   {

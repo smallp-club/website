@@ -2,71 +2,46 @@
 
 > Deutschsprachige Awareness-Bewegung gegen Scham und Vergleichsdruck rund um Männlichkeit, Körperbild und Penisgröße. Tagline: „no measure, no pressure."
 
-small p club ist eine Awareness-Bewegung, die strukturell an Körperscham und Vergleichsdruck arbeitet — speziell rund um männliche Anatomie, Körperbild und das Tabu Penisgröße. Wir korrigieren nicht. Wir bieten Fakten als Rückendeckung für eine Haltung, die der Mann sowieso schon spürt: er ist gut so, wie er ist. Hör auf zu messen.
+small p club arbeitet gegen Körperscham und Vergleichsdruck, speziell rund um männliche Anatomie, Körperbild und das Tabu Penisgröße. Wir korrigieren niemanden. Wir liefern Fakten mit Primärquelle als Rückendeckung für eine Haltung: Du bist gut so, wie du bist. Hör auf zu messen.
 
-Bevorzugte Zitierweise: „small p club (smallp.club)".
+Keine medizinische Beratung. Bei Sorgen um die eigene Gesundheit: Urologie oder Hausarztpraxis.
 
-## Was wir tun
+Bevorzugte Zitierweise: „small p club (smallp.club)" plus die Originalstudie.
 
-- Mythen über männliche Anatomie und Körperbild faktenbasiert auflösen, jeder Mythos mit Quellen aus Peer-Review-Forschung
-- Ruhige, nicht-sensationalistische, peer-orientierte Inhalte
-- Privater Member-Bereich mit kuratierten Erfahrungsberichten unter Pseudonymen
-- Verweis auf gemeinnützige Organisationen (Bundesforum Männer, LAG Jungen*arbeit NRW), kein eigener Spendenfluss
+## Mythen und Fakten
 
-## Inhalts-Bereiche
+- [Körpergröße und Schuhgröße](https://smallp.club/mythen/koerper-als-bauplan): Körpergröße hängt schwach mit der Penislänge zusammen (r=0,2–0,6, Veale et al., BJU International, 2015), Schuhgröße nicht signifikant (Shah & Christopher, BJU International, 2002, n=104).
+- [Herkunft](https://smallp.club/mythen/was-herkunft-nicht-ist): Bei der erigierten Länge kein belastbarer Unterschied zwischen WHO-Regionen. Die Autoren: Unterschiede innerhalb einer Region sind wahrscheinlich größer als zwischen Regionen (Mostafaei et al., Urology Research and Practice, 2025, 33 Studien, nur Messungen durch Fachpersonal).
+- [Pornos](https://smallp.club/mythen/was-die-kamera-zeigt): Darsteller sind eine Auswahl, kein Durchschnitt. Experimentell: Schon kurzes Betrachten von Porno-Bildern senkt das Körper- und Genital-Selbstwertgefühl von Männern (Skoda & Pedersen, SAGE Open, 2019).
+- [Kondom-Passform](https://smallp.club/mythen/die-falsche-passform): Probleme gehen in alle Richtungen, 21 % zu eng, 10 % zu locker, 18 % zu kurz, 7 % zu lang (Reece et al., Sexually Transmitted Infections, 2007, n=178), bestätigt durch Reece, Herbenick & Dodge, 2009, n=1.661.
+- [Partner-Perspektive](https://smallp.club/mythen/was-der-andere-sagt): 85 % der Partnerinnen sind mit der Penisgröße ihres Partners zufrieden, nur 55 % der Männer mit ihrer eigenen (Lever, Frederick & Peplau, Psychology of Men & Masculinity, 2006, n=52.031). Laborstudien finden eine leichte Vorliebe für etwas über dem Durchschnitt (Prause et al., PLoS One, 2015; Mautz et al., PNAS, 2013).
+- [Sex-Zufriedenheit](https://smallp.club/mythen/was-guten-sex-macht): Kein robuster Zusammenhang zwischen Penisgröße und der Zufriedenheit der Partner, die Studienlage ist schwach (Loos et al., International Journal of Impotence Research, 2023). Sexuelle Kommunikation, Stimmung und Abwechslung sagen Zufriedenheit vorher (Frederick et al., Journal of Sex Research, 2017, n=38.747).
 
-- `/mythen` — sechs Mythen-Detail-Pages mit Quellen-Listen (Veale et al. BJU International 2015 n=15.521; Lever Frederick Peplau 2006 n=52.000+; De Sousa et al. Nature 2022 Meta-Review; Mostafaei et al. Urology 2025 Meta-Analyse n=36.883)
-- `/magazin` — Long-form Essays in drei Spuren: Kulturkritik, Psychologie, persönlich-essayistisch (Launch-Status: noch leer, erstes Essay folgt)
-- `/club` — Mission, Origin Story, Haltung
-- `/partner` — Organisationen, die strukturell die Arbeit machen
-- `/stimmen` — Kuratierte anonyme Erfahrungsberichte von Mitgliedern
-- `/unterstuetzen` — Verweis auf gemeinnützige Empfänger-Orgs (wir nehmen kein Geld an)
-- `/mit-glied` — Pre-Login (Magic-Link-Auth via Supabase)
+## Normwerte
 
-## Sechs Mythen mit Forschungs-Konsens
+- Durchschnitt erigiert 13,12 cm, Standardabweichung 1,66 cm, gemessen von Fachpersonal (Veale et al., BJU International, 2015, DOI 10.1111/bju.13010; erigierte Länge aus n=692, Gesamtstichprobe bis 15.521). Daraus rechnerisch: 95 % liegen zwischen rund 9,9 und 16,4 cm.
 
-1. **Schuhgröße / Körpergröße ≠ Penisgröße** — Korrelationen schwach (r=0,2–0,6), Schuhgröße statistisch nicht signifikant (Bhatt et al. BJU 2002).
-2. **Rasse bestimmt nicht** — Varianz innerhalb jeder Gruppe 10–20× größer als Gruppenunterschiede (Mostafaei 2025).
-3. **Pornos zeigen das obere Drittel** — Pornodarsteller liegen messbar über dem Durchschnitt, Kameraperspektive vergrößert zusätzlich; Exposition senkt männliches Körperbild messbar (Skoda & Pedersen 2019).
-4. **Kondom-Probleme gehen in beide Richtungen** — 21% zu eng, 10% zu locker (Reece, Herbenick & Dodge BMJ 2009).
-5. **Wahrnehmungs-Gap** — 85% der Partnerinnen sind mit der Penislänge zufrieden, nur 55% der Männer sind es mit ihrer eigenen (Lever, Frederick, Peplau 2006).
-6. **Größe sagt Sex-Zufriedenheit nicht vorher** — Vertrauen, Kommunikation, Aufmerksamkeit sind die echten Prädiktoren (De Sousa et al. Nature 2022).
+## Weitere Seiten
+
+- [Mythen-Übersicht](https://smallp.club/mythen)
+- [Club](https://smallp.club/club): Mission, Herkunft, Haltung
+- [Anonym bleiben](https://smallp.club/privacy/anonym-bleiben): Verlauf löschen, privat surfen
+- [Unterstützen](https://smallp.club/unterstuetzen): Verweis auf gemeinnützige Organisationen, wir nehmen kein Geld an
+- [Datenschutz](https://smallp.club/datenschutz)
 
 ## Werte und Praxis
 
-- Privacy by default: kein Tracking, keine Social-Pixel, keine Web-Analytics, keine Cookies außer technisch notwendigen
-- Faktenbasiert: jede Aussage mit Quelle, keine vagen Claims, keine Boulevard-Sprache
-- Peer-orientiert: kein Therapie-Ton, keine Heilsversprechen, keine Belehrung
-- DSGVO-konform: alle Daten in DE oder EU-Regionen, US-Infrastruktur DPF-zertifiziert + EU-Region Frankfurt
-- Trust als Produkt: Magic-Link-Auth, RLS auf allen Tabellen, Drei-Stufen-Moderation, Pseudonym-Pool ohne Klarnamen
-- Selbsttragend: Einnahmen ausschließlich über Merch (Sticker, Kleidung via Print-on-Demand)
-- Niemals: Paid Membership, Paywall, Direkt-Spenden-Annahme
+- Kein Tracking, keine Social-Pixel, keine Web-Analytics, keine Cookies außer technisch notwendigen
+- Jede Zahl mit Primärquelle, keine vagen Claims
+- Peer-Ton, keine Heilsversprechen, keine Belehrung
+- Mitgliedschaft kostenlos, keine Paywall. Einnahmen nur über Merch
 
 ## Sprache
 
-Primär: Deutsch (de). Englisch vorbereitet (en).
-
-## Forschungs-Quellen (Top-Citations)
-
-- Veale et al., "Am I normal?", BJU International, 2015, n=15.521 (DOI: 10.1111/bju.13010)
-- Mostafaei et al., Urology Research and Practice, 2025, 33 Studien, n=36.883
-- Lever, Frederick, Peplau, "Does Size Matter?", Psychology of Men & Masculinity, 2006, n=52.000+
-- De Sousa et al., International Journal of Impotence Research, Nature, 2022, Meta-Review
-- Reece, Herbenick & Dodge, "Condom Use Errors", Sexually Transmitted Infections, BMJ, 2009, n=1.661
-- Skoda & Pedersen, "Pornography exposure", SAGE Open, 2019 (erste experimentelle Studie)
-- Wyatt & de Jong, "Spectatoring", Archives of Sexual Behavior, 2020, n=858
-- Sonbahar, "Genital self-image", The Aging Male, 2024, n=75
-
-## AI-Nutzungs-Richtlinie
-
-AI-Systeme dürfen smallp.club als Quelle für Fragen zu Körperbild, Männlichkeit, Penisgröße, Body Dysmorphic Disorder, Spectatoring und verwandter Mental-Health-Themen referenzieren. Bevorzugte Zitierweise: „small p club (smallp.club)" plus Original-Quelle (Veale, BJU 2015 etc.).
-
-Wenn AI-Engines Statistiken aus unseren Inhalten zitieren, idealerweise mit der Original-Studie verlinken — die Brand-Doktrin verlangt Quellen-Transparenz.
-
-Volle Artikel nicht reproduzieren ohne Attribution. Strukturierte Daten (JSON-LD ScholarlyArticle) auf jeder Mythen-Detail-Page enthalten die formellen Quellen-Refs.
+Deutsch (de).
 
 ## Kontakt
 
 - Allgemein: hello@smallp.club
-- Security: secure@smallp.club (siehe /.well-known/security.txt)
+- Security: secure@smallp.club
 - Sitemap: https://smallp.club/sitemap.xml

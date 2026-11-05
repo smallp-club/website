@@ -4,67 +4,80 @@ import { Chapter, JoinBlock, Margin, Page, Wide } from '@/components/v2/Page';
 import { MythHero } from '@/components/v2/MythHero';
 import { MythList } from '@/components/v2/MythList';
 import { Link } from '@/i18n/navigation';
+import {
+  OG_IMAGE,
+  ORG_ID,
+  SITE_URL,
+  absoluteUrl,
+  jsonLd,
+  pageMetadata,
+  robotsFor,
+  webPageNode,
+} from '@/lib/seo';
 import styles from './page.module.css';
 import {
   getMythBySlug,
   getRelatedMyths,
+  MYTHS_PUBLISHED,
+  MYTHS_REVIEWED,
   type MythDetail,
 } from '@/content/data/myths';
 
-const SITE_URL = 'https://smallp.club';
+/** Headline für Article-Schema: Google schneidet über 110 Zeichen ab. */
+function headline(myth: MythDetail): string {
+  for (const t of [myth.fact, myth.myth]) if (t.length <= 110) return t;
+  return myth.fact.slice(0, 107).replace(/\s+\S*$/, '') + ' …';
+}
 
 /**
- * JSON-LD pro Mythen-Detail-Page — Article + ScholarlyArticle-Citations.
- * GEO-Hauptmaßnahme: AI-Engines erhalten formelle Quellen-Refs für jede
- * Aussage, plus BreadcrumbList für Google's Site-Struktur-Anzeige.
+ * JSON-LD pro Mythen-Detailseite als ein @graph: WebPage + Article mit
+ * ScholarlyArticle-Zitaten + BreadcrumbList, verknüpft mit der Organization
+ * aus dem Layout (@id). GEO: KI-Systeme bekommen formelle Quellen-Refs.
  */
-function buildMythSchemas(myth: MythDetail, slug: string) {
-  const url = `${SITE_URL}/mythen/${slug}`;
+function buildMythGraph(myth: MythDetail, slug: string) {
+  const path = `/mythen/${slug}`;
+  const url = absoluteUrl(path);
   return {
-    article: {
-      '@context': 'https://schema.org',
-      '@type': 'Article',
-      headline: myth.fact,
-      description: myth.teaser,
-      inLanguage: 'de',
-      url,
-      author: { '@type': 'Organization', name: 'small p club' },
-      publisher: {
-        '@type': 'Organization',
-        name: 'small p club',
-        logo: {
-          '@type': 'ImageObject',
-          url: `${SITE_URL}/brand/smallpclub-mark-black.svg`,
-        },
+    '@context': 'https://schema.org',
+    '@graph': [
+      webPageNode(path, myth.myth, 'WebPage', {
+        breadcrumb: { '@id': `${url}#breadcrumb` },
+        mainEntity: { '@id': `${url}#article` },
+      }),
+      {
+        '@type': 'Article',
+        '@id': `${url}#article`,
+        mainEntityOfPage: { '@id': `${url}#webpage` },
+        headline: headline(myth),
+        description: myth.teaser,
+        inLanguage: 'de',
+        url,
+        image: OG_IMAGE,
+        datePublished: MYTHS_PUBLISHED,
+        dateModified: MYTHS_REVIEWED,
+        author: { '@id': ORG_ID },
+        publisher: { '@id': ORG_ID },
+        about: { '@type': 'Thing', name: myth.category },
+        citation: myth.sources.map((s) => ({
+          '@type': 'ScholarlyArticle',
+          ...(s.title ? { name: s.title } : {}),
+          author: { '@type': 'Person', name: s.author },
+          isPartOf: { '@type': 'Periodical', name: s.publication },
+          datePublished: String(s.year),
+          ...(s.n ? { description: `Stichprobe n=${s.n.toLocaleString('de-DE')}` } : {}),
+          ...(s.doi ? { sameAs: `https://doi.org/${s.doi}` } : {}),
+        })),
       },
-      about: myth.category,
-      citation: myth.sources.map((s) => ({
-        '@type': 'ScholarlyArticle',
-        author: s.author,
-        publisher: s.publication,
-        datePublished: String(s.year),
-        ...(s.n ? { numberOfParticipants: s.n } : {}),
-        ...(s.doi ? { identifier: `doi:${s.doi}` } : {}),
-      })),
-    },
-    breadcrumb: {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        {
-          '@type': 'ListItem',
-          position: 1,
-          name: 'mythen',
-          item: `${SITE_URL}/mythen`,
-        },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: myth.myth,
-          item: url,
-        },
-      ],
-    },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${url}#breadcrumb`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'small p club', item: SITE_URL },
+          { '@type': 'ListItem', position: 2, name: 'mythen', item: absoluteUrl('/mythen') },
+          { '@type': 'ListItem', position: 3, name: myth.myth, item: url },
+        ],
+      },
+    ],
   };
 }
 
@@ -79,17 +92,14 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
   const myth = getMythBySlug(slug);
-  if (!myth) {
-    return {
-      title: 'mythos. · small p club',
-      robots: { index: false, follow: false },
-    };
-  }
-  return {
-    title: 'mythos. · small p club',
+  if (!myth) return { title: 'mythos.', robots: robotsFor(false) };
+  // Titel bewusst neutral (Outing-Schutz im Tab/Verlauf) — Entscheidung offen,
+  // siehe docs/project/seo-geo-audit-2026-11/BERICHT.md H2.
+  return pageMetadata({
+    path: `/mythen/${slug}`,
+    title: 'mythos.',
     description: 'no measure, no pressure. ein mythos, ein fakt, eine quelle.',
-    robots: { index: false, follow: false },
-  };
+  });
 }
 
 export default async function MythosDetailPage({ params }: PageProps) {
@@ -98,21 +108,15 @@ export default async function MythosDetailPage({ params }: PageProps) {
   if (!myth) notFound();
 
   const related = getRelatedMyths(slug);
-  const schemas = buildMythSchemas(myth, slug);
+  const graph = buildMythGraph(myth, slug);
 
   return (
     <Page>
-      {/* JSON-LD: Article + ScholarlyArticle-Citations (GEO) + BreadcrumbList.
-          JSON-LD wird nicht ausgeführt, braucht also keine CSP-Nonce. */}
+      {/* JSON-LD-Graph (GEO). Wird nicht ausgeführt, braucht keine CSP-Nonce. */}
       <script
         type="application/ld+json"
         suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.article) }}
-      />
-      <script
-        type="application/ld+json"
-        suppressHydrationWarning
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemas.breadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(graph) }}
       />
 
       <MythHero

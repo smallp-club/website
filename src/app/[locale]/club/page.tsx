@@ -11,11 +11,14 @@ import { Snapshot } from '@/components/v2/Snapshot';
 import { getCachedMemberCount } from '@/lib/members/cached-count';
 import { memberCountVoice } from '@/lib/members/count';
 import styles from './page.module.css';
+import { ORG_ID, jsonLd, webPageNode, pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'club. · small p club',
-  description: 'wer hinter small p club steht und warum es den club gibt.',
-};
+export const metadata = pageMetadata({
+  path: '/club',
+  title: 'club.',
+  description:
+    'wer hinter small p club steht: ein club gegen den vergleichsdruck rund um penisgröße und körperbild. ohne therapie, ohne belehrung, ohne maßband.',
+});
 
 export default async function ClubPage() {
   let count = 0;
@@ -30,6 +33,14 @@ export default async function ClubPage() {
 
   return (
     <Page>
+      <script
+        type="application/ld+json"
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: jsonLd({
+          '@context': 'https://schema.org',
+          ...webPageNode('/club', 'club.', 'AboutPage', { about: { '@id': ORG_ID } }),
+        }) }}
+      />
       <PageHead
         eyebrow="club"
         title="ein club ohne maßband."

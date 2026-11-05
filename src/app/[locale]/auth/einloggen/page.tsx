@@ -14,7 +14,7 @@ import { AutoSubmitForm } from './AutoSubmitForm';
 import styles from './einloggen.module.css';
 
 export const metadata = {
-  title: 'einloggen. — small p club',
+  title: 'einloggen.',
   description: 'ein klick, dann bist du drin.',
   robots: { index: false, follow: false },
 };

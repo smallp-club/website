@@ -2,7 +2,7 @@ import { Chapter, Page, PageHead, pageStyles } from '@/components/v2/Page';
 import { Link } from '@/i18n/navigation';
 
 export const metadata = {
-  title: 'partner · story. — small p club',
+  title: 'partner · story.',
   description: 'eine partner-story.',
   robots: { index: false, follow: false },
 };

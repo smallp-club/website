@@ -1,14 +1,15 @@
-import type { Metadata } from 'next';
 
 import { Chapter, Page, PageHead, SubHead, pageStyles } from '@/components/v2/Page';
 
 import styles from './page.module.css';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata: Metadata = {
-  title: 'datenschutz',
-  description: 'wie wir mit deinen daten umgehen. ehrlich, brand-konform, dsgvo-erfüllend.',
-  robots: { index: false, follow: false },
-};
+export const metadata = pageMetadata({
+  path: '/datenschutz',
+  title: 'datenschutz.',
+  description:
+    'wie wir mit deinen daten umgehen: kein tracking, keine werbung, server in der eu. ehrlich aufgeschrieben, nach dsgvo.',
+});
 
 export default function DatenschutzPage() {
   return (

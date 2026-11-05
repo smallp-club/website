@@ -8,12 +8,14 @@
 
 import { Chapter, Page, PageHead, Wide } from '@/components/v2/Page';
 import styles from './unterstuetzen.module.css';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'unterstützen. · small p club',
+export const metadata = pageMetadata({
+  path: '/unterstuetzen',
+  title: 'unterstützen.',
   description:
     'wir nehmen kein geld an. spenden gehen direkt an bundesforum männer und lag jungen*arbeit nrw.',
-};
+});
 
 const RECIPIENTS = [
   {
