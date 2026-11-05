@@ -55,7 +55,7 @@ export default async function TotpChallengePage({ searchParams }: PageProps) {
         title="sechs ziffern."
         lead={
           cameFromIdleTimeout
-            ? 'zwei stunden ohne aktion. zur sicherheit nochmal bestätigen.'
+            ? 'ein jahr ist rum. zur sicherheit einmal bestätigen.'
             : 'aus deiner authenticator-app. ohne die ziffern kein admin.'
         }
         size="compact"

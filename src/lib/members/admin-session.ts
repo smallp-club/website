@@ -24,7 +24,9 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 import { cookies } from 'next/headers';
 
 const COOKIE_NAME = 'spc_admin_aal2_until';
-const TTL_HOURS = 2;
+// Kethe 2026-11-05: Code-Abfrage nur noch einmal im Jahr pro Gerät. Neue
+// Logins (neues Gerät, Logout) verlangen den TOTP-Code weiterhin sofort.
+const TTL_HOURS = 365 * 24;
 const TTL_MS = TTL_HOURS * 60 * 60 * 1000;
 
 // HMAC-Signatur über den Ablauf-Timestamp (Security-Audit 2026-07-13):
