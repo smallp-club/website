@@ -20,37 +20,40 @@ Die Weltbenchmark der Urologie. Systematische Review + Nomogramme, ausschließli
 | Flaccide Länge | 9,16 cm | 1,57 cm |
 | Erigierter Umfang | 11,66 cm | 1,10 cm |
 
-95 % aller Männer: 9,8–16,4 cm erigiert. Klinische Definition Mikropenis: unter 7 cm.
+Erigierte Länge beruht auf **n=692**, nicht auf allen 15.521. „Ausschließlich klinisch“ heißt: gemessen von Fachpersonal.
+95 % aller Männer, rechnerisch aus Mittelwert ± 1,96 SD: **rund 9,9–16,4 cm** erigiert (nicht 9,8, das steht nicht im Abstract). Klinische Definition Mikropenis: unter 7 cm.
 
-Ergänzende Metaanalyse: **Mostafaei et al., Urology Research and Practice, 2025** (33 Studien, n=36.883): Ø 13,84 cm erigiert.
+Ergänzende Metaanalyse: **Mostafaei et al., Urology Research and Practice, 2025** (33 Studien, n=36.883, DOI 10.5152/tud.2025.24038): Ø 13,84 cm erigiert, der erigierte Wert aus n=5.669. Nur Messungen durch Fachpersonal.
+
+> Audit 2026-11: Alle Zitate unten gegen PubMed/Crossref geprüft. Details und Volltitel: `docs/project/seo-geo-audit-2026-11/sources.md`.
 
 ---
 
 ## Kognitive Verzerrung — das eigentliche Problem
 
-**91 % der Männer** schätzen sich subjektiv als unterdurchschnittlich ein.
-Tatsächlich anatomisch kleiner Penis (unter Normbereich): **~2,28 %**.
+> **Nicht verwenden.** Die 91-%-Zahl und die DGA-Zahlen (45 %, „ein Drittel der Partnerinnen“) haben keine auffindbare Primärquelle. Stehen nur noch als Merkposten hier.
 
-Quelle: Veale-Forschungsgruppe; klinische Andrologie-Praxis.
+~~91 % der Männer schätzen sich subjektiv als unterdurchschnittlich ein.~~ (Psychology Today 2015 meint nur Männer, die sich selbst als klein einstufen)
 
-**DGA — Deutsche Gesellschaft für Andrologie:**
-45 % der deutschen Männer wünschen sich einen größeren Penis, obwohl sie im Normbereich liegen.
-Nur ein Drittel der Partnerinnen teilt diesen Wunsch.
-URL: dg-andrologie.de
+~~DGA: 45 % der deutschen Männer wünschen sich einen größeren Penis … nur ein Drittel der Partnerinnen teilt diesen Wunsch.~~
+
+**Belegt stattdessen (Lever 2006):** 45 % der Männer wünschen sich einen größeren Penis, 0,2 % einen kleineren.
 
 **Uro-News / Springermedizin, 2022:**
 46 % der Männer die ihre Größe als durchschnittlich einschätzen, wünschen sich dennoch mehr.
-DOI: 10.1007/s00092-022-5572-z
+DOI: 10.1007/s00092-022-5572-z (nicht im Audit geprüft)
 
 ---
 
 ## Die stärkste Einzelzahl der gesamten Kampagne
 
-> **85 % der Partnerinnen sind mit der Penislänge ihres Partners zufrieden.**
+> **85 % der Partnerinnen sind mit der Penisgröße ihres Partners zufrieden.**
 > **Nur 55 % der Männer sind es mit ihrer eigenen.**
 
-Quelle: Lever J, Frederick DA, Peplau LA — "Does Size Matter?"
-*Psychology of Men & Masculinity*, 2006 | n=52.000+
+Quelle: Lever J, Frederick DA, Peplau LA, „Does size matter? Men's and women's views on penis size across the lifespan“
+*Psychology of Men & Masculinity*, 2006 | n=52.031 | DOI 10.1037/1524-9220.7.3.129
+
+Gemessen wurde **Größe** (size), nicht Länge. Online-Befragung, nicht repräsentativ.
 
 Dieser Gap ist der emotionale Kern. Er sitzt im Kopf, nicht in der Hose.
 
@@ -59,34 +62,37 @@ Dieser Gap ist der emotionale Kern. Er sitzt im Kopf, nicht in der Hose.
 ## Mythen & Widerlegungen (belegbar)
 
 ### Mythos: Schuhgröße / Körpergröße sagt Penisgröße voraus
-Stärkste Korrelation Körpergröße↔Penisgröße: r=0,2–0,6 — zu schwach für Rückschlüsse.
+Korrelation Körpergröße↔Penisgröße: r=0,2–0,6 (aus Veale 2015), zu schwach für Rückschlüsse.
 Schuhgröße: keine statistisch signifikante Korrelation.
-Quellen: Veale 2015; Bhatt et al., BJU International, 2002 (n=104)
+Quellen: Veale 2015; **Shah J & Christopher N**, „Can shoe size predict penile length?“, BJU International, 2002, n=104, DOI 10.1046/j.1464-410x.2002.02974.x (früher fälschlich „Bhatt et al.“)
 
-### Mythos: Rasse bestimmt Penisgröße
-Varianz *innerhalb* jeder Gruppe ist 10–20× größer als behauptete Gruppenunterschiede.
-Sauber kontrollierte Studien zeigen <1 cm Unterschied; Messprotokolle, Selbstangaben und Erhebungsmethoden erklären mehr als Herkunft.
-Quelle: Mostafaei et al., 2025, n=36.883
+### Mythos: Herkunft bestimmt Penisgröße
+Bei der erigierten Länge kein signifikanter Unterschied zwischen WHO-Regionen (bei schlaff und gestreckt schon).
+Wörtlich: „Probably, the differences within a region are larger than that between the regions.“
+Quelle: Mostafaei et al., 2025. **Nicht belegt** und gestrichen: „10–20× größer“, „<1 cm Unterschied“, „Selbstangaben ziehen den Schnitt hoch“.
 
 ### Mythos: Pornos zeigen realistische Größen
-Pornodarsteller = oberes Drittel der Normalverteilung. Kamerawinkel vergrößern zusätzlich.
-Experiment: Schon kurze Exposition senkt das männliche Körperbild messbar (erste experimentelle, keine korrelative Studie).
-Quelle: Skoda & Pedersen, *SAGE Open*, 2019
+Belegt: Experiment mit zufälliger Zuteilung (Porno-Bilder / normale Medienbilder / keine Bilder). Nach Porno-Bildern war das Körper- und Genital-Selbstwertgefühl der Männer niedriger.
+Quelle: Skoda K & Pedersen CL, „Size Matters After All: Experimental Evidence that SEM Consumption Influences Genital and Body Esteem in Men“, *SAGE Open*, 2019, DOI 10.1177/2158244019857341
+**Nicht belegt** und gestrichen: „Darsteller = oberes Drittel“, „Kamera vergrößert“.
 
 ### Mythos: Kondome passen nicht (als Scham-Aussage)
-Kondomprobleme gehen in beide Richtungen: 21 % zu eng, 10 % zu locker.
-"One size fits all" funktioniert nicht — in beide Richtungen.
-Quelle: Reece, Herbenick & Dodge, *Sexually Transmitted Infections* (BMJ), 2009, n=1.661
+21 % zu eng, 18 % zu kurz, 10 % zu locker, 7 % zu lang.
+Quelle der Prozente: Reece, Dodge, Herbenick, Fisher, Alexander & Satinsky, „Experiences of condom fit and feel among African-American men who have sex with men“, *STI*, 2007, **n=178**, DOI 10.1136/sti.2007.026484
+Qualitative Bestätigung: Reece, Herbenick & Dodge, „Penile dimensions and men's perceptions of condom fit and feel“, *STI*, 2009, n=1.661, DOI 10.1136/sti.2008.033050
 
 ### Mythos: Frauen wollen größere Penisse
-85 % der Partnerinnen zufrieden mit Penislänge des Partners. 55 % der Männer mit ihrer eigenen.
-Quelle: Lever et al., *Psychology of Men & Masculinity*, 2006
+85 % der Partnerinnen zufrieden mit der Penisgröße des Partners. 55 % der Männer mit ihrer eigenen (Lever 2006).
+Gegenbefunde, auf der Seite eingeordnet:
+- Mautz BS et al., PNAS, 2013, DOI 10.1073/pnas.1219361110: größerer Penis erhöht bewertete Attraktivität computergenerierter Figuren, Zuwachs flacht ab.
+- Prause N et al., PLoS One, 2015, n=75, DOI 10.1371/journal.pone.0133079: bevorzugt 16,0 cm (Langzeit) bzw. 16,3 cm (einmalig), „only slightly larger than average“.
 
 ### Mythos: Kleiner Penis = schlechterer Sex
-Kein robuster wissenschaftlicher Beweis. Aktuelle Literaturübersicht: "currently available studies show incomplete results."
-Faktoren die Sexual-Zufriedenheit vorhersagen: Vertrauen, Kommunikation, Aufmerksamkeit — nicht Anatomie.
-Quellen: De Sousa et al., *International Journal of Impotence Research* (Nature), 2022;
-Herbenick et al., *Journal of Sexual Medicine*, 2018, n=52.031
+Kein robuster Beleg. Narrative Übersicht, nur Partner-Zufriedenheit:
+Loos S et al., „The effect of penis size on partner sexual satisfaction: a literature review“, *Int J Impot Res*, 2023, DOI 10.1038/s41443-022-00636-7 (früher fälschlich „De Sousa et al. 2022“)
+Was Zufriedenheit vorhersagt: sexuelle Kommunikation, Stimmung, Abwechslung, Oralsex, Orgasmus, Häufigkeit.
+Frederick DA, Lever J, Gillespie BJ, Garcia JR, „What Keeps Passion Alive? …“, *J Sex Res*, 2017, n=38.747, DOI 10.1080/00224499.2015.1137854
+**Gestrichen:** „Herbenick et al., J Sex Med 2018, n=52.031“ existiert so nicht. „Vertrauen, Aufmerksamkeit“ als Prädiktoren nicht belegt.
 
 ---
 
