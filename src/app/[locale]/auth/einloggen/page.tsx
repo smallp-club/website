@@ -3,12 +3,14 @@
  *
  * Firmen-Mailfilter (Outlook SafeLinks u. a.) rufen Links aus Mails vorab auf.
  * Würde schon dieser Aufruf den Einmal-Link einlösen, wäre er verbraucht, bevor
- * der Mensch klickt. Deshalb löst erst der Knopf hier (POST) den Link ein
- * (Security-Audit L8).
+ * der Mensch klickt. Deshalb löst erst ein POST von dieser Seite den Link ein
+ * (Security-Audit L8). Der POST startet per JavaScript automatisch, der Knopf
+ * bleibt als Rückfall.
  */
 
 import { Page, PageHead, pageStyles } from '@/components/v2/Page';
 import { Button } from '@/components/primitives/Button';
+import { AutoSubmitForm } from './AutoSubmitForm';
 import styles from './einloggen.module.css';
 
 export const metadata = {
@@ -29,22 +31,22 @@ export default async function EinloggenPage({ searchParams }: PageProps) {
     <Page>
       <PageHead
         eyebrow="einloggen"
-        title={valid ? 'ein klick noch.' : 'der link ist unvollständig.'}
+        title={valid ? 'du kommst rein.' : 'der link ist unvollständig.'}
         size="compact"
         lead={
           valid
-            ? 'damit kein mailfilter deinen link vorher verbraucht, löst erst dieser knopf ihn ein.'
+            ? 'einen moment. falls nichts passiert, drück den knopf.'
             : 'fordere einfach einen neuen an, das dauert eine minute.'
         }
       >
         {valid ? (
-          <form method="post" action="/auth/verify" className={styles.actions}>
+          <AutoSubmitForm className={styles.actions}>
             <input type="hidden" name="token_hash" value={tokenHash} />
             <input type="hidden" name="type" value={type} />
             <Button type="submit" variant="accent">
               jetzt einloggen
             </Button>
-          </form>
+          </AutoSubmitForm>
         ) : (
           <p>
             <a href="/mit-glied" className={pageStyles.link}>

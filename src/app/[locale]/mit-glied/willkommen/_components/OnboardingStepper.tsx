@@ -15,14 +15,12 @@ import {
 } from '../onboarding-types';
 import styles from './OnboardingStepper.module.css';
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2;
 
 interface OnboardingStepperProps {
   currentPseudonym: string;
   initialSuggestions: string[];
 }
-
-const ARRIVAL_REVEAL_MS = 2400;
 
 export function OnboardingStepper({
   currentPseudonym,
@@ -33,70 +31,23 @@ export function OnboardingStepper({
 
   return (
     <div className={styles.stepper} data-step={step}>
-      {step === 1 && <ArrivalStep onAdvance={() => setStep(2)} />}
-      {step === 2 && (
+      {step === 1 && (
         <PseudonymStep
           currentPseudonym={pseudonym}
           initialSuggestions={initialSuggestions}
           onAdvance={(newName) => {
             if (newName) setPseudonym(newName);
-            setStep(3);
+            setStep(2);
           }}
         />
       )}
-      {step === 3 && <ShopPreviewStep />}
+      {step === 2 && <ShopPreviewStep />}
     </div>
   );
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Step 1 — Arrival
-
-function ArrivalStep({ onAdvance }: { onAdvance: () => void }) {
-  const [arrowVisible, setArrowVisible] = useState(false);
-
-  useEffect(() => {
-    const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
-      setArrowVisible(true);
-      return;
-    }
-    const id = window.setTimeout(() => setArrowVisible(true), ARRIVAL_REVEAL_MS);
-    return () => window.clearTimeout(id);
-  }, []);
-
-  return (
-    <>
-      <PageHead
-        eyebrow="schritt 1 von 3"
-        size="compact"
-        poster="act"
-        title="du bist drin."
-        lead="keine bestätigungsmail, keine wartezeit. ab jetzt mit-glied. auch ohne-glied."
-      />
-      <div className={styles.stage}>
-        <div
-          className={styles.arrival}
-          data-arrow-visible={arrowVisible || undefined}
-        >
-          <Button
-            type="button"
-            variant="primary"
-            onClick={onAdvance}
-            aria-label="weiter zu schritt 2"
-          >
-            weiter
-          </Button>
-        </div>
-      </div>
-    </>
-  );
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Step 2 — Pseudonym (Würfel-UI)
+// Step 1 — Pseudonym (mit Ankunft „du bist drin.“) (Würfel-UI)
 
 interface PseudonymStepProps {
   currentPseudonym: string;
@@ -143,12 +94,14 @@ function PseudonymStep({
 
   return (
     <PageHead
-      eyebrow="schritt 2 von 3"
+      eyebrow="schritt 1 von 2"
       size="compact"
-      title="dein name hier."
+      poster="act"
+      title="du bist drin."
       lead={
         <>
-          wir nennen dich erstmal <strong>{currentPseudonym}</strong>. den
+          ab jetzt mit-glied. auch ohne-glied. wir nennen dich erstmal{' '}
+          <strong>{currentPseudonym}</strong>. den
           kannst du behalten, oder du würfelst was anderes. mehr als wählen
           kannst du nicht, freitext gibt es nicht.
         </>
@@ -205,13 +158,13 @@ function PseudonymStep({
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Step 3 — Shop preview
+// Step 2 — Shop preview
 
 function ShopPreviewStep() {
   return (
     <>
       <PageHead
-        eyebrow="schritt 3 von 3"
+        eyebrow="schritt 2 von 2"
         size="compact"
         title="bald zu haben."
         lead="sticker, shirts, taschen. wenn der shop aufmacht, bekommst du eine mail."

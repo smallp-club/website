@@ -1,48 +1,11 @@
-/* OnboardingStepper V2 — drei stille Schritte. Kopf kommt aus dem
+/* OnboardingStepper V2 — zwei stille Schritte. Kopf kommt aus dem
  * Innenseiten-System (PageHead), hier nur Bühne, Würfel und Kacheln. */
 
 .stepper {
   min-height: 60vh;
 }
 
-/* ----- Step 1: Arrival ----- */
-
-.stage {
-  max-width: var(--v2-max);
-  margin-inline: auto;
-  padding: clamp(2.5rem, 5vw, 4rem) var(--v2-gutter) clamp(4rem, 8vw, 6rem);
-}
-
-.arrival {
-  display: flex;
-  justify-content: flex-start;
-  min-height: 3rem;
-}
-
-/* Der Weiter-Knopf erscheint nach kurzer Pause (Verhalten wie bisher).
- * Reduced Motion: sofort sichtbar, per CSS und per JS. */
-.arrival > * {
-  opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity var(--v2-dur-fast) var(--v2-ease),
-    transform var(--v2-dur-fast) var(--v2-ease);
-}
-
-.arrival[data-arrow-visible] > * {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .arrival > * {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-}
-
-/* ----- Step 2: Pseudonym-Würfel ----- */
+/* ----- Step 1: Pseudonym-Würfel ----- */
 
 .suggestionList {
   display: flex;
@@ -128,7 +91,7 @@
   align-items: center;
 }
 
-/* ----- Step 3: Shop preview ----- */
+/* ----- Step 2: Shop preview ----- */
 
 .tileGrid {
   display: grid;
