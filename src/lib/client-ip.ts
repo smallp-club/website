@@ -31,13 +31,16 @@ export async function getClientIp(): Promise<string | null> {
     // NICHT vertraut (sonst könnte ein Angreifer die IP fälschen und alle
     // IP-Limits + die IP-Blocklist aushebeln). Security-Audit 2026-07-13.
     //
-    // Ohne CF_VERIFY_SECRET wird cf-connecting-ip in Produktion nicht mehr
-    // vertraut (Audit L2, vorher fail-open). Vergleich zeitkonstant.
+    // Ohne CF_VERIFY_SECRET wird cf-connecting-ip weiter vertraut. Der
+    // fail-closed-Versuch (Audit L2) hat in Produktion alle Besucher auf die
+    // Cloudflare-Edge-IP zusammengelegt: geteiltes IP-Limit, Login für alle
+    // gesperrt (2026-11-05). Restrisiko: IP-Spoofing über die rohe Vercel-URL,
+    // bis das Secret gesetzt ist. env-check warnt beim Boot. Vergleich zeitkonstant.
     const secret = process.env.CF_VERIFY_SECRET;
     const stamp = hdrs.get('x-origin-verify') ?? '';
     const stamped = secret
       ? stamp.length === secret.length && timingSafeEqual(Buffer.from(stamp), Buffer.from(secret))
-      : process.env.NODE_ENV !== 'production';
+      : true;
     if (stamped) return cf.trim();
   }
 
