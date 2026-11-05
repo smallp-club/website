@@ -41,13 +41,15 @@
 .statement {
   margin: 0;
   font-weight: var(--weight-bold);
-  font-size: 46pt;
+  font-size: 38pt;
   line-height: 0.95;
   letter-spacing: -0.025em;
 }
 
 .statementSecond {
   color: var(--v2-deep);
+  /* „ohne-glied“ nie am Bindestrich trennen, der Wortwitz hängt daran */
+  white-space: nowrap;
 }
 
 .foot {
