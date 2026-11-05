@@ -1,0 +1,10 @@
+/* Ersetzt das Padding der MemberShell (.content), das MemberPage aufhebt. */
+.shellPad {
+  padding: var(--space-6) var(--gutter) var(--space-9);
+}
+
+@media (min-width: 1024px) {
+  .shellPad {
+    padding: var(--space-7) var(--space-7) var(--space-11);
+  }
+}
