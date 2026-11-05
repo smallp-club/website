@@ -4,21 +4,26 @@
  * MemberShell — Layout-Wrapper für alle Pages im eingeloggten Mit-Glied-Bereich.
  *
  * Desktop: zweispaltiges Grid (Sidebar links, Content rechts).
- * Mobile: einspaltig, Sidebar als Drawer, getriggert via Top-Bar.
+ * Mobile: Nachtwand-Leiste oben mit allen Bereichen als Zettel-Reihe
+ * (wischbar, ein Tipp pro Wechsel). Das Namensschild ganz links öffnet den
+ * Drawer mit Konto, Ausloggen, Admin und Rechtslinks.
  *
  * MemberSidebar wird als direktes Grid-Child eingehängt (kein Wrap-div),
  * damit das CSS-Grid die Spalten korrekt aufteilt.
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { MemberSidebar } from './MemberSidebar';
+import { MEMBER_NAV, isNavItemActive } from './nav-items';
 import styles from './MemberShell.module.css';
 
 interface MemberShellProps {
   pseudonym: string;
   joinedDate: string;
   isAdmin: boolean;
-  /** Sichtbarer Titel auf der Mobile-Top-Bar (typischerweise der Page-Name). */
+  /** Titel der Seite (für Screenreader in der Mobile-Leiste). */
   pageLabel: string;
   children: React.ReactNode;
 }
@@ -31,32 +36,55 @@ export function MemberShell({
   children,
 }: MemberShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const pathname = usePathname();
+  const stripRef = useRef<HTMLUListElement>(null);
+
+  // Aktiven Zettel in die sichtbare Spur holen, ohne die Seite zu scrollen.
+  useEffect(() => {
+    const strip = stripRef.current;
+    const active = strip?.querySelector<HTMLElement>('[data-active]');
+    if (!strip || !active) return;
+    strip.scrollLeft = active.offsetLeft - strip.clientWidth / 2 + active.clientWidth / 2;
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setDrawerOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen]);
 
   return (
     <div className={styles.shell}>
-      {/* Mobile Top-Bar mit Burger zum Drawer-Toggle */}
-      <div className={styles.mobileBar}>
+      <nav className={styles.mobileBar} aria-label={`mit-glied bereich, gerade: ${pageLabel}`}>
         <button
           type="button"
-          className={styles.burger}
+          className={styles.nameTag}
           onClick={() => setDrawerOpen(true)}
-          aria-label="bereichs-navigation öffnen"
+          aria-label={`${pseudonym}: konto, ausloggen und mehr`}
           aria-expanded={drawerOpen}
           aria-controls="member-sidebar"
         >
-          <span aria-hidden="true" />
-          <span aria-hidden="true" />
-          <span aria-hidden="true" />
+          {pseudonym}
         </button>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/brand/smallpclub-mark-offwhite.svg"
-          alt=""
-          className={styles.mobileMark}
-          aria-hidden="true"
-        />
-        <span className={styles.mobileLabel}>{pageLabel}</span>
-      </div>
+        <ul ref={stripRef} className={styles.strip}>
+          {MEMBER_NAV.map((item) => {
+            const active = isNavItemActive(pathname, item.href);
+            return (
+              <li key={item.href}>
+                <Link
+                  href={item.href}
+                  className={styles.stripItem}
+                  data-active={active || undefined}
+                  aria-current={active ? 'page' : undefined}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
       <MemberSidebar
         pseudonym={pseudonym}

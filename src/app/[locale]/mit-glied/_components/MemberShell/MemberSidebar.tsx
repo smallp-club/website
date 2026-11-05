@@ -50,6 +50,7 @@ export function MemberSidebar({
       />
 
       <aside
+        id="member-sidebar"
         className={styles.sidebar}
         data-open={open || undefined}
         aria-label="mit-glied bereich"
