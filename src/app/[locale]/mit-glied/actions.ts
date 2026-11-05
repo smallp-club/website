@@ -38,7 +38,7 @@ export async function requestMagicLink(
     return await requestMagicLinkInner(prev, formData);
   } catch (err) {
     console.error('[magic-link] unhandled:', err);
-    return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
+    return { status: 'error', message: 'klappt gerade nicht (fehler x). probier es später nochmal.' };
   }
 }
 
@@ -94,7 +94,13 @@ async function requestMagicLinkInner(
     (!ip || ip === '127.0.0.1' || ip === '::1' || ip === '::ffff:127.0.0.1');
   if (!isLocalhost) {
     if (ip) {
-      const ipResult = await consumeRateLimit('magic_link_per_ip', ip);
+      const ipResult = await consumeRateLimit('magic_link_per_ip', ip).catch((err) => {
+        console.error('[magic-link] rate-limit backend failed:', err);
+        return null;
+      });
+      if (!ipResult) {
+        return { status: 'error', message: 'klappt gerade nicht (fehler r). probier es später nochmal.' };
+      }
       if (!ipResult.success) {
         return { status: 'error', message: 'zu viele anfragen. probier es später nochmal.' };
       }
@@ -103,9 +109,15 @@ async function requestMagicLinkInner(
       // Angreifer könnte über rotierende Zieladressen unbegrenzt Mails
       // auslösen. In Production hart abbrechen (Security-Audit M2).
       console.error('[magic-link] no client ip in prod — abort');
-      return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
+      return { status: 'error', message: 'klappt gerade nicht (fehler i). probier es später nochmal.' };
     }
-    const emailResult = await consumeRateLimit('magic_link_per_email', emailHash);
+    const emailResult = await consumeRateLimit('magic_link_per_email', emailHash).catch((err) => {
+      console.error('[magic-link] rate-limit backend failed:', err);
+      return null;
+    });
+    if (!emailResult) {
+      return { status: 'error', message: 'klappt gerade nicht (fehler r). probier es später nochmal.' };
+    }
     if (!emailResult.success) {
       return {
         status: 'error',
@@ -142,11 +154,11 @@ async function requestMagicLinkInner(
           message: 'zu viele anfragen. probier es später nochmal.',
         };
       }
-      return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
+      return { status: 'error', message: 'klappt gerade nicht (fehler s). probier es später nochmal.' };
     }
   } catch (err) {
     console.error('[magic-link] unexpected throw:', err);
-    return { status: 'error', message: 'klappt gerade nicht. probier es später nochmal.' };
+    return { status: 'error', message: 'klappt gerade nicht (fehler t). probier es später nochmal.' };
   }
 
   return { status: 'success', email };
