@@ -1,0 +1,150 @@
+/* Quellen-Keller: jede Studie als Karteikarte auf Papier. */
+
+.jump {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  max-width: var(--v2-max);
+  margin: 0 auto;
+  padding: var(--space-6) var(--v2-gutter) 0;
+}
+
+.jumpLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 1.5px solid var(--v2-poster-ink);
+  border-radius: var(--radius-pill);
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-body-sm);
+  color: var(--v2-poster-ink);
+  text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-standard);
+}
+
+.jumpLink:hover {
+  background-color: var(--v2-act);
+}
+
+.jumpLink:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+.jumpCount {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  color: var(--v2-muted-on-paper);
+}
+
+.list {
+  list-style: none;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 48rem) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  background-color: var(--v2-note-white);
+  background-image: var(--v2-paper-noise-soft);
+  background-size: 240px;
+  background-blend-mode: multiply;
+  box-shadow: 0 12px 24px -18px rgba(0, 0, 0, 0.5);
+  color: var(--v2-note-ink);
+}
+
+.card:nth-child(odd) {
+  transform: rotate(-0.4deg);
+}
+
+.card:nth-child(even) {
+  transform: rotate(0.5deg);
+}
+
+.cite {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-heading-sm);
+  line-height: 1.15;
+}
+
+.author {
+  font-weight: var(--weight-bold);
+}
+
+.year {
+  font-weight: var(--weight-regular);
+  color: var(--v2-deep);
+}
+
+.pub {
+  margin: 0 0 var(--space-2);
+  padding-bottom: var(--space-3);
+  border-bottom: 1.5px solid var(--v2-note-ink);
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-style: italic;
+  color: var(--v2-note-muted);
+}
+
+.shows {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  line-height: 1.55;
+}
+
+.limit {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  line-height: 1.5;
+  color: var(--v2-note-muted);
+}
+
+.limitLabel {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  color: var(--v2-note-ink);
+}
+
+.doi {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: auto;
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-body-sm);
+  color: var(--v2-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.doi:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card:nth-child(odd),
+  .card:nth-child(even) {
+    transform: none;
+  }
+}
