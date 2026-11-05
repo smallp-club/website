@@ -3,17 +3,10 @@
 /**
  * MemberSidebar — persistent Navigation für den Mit-Glied-Bereich.
  *
- * Brand-Reset (Session 17 nach Kevin-Feedback): nicht SaaS-App, nicht
- * Full-Editorial. „Member-Atelier"-Position: dichter als Public, aber
- * Brand-Stille bewahrt.
- *
- * Konkret:
- *   - KEIN Avatar-Kreis (Linear/Notion-Tell). Typographische Anordnung
- *     mit Pseudonym als Chillax-Display + Caption darunter
- *   - KEINE Pastel-Pill als Active-State. Subtile Surface-Sunken +
- *     2px Dark-Turquoise-Hairline links + Bold-Text
- *   - Sections mit lowercase Eyebrow (Brand-Doktrin: NIE uppercase-tracked)
- *   - Service-Links unten als kleine Hairline-getrennte Caption-Strip
+ * Plakat-Sprache wie die Website: Nacht-Wand als Grund, das Pseudonym als
+ * gekleistertes Namensplakat, die aktive Seite als türkiser Zettel.
+ * Keine Icons, keine Bildmarke (die Wörter tragen, das Logo steht im Kopf).
+ * Rechtslinks unten, damit Impressum und Datenschutz überall erreichbar sind.
  */
 
 import Link from 'next/link';
@@ -65,13 +58,7 @@ export function MemberSidebar({
             Doktrin MEMBER_SECURITY §7: Owner ist Member, Admin-Status erscheint
             kontextuell im NavBlock-Label, nicht im Identitäts-Header. */}
         <header className={styles.account}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/brand/smallpclub-mark-black.svg"
-            alt=""
-            className={styles.accountMark}
-            aria-hidden="true"
-          />
+          <span className={styles.tape} aria-hidden="true" />
           <span className={styles.accountEyebrow}>mit-glied</span>
           <span className={styles.accountName}>{pseudonym}</span>
           <span className={styles.accountDate}>
@@ -82,6 +69,7 @@ export function MemberSidebar({
         <div className={styles.scroller}>
           <NavBlock
             label="dein bereich"
+            hideLabel
             items={MEMBER_NAV}
             pathname={pathname}
             onItemClick={onClose}
@@ -121,14 +109,16 @@ interface NavBlockProps {
   items: MemberNavItem[];
   pathname: string;
   onItemClick: () => void;
+  /** Label nur für Screenreader (der Member-Block braucht keine sichtbare Überschrift). */
+  hideLabel?: boolean;
 }
 
-function NavBlock({ label, items, pathname, onItemClick }: NavBlockProps) {
+function NavBlock({ label, items, pathname, onItemClick, hideLabel }: NavBlockProps) {
   return (
     <nav className={styles.block} aria-label={label}>
-      <p className={styles.blockLabel}>{label}</p>
+      {!hideLabel && <p className={styles.blockLabel}>{label}</p>}
       <ul className={styles.list} role="list">
-        {items.map(({ href, label, Icon, caption }) => {
+        {items.map(({ href, label, caption }) => {
           const active = isNavItemActive(pathname, href);
           return (
             <li key={href}>
@@ -139,7 +129,6 @@ function NavBlock({ label, items, pathname, onItemClick }: NavBlockProps) {
                 aria-current={active ? 'page' : undefined}
                 onClick={onItemClick}
               >
-                <Icon size={20} className={styles.icon} />
                 <span className={styles.itemText}>
                   <span className={styles.itemLabel}>{label}</span>
                   {caption && <span className={styles.itemCaption}>{caption}</span>}

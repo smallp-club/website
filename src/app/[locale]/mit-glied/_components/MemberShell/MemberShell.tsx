@@ -50,7 +50,7 @@ export function MemberShell({
         </button>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/brand/smallpclub-mark-black.svg"
+          src="/brand/smallpclub-mark-offwhite.svg"
           alt=""
           className={styles.mobileMark}
           aria-hidden="true"

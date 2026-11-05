@@ -41,8 +41,8 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3) var(--gutter);
-  border-bottom: 1px solid var(--border-hairline);
-  background-color: var(--surface-bg);
+  background-color: var(--v2-night-wall);
+  color: var(--v2-on-dark);
   position: sticky;
   top: 0;
   z-index: 30;
@@ -57,7 +57,7 @@
 .burger {
   appearance: none;
   background: transparent;
-  border: 1px solid var(--border-hairline);
+  border: 1px solid var(--v2-hairline-dark);
   border-radius: var(--radius-sm);
   width: 44px;
   height: 44px;
@@ -71,21 +71,21 @@
 }
 
 .burger:hover {
-  border-color: var(--text-strong);
+  border-color: var(--v2-on-dark);
 }
 
 .burger:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px var(--surface-bg),
-    0 0 0 4px var(--accent-contrast, var(--spc-turquoise-deep));
+    0 0 0 2px var(--v2-night-wall),
+    0 0 0 4px var(--v2-act);
 }
 
 .burger span {
   display: block;
   width: 18px;
   height: 1.5px;
-  background-color: var(--text-strong);
+  background-color: var(--v2-on-dark);
   border-radius: 1px;
   transition:
     transform 220ms cubic-bezier(0.16, 1, 0.3, 1),
@@ -113,9 +113,9 @@
 
 .mobileLabel {
   font-family: var(--font-display);
-  font-weight: var(--weight-light);
+  font-weight: var(--weight-medium);
   font-size: var(--text-body-lg);
-  color: var(--text-strong);
+  color: var(--v2-on-dark);
 }
 
 /* ===== Content-Area ===== */
