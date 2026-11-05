@@ -4,9 +4,9 @@
  * MemberShell — Layout-Wrapper für alle Pages im eingeloggten Mit-Glied-Bereich.
  *
  * Desktop: zweispaltiges Grid (Sidebar links, Content rechts).
- * Mobile: Nachtwand-Leiste oben mit allen Bereichen als Zettel-Reihe
- * (wischbar, ein Tipp pro Wechsel). Das Namensschild ganz links öffnet den
- * Drawer mit Konto, Ausloggen, Admin und Rechtslinks.
+ * Mobile: Nachtwand-Leiste oben, Burger links (öffnet Drawer mit Konto,
+ * Ausloggen, Admin, Rechtslinks), daneben alle Bereiche als wischbare
+ * Zettel-Reihe (ein Tipp pro Wechsel).
  *
  * MemberSidebar wird als direktes Grid-Child eingehängt (kein Wrap-div),
  * damit das CSS-Grid die Spalten korrekt aufteilt.
@@ -59,13 +59,15 @@ export function MemberShell({
       <nav className={styles.mobileBar} aria-label={`mit-glied bereich, gerade: ${pageLabel}`}>
         <button
           type="button"
-          className={styles.nameTag}
+          className={styles.burger}
           onClick={() => setDrawerOpen(true)}
-          aria-label={`${pseudonym}: konto, ausloggen und mehr`}
+          aria-label="menü: konto, ausloggen und mehr"
           aria-expanded={drawerOpen}
           aria-controls="member-sidebar"
         >
-          {pseudonym}
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
+          <span aria-hidden="true" />
         </button>
         <ul ref={stripRef} className={styles.strip}>
           {MEMBER_NAV.map((item) => {

@@ -57,31 +57,31 @@
   }
 }
 
-/* Pseudonym als kleines Plakat, öffnet den Drawer */
-.nameTag {
+/* Burger: öffnet den Drawer */
+.burger {
   flex-shrink: 0;
   appearance: none;
-  border: 0;
+  background: transparent;
+  border: 1px solid var(--v2-hairline-dark);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   cursor: pointer;
-  min-height: 44px;
-  max-width: 9.5rem;
-  padding: 0 var(--space-3);
-  background-color: var(--v2-poster-paper);
-  background-image: var(--v2-paper-noise-soft);
-  background-size: 240px;
-  color: var(--v2-poster-ink);
-  font-family: var(--font-display);
-  font-weight: var(--weight-bold);
-  font-size: var(--text-body-md);
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transform: rotate(-2deg);
-  box-shadow: 0 8px 14px -10px rgba(0, 0, 0, 0.9);
+  padding: 0;
 }
 
-.nameTag:focus-visible {
+.burger span {
+  display: block;
+  width: 18px;
+  height: 1.5px;
+  background-color: var(--v2-on-dark);
+}
+
+.burger:focus-visible {
   outline: none;
   box-shadow:
     0 0 0 2px var(--v2-night-wall),
@@ -101,8 +101,8 @@
   overflow-x: auto;
   scroll-snap-type: x proximity;
   scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 0.75rem, #000 calc(100% - 1.5rem), transparent);
-  mask-image: linear-gradient(to right, transparent 0, #000 0.75rem, #000 calc(100% - 1.5rem), transparent);
+  -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 1.5rem), transparent);
 }
 
 .strip::-webkit-scrollbar {
@@ -146,7 +146,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nameTag,
   .stripItem[data-active] {
     transform: none;
   }
