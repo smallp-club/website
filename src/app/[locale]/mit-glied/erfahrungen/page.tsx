@@ -72,7 +72,7 @@ export default async function ErfahrungenListePage() {
               <li key={p.key}>
                 <Link href={`/mit-glied/erfahrungen/neu?prompt=${p.key}`} className={styles.prompt}>
                   <span className={styles.tape} aria-hidden="true" />
-                  <span className={styles.promptText}>{p.label.replace(/\.$/, '')} …</span>
+                  <span className={styles.promptText}>{`${p.label.replace(/\.$/, '')}\u00a0…`}</span>
                   <span className={styles.promptGo}>weiterschreiben →</span>
                 </Link>
               </li>
