@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { createSupabaseServiceClient } from '@/lib/supabase/service';
 import { requireAdminBasic } from '@/lib/members/auth';
-import { challengeAndVerify, consumeBackupCode, getMfaStatus } from '@/lib/members/mfa';
+import { consumeBackupCode, getMfaStatus, verifyWithAnyFactor } from '@/lib/members/mfa';
 import { setAdminAal2Expiry } from '@/lib/members/admin-session';
 import { consumeRateLimit } from '@/lib/rate-limit';
 import type { TotpChallengeFormState } from './challenge-types';
@@ -49,8 +49,7 @@ export async function verifyTotpChallengeAction(
     };
   }
 
-  const result = await challengeAndVerify(supabase, mfa.verifiedFactorId, code);
-  if (!result.ok) {
+  if (!(await verifyWithAnyFactor(supabase, mfa, code))) {
     return {
       status: 'error',
       message:
@@ -112,10 +111,10 @@ export async function verifyBackupCodeAction(
     };
   }
 
-  // Alten Factor wegräumen, damit Setup einen frischen erzeugt.
+  // Alle alten Geräte wegräumen, damit Setup einen frischen Factor erzeugt.
   const mfa = await getMfaStatus(supabase);
-  if (mfa.verifiedFactorId) {
-    await supabase.auth.mfa.unenroll({ factorId: mfa.verifiedFactorId });
+  for (const f of mfa.verifiedFactors) {
+    await supabase.auth.mfa.unenroll({ factorId: f.id });
   }
 
   const service = createSupabaseServiceClient();

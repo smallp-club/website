@@ -30,6 +30,7 @@ export const ADMIN_NAV: MemberNavItem[] = [
   { href: '/mit-glied/admin/audit', label: 'audit-log' },
   { href: '/mit-glied/admin/blocklist', label: 'blocklist' },
   { href: '/mit-glied/admin/brigading', label: 'brigading' },
+  { href: '/mit-glied/admin/2fa/geraete', label: 'geräte', caption: 'zwei-faktor' },
 ];
 
 /**

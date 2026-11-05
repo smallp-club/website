@@ -25,6 +25,8 @@ const FACTOR_ISSUER = 'small p club';
 export interface MfaStatus {
   enrolled: boolean;
   factorId: string | null;
+  /** Alle eingerichteten Geräte, neuestes zuerst. */
+  verifiedFactors: Array<{ id: string; createdAt: string }>;
   verifiedFactorId: string | null;
   unverifiedFactorId: string | null;
   currentLevel: 'aal1' | 'aal2' | null;
@@ -48,7 +50,10 @@ export async function getMfaStatus(
   // unverified factors (Setup-Zwischenstand) — dafür gibt's `factors.all`.
   const allFactors = factors?.all ?? [];
   const totpFactors = allFactors.filter((f) => f.factor_type === 'totp');
-  const verified = totpFactors.find((f) => f.status === 'verified') ?? null;
+  const verifiedList = totpFactors
+    .filter((f) => f.status === 'verified')
+    .sort((a, b) => b.created_at.localeCompare(a.created_at));
+  const verified = verifiedList[0] ?? null;
   const unverified = totpFactors.find((f) => f.status === 'unverified') ?? null;
 
   const currentLevel = (aal?.currentLevel as 'aal1' | 'aal2' | null) ?? null;
@@ -58,6 +63,7 @@ export async function getMfaStatus(
     enrolled: verified !== null,
     factorId: verified?.id ?? unverified?.id ?? null,
     verifiedFactorId: verified?.id ?? null,
+    verifiedFactors: verifiedList.map((f) => ({ id: f.id, createdAt: f.created_at })),
     unverifiedFactorId: unverified?.id ?? null,
     currentLevel,
     nextLevel,
@@ -72,7 +78,9 @@ export async function getMfaStatus(
  * Returns: { factorId, qrCodeSvg, secret, uri }.
  */
 export async function enrollTotp(
-  supabase: SupabaseClient<Database>
+  supabase: SupabaseClient<Database>,
+  /** Supabase verlangt pro User eindeutige Namen, weitere Geräte brauchen einen eigenen. */
+  friendlyName: string = FACTOR_FRIENDLY_NAME
 ): Promise<{ factorId: string; qrCodeSvg: string; secret: string; uri: string }> {
   // Lösche bestehende unverified factors, sonst stapeln sie sich.
   const { data: factors } = await supabase.auth.mfa.listFactors();
@@ -85,7 +93,7 @@ export async function enrollTotp(
 
   const { data, error } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
-    friendlyName: FACTOR_FRIENDLY_NAME,
+    friendlyName,
     issuer: FACTOR_ISSUER,
   });
 
@@ -129,6 +137,22 @@ export async function challengeAndVerify(
   }
 
   return { ok: true };
+}
+
+/**
+ * Prüft einen Code gegen alle eingerichteten Geräte (neuestes zuerst).
+ * Mehrere Geräte = mehrere TOTP-Factors mit je eigenem Secret.
+ */
+export async function verifyWithAnyFactor(
+  supabase: SupabaseClient<Database>,
+  status: MfaStatus,
+  code: string
+): Promise<boolean> {
+  for (const f of status.verifiedFactors) {
+    const result = await challengeAndVerify(supabase, f.id, code);
+    if (result.ok) return true;
+  }
+  return false;
 }
 
 /**
@@ -241,8 +265,7 @@ export async function verifyTotpForReauth(rawCode: string): Promise<boolean> {
   const status = await getMfaStatus(supabase);
   if (!status.verifiedFactorId) return false;
 
-  const result = await challengeAndVerify(supabase, status.verifiedFactorId, code);
-  if (!result.ok) return false;
+  if (!(await verifyWithAnyFactor(supabase, status, code))) return false;
 
   // Aktive Re-Auth → Idle-Cookie verlängern. Wer aktiv arbeitet, bleibt drin.
   const { setAdminAal2Expiry } = await import('@/lib/members/admin-session');

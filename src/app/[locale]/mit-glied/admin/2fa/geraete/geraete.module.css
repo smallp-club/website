@@ -1,0 +1,153 @@
+/* Admin-Geräte (2FA): Liste, Hinzufügen mit QR. V2-Tokens. */
+
+.list {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  border-top: 1.5px solid var(--v2-poster-ink);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--v2-hairline-light);
+}
+
+.rowName {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-body-lg);
+}
+
+.rowDate {
+  font-family: var(--font-body);
+  font-weight: var(--weight-regular);
+  font-size: var(--text-caption);
+  color: var(--v2-muted-on-paper);
+}
+
+.remove {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--v2-hairline-light);
+  min-height: 44px;
+  padding: 0 1rem;
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-body-sm);
+  color: var(--v2-poster-ink);
+  cursor: pointer;
+}
+
+.remove:hover {
+  border-color: var(--v2-poster-ink);
+}
+
+.remove:focus-visible,
+.cta:focus-visible,
+.link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--v2-deep);
+}
+
+.note {
+  margin-top: 1.25rem;
+  font-size: var(--text-body-sm);
+  color: var(--v2-muted-on-paper);
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  background-color: var(--v2-act);
+  color: var(--v2-on-act);
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  text-decoration: none;
+  transform: rotate(-1deg);
+  box-shadow: 0 10px 18px -14px rgba(0, 0, 0, 0.6);
+}
+
+.add {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+@media (min-width: 40rem) {
+  .add {
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.qr {
+  width: 200px;
+  height: 200px;
+  padding: 0.75rem;
+  background: #fff;
+  box-shadow: 0 12px 22px -16px rgba(0, 0, 0, 0.5);
+}
+
+.addText {
+  display: grid;
+  gap: 1rem;
+}
+
+.addText p {
+  margin: 0;
+}
+
+.secretDetails summary {
+  cursor: pointer;
+  font-size: var(--text-body-sm);
+  color: var(--v2-deep);
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.secret {
+  display: block;
+  margin-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  overflow-wrap: anywhere;
+}
+
+.form {
+  display: grid;
+  gap: 1rem;
+  justify-items: start;
+}
+
+.done {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.done p {
+  margin: 0;
+}
+
+.doneTitle {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-heading-md);
+}
+
+.link {
+  color: var(--v2-deep);
+  font-weight: var(--weight-medium);
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
