@@ -26,6 +26,7 @@ export const MEMBER_NAV: MemberNavItem[] = [
 
 export const ADMIN_NAV: MemberNavItem[] = [
   { href: '/mit-glied/admin', label: 'übersicht' },
+  { href: '/mit-glied/admin/mitglieder', label: 'mit-glieder' },
   { href: '/mit-glied/admin/inbox', label: 'inbox', caption: 'kuratieren' },
   { href: '/mit-glied/admin/audit', label: 'audit-log' },
   { href: '/mit-glied/admin/blocklist', label: 'blocklist' },
