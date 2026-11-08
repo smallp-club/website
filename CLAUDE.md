@@ -53,7 +53,8 @@ Ton: Direkt. Ehrlich. Mit Augenzwinkern. Gerne herb. → Details: @docs/brand/VO
 - **91-%-Zahl hatte keine Primärquelle** (Psychology Today 2015 meint nur Männer, die sich selbst als klein einstufen). V2 und FAQ-JSON-LD nutzen nur noch Lever 2006 (85/55, n=52.031) und Veale 2015. Live-Site (HeroTiefe) trägt die 91 % weiterhin.
 - **Doktrin-Änderung:** ThresholdGate auf /mit-glied ersetzt durch H1 direkt über dem Formular (Gate-Komponente bleibt als Plan B).
 - Ein Beitrittsformular `JoinInline` (Turnstile lädt erst bei Interaktion), einmal pro Seite, nie auf /partner und /unterstuetzen.
-- Offen: Kevin-Review der V2, Betreff/Absender der Magic-Link-Mail im Supabase-Dashboard prüfen, `--v2-myth-on-dark` (#e08a6a) als neue Sienna-Abstufung freigeben, echte Fotos für 10 Platzhalter (Motivsätze in lene.md §11).
+- **Freigegeben 2026-11-08:** V2 (Kethe-Review durch) und `--v2-myth-on-dark` (#e08a6a) als Sienna-Abstufung für dunkle Flächen. Alle 10 Bildstellen tragen Magnific-Bilder (Nano Banana 2); club-tisch, gruppenraum, umkleide am 08.11. neu erzeugt (Klon-Gesichter bzw. englische Schilder raus).
+- Offen: Betreff/Absender der Magic-Link-Mail im Supabase-Dashboard prüfen, langfristig echtes Shooting statt KI-Bilder.
 
 ## Stand (2026-07-13, Session 17 — Security-Audit end-to-end, Go-Live scharf, Member-Login zum ersten Mal live)
 
