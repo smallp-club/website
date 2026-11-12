@@ -1067,8 +1067,8 @@ a.notePrompt:focus-visible {
 }
 
 
-/* Fall-Ebene: liegt über Mann, Verlauf und Fußzeile */
-.heroFall { z-index: 6; pointer-events: none; }
+/* Fall-Ebene: über der Wand, hinter dem Mann (gleiche Ebene wie die Wand, später im DOM) */
+.heroFall { z-index: 1; pointer-events: none; }
 .heroFall .sheetSlot { cursor: default; }
 
 /* Gap passt immer in einen Bildschirm: Plakate richten sich nach der Höhe */

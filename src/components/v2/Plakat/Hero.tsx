@@ -143,7 +143,7 @@ export function Hero() {
 
       <div className={styles.heroScrim} aria-hidden="true" />
 
-      {/* Abgerissene Bahnen fallen vor allem anderen herunter, auch vor dem Mann. */}
+      {/* Abgerissene Bahnen fallen hinter dem Mann herunter, vor der Wand. */}
       <MotionConfig reducedMotion="user">
         <div className={`${styles.heroSheets} ${styles.heroFall}`} aria-hidden="true">
           {SHEETS.map((s, i) => (
