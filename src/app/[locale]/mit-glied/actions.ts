@@ -7,6 +7,8 @@ import { consumeRateLimit } from '@/lib/rate-limit';
 import { verifyTurnstileToken } from '@/lib/turnstile';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { isBanned } from '@/lib/members/blocklist';
+import { LOGIN_PENDING_COOKIE, loginPendingCookieOptions } from '@/lib/members/login-pending';
+import { cookies } from 'next/headers';
 import type { AuthFormState } from './auth-types';
 
 /**
@@ -161,5 +163,6 @@ async function requestMagicLinkInner(
     return { status: 'error', message: 'klappt gerade nicht (fehler t). probier es später nochmal.' };
   }
 
+  (await cookies()).set(LOGIN_PENDING_COOKIE, '1', loginPendingCookieOptions);
   return { status: 'success', email };
 }

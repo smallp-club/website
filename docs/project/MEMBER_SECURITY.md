@@ -323,7 +323,7 @@ Der Owner braucht einen abgeschirmten Admin-Bereich im Member-System, um Erfahru
 | **Role-Check** | `profiles.role = 'admin'` Server-Side in Layout. Middleware redirected non-admin auf `/mit-glied/eingang` | Launch |
 | **RLS in Supabase** | Admin-Rolle kann alle `stories`-Rows lesen (`policy: role() = 'admin' OR user_id = auth.uid()`). Normale Member sehen nur eigene | Launch |
 | **2FA-Pflicht (TOTP)** | Magic-Link allein reicht für Admin nicht. Zusätzlich 6-stelliger TOTP-Code beim Login. Setup-QR-Code einmalig bei Admin-Aktivierung. Code in Proton Pass | Launch |
-| **Kurze Session-Timeout** | Admin-Session: 2h Idle-Timeout vs. 30 Tage für normale Member. Auto-Logout bei Inaktivität | Launch |
+| **Kurze Session-Timeout** | Admin-Re-Challenge per signiertem Cookie. Seit 2026-11-05 bewusst 365 Tage pro Gerät (Kethe-Entscheidung, Audit 2026-11 bestätigt). Neues Gerät oder Logout verlangt den Code sofort | Launch |
 | **Audit-Log** | Jede Approve/Reject/Ban-Aktion in `admin_audit_log` mit Timestamp + Admin-ID + Target | Launch |
 | **Server-only Render** | Admin-Routes sind `'use client'`-frei wo möglich. Bericht-Inhalte werden nie in Browser-State persistiert | Launch |
 | **IP-Whitelist** | Optional: nur Heim-/Mobil-IP-Ranges. Aktivieren wenn Brigading spürbar wird | Post-Launch |

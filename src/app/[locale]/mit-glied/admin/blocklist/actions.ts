@@ -57,6 +57,11 @@ export async function banAction(formData: FormData): Promise<void> {
     return;
   }
 
+  // Hat die Mail schon ein Konto, endet es jetzt — nicht erst beim nächsten
+  // Login. Sonst bliebe eine laufende Session aktiv (Security-Audit 2026-11).
+  const existingUserId = email ? await findUserIdByEmail(service, email) : null;
+  if (existingUserId) await revokeMember(service, existingUserId, email);
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const auditTable = service.from('admin_audit_log') as any;
   await auditTable.insert({
@@ -64,7 +69,7 @@ export async function banAction(formData: FormData): Promise<void> {
     action: 'ban',
     target_type: 'blocklist',
     target_id: (inserted as { id: string }).id,
-    metadata: { reason },
+    metadata: { reason, removed_user_id: existingUserId },
   });
 
   revalidatePath('/mit-glied/admin/blocklist');
@@ -149,10 +154,8 @@ export async function banUserFromStoryAction(formData: FormData): Promise<void> 
   const email = userResult.user.email;
   const emailHash = hashEmail(email);
 
-  // 3) Story rejecten, übrige nicht veröffentlichte Berichte der Person
-  //    löschen (sonst bleiben sie verwaist in der Inbox, Audit L7)
+  // 3) Story rejecten (die übrigen unveröffentlichten löscht revokeMember)
   await storiesTable.update({ status: 'rejected' }).eq('id', storyId);
-  await storiesTable.delete().eq('user_id', userId).neq('status', 'approved').neq('id', storyId);
 
   // 4) Email-Hash auf Blocklist
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -166,13 +169,8 @@ export async function banUserFromStoryAction(formData: FormData): Promise<void> 
     .select('id')
     .single();
 
-  // 5) User-Account löschen (cascade löscht profile, stories.user_id wird NULL
-  //    via Migration 0004, approved Stories bleiben mit ihrem aktuellen
-  //    Pseudonym sichtbar — kein „alter-"-Marker beim Ban, anders als beim
-  //    self-delete)
-  await service.auth.admin.deleteUser(userId);
-  const brevo = await deleteContact(email);
-  if (!brevo.ok) console.error('[admin-ban-user] brevo delete failed:', brevo.reason);
+  // 5) Konto beenden
+  await revokeMember(service, userId, email, storyId);
 
   // 6) Audit-Log
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -193,4 +191,47 @@ export async function banUserFromStoryAction(formData: FormData): Promise<void> 
   revalidatePath('/mit-glied/admin/inbox');
   revalidatePath('/mit-glied/admin/blocklist');
   revalidatePath('/mit-glied/admin/audit');
+}
+
+type ServiceClient = ReturnType<typeof createSupabaseServiceClient>;
+
+/**
+ * Beendet ein Mitglied: unveröffentlichte Berichte löschen (außer `keepStoryId`,
+ * die schon als rejected markiert ist), Konto löschen (Cascade auf profile,
+ * stories.user_id → NULL via 0004; approved Stories bleiben mit ihrem Pseudonym,
+ * kein „alter-"-Marker beim Ban) und Brevo-Kontakt entfernen.
+ * Nach deleteUser schlägt getUser() für jede bestehende Session fehl.
+ */
+async function revokeMember(
+  service: ServiceClient,
+  userId: string,
+  email: string,
+  keepStoryId?: string,
+): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const storiesTable = service.from('stories') as any;
+  let pending = storiesTable.delete().eq('user_id', userId).neq('status', 'approved');
+  if (keepStoryId) pending = pending.neq('id', keepStoryId);
+  await pending;
+
+  const { error } = await service.auth.admin.deleteUser(userId);
+  if (error) console.error('[admin-ban] deleteUser failed:', error);
+  const brevo = await deleteContact(email);
+  if (!brevo.ok) console.error('[admin-ban] brevo delete failed:', brevo.reason);
+}
+
+/** Supabase hat kein getUserByEmail; der Club ist klein, Blättern reicht. */
+async function findUserIdByEmail(service: ServiceClient, email: string): Promise<string | null> {
+  const perPage = 1000;
+  for (let page = 1; page <= 50; page++) {
+    const { data, error } = await service.auth.admin.listUsers({ page, perPage });
+    if (error) {
+      console.error('[admin-ban] listUsers failed:', error);
+      return null;
+    }
+    const hit = data.users.find((u) => u.email?.toLowerCase() === email);
+    if (hit) return hit.id;
+    if (data.users.length < perPage) return null;
+  }
+  return null;
 }

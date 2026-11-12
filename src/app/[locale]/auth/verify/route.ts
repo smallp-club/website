@@ -22,6 +22,7 @@ import { generatePseudonym } from '@/lib/members/pseudonym';
 import { deleteContact, requestNewsletterDoubleOptIn } from '@/lib/brevo';
 import { isBanned } from '@/lib/members/blocklist';
 import { hashEmail } from '@/lib/hash';
+import { LOGIN_PENDING_COOKIE } from '@/lib/members/login-pending';
 
 const MAX_PSEUDONYM_RETRIES = 8;
 
@@ -159,11 +160,15 @@ export async function POST(request: NextRequest) {
     token_hash: tokenHash,
   });
   if (error || !data.user) return go(origin, '/mit-glied?error=expired_link', 303);
-  return completeLogin(origin, 303, {
+  const response = await completeLogin(origin, 303, {
     userId: data.user.id,
     email: data.user.email ?? null,
     metadata: data.user.user_metadata ?? {},
   });
+  // Merker ist verbraucht; ein später untergeschobener Link soll nicht mehr
+  // automatisch durchgehen.
+  response.cookies.delete({ name: LOGIN_PENDING_COOKIE, path: '/' });
+  return response;
 }
 
 async function completeLogin(origin: string, status: 302 | 303, user: LoggedIn) {

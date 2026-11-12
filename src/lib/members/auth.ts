@@ -66,7 +66,7 @@ export async function requireAdmin(): Promise<MemberSession> {
 }
 
 /**
- * Erzwingt Admin-Rolle UND aktiven zweiten Faktor UND aktives 2h-Idle-Cookie.
+ * Erzwingt Admin-Rolle UND aktiven zweiten Faktor UND aktives Admin-Cookie (Laufzeit siehe admin-session.ts).
  *
  * Vier Stufen:
  *   1. Nicht admin → /mit-glied/eingang
@@ -89,7 +89,7 @@ export async function requireAdminWithMfa(): Promise<MemberSession> {
     redirect('/mit-glied/admin/2fa/challenge');
   }
 
-  // 2h Idle-Cookie. Auch bei aktiver aal2-Session: ohne frisches Cookie
+  // Admin-Cookie (TTL in admin-session.ts). Auch bei aktiver aal2-Session: ohne frisches Cookie
   // (oder abgelaufen) muss neu challenged werden. Doktrin MEMBER_SECURITY.md §7.
   const idleActive = await isAdminAal2Active();
   if (!idleActive) {

@@ -10,11 +10,14 @@ import { createSupabaseServiceClient } from '@/lib/supabase/service';
 export async function isBanned(emailHash: string, ipHash: string | null): Promise<boolean> {
   try {
     const service = createSupabaseServiceClient();
-    const { data } = await service
+    // supabase-js wirft bei DB-Fehlern nicht, sondern liefert `error` zurück.
+    // Ohne diesen Check wäre ein Fehler „nicht gebannt" (Security-Audit 2026-11).
+    const { data, error } = await service
       .from('blocklist')
       .select('email_hash')
       .eq('email_hash', emailHash)
       .limit(1);
+    if (error) throw error;
     if (Array.isArray(data) && data.length > 0) return true;
 
     if (ipHash) {
@@ -23,6 +26,7 @@ export async function isBanned(emailHash: string, ipHash: string | null): Promis
         .select('ip_hash')
         .eq('ip_hash', ipHash)
         .limit(1);
+      if (ipResult.error) throw ipResult.error;
       return Array.isArray(ipResult.data) && ipResult.data.length > 0;
     }
     return false;

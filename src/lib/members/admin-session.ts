@@ -1,12 +1,12 @@
 /**
  * Admin-Idle-Timeout über Cookie.
  *
- * Doktrin: MEMBER_SECURITY.md §7 — Admin-Session bekommt 2h Idle-Timeout,
- * deutlich kürzer als die 30-Tage-Default-Session für normale Member.
+ * Doktrin: MEMBER_SECURITY.md §7 — Re-Challenge per Cookie. Laufzeit seit 2026-11-05 bewusst
+ * 365 Tage pro Gerät (Kethe-Entscheidung, im Audit 2026-11 bestätigt).
  *
  * Mechanik:
  *   1. Bei erfolgreichem TOTP-Verify (Setup oder Challenge) wird das Cookie
- *      `spc_admin_aal2_until` auf NOW + 2h gesetzt.
+ *      `spc_admin_aal2_until` auf NOW + TTL gesetzt.
  *   2. Bei jedem Re-Auth (Ban / Unban) wird das Cookie verlängert — wer
  *      aktiv arbeitet, bleibt drin.
  *   3. `requireAdminWithMfa()` liest das Cookie und prüft. Fehlt es oder
@@ -55,7 +55,7 @@ function verifyExpiry(value: string, sig: string): boolean {
 }
 
 /**
- * Setzt Cookie auf NOW + 2h. Aufruf nur aus Server-Actions oder
+ * Setzt Cookie auf NOW + TTL. Aufruf nur aus Server-Actions oder
  * Route-Handlers (Server-Components dürfen nicht schreiben).
  */
 export async function setAdminAal2Expiry(): Promise<void> {
