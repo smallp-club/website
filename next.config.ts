@@ -14,6 +14,13 @@ const nextConfig: NextConfig = {
   // Kein „x-powered-by: Next.js“ (Audit L6, Technik-Verrat ohne Nutzen).
   poweredByHeader: false,
   // Nur Dev: Handy im selben WLAN darf die lokale Vorschau laden (HMR).
+  // Audit 2026-11 (Performance): AVIF zuerst, WebP als Rückfall. Spart bei
+  // den Wandfotos ~20 %, bei Personenfotos bis ~60 % gegenüber WebP.
+  images: { formats: ['image/avif', 'image/webp'] },
+  // Audit 2026-11 (Performance): CSS direkt ins HTML statt 4 render-blockierender
+  // Dateien. Spart im Mobilnetz je einen Umlauf vor dem LCP-Bild. Die CSP
+  // erlaubt Inline-Styles bereits ('unsafe-inline' in style-src).
+  experimental: { inlineCss: true },
   allowedDevOrigins: ['192.168.178.*'],
   async headers() {
     return [

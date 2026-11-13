@@ -126,8 +126,10 @@ export function Hero() {
       <motion.div
         className={styles.heroMan}
         style={{ y: manY }}
-        initial={{ opacity: 0, x: 40 }}
-        animate={{ opacity: 1, x: 0 }}
+        // Sofort sichtbar, nur der Weg kommt mit JS: ein Fade von 0 würde den
+        // LCP (dieses Bild) bis nach der Hydration aufhalten (PSI-Audit 2026-11).
+        initial={{ x: 40 }}
+        animate={{ x: 0 }}
         transition={{ duration: 1, delay: 0.15, ease: EASE }}
         aria-hidden="true"
       >

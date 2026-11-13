@@ -19,9 +19,14 @@ export interface SourceProps extends Omit<HTMLAttributes<HTMLParagraphElement>, 
   locale?: SourceLocale;
 }
 
+// Einmal pro Sprache statt pro Render: Intl.NumberFormat anzulegen ist teuer.
+const NUMBER_FORMAT: Record<SourceLocale, Intl.NumberFormat> = {
+  de: new Intl.NumberFormat('de-DE'),
+  en: new Intl.NumberFormat('en-US'),
+};
+
 function formatN(n: number, locale: SourceLocale): string {
-  const tag = locale === 'de' ? 'de-DE' : 'en-US';
-  return new Intl.NumberFormat(tag).format(n);
+  return NUMBER_FORMAT[locale].format(n);
 }
 
 function resolveHref(props: { doi?: string; href?: string }): string | undefined {
